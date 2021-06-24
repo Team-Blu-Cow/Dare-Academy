@@ -120,7 +120,10 @@ namespace CanvasTool
                     openCanvases.Clear();
                 }
             }
-
+            foreach (CanvasContainer container in containers)
+            {
+                container.OpenCanvas();
+            }
             overlay.canvas.sortingOrder = openCanvases.Count + sortingBoost;
         }
 
