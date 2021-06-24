@@ -15,7 +15,7 @@ namespace CanvasTool
         private int sortingBoost = 20;
 
         private CanvasContainer overlay = new CanvasContainer();
-        public CanvasContainer startingCanvas;
+        public List<CanvasContainer> startingCanvas = new List<CanvasContainer>();
 
         // Stack of open canvases
         private Stack<CanvasContainer> openCanvases = new Stack<CanvasContainer>();
@@ -66,9 +66,10 @@ namespace CanvasTool
 
             CloseCanvas(true);
 
-            if (startingCanvas.canvas != null)
+            if (startingCanvas.Count > 0)
             {
-                OpenCanvas(startingCanvas);
+                foreach (CanvasContainer container in startingCanvas)
+                    OpenCanvas(container, true);
             }
         }
 
@@ -390,7 +391,8 @@ namespace CanvasTool
 
             canvasContainer.gameObject = canvasGO;
 
-            canvasContainer.CloseCanvas();
+            if (Application.isPlaying)
+                canvasContainer.CloseCanvas();
 
             canvases.Add(canvasContainer);
         }
