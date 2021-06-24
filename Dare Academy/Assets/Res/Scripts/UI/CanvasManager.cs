@@ -96,11 +96,6 @@ namespace CanvasTool
 
                 if (stack)
                 {
-                    if (openCanvases.Count > 0 && openCanvases.Peek().layer != 0 && openCanvases.Peek().layer == container.layer)
-                    {
-                        openCanvases.Pop();
-                    }
-
                     //close on same layer
                     if (container.layer != 0)
                     {
@@ -126,13 +121,6 @@ namespace CanvasTool
                 }
             }
 
-            int i = 0;
-            foreach (CanvasContainer container in containers)
-            {
-                container.OpenCanvas();
-                container.canvas.sortingOrder = openCanvases.Count + i + sortingBoost;
-                i++;
-            }
             overlay.canvas.sortingOrder = openCanvases.Count + sortingBoost;
         }
 
@@ -181,8 +169,6 @@ namespace CanvasTool
             }
 
             container.OpenCanvas();
-            if (container.canvas)
-                container.canvas.sortingOrder = openCanvases.Count + sortingBoost;
 
             if (overlay.canvas)
                 overlay.canvas.sortingOrder = openCanvases.Count + sortingBoost;
