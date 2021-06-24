@@ -68,8 +68,11 @@ namespace CanvasTool
 
             if (startingCanvas.Count > 0)
             {
-                foreach (CanvasContainer container in startingCanvas)
-                    OpenCanvas(container, true);
+                OpenCanvas(startingCanvas, true);
+            }
+            else if (canvases.Count > 0)
+            {
+                OpenCanvas(canvases[0]);
             }
         }
 
@@ -93,7 +96,7 @@ namespace CanvasTool
 
                 if (stack)
                 {
-                    if (openCanvases.Count > 0 && openCanvases.Peek().layer == container.layer)
+                    if (openCanvases.Count > 0 && openCanvases.Peek().layer != 0 && openCanvases.Peek().layer == container.layer)
                     {
                         openCanvases.Pop();
                     }

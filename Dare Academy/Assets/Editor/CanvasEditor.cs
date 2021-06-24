@@ -69,6 +69,7 @@ namespace CanvasTool
             }
 
             Indent();
+
             // Looping each cavas to show
             for (int i = 0; i < canvasContoller.CanvasAmount(); i++)
             {

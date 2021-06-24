@@ -26,7 +26,7 @@ namespace CanvasTool
                 else
                     button.button.onClick.AddListener(delegate
                     {
-                        App.GetModule<SceneModule>().SwitchScene(button.sceneName, (blu.TransitionType)button.transition, (blu.LoadingBarType)button.loadingBar, button.test);
+                        App.GetModule<SceneModule>().SwitchScene(button.sceneName, (TransitionType)button.transition, (LoadingBarType)button.loadingBar, button.test);
                     });
 
                 //button.button.onClick.AddListener(delegate { blu.Application.ModuleManager.GetModule<AudioModule>().PlayAudioEvent("event:/UI/buttons/on click"); });

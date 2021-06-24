@@ -131,12 +131,12 @@ public class ButtonWrapperEditor : Editor
                                     SerializedProperty sceneName = Button.FindPropertyRelative("sceneName");
 
                                     sceneName.stringValue = GUILayout.TextField(sceneName.stringValue);
-                                    if (UnityEngine.Application.isPlaying && GUI.changed)
+                                    if (Application.isPlaying && GUI.changed)
                                     {
                                         button.button.onClick.RemoveAllListeners();
                                         //button.button.onClick.AddListener(delegate { bluModule.Application.instance.audioModule.PlayAudioEvent("event:/UI/buttons/on click"); });
 
-                                        button.button.onClick.AddListener(delegate { App.GetModule<SceneModule>().SwitchScene(button.sceneName, (blu.TransitionType)button.transition, (blu.LoadingBarType)button.loadingBar, button.test); });
+                                        button.button.onClick.AddListener(delegate { App.GetModule<SceneModule>().SwitchScene(button.sceneName, (TransitionType)button.transition, (LoadingBarType)button.loadingBar, button.test); });
                                     }
                                 }
                             }
@@ -148,7 +148,7 @@ public class ButtonWrapperEditor : Editor
                                     GUILayout.Label("Transition", GUILayout.Width(100));
                                     SerializedProperty transition = Button.FindPropertyRelative("transition");
 
-                                    transition.intValue = EditorGUILayout.Popup(transition.intValue, System.Enum.GetNames(typeof(blu.TransitionType)));
+                                    transition.intValue = EditorGUILayout.Popup(transition.intValue, System.Enum.GetNames(typeof(TransitionType)));
                                 }
                             }
 
