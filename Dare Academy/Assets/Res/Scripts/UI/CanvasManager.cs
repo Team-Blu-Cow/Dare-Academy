@@ -156,11 +156,6 @@ namespace CanvasTool
 
             if (stack)
             {
-                if (openCanvases.Count > 0 && openCanvases.Peek().layer == container.layer)
-                {
-                    openCanvases.Pop();
-                }
-
                 //close on same layer
                 if (container.layer != 0)
                 {
