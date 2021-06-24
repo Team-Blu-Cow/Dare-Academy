@@ -390,6 +390,8 @@ namespace CanvasTool
 
             canvasContainer.gameObject = canvasGO;
 
+            canvasContainer.CloseCanvas();
+
             canvases.Add(canvasContainer);
         }
 

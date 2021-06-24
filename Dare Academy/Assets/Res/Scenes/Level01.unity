@@ -523,6 +523,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 8484209374151700903, guid: 887ebc2be8f70df49bc709a7c7f653b4, type: 3}
+      propertyPath: _currentType
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8484209374151700903, guid: 887ebc2be8f70df49bc709a7c7f653b4, type: 3}
+      propertyPath: FilterEnabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8484209374151700904, guid: 887ebc2be8f70df49bc709a7c7f653b4, type: 3}
       propertyPath: m_HDR
       value: 1

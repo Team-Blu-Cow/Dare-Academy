@@ -69,12 +69,15 @@ public class MainTestScript : MonoBehaviour
 
     private void PauseGame(InputAction.CallbackContext context)
     {
+        Debug.Log("Attempting Pause");
+
         _paused = !_paused;
 
         if (_paused)
         {
             Time.timeScale = 0f;
             App.CanvasManager.AddCanvas(Instantiate(Resources.Load<GameObject>("prefabs/PauseCanvas")));
+            App.CanvasManager.OpenCanvas(App.CanvasManager.GetCanvasContainer("PauseCanvas(Clone)"), true);
         }
         else
         {
@@ -85,15 +88,12 @@ public class MainTestScript : MonoBehaviour
 
     private void OnDestroy()
     {
-        App.GetModule<blu.InputModule>().PlayerController.Move.Direction.started -= LoadLevel;
         App.GetModule<blu.InputModule>().SystemController.UI.Pause.performed -= PauseGame;
     }
 
     // Start is called before the first frame update
     private void Start()
     {
-        App.GetModule<blu.InputModule>().PlayerController.Move.Direction.started += LoadLevel;
-        //App.ModuleManager.GetModule<blu.InputModule>().SystemController.UI.Pause.performed += InputDebug;
         App.GetModule<blu.InputModule>().SystemController.UI.Pause.performed += PauseGame;
         ExampleLoadData();
     }
@@ -101,14 +101,9 @@ public class MainTestScript : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (Keyboard.current.oKey.wasPressedThisFrame)
+        if (Keyboard.current.bKey.wasPressedThisFrame)
         {
-            App.RemoveModule<SettingsModule>();
-        }
-
-        if (Keyboard.current.pKey.wasPressedThisFrame)
-        {
-            App.AddModule<SettingsModule>();
+            App.GetModule<DialogueModule>().StartDialogue(Resources.Load<GameObject>("Conversations/ExampleZoneName/TestConvo"));
         }
     }
 }
