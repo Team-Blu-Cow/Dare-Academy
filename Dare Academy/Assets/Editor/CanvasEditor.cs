@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEditor.SceneManagement;
 using UnityEditor;
 
 namespace CanvasTool
@@ -39,6 +40,7 @@ namespace CanvasTool
             using (var VerticalScope = new GUILayout.VerticalScope())
             {
                 SerializedProperty canvas = serializedObject.FindProperty("canvases");
+                GUI.changed = false;
 
                 if (canvasContoller.startingCanvas == null)
                 {
@@ -68,6 +70,9 @@ namespace CanvasTool
                         canvasContoller.startingCanvas.Add(new CanvasContainer());
                     }
                 }
+
+                if (GUI.changed)
+                    EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
             }
 
             Indent();
