@@ -179,7 +179,7 @@ public class ButtonWrapperEditor : Editor
                         {
                             button.quit = GUILayout.Toggle(button.quit, "Quit");
 
-                            if (UnityEngine.Application.isPlaying && GUI.changed && button.quit)
+                            if (Application.isPlaying && GUI.changed && button.quit)
                             {
                                 button.button.onClick.RemoveAllListeners();
                                 //button.button.onClick.AddListener(delegate { bluModule.Application.instance.audioModule.PlayAudioEvent("event:/UI/buttons/on click"); });
@@ -208,6 +208,7 @@ public class ButtonWrapperEditor : Editor
                                 else
                                 {
                                     button.stack = false;
+                                    button.closeAll = GUILayout.Toggle(button.closeAll, "CloseAll");
                                 }
 
                                 if (UnityEngine.Application.isPlaying && GUI.changed)

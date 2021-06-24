@@ -21,6 +21,7 @@ public class ButtonContainer
     // Canvas Swaps
 
     public bool open;
+    public bool closeAll;
     public bool stack;
     public bool quit;
 

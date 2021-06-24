@@ -22,7 +22,7 @@ namespace CanvasTool
                 else if (button.quit)
                     button.button.onClick.AddListener(delegate { App.GetModule<SceneModule>().Quit(); });
                 else if (!button.swapScene)
-                    button.button.onClick.AddListener(delegate { canvasManager.CloseCanvas(true); });
+                    button.button.onClick.AddListener(delegate { canvasManager.CloseCanvas(button.closeAll); });
                 else
                     button.button.onClick.AddListener(delegate
                     {
