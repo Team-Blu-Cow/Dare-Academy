@@ -24,6 +24,7 @@ namespace DialogueEditor
         public static ConversationManager Instance { get; private set; }
 
         public delegate void ConversationStartEvent();
+
         public delegate void ConversationEndEvent();
 
         public static ConversationStartEvent OnConversationStarted;
@@ -32,6 +33,7 @@ namespace DialogueEditor
         // User-Facing options
         // Drawn by custom inspector
         public bool ScrollText;
+
         public float ScrollSpeed = 1;
         public Sprite BackgroundImage;
         public bool BackgroundImageSliced;
@@ -39,21 +41,27 @@ namespace DialogueEditor
         public bool OptionImageSliced;
         public bool AllowMouseInteraction;
 
-        // Non-User facing 
+        // Non-User facing
         // Not exposed via custom inspector
-        // 
+        //
         // Base panels
         public RectTransform DialoguePanel;
+
         public RectTransform OptionsPanel;
+
         // Dialogue UI
         public Image DialogueBackground;
+
         public Image NpcIcon;
         public TMPro.TextMeshProUGUI NameText;
         public TMPro.TextMeshProUGUI DialogueText;
+
         // Components
         public AudioSource AudioPlayer;
+
         // Prefabs
         public UIConversationButton ButtonPrefab;
+
         // Default values
         public Sprite BlankSprite;
 
@@ -68,19 +76,20 @@ namespace DialogueEditor
 
         // Private
         private float m_elapsedScrollTime;
+
         private int m_scrollIndex;
         public int m_targetScrollTextCount;
         private eState m_state;
         private float m_stateTime;
-        
+
         private Conversation m_conversation;
         private SpeechNode m_currentSpeech;
         private OptionNode m_selectedOption;
 
         // Selection options
         private List<UIConversationButton> m_uiOptions;
-        private int m_currentSelectedIndex;
 
+        private int m_currentSelectedIndex;
 
         //--------------------------------------
         // Awake, Start, Destroy, Update
@@ -136,8 +145,6 @@ namespace DialogueEditor
                     break;
             }
         }
-
-
 
         //--------------------------------------
         // Public functions
@@ -218,7 +225,7 @@ namespace DialogueEditor
                 LogWarning("parameter \'" + paramName + "\' does not exist.");
             }
         }
-        
+
         public void SetBool(string paramName, bool value)
         {
             eParamStatus status;
@@ -256,7 +263,6 @@ namespace DialogueEditor
             return value;
         }
 
-
         //--------------------------------------
         // Set state
         //--------------------------------------
@@ -269,6 +275,7 @@ namespace DialogueEditor
                 case eState.TransitioningOptionsOff:
                     m_selectedOption = null;
                     break;
+
                 case eState.TransitioningDialogueBoxOn:
                     SetColorAlpha(DialogueBackground, 1);
                     SetColorAlpha(NpcIcon, 1);
@@ -279,7 +286,7 @@ namespace DialogueEditor
             m_state = newState;
             m_stateTime = 0f;
 
-            // Enter 
+            // Enter
             switch (m_state)
             {
                 case eState.TransitioningDialogueBoxOn:
@@ -312,9 +319,6 @@ namespace DialogueEditor
                     break;
             }
         }
-
-
-
 
         //--------------------------------------
         // Update
@@ -423,7 +427,6 @@ namespace DialogueEditor
                 return;
             }
 
-
             for (int i = 0; i < m_uiOptions.Count; i++)
                 m_uiOptions[i].SetAlpha(1 - t);
 
@@ -445,9 +448,6 @@ namespace DialogueEditor
             SetColorAlpha(NpcIcon, 1 - t);
             SetColorAlpha(NameText, 1 - t);
         }
-
-
-
 
         //--------------------------------------
         // Do Speech
@@ -541,9 +541,6 @@ namespace DialogueEditor
             SetState(eState.ScrollingText);
         }
 
-
-
-
         //--------------------------------------
         // Option Selected
         //--------------------------------------
@@ -565,9 +562,6 @@ namespace DialogueEditor
             m_selectedOption = null;
             SetState(eState.TransitioningOptionsOff);
         }
-
-
-
 
         //--------------------------------------
         // Util
@@ -679,7 +673,6 @@ namespace DialogueEditor
                         {
                             uiOption.SetupButton(UIConversationButton.eButtonType.Speech, next, continueFont: m_conversation.ContinueFont);
                         }
-                        
                     }
                     else if (m_currentSpeech.ConnectionType == Connection.eConnectionType.None)
                     {
@@ -687,7 +680,6 @@ namespace DialogueEditor
                         uiOption.SetupButton(UIConversationButton.eButtonType.End, null, endFont: m_conversation.EndConversationFont);
                     }
                 }
-
             }
             SetSelectedOption(0);
 
@@ -700,7 +692,7 @@ namespace DialogueEditor
             }
         }
 
-        private void ClearOptions()
+        public void ClearOptions()
         {
             while (m_uiOptions.Count != 0)
             {

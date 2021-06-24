@@ -121,7 +121,7 @@ public class @DialogueControls : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""0e2b3631-9406-4e70-85d0-7d8a654b5d19"",
-                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",

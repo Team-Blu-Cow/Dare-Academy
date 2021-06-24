@@ -90,6 +90,7 @@ namespace blu
         {
             if (_closable)
             {
+                ConversationManager.Instance.ClearOptions();
                 ConversationManager.Instance.EndConversation();
             }
         }
