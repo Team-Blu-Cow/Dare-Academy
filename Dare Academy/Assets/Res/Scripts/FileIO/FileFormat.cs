@@ -21,24 +21,13 @@ namespace blu.FileIO
         }
     }
 
-    public class TestCounter : BaseFileFormat
-    {
-        protected override string EditorFileExtension()
-        { return "test-debug"; }
-
-        protected override string ReleaseFileExtension()
-        { return "test"; }
-
-        public int count = 0;
-    }
-
     public class SaveData : BaseFileFormat
     {
         protected override string EditorFileExtension()
-        { return "sv-debug"; }
+        { return "uwu-debug"; }
 
         protected override string ReleaseFileExtension()
-        { return "sv"; }
+        { return "uwu"; }
 
         public string displayName = null;
     }
