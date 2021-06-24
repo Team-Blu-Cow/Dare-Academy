@@ -1,0 +1,33 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 689940897d07d824bb3d61e74d63d0ed, type: 3}
+  m_Name: Cliffs
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: 542327e5b9ae6504a95b39b6e6bd665f, type: 2}
+  - {fileID: 11400000, guid: e27531f9ac6bbe945a5c82767f4a4735, type: 2}
+  - {fileID: 11400000, guid: 1b6ee890b89fe1c48b38afd1d69f22fc, type: 2}
+  - {fileID: 11400000, guid: 59dd6620022c6b4458d876a62735cf48, type: 2}
+  - {fileID: 11400000, guid: b4c9d1218560cf949a9ccc969d0b0433, type: 2}
+  - {fileID: 11400000, guid: c4e9a5ed1527958408b9b54993166d1f, type: 2}
+  - {fileID: 11400000, guid: 45cac53b7ab655545a2ef06f2467f1d8, type: 2}
+  - {fileID: 11400000, guid: ee25987d4a170f64594e7eece893a39d, type: 2}
+  - {fileID: 11400000, guid: 64ae1e5a1dd48184982930533e2d93ec, type: 2}
+  - {fileID: 11400000, guid: c2b49a8ca261d974ba5d05eda8fc825b, type: 2}
+  data:
+    boolData:
+    - name: walkable
+      data: 0
+    intData: []
+    floatData: []
+  neighbours:
+    neighbors: 0000000000000000000000000000000000000000000000000000000000000000

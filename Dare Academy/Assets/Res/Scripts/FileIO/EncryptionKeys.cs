@@ -1,0 +1,26 @@
+// M-RENNIE 07-JUN-2021
+// CONTENTS OF THIS FILE SHOULD BE TREATED AS STRICTLY CONFIDENTIAL
+// UNDER NO CIRCUMSTANCES SHOULD THE CONTENTS CONTAINED HERE BE PUBLICLY DISTRIBUTED
+
+namespace blu.Crypto
+{
+    public static class FileEncryptionKeys
+    {
+        static public byte[] key { get { return m_aes256Key; } }
+        static public byte[] iv { get { return m_aes256Iv; } }
+
+        [UnityEngine.HideInInspector]
+        private static byte[] m_aes256Key = {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        };
+
+        [UnityEngine.HideInInspector]
+        private static byte[] m_aes256Iv = {
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+            0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        };
+    }
+}

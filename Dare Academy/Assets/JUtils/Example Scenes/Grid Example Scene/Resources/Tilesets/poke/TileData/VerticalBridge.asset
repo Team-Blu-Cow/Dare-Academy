@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 689940897d07d824bb3d61e74d63d0ed, type: 3}
+  m_Name: VerticalBridge
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: 63e2f8aba322cbf408fc17d8029e6870, type: 2}
+  - {fileID: 11400000, guid: 3f58cc888e717354bbf91eb92d736cb5, type: 2}
+  - {fileID: 11400000, guid: beae7d93d14ead64f8a6055885898649, type: 2}
+  data:
+    boolData:
+    - name: walkable
+      data: 1
+    intData:
+    - name: 
+      data: 0
+    floatData:
+    - name: 
+      data: 0
+  neighbours:
+    neighbors: 0100000000000000000000000000000001000000000000000000000000000000
