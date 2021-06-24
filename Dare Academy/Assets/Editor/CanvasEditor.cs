@@ -38,6 +38,8 @@ namespace CanvasTool
             // What canvas to open on Start
             using (var VerticalScope = new GUILayout.VerticalScope())
             {
+                SerializedProperty canvas = serializedObject.FindProperty("canvases");
+
                 if (canvasContoller.startingCanvas == null)
                 {
                     canvasContoller.startingCanvas = new System.Collections.Generic.List<CanvasContainer>();

@@ -15,7 +15,7 @@ namespace CanvasTool
         private int sortingBoost = 20;
 
         private CanvasContainer overlay = new CanvasContainer();
-        public List<CanvasContainer> startingCanvas = new List<CanvasContainer>();
+        [SerializeField] public List<CanvasContainer> startingCanvas = new List<CanvasContainer>();
 
         // Stack of open canvases
         private Stack<CanvasContainer> openCanvases = new Stack<CanvasContainer>();
@@ -212,6 +212,7 @@ namespace CanvasTool
                 CanvasContainer temp = GetCanvasContainer(index);
                 canvases.RemoveAt(index);
                 canvases.Insert(index - 1, temp);
+                SetSortingOrder();
             }
         }
 
@@ -222,6 +223,17 @@ namespace CanvasTool
                 CanvasContainer temp = GetCanvasContainer(index);
                 canvases.RemoveAt(index);
                 canvases.Insert(index + 1, temp);
+                SetSortingOrder();
+            }
+        }
+
+        private void SetSortingOrder()
+        {
+            int i = 0;
+            foreach (CanvasContainer container in canvases)
+            {
+                container.canvas.sortingOrder = i;
+                i++;
             }
         }
 
@@ -280,14 +292,18 @@ namespace CanvasTool
                 return false;
             }
 
-            return canvases.Remove(temp);
+            bool x = canvases.Remove(temp);
+            SetSortingOrder();
+            return x;
         }
 
         public bool RemoveCanvasContainer(Canvas canvas)
         {
             CanvasContainer temp = GetCanvasContainer(canvas);
             CleanUpContainer(temp);
-            return canvases.Remove(temp);
+            bool x = canvases.Remove(temp);
+            SetSortingOrder();
+            return x;
         }
 
         public bool RemoveCanvasContainer(int index)
@@ -296,6 +312,7 @@ namespace CanvasTool
             if (index <= canvases.Count)
             {
                 canvases.RemoveAt(index);
+                SetSortingOrder();
                 return true;
             }
             return false;
@@ -334,6 +351,7 @@ namespace CanvasTool
             canvasContainer.gameObject = Go;
 
             canvases.Add(canvasContainer);
+            SetSortingOrder();
         }
 
         public void AddCanvas(GameObject canvasGO)
@@ -393,6 +411,7 @@ namespace CanvasTool
                 canvasContainer.CloseCanvas();
 
             canvases.Add(canvasContainer);
+            SetSortingOrder();
         }
 
         // Deletes the game object of the canvas
