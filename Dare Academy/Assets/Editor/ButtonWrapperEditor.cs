@@ -52,25 +52,23 @@ public class ButtonWrapperEditor : Editor
 
                         if (GUI.changed)
                         {
-                            button.button.gameObject.name = button.name + " (Button)";
+                            button.button.gameObject.name = name.stringValue + " (Button)";
                         }
-                        serializedObject.ApplyModifiedProperties();
                     }
 
                     using (var HorizontalScope = new GUILayout.HorizontalScope())
                     {
                         Indent();
-
                         GUILayout.Label("Button Text", GUILayout.Width(100));
                         SerializedProperty text = Button.FindPropertyRelative("text");
 
-                        text.stringValue = GUILayout.TextField(text.stringValue);
                         GUI.changed = false;
+                        text.stringValue = GUILayout.TextField(text.stringValue);
+
                         if (GUI.changed)
                         {
                             button.textMeshPro.text = text.stringValue;
                         }
-                        serializedObject.ApplyModifiedProperties();
                     }
 
                     using (var HorizontalScope = new GUILayout.HorizontalScope())
@@ -141,7 +139,6 @@ public class ButtonWrapperEditor : Editor
                                         button.button.onClick.AddListener(delegate { App.GetModule<SceneModule>().SwitchScene(button.sceneName, (blu.TransitionType)button.transition, (blu.LoadingBarType)button.loadingBar, button.test); });
                                     }
                                 }
-                                serializedObject.ApplyModifiedProperties();
                             }
 
                             if (button.swapScene)
@@ -176,7 +173,6 @@ public class ButtonWrapperEditor : Editor
                                     test.boolValue = EditorGUILayout.Toggle(test.boolValue);
                                 }
                             }
-                            serializedObject.ApplyModifiedProperties();
                         }
 
                         if (!button.swapScene)
@@ -245,6 +241,7 @@ public class ButtonWrapperEditor : Editor
                 }
                 i++;
             }
+            serializedObject.ApplyModifiedProperties();
         }
 
         if (GUILayout.Button(addButtonContent))

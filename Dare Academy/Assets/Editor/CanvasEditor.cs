@@ -36,13 +36,39 @@ namespace CanvasTool
             }
 
             // What canvas to open on Start
-            using (var HorizontalScope = new GUILayout.HorizontalScope())
+            using (var VerticalScope = new GUILayout.VerticalScope())
             {
-                GUILayout.Label("Starting Canvas", GUILayout.Width(110));
-                Indent();
-                canvasContoller.startingCanvas.canvas = (Canvas)EditorGUILayout.ObjectField(canvasContoller.startingCanvas.canvas, typeof(Canvas), true);
+                if (canvasContoller.startingCanvas == null)
+                {
+                    canvasContoller.startingCanvas = new System.Collections.Generic.List<CanvasContainer>();
+                }
+
+                for (int x = 0; x < canvasContoller.startingCanvas.Count; x++)
+                {
+                    using (var HorizontalScope = new GUILayout.HorizontalScope())
+                    {
+                        GUILayout.Label("Starting Canvas", GUILayout.Width(100));
+                        canvasContoller.startingCanvas[x].canvas = (Canvas)EditorGUILayout.ObjectField(canvasContoller.startingCanvas[x].canvas, typeof(Canvas), true);
+                        if (GUILayout.Button(deleteButtonContent))
+                        {
+                            canvasContoller.startingCanvas.Remove(canvasContoller.startingCanvas[x]);
+                        }
+                    }
+                }
+
+                using (var HorizontalScope = new GUILayout.HorizontalScope())
+                {
+                    Indent();
+                    GUILayout.Label("Add Starting Canvas", GUILayout.Width(120));
+
+                    if (GUILayout.Button(addButtonContent))
+                    {
+                        canvasContoller.startingCanvas.Add(new CanvasContainer());
+                    }
+                }
             }
 
+            Indent();
             // Looping each cavas to show
             for (int i = 0; i < canvasContoller.CanvasAmount(); i++)
             {
