@@ -12,13 +12,13 @@ namespace JUtil.Grids
         where T : class, IPathFindingNode<T>, IHeapItem<T>, MultiNode, new()
     {
         // MEMBERS ************************************************************************************
-        [SerializeField] List<Grid<T>> grids;
+        [SerializeField] private List<Grid<T>> grids;
 
-        [SerializeField] GridInfo[] gridInfo;
+        [SerializeField] private GridInfo[] gridInfo;
 
-        [SerializeField] string[] gridNames;
+        [SerializeField] private string[] gridNames;
 
-        [SerializeField] NodeOverrides nodeOverrides;
+        [SerializeField] private NodeOverrides nodeOverrides;
 
         [SerializeField] private TileDatabase tileData;
 
@@ -57,7 +57,7 @@ namespace JUtil.Grids
                 InitGrid(grid);
 
                 sw.Stop();
-                if(debugSettings.showGridGenerationTime)
+                if (debugSettings.showGridGenerationTime)
                     JUtils.ShowTime(sw.ElapsedTicks, "grid [" + count.ToString() + "] initialized in:");
 
                 count++;
@@ -74,7 +74,6 @@ namespace JUtil.Grids
                 OverrideNode(node1, node2, link.grid1);
                 OverrideNode(node2, node1, link.grid2);
             }
-
         }
 
         private void OverrideNode(T node, T partner, LinkID link)
@@ -108,7 +107,6 @@ namespace JUtil.Grids
                     CreateNode(x, y, grid);
                 }
             }
-
 
             for (int x = 0; x < grid.Width; x++)
             {
@@ -221,7 +219,6 @@ namespace JUtil.Grids
             int i = 0;
             foreach (Tilemap tilemap in tileData.tilemaps)
             {
-
                 Vector3Int currentTile = tilemap.WorldToCell(grid.ToWorld(x, y));
 
                 if (tilemap.HasTile(currentTile))
@@ -238,11 +235,11 @@ namespace JUtil.Grids
             }
 
             //grid[x, y] = new T(grid, x, y);
-            grid[x, y]              = new T();
-            grid[x, y].position     = grid.GetNodePosition(x, y);
-            grid[x, y].overridden   = false;
-            grid[x, y].walkable     = walkable;
-            grid[x, y].Neighbors    = new NodeNeighborhood<T>(8);
+            grid[x, y] = new T();
+            grid[x, y].position = grid.GetNodePosition(x, y);
+            grid[x, y].overridden = false;
+            grid[x, y].walkable = walkable;
+            grid[x, y].Neighbors = new NodeNeighborhood<T>(8);
 
             if (tilecount > 0)
                 SetNeighborVectors(grid[x, y], tileDataObject);
@@ -262,16 +259,16 @@ namespace JUtil.Grids
                 if (debugSettings.drawNodes)
                     DrawNodes(grid);
             }
-
+#if UNITY_EDITOR
             if (!EditorApplication.isPlaying)
             {
-                foreach(var gridI in gridInfo)
+                foreach (var gridI in gridInfo)
                 {
                     if (debugSettings.drawGrid)
                         gridI.DrawGizmos(debugSettings.drawGridColour, debugSettings.drawGridOutlineColour);
                 }
             }
-
+#endif
 
             foreach (var link in nodeOverrides.gridLinks)
             {
@@ -307,11 +304,10 @@ namespace JUtil.Grids
 
                 if (debugSettings.drawNodeConnections && debugSettings.drawNodes)
                     Gizmos.DrawLine(
-                        gridInfo[link.grid1.index].ToWorld(link.grid1.position) + (gizmoDirections[link.grid1.direction]*0.25f),
-                        gridInfo[link.grid2.index].ToWorld(link.grid2.position) + (gizmoDirections[link.grid2.direction]*0.25f)
+                        gridInfo[link.grid1.index].ToWorld(link.grid1.position) + (gizmoDirections[link.grid1.direction] * 0.25f),
+                        gridInfo[link.grid2.index].ToWorld(link.grid2.position) + (gizmoDirections[link.grid2.direction] * 0.25f)
                         );
             }
-
         }
 
         private void DrawNodes(Grid<T> grid)
@@ -336,19 +332,15 @@ namespace JUtil.Grids
 
             Gizmos.DrawSphere(grid.ToWorld(x, y), 1 * (grid.CellSize / 8));
 
-
-
             if (debugSettings.drawNodeConnections && grid.NodeExists(x, y))
             {
                 foreach (NodeNeighbor<T> neighbor in grid[x, y].Neighbors)
                 {
-
                     if (!neighbor.connected && !neighbor.overridden)
                         continue;
 
                     if (neighbor.reference == null && !neighbor.overridden)
                         continue;
-
 
                     Gizmos.color = (neighbor.oneway) ? Color.red : Color.blue;
 
@@ -359,14 +351,15 @@ namespace JUtil.Grids
                         grid.ToWorld(x, y),
                         grid.ToWorld(x, y) + (new Vector3(neighbor.offsetVector.x, neighbor.offsetVector.y, grid.ToWorld(x, y).z) * (grid.CellSize / 2))
                         );
-
                 }
             }
         }
 
         // PATHFINDING METHODS ************************************************************************
         public Vector3[] GetPath(int x, int y, int end_x, int end_y) => GetPath(grids[0].ToWorld(x, y), grids[0].ToWorld(end_x, end_y));
+
         public Vector3[] GetPath(Vector2Int start, Vector2Int end) => GetPath(grids[0].ToWorld(start.x, start.y), grids[0].ToWorld(end.x, end.y));
+
         public Vector3[] GetPath(Vector3 start, Vector3 end)
         {
             T startNode = GetNodeFromWorld(start);
@@ -381,7 +374,6 @@ namespace JUtil.Grids
 
             return pathfinder.FindPath(startNode, endNode, debugSettings.showPathfindTime);
         }
-
 
         // MISC METHODS *******************************************************************************
         public Grid<T> Grid(int i)
@@ -404,7 +396,6 @@ namespace JUtil.Grids
 
             return null;
         }
-
     }
 
     // TILE DATABASE ************************************************************************************************************************************
@@ -449,13 +440,18 @@ namespace JUtil.Grids
     {
         [Header("Gizmo Settings")]
         public bool drawGrid;
+
         public Color drawGridOutlineColour;
         public Color drawGridColour;
+
         [Space(5)]
         public bool drawNodes;
+
         public bool drawNodeConnections;
+
         [Header("Performance Testing Settings")]
         public bool showPathfindTime;
+
         public bool showGridGenerationTime;
 
         public DebugSettings()
@@ -470,18 +466,19 @@ namespace JUtil.Grids
     [System.Serializable]
     public class GridInfo
     {
-        [SerializeField, Min(1)] public int width      = 2;
-        [SerializeField, Min(1)] public int height     = 2;
+        [SerializeField, Min(1)] public int width = 2;
+        [SerializeField, Min(1)] public int height = 2;
         [SerializeField, Min(0)] public float cellSize = 1;
         [SerializeField] public Vector3 originPosition = Vector3.zero;
 
         public Vector3 ToWorld(Vector2Int pos) => ToWorld(pos.x, pos.y);
+
         virtual public Vector3 ToWorld(int x, int y)
         {
             Vector3 pos = originPosition;
 
             if (x >= 0 && y >= 0 && x < width && y < height)
-                pos =  new Vector3(originPosition.x + x * cellSize, originPosition.y + y * cellSize, originPosition.z);
+                pos = new Vector3(originPosition.x + x * cellSize, originPosition.y + y * cellSize, originPosition.z);
 
             return new Vector3(pos.x + (cellSize / 2), pos.y + (cellSize / 2), pos.z);
         }
@@ -509,7 +506,6 @@ namespace JUtil.Grids
             Gizmos.DrawLine(startPos + (Vector3.up * height * cellSize), targetPos + (Vector3.up * height * cellSize));
         }
     }
-
 
     // GRID NODE OVERRIDER CLASS ********************************************************************************************************************
     [System.Serializable]

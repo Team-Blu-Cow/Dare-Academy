@@ -191,17 +191,39 @@ namespace blu.FileIO
         //private UniversalRenderPipelineAsset _URPAsset;
 
         private Resolution _currentResolution = new Resolution();
+
+        public Resolution Resolution
+        {
+            get => _currentResolution;
+            set
+            {
+                _currentResolution = value;
+                PlayerPrefs.SetInt("RefreshRate", _currentResolution.refreshRate);
+                PlayerPrefs.SetInt("ScreenWidth", _currentResolution.width);
+                PlayerPrefs.SetInt("ScreenHeight", _currentResolution.height);
+            }
+        }
+
         private bool _fullscreen = false;
+
+        public bool Fullscreen
+        {
+            get => _fullscreen;
+            set
+            {
+                _fullscreen = value;
+                PlayerPrefs.SetInt("Fullscreen", _fullscreen ? 1 : 0);
+            }
+        }
 
         public override bool Init()
         {
-            //_URPAsset = GameObject.FindObjectOfType<UniversalRenderPipelineAsset>();
             _currentResolution.refreshRate = PlayerPrefs.GetInt("RefreshRate", 60);
             _currentResolution.width = PlayerPrefs.GetInt("ScreenWidth", 1600);
             _currentResolution.height = PlayerPrefs.GetInt("ScreenHeight", 800);
             _fullscreen = PlayerPrefs.GetInt("Fullscreen", 0) == 1;
-            //_URPAsset.msaaSampleCount = PlayerPrefs.GetInt("MSAA", (int)MSAASettings.NONE);
-            //_URPAsset.renderScale = PlayerPrefs.GetFloat("RenderScale", 1f);
+
+            Screen.SetResolution(_currentResolution.width, _currentResolution.height, _fullscreen, _currentResolution.refreshRate);
 
             return true;
         }
