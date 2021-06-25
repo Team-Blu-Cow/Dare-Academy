@@ -17,6 +17,7 @@ namespace blu
         private Animator _canvasAnimation;
         private NPCConversation _currentConversation;
         private GameObject _EventSystem;
+        public GameObject EventSystem { set => _EventSystem = value; }
 
         public void StartDialogue(GameObject in_conversation = null)
         {
@@ -25,7 +26,7 @@ namespace blu
 
             //TODO @Anyone: Im aware this is slow but I have no way to
             // guarentee if an event system exists in any given scene
-            _EventSystem = GameObject.Find("EventSystem");
+            //_EventSystem = GameObject.Find("EventSystem");
 
             if (_EventSystem != null)
             {
@@ -36,15 +37,10 @@ namespace blu
             _dialogueCanvas = Instantiate(Resources.Load<GameObject>("prefabs/DialogueCanvas"));
             _dialogueCanvas.name = "Dialogue Canvas";
             _canvasAnimation = _dialogueCanvas.GetComponentInChildren<Animator>();
-            App.GetModule<InputModule>().PlayerController.Disable();
-            App.GetModule<InputModule>().SystemController.Disable();
-            App.GetModule<InputModule>().DialogueController.Enable();
+            App.GetModule<InputModule>().PlayerController.Disable();                // stop all input other than dialogue
+            App.GetModule<InputModule>().SystemController.Disable();                //
+            App.GetModule<InputModule>().DialogueController.Enable();               //
             App.CanvasManager.AddCanvas(_dialogueCanvas);
-            //Init dialogue canvas
-            //
-            // do some funky shit here
-            //
-            //open dialogue canvas
             App.CanvasManager.OpenCanvas(App.CanvasManager.GetCanvasContainer("Dialogue Canvas"), true);
             ConversationManager.Instance.StartConversation(_currentConversation);
 

@@ -81,6 +81,20 @@ namespace blu
                 Debug.Log("[App]: Canvas Manager found.");
             else
                 Debug.Log("[App]: Canvas Manager is null.");
+
+            if (App.GetModule<DialogueModule>() != null)
+            {
+                UnityEngine.EventSystems.EventSystem temp = GameObject.FindObjectOfType<UnityEngine.EventSystems.EventSystem>();
+                if (temp != null)
+                {
+                    App.GetModule<DialogueModule>().EventSystem = temp.gameObject;
+                    Debug.Log("[App]: Event System found.");
+                }
+                else
+                {
+                    Debug.Log("[App]: Event System is null.");
+                }
+            }
         }
 
         public static T GetModule<T>() where T : blu.Module

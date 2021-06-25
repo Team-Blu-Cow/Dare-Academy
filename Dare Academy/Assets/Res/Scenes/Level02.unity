@@ -626,10 +626,10 @@ MonoBehaviour:
     showInEditor: 1
   layerNames: []
   startingCanvas:
-    gameObject: {fileID: 0}
+  - gameObject: {fileID: 0}
     canvas: {fileID: 735211367}
     canvasScaler: {fileID: 0}
-    name: Canvas
+    name: 
     desc: 
     layer: 0
     transition: 0
