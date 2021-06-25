@@ -22,6 +22,7 @@ namespace blu.FileIO
         private FMOD.Studio.Bus _masterBus;
         private FMOD.Studio.Bus _SFXBus;
         private FMOD.Studio.Bus _musicBus;
+        private bool _muted;
 
         public FMOD.Studio.Bus MasterBus
         { get => _masterBus; }
@@ -36,8 +37,15 @@ namespace blu.FileIO
         {
             try
             {
+                _muted = PlayerPrefs.GetInt("AudioMuted", 1) == 1;
+            }
+            catch (System.Exception ex)
+            { Debug.LogWarning(ex); }
+            try
+            {
                 _masterBus = FMODUnity.RuntimeManager.GetBus("bus:/Master");
                 _masterBus.setVolume(PlayerPrefs.GetFloat("MasterVolume", 1f));
+                _masterBus.setMute(_muted);
             }
             catch (System.Exception ex)
             { Debug.LogWarning(ex); }
@@ -148,8 +156,7 @@ namespace blu.FileIO
             {
                 try
                 {
-                    _masterBus.getMute(out bool out_mute);
-                    return out_mute;
+                    return _muted;
                 }
                 catch (System.Exception ex)
                 {
@@ -160,7 +167,11 @@ namespace blu.FileIO
             set
             {
                 try
-                { _masterBus.setMute(value); }
+                {
+                    _muted = value;
+                    PlayerPrefs.SetInt("AudioMuted", _muted ? 1 : 0);
+                    _masterBus.setMute(_muted);
+                }
                 catch (System.Exception ex)
                 { Debug.LogWarning(ex); }
             }
