@@ -251,12 +251,13 @@ MonoBehaviour:
     text: Button
     name: To Level 2
     open: 0
+    closeAll: 0
     stack: 0
     quit: 0
     test: 0
     transition: 1
     loadingBar: 1
-    sceneName: Level02
+    sceneName: StepManagerTestScene
     swapScene: 1
     showInEditor: 1
   - canvas: []
@@ -267,6 +268,7 @@ MonoBehaviour:
     text: To Credits
     name: To Credits
     open: 0
+    closeAll: 0
     stack: 0
     quit: 0
     test: 0

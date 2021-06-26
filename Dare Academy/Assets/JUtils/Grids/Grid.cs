@@ -66,6 +66,12 @@ namespace JUtil.Grids
             set { grid[pos.x, pos.y] = value; }
         }
 
+        public T this[GridNodePosition pos]
+        {
+            get { return GetNode(pos.grid); }
+            set { grid[pos.grid.x, pos.grid.y] = value; }
+        }
+
         // INITIALISATION METHODS *****************************************************************
         virtual public void Init()
         {

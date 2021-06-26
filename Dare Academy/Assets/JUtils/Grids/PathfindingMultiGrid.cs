@@ -54,7 +54,7 @@ namespace JUtil.Grids
                 Stopwatch sw = new Stopwatch();
                 sw.Start();
 
-                InitGrid(grid);
+                InitGrid(grid, count);
 
                 sw.Stop();
                 if(debugSettings.showGridGenerationTime)
@@ -89,7 +89,7 @@ namespace JUtil.Grids
 
         // GRID INITIALISATION METHODS ****************************************************************
         //private void InitGrid(Grid<T> grid)
-        private void InitGrid(GridInfo gridInfo)
+        private void InitGrid(GridInfo gridInfo, int index)
         {
             Grid<T> grid = new Grid<T>(
                 gridInfo.width,
@@ -105,7 +105,7 @@ namespace JUtil.Grids
             {
                 for (int y = 0; y < grid.Height; y++)
                 {
-                    CreateNode(x, y, grid);
+                    CreateNode(x, y, grid, index);
                 }
             }
 
@@ -212,7 +212,7 @@ namespace JUtil.Grids
             }
         }
 
-        private void CreateNode(int x, int y, Grid<T> grid)
+        private void CreateNode(int x, int y, Grid<T> grid, int index)
         {
             bool walkable = false;
             int tilecount = 0;
@@ -237,12 +237,12 @@ namespace JUtil.Grids
                 i++;
             }
 
-            //grid[x, y] = new T(grid, x, y);
             grid[x, y]              = new T();
             grid[x, y].position     = grid.GetNodePosition(x, y);
             grid[x, y].overridden   = false;
             grid[x, y].walkable     = walkable;
             grid[x, y].Neighbors    = new NodeNeighborhood<T>(8);
+            grid[x, y].gridIndex    = index;
 
             if (tilecount > 0)
                 SetNeighborVectors(grid[x, y], tileDataObject);
@@ -537,6 +537,8 @@ namespace JUtil.Grids
     // MULTIGRID NODE INTERFACE *********************************************************************************************************************
     public interface MultiNode
     {
+        public int gridIndex { get; set; }
+
         public bool walkable { get; set; }
         public bool overridden { get; set; }
         public int overriddenDir { get; set; }
