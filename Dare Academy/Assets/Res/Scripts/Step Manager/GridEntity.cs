@@ -19,7 +19,7 @@ public class GridEntity : MonoBehaviour
     public bool IsAttack    { get { return _isAttack; } set { _isAttack = value; } }
     public int Mass         { get { return _mass; } set { _mass = value; } }
     public int Speed        { get { return _speed; } set { _speed = value; } }
-    public int RoomIndex    { get { return _roomIndex; } set { _speed = _roomIndex; } }
+    public int RoomIndex    { get { return _roomIndex; } set { _roomIndex = value; } }
 
     private StepController _stepController;
 
