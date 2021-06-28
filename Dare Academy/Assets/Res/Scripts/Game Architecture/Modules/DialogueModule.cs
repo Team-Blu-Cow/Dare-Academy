@@ -9,7 +9,6 @@ namespace blu
     {
         private float _fadeDelay = 0.5f;
         private bool _closable = false;
-        private bool _dialogueFinished;
 
         private GameObject _dialogueCanvas;
         private Animator _canvasAnimation;
@@ -49,7 +48,6 @@ namespace blu
         {
             yield return new WaitForSeconds(_fadeDelay);
             _closable = true;
-            _dialogueFinished = false;
 
             while (ConversationManager.Instance.IsConversationActive)
             {
