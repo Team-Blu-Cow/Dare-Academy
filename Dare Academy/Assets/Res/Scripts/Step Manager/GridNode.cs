@@ -69,5 +69,15 @@ namespace JUtil.Grids
         {
             return m_currentEntities.Remove(entity);
         }
+
+        public bool CheckForConflict()
+        {
+            return (m_currentEntities.Count > 1);
+        }
+
+        public List<GridEntity> GetGridEntities()
+        {
+            return m_currentEntities;
+        }
     }
 }

@@ -57,6 +57,20 @@ namespace JUtil
                 return 360 - Vector2.Angle(v_up, v);
         }
 
+        public static int RotationToIndex(this Vector2 v, int sliceSize = 45)
+        {
+            float angle = v.GetRotation();
+
+            return Mathf.RoundToInt(angle) / sliceSize;
+        }
+
+        public static int RotationToIndex(this Vector2Int v, int sliceSize = 45)
+        {
+            float angle = v.GetRotation();
+
+            return Mathf.RoundToInt(angle) / sliceSize;
+        }
+
         // BETTER SIGN MENTHODS *******************************************************************
         // Returns -1, 0 or 1 depending on the numbers sign or if it is zero 
 
