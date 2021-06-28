@@ -39,8 +39,8 @@ namespace blu.EditorTools
                 if (System.IO.File.Exists(path))
                 {
                     // ensure latest version of file format is used
-                    FileIO.BaseFileLoader<FileIO.SaveData> fileloader = new FileIO.DebugFileLoader<FileIO.SaveData>(path);
-                    FileIO.SaveData savedata = fileloader.ReadData();
+                    FileIO.BaseFileLoader<SaveData> fileloader = new FileIO.DebugFileLoader<SaveData>(path);
+                    SaveData savedata = fileloader.ReadData();
                     fileloader.WriteData(savedata);
 
                     filepath = path;
@@ -66,7 +66,7 @@ namespace blu.EditorTools
             GUILayout.Label(filepath, EditorStyles.boldLabel);
             if (GUILayout.Button("Find", GUILayout.Width(100f)))
             {
-                FileIO.SaveData savedata = new FileIO.SaveData();
+                SaveData savedata = new SaveData();
 
                 string path = EditorUtility.OpenFilePanel("Debug Save File", Application.persistentDataPath, savedata.FileExtension());
                 OpenFile(path);
