@@ -7,7 +7,7 @@ namespace DialogueEditor
 {
     public class ConversationManager : MonoBehaviour
     {
-        private enum eState
+        public enum eState
         {
             TransitioningDialogueBoxOn,
             ScrollingText,
@@ -40,6 +40,7 @@ namespace DialogueEditor
         public Sprite OptionImage;
         public bool OptionImageSliced;
         public bool AllowMouseInteraction;
+        public bool Skip = false;
 
         // Non-User facing
         // Not exposed via custom inspector
@@ -80,6 +81,7 @@ namespace DialogueEditor
         private int m_scrollIndex;
         public int m_targetScrollTextCount;
         private eState m_state;
+        public eState CurrentState { get => m_state; }
         private float m_stateTime;
 
         private Conversation m_conversation;
@@ -125,18 +127,22 @@ namespace DialogueEditor
                     break;
 
                 case eState.ScrollingText:
+                    //////
                     ScrollingText_Update();
                     break;
 
                 case eState.TransitioningOptionsOn:
+                    Skip = false;
                     TransitionOptionsOn_Update();
                     break;
 
                 case eState.Idle:
+
                     Idle_Update();
                     break;
 
                 case eState.TransitioningOptionsOff:
+
                     TransitionOptionsOff_Update();
                     break;
 
@@ -197,6 +203,7 @@ namespace DialogueEditor
             if (m_uiOptions.Count == 0) { return; }
 
             UIConversationButton button = m_uiOptions[m_currentSelectedIndex];
+            Skip = false;
             button.OnButtonPressed();
         }
 
@@ -347,6 +354,13 @@ namespace DialogueEditor
             timePerChar *= ScrollSpeed;
 
             m_elapsedScrollTime += Time.deltaTime;
+
+            if (Skip)
+            {
+                DialogueText.maxVisibleCharacters = m_targetScrollTextCount;
+                Skip = false;
+                SetState(eState.TransitioningOptionsOn);
+            }
 
             if (m_elapsedScrollTime > timePerChar)
             {
@@ -537,7 +551,6 @@ namespace DialogueEditor
                 AudioPlayer.volume = speech.Volume;
                 AudioPlayer.Play();
             }
-
             SetState(eState.ScrollingText);
         }
 
@@ -547,11 +560,13 @@ namespace DialogueEditor
 
         public void SpeechSelected(SpeechNode speech)
         {
+            Skip = false;
             SetupSpeech(speech);
         }
 
         public void OptionSelected(OptionNode option)
         {
+            Skip = false;
             m_selectedOption = option;
             DoParamAction(option);
             SetState(eState.TransitioningOptionsOff);
@@ -559,6 +574,7 @@ namespace DialogueEditor
 
         public void EndButtonSelected()
         {
+            Skip = false;
             m_selectedOption = null;
             SetState(eState.TransitioningOptionsOff);
         }

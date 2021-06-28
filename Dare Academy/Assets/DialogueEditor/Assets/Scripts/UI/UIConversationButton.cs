@@ -206,14 +206,17 @@ namespace DialogueEditor
             switch (m_buttonType)
             {
                 case eButtonType.Speech:
+                    ConversationManager.Instance.Skip = false;
                     ConversationManager.Instance.SpeechSelected(m_node as SpeechNode);
                     break;
 
                 case eButtonType.Option:
+                    ConversationManager.Instance.Skip = false;
                     ConversationManager.Instance.OptionSelected(m_node as OptionNode);
                     break;
 
                 case eButtonType.End:
+                    ConversationManager.Instance.Skip = false;
                     ConversationManager.Instance.EndButtonSelected();
                     break;
             }

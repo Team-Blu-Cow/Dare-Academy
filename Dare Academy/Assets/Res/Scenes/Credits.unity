@@ -2297,12 +2297,13 @@ MonoBehaviour:
     text: Button
     name: Return Button
     open: 0
+    closeAll: 0
     stack: 0
     quit: 0
     test: 0
     transition: 2
     loadingBar: 0
-    sceneName: Level01
+    sceneName: MainMenu
     swapScene: 1
     showInEditor: 1
 --- !u!114 &1927567691

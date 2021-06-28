@@ -8,6 +8,8 @@ namespace blu
     public class DialogueModule : Module
     {
         private float _fadeDelay = 0.5f;
+        private float _skipTimer = 0f;
+        private bool _skippable = false;
         private bool _closable = false;
 
         private GameObject _dialogueCanvas;
@@ -20,10 +22,6 @@ namespace blu
         {
             if (in_conversation == null)
                 return;
-
-            //TODO @Anyone: Im aware this is slow but I have no way to
-            // guarentee if an event system exists in any given scene
-            //_EventSystem = GameObject.Find("EventSystem");
 
             if (_EventSystem != null)
             {
@@ -87,6 +85,20 @@ namespace blu
             }
         }
 
+        private void SkipDialogue(InputAction.CallbackContext context)
+        {
+            if (ConversationManager.Instance != null && ConversationManager.Instance.IsConversationActive)
+            {
+                if (ConversationManager.Instance.CurrentState == ConversationManager.eState.ScrollingText)
+                {
+                    if (_skippable)
+                    {
+                        ConversationManager.Instance.Skip = true;
+                    }
+                }
+            }
+        }
+
         private void NextOption(InputAction.CallbackContext context)
         {
             if (ConversationManager.Instance != null && ConversationManager.Instance.IsConversationActive)
@@ -107,7 +119,12 @@ namespace blu
         {
             if (ConversationManager.Instance != null && ConversationManager.Instance.IsConversationActive)
             {
-                ConversationManager.Instance.PressSelectedOption();
+                if (ConversationManager.Instance.CurrentState != ConversationManager.eState.ScrollingText)
+                {
+                    ConversationManager.Instance.PressSelectedOption();
+                    _skipTimer = 0f;
+                    _skippable = false;
+                }
             }
         }
 
@@ -117,6 +134,7 @@ namespace blu
             App.GetModule<InputModule>().DialogueController.Dialogue.NextOption.performed += NextOption;
             App.GetModule<InputModule>().DialogueController.Dialogue.PreviousOption.performed += PreviousOption;
             App.GetModule<InputModule>().DialogueController.Dialogue.Select.performed += SelectOption;
+            App.GetModule<InputModule>().DialogueController.Dialogue.Skip.performed += SkipDialogue;
         }
 
         private void OnDestroy()
@@ -125,6 +143,17 @@ namespace blu
             App.GetModule<InputModule>().DialogueController.Dialogue.NextOption.performed -= NextOption;
             App.GetModule<InputModule>().DialogueController.Dialogue.PreviousOption.performed -= PreviousOption;
             App.GetModule<InputModule>().DialogueController.Dialogue.Select.performed -= SelectOption;
+            App.GetModule<InputModule>().DialogueController.Dialogue.Skip.performed -= SkipDialogue;
+        }
+
+        private void Update()
+        {
+            _skipTimer += Time.deltaTime;
+
+            if (_skipTimer > 0.25f)
+            {
+                _skippable = true;
+            }
         }
 
         protected override void SetDependancies()

@@ -27,6 +27,14 @@ public class @DialogueControls : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
+                    ""name"": ""Skip"",
+                    ""type"": ""Button"",
+                    ""id"": ""2630eb3b-74ed-4dc2-83d0-e9f104988e91"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
                     ""name"": ""Cancel"",
                     ""type"": ""Button"",
                     ""id"": ""a5077c45-72ba-4302-b8e3-c63dc049d793"",
@@ -216,6 +224,61 @@ public class @DialogueControls : IInputActionCollection, IDisposable
                     ""action"": ""Previous Option"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b6cf9a76-e887-4418-a1c8-f3e38f35163e"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Skip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d1062246-3125-473c-8b7a-a2b44ee2a919"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Skip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""af272343-abf7-4e2d-9827-766a0eace058"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Skip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a673af9a-46a8-42da-af44-88610eee9e51"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Skip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8d4e764f-d95e-413c-bc77-398b4a70f16f"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Skip"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -225,6 +288,7 @@ public class @DialogueControls : IInputActionCollection, IDisposable
         // Dialogue
         m_Dialogue = asset.FindActionMap("Dialogue", throwIfNotFound: true);
         m_Dialogue_Select = m_Dialogue.FindAction("Select", throwIfNotFound: true);
+        m_Dialogue_Skip = m_Dialogue.FindAction("Skip", throwIfNotFound: true);
         m_Dialogue_Cancel = m_Dialogue.FindAction("Cancel", throwIfNotFound: true);
         m_Dialogue_NextOption = m_Dialogue.FindAction("Next Option", throwIfNotFound: true);
         m_Dialogue_PreviousOption = m_Dialogue.FindAction("Previous Option", throwIfNotFound: true);
@@ -278,6 +342,7 @@ public class @DialogueControls : IInputActionCollection, IDisposable
     private readonly InputActionMap m_Dialogue;
     private IDialogueActions m_DialogueActionsCallbackInterface;
     private readonly InputAction m_Dialogue_Select;
+    private readonly InputAction m_Dialogue_Skip;
     private readonly InputAction m_Dialogue_Cancel;
     private readonly InputAction m_Dialogue_NextOption;
     private readonly InputAction m_Dialogue_PreviousOption;
@@ -286,6 +351,7 @@ public class @DialogueControls : IInputActionCollection, IDisposable
         private @DialogueControls m_Wrapper;
         public DialogueActions(@DialogueControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Select => m_Wrapper.m_Dialogue_Select;
+        public InputAction @Skip => m_Wrapper.m_Dialogue_Skip;
         public InputAction @Cancel => m_Wrapper.m_Dialogue_Cancel;
         public InputAction @NextOption => m_Wrapper.m_Dialogue_NextOption;
         public InputAction @PreviousOption => m_Wrapper.m_Dialogue_PreviousOption;
@@ -301,6 +367,9 @@ public class @DialogueControls : IInputActionCollection, IDisposable
                 @Select.started -= m_Wrapper.m_DialogueActionsCallbackInterface.OnSelect;
                 @Select.performed -= m_Wrapper.m_DialogueActionsCallbackInterface.OnSelect;
                 @Select.canceled -= m_Wrapper.m_DialogueActionsCallbackInterface.OnSelect;
+                @Skip.started -= m_Wrapper.m_DialogueActionsCallbackInterface.OnSkip;
+                @Skip.performed -= m_Wrapper.m_DialogueActionsCallbackInterface.OnSkip;
+                @Skip.canceled -= m_Wrapper.m_DialogueActionsCallbackInterface.OnSkip;
                 @Cancel.started -= m_Wrapper.m_DialogueActionsCallbackInterface.OnCancel;
                 @Cancel.performed -= m_Wrapper.m_DialogueActionsCallbackInterface.OnCancel;
                 @Cancel.canceled -= m_Wrapper.m_DialogueActionsCallbackInterface.OnCancel;
@@ -317,6 +386,9 @@ public class @DialogueControls : IInputActionCollection, IDisposable
                 @Select.started += instance.OnSelect;
                 @Select.performed += instance.OnSelect;
                 @Select.canceled += instance.OnSelect;
+                @Skip.started += instance.OnSkip;
+                @Skip.performed += instance.OnSkip;
+                @Skip.canceled += instance.OnSkip;
                 @Cancel.started += instance.OnCancel;
                 @Cancel.performed += instance.OnCancel;
                 @Cancel.canceled += instance.OnCancel;
@@ -333,6 +405,7 @@ public class @DialogueControls : IInputActionCollection, IDisposable
     public interface IDialogueActions
     {
         void OnSelect(InputAction.CallbackContext context);
+        void OnSkip(InputAction.CallbackContext context);
         void OnCancel(InputAction.CallbackContext context);
         void OnNextOption(InputAction.CallbackContext context);
         void OnPreviousOption(InputAction.CallbackContext context);
