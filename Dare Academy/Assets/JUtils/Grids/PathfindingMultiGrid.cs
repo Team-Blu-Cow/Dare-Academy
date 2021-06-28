@@ -242,7 +242,7 @@ namespace JUtil.Grids
             grid[x, y].overridden   = false;
             grid[x, y].walkable     = walkable;
             grid[x, y].Neighbors    = new NodeNeighborhood<T>(8);
-            grid[x, y].gridIndex    = index;
+            grid[x, y].roomIndex    = index;
 
             if (tilecount > 0)
                 SetNeighborVectors(grid[x, y], tileDataObject);
@@ -537,7 +537,7 @@ namespace JUtil.Grids
     // MULTIGRID NODE INTERFACE *********************************************************************************************************************
     public interface MultiNode
     {
-        public int gridIndex { get; set; }
+        public int roomIndex { get; set; }
 
         public bool walkable { get; set; }
         public bool overridden { get; set; }

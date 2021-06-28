@@ -9,32 +9,50 @@ public class GridEntity : MonoBehaviour
 {
     // MEMBERS ************************************************************************************
 
-    private bool _isAttack = false;
+    public Vector2 testDirection;
 
-    private int _mass;
-    private int _speed;
+    private bool m_isAttack = false;
 
-    [SerializeField] private int _roomIndex = 0;
+    private int m_mass;
+    private int m_speed;
 
-    public bool IsAttack    { get { return _isAttack; } set { _isAttack = value; } }
-    public int Mass         { get { return _mass; } set { _mass = value; } }
-    public int Speed        { get { return _speed; } set { _speed = value; } }
-    public int RoomIndex    { get { return _roomIndex; } set { _roomIndex = value; } }
+    [SerializeField] private int m_roomIndex = 0;
 
-    private StepController _stepController;
+    public bool IsAttack    { get { return m_isAttack; } set { m_isAttack = value; } }
+    public int Mass         { get { return m_mass; } set { m_mass = value; } }
+    public int Speed        { get { return m_speed; } set { m_speed = value; } }
+    public int RoomIndex    { get { return m_roomIndex; } set { m_roomIndex = value; } }
 
-    JUtil.Grids.GridNodePosition _position;
-    public JUtil.Grids.GridNodePosition Position
-    { get { return _position; } set { _position = value; } }
+    private StepController m_stepController;
+
+    GridNodePosition m_position;
+    GridNodePosition m_targetPosition;
+    GridNode m_node;
+
+    public GridNodePosition Position
+    { get { return m_position; } set { m_position = value; } }
 
     // INITIALISATION METHODS *********************************************************************
     private void Start()
     {
-        _stepController = App.GetModule<LevelModule>().LevelManager.StepController;
-
-        if (_roomIndex == _stepController.currentRoomIndex)
+        m_node = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(transform.position);
+        if (m_node == null)
         {
-            _stepController.AddEntity(this);
+            m_roomIndex = -1;
+            return;
+        }
+
+        m_position = m_node.position;
+        m_roomIndex = m_node.roomIndex;
+
+        transform.position = m_position.world;
+        m_targetPosition = m_position;
+
+        m_stepController = App.GetModule<LevelModule>().LevelManager.StepController;
+
+        if (m_roomIndex == m_stepController.m_currentRoomIndex)
+        {
+            m_stepController.AddEntity(this);
         }
     }
 
@@ -48,6 +66,7 @@ public class GridEntity : MonoBehaviour
     virtual public void MoveStep()
     {
         Debug.Log("Move Step");
+        MoveTile(testDirection);
     }
 
     virtual public void ResolveMoveStep()
@@ -77,6 +96,18 @@ public class GridEntity : MonoBehaviour
 
     // HELPER METHODS *****************************************************************************
 
+    public void Update()
+    {
+        if (RoomIndex == -1)
+            return;
+
+        float xx = Mathf.Lerp(transform.position.x, m_position.world.x, 0.5f);
+        float yy = Mathf.Lerp(transform.position.y, m_position.world.y, 0.5f);
+        float zz = Mathf.Lerp(transform.position.z, m_position.world.z, 0.5f);
+
+        transform.position = new Vector3(xx, yy, zz);
+    }
+
     public void MoveTile(Vector2 direction)
     {
         int dir;
@@ -90,8 +121,13 @@ public class GridEntity : MonoBehaviour
     virtual public void MoveTile(int direction)
     {
         Mathf.Clamp(direction, 0, 7);
-        GridNode node = App.GetModule<LevelModule>().Grid(_roomIndex)[Position];
+        GridNode node = App.GetModule<LevelModule>().Grid(m_roomIndex)[Position];
 
         GridNode targetNode = node.Neighbors[direction].reference;
+
+        if (targetNode == null)
+            return;
+
+        m_position = targetNode.position;
     }
 }

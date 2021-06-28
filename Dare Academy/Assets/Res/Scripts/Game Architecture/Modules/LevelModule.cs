@@ -9,18 +9,18 @@ namespace blu
 
     public class LevelModule : Module
     {
-        private PathfindingMultiGrid<GridNode> grid = null;
+        private PathfindingMultiGrid<GridNode> m_grid = null;
         public PathfindingMultiGrid<GridNode> MetaGrid
-        { set { grid = value; } get { return grid; } }
+        { set { m_grid = value; } get { return m_grid; } }
 
         public Grid<GridNode> Grid(int i)
-        { return grid.Grid(i); }
+        { return m_grid.Grid(i); }
 
-        private LevelManager levelManager = null;
+        private LevelManager m_levelManager = null;
         public LevelManager LevelManager
-        { get { return levelManager; } }
+        { get { return m_levelManager; } }
         public StepController StepController
-        { get { return levelManager.StepController; } }
+        { get { return m_levelManager.StepController; } }
 
 
         private void OnDestroy()
@@ -31,31 +31,31 @@ namespace blu
         public override void Initialize()
         {
             SceneManager.sceneLoaded += LevelChanged;
-            grid = null;
+            m_grid = null;
         }
 
         protected override void SetDependancies()
         {
-            grid = null;
+            m_grid = null;
         }
 
         public void LevelChanged(Scene scene, LoadSceneMode loadSceneMode)
         {
-            levelManager = null;
-            levelManager = FindObjectOfType<LevelManager>();
+            m_levelManager = null;
+            m_levelManager = FindObjectOfType<LevelManager>();
 
-            if (levelManager == null)
+            if (m_levelManager == null)
                 return;
 
-            grid = levelManager.Grid;
+            m_grid = m_levelManager.Grid;
 
-            grid.Initialise();
-            levelManager.StepController.InitialAnalyse();
+            m_grid.Initialise();
+            //m_levelManager.StepController.InitialAnalyse();
         }
 
         public void AddEntityToCurrentRoom(GridEntity entity)
         {
-            levelManager.AddEntityToStepController(entity);
+            m_levelManager.AddEntityToStepController(entity);
         }
     }
 

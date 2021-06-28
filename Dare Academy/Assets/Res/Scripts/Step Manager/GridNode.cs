@@ -30,7 +30,7 @@ namespace JUtil.Grids
             return walkable;
         }
 
-        public int gridIndex { get; set; }
+        public int roomIndex { get; set; }
         public bool walkable { get; set; }
         public bool overridden { get; set; }
         public int overriddenDir { get; set; }

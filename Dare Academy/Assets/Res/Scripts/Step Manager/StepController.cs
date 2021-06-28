@@ -6,31 +6,31 @@ using UnityEngine;
 public class StepController
 {
     // MEMBERS ************************************************************************************
-    [SerializeField] List<GridEntity> entities;
-    [SerializeField] public int currentRoomIndex;
-    [SerializeField] public float stepTime;
+    [SerializeField] List<GridEntity> m_entities;
+    [SerializeField] public int m_currentRoomIndex;
+    [SerializeField] public float m_stepTime;
 
-    [HideInInspector] public bool canStepAgain;
+    [HideInInspector] public bool m_canStepAgain;
 
     public const int NUMBER_OF_STEPS = 7;
 
     // INITIALISATION METHODS *********************************************************************
     public StepController()
     {
-        entities = new List<GridEntity>();
+        m_entities = new List<GridEntity>();
     }
 
     // STEP METHODS *******************************************************************************
     public void ExecuteStep()
     {
-        if (!canStepAgain)
+        if (!m_canStepAgain)
             return;
 
-        canStepAgain = false;
+        m_canStepAgain = false;
 
         for (int i = 0; i < NUMBER_OF_STEPS; i++)
         {
-            foreach(GridEntity entity in entities)
+            foreach(GridEntity entity in m_entities)
             {
                 switch(i)
                 {
@@ -63,17 +63,18 @@ public class StepController
 
     public void InitialAnalyse()
     {
-        foreach (GridEntity entity in entities)
+        foreach (GridEntity entity in m_entities)
         {
-            entity.AnalyseStep();
+            if(entity.RoomIndex == m_currentRoomIndex)
+                entity.AnalyseStep();
         }
     }
 
     // HELPER METHODS *****************************************************************************
     public void AddEntity(GridEntity entity)
     {
-        if (entities.Contains(entity))
+        if (m_entities.Contains(entity))
             return;
-        entities.Add(entity);
+        m_entities.Add(entity);
     }
 }

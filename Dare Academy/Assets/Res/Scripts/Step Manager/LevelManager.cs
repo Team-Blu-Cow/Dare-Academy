@@ -7,26 +7,26 @@ using UnityEngine.InputSystem;
 
 public class LevelManager : MonoBehaviour
 {
-    [SerializeField] StepController stepController;
+    [SerializeField] StepController m_stepController;
 
-    [SerializeField] private PathfindingMultiGrid<GridNode> grid = null;
+    [SerializeField] private PathfindingMultiGrid<GridNode> m_grid = null;
 
     public StepController StepController
-    { get { return stepController; } }
+    { get { return m_stepController; } }
     public PathfindingMultiGrid<GridNode> Grid
-    { set { grid = value; } get { return grid; } }
+    { set { m_grid = value; } get { return m_grid; } }
 
-    float stepTimer = 0;
+    float m_stepTimer = 0;
 
     private void Awake()
     {
-        stepController = new StepController();
+        m_stepController = new StepController();
     }
 
     IEnumerator LateStart()
     {
         yield return new WaitForEndOfFrame();
-        stepController.InitialAnalyse();
+        m_stepController.InitialAnalyse();
     }
 
     private void Start()
@@ -36,26 +36,26 @@ public class LevelManager : MonoBehaviour
 
     private void OnDrawGizmos()
     {
-        grid.DrawGizmos();
+        m_grid.DrawGizmos();
     }
 
     public void AddEntityToStepController(GridEntity entity)
     {
-        stepController.AddEntity(entity);
+        m_stepController.AddEntity(entity);
     }
 
     private void Update()
     {
         if(Keyboard.current.spaceKey.wasPressedThisFrame)
         {
-            stepController.ExecuteStep();
-            stepTimer = 0;
+            m_stepController.ExecuteStep();
+            m_stepTimer = 0;
         }
 
-        stepTimer += Time.deltaTime;
+        m_stepTimer += Time.deltaTime;
 
-        if (!stepController.canStepAgain && stepTimer > stepController.stepTime)
-            stepController.canStepAgain = true;
+        if (!m_stepController.m_canStepAgain && m_stepTimer > m_stepController.m_stepTime)
+            m_stepController.m_canStepAgain = true;
     }
 
 }
