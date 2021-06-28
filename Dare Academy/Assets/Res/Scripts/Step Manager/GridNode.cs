@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace JUtil.Grids
 {
     [System.Serializable]
@@ -5,6 +7,7 @@ namespace JUtil.Grids
     {
         // INTERFACES *****************************************************************************
         public int gCost { get; set; } = 0;
+
         public int hCost { get; set; } = 0;
         public int fCost { get { return gCost + hCost; } }
 
@@ -12,7 +15,7 @@ namespace JUtil.Grids
 
         public GridNodePosition position { get; set; }
 
-        NodeNeighborhood<GridNode> neighbors;
+        private NodeNeighborhood<GridNode> neighbors;
         public NodeNeighborhood<GridNode> Neighbors { get { return neighbors; } set { neighbors = value; } }
         public GridNode parent { get; set; }
 
@@ -37,11 +40,12 @@ namespace JUtil.Grids
 
         // MEMBERS ********************************************************************************
 
+        private List<GridEntity> m_currentEntities = new List<GridEntity>();
 
         // METHODS ********************************************************************************
         public GridNode(Grid<GridNode> grid, int x, int y)
         {
-            position = grid.GetNodePosition(x,y);
+            position = grid.GetNodePosition(x, y);
             walkable = false;
             overridden = false;
         }
@@ -51,6 +55,19 @@ namespace JUtil.Grids
             position = new GridNodePosition();
             walkable = false;
             overridden = false;
+        }
+
+        public void AddEntity(GridEntity entity)
+        {
+            if (m_currentEntities.Contains(entity))
+                return;
+            m_currentEntities.Add(entity);
+        }
+
+        // returns false if object was not in the list
+        public bool RemoveEntity(GridEntity entity)
+        {
+            return m_currentEntities.Remove(entity);
         }
     }
 }

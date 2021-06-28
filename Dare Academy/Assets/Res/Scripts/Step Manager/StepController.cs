@@ -6,7 +6,8 @@ using UnityEngine;
 public class StepController
 {
     // MEMBERS ************************************************************************************
-    [SerializeField] List<GridEntity> m_entities;
+    [SerializeField] private List<GridEntity> m_entities;
+
     [SerializeField] public int m_currentRoomIndex;
     [SerializeField] public float m_stepTime;
 
@@ -30,32 +31,37 @@ public class StepController
 
         for (int i = 0; i < NUMBER_OF_STEPS; i++)
         {
-            foreach(GridEntity entity in m_entities)
+            for (int j = m_entities.Count - 1; j >= 0; j--)
             {
-                switch(i)
+                switch (i)
                 {
                     case 0:
-                        entity.MoveStep();
-                        break;
-                    case 1:
-                        entity.ResolveMoveStep();
-                        break;
-                    case 2:
-                        entity.AttackStep();
-                        break;
-                    case 3:
-                        entity.DamageStep();
-                        break;
-                    case 4:
-                        entity.EndStep();
-                        break;
-                    case 5:
-                        entity.DrawStep();
-                        break;
-                    case 6:
-                        entity.AnalyseStep();
+                        m_entities[j].MoveStep();
                         break;
 
+                    case 1:
+                        m_entities[j].ResolveMoveStep();
+                        break;
+
+                    case 2:
+                        m_entities[j].AttackStep();
+                        break;
+
+                    case 3:
+                        m_entities[j].DamageStep();
+                        break;
+
+                    case 4:
+                        m_entities[j].EndStep();
+                        break;
+
+                    case 5:
+                        m_entities[j].DrawStep();
+                        break;
+
+                    case 6:
+                        m_entities[j].AnalyseStep();
+                        break;
                 }
             }
         }
@@ -65,7 +71,7 @@ public class StepController
     {
         foreach (GridEntity entity in m_entities)
         {
-            if(entity.RoomIndex == m_currentRoomIndex)
+            if (entity.RoomIndex == m_currentRoomIndex)
                 entity.AnalyseStep();
         }
     }
@@ -76,5 +82,11 @@ public class StepController
         if (m_entities.Contains(entity))
             return;
         m_entities.Add(entity);
+    }
+
+    // returns false if object was not in the list
+    public bool RemoveEntity(GridEntity entity)
+    {
+        return m_entities.Remove(entity);
     }
 }
