@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using DialogueEditor;
 
@@ -16,6 +17,9 @@ namespace blu
         private Animator _canvasAnimation;
         private NPCConversation _currentConversation;
         private GameObject _EventSystem;
+        private GameObject _ContinueButton;
+
+        //private Image _continueButton;
         public GameObject EventSystem { set => _EventSystem = value; }
 
         public void StartDialogue(GameObject in_conversation = null)
@@ -31,6 +35,8 @@ namespace blu
             _currentConversation = in_conversation.GetComponent<NPCConversation>();
             _dialogueCanvas = Instantiate(Resources.Load<GameObject>("prefabs/DialogueCanvas"));
             _dialogueCanvas.name = "Dialogue Canvas";
+            //_ContinueButton = GameObject.Find("CanvasManager").transform.Find("ContinueButton").gameObject;
+
             _canvasAnimation = _dialogueCanvas.GetComponentInChildren<Animator>();
             App.GetModule<InputModule>().PlayerController.Disable();                // stop all input other than dialogue
             App.GetModule<InputModule>().SystemController.Disable();                //
@@ -49,6 +55,14 @@ namespace blu
 
             while (ConversationManager.Instance.IsConversationActive)
             {
+                if (ConversationManager.Instance.CurrentState == ConversationManager.eState.Idle)
+                {
+                    //_ContinueButton.SetActive(false);
+                }
+                else
+                {
+                    // _ContinueButton.SetActive(true);
+                }
                 yield return null;
             }
 

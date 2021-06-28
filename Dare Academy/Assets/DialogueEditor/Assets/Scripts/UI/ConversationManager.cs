@@ -132,7 +132,6 @@ namespace DialogueEditor
                     break;
 
                 case eState.TransitioningOptionsOn:
-                    Skip = false;
                     TransitionOptionsOn_Update();
                     break;
 
@@ -203,7 +202,6 @@ namespace DialogueEditor
             if (m_uiOptions.Count == 0) { return; }
 
             UIConversationButton button = m_uiOptions[m_currentSelectedIndex];
-            Skip = false;
             button.OnButtonPressed();
         }
 
@@ -360,6 +358,7 @@ namespace DialogueEditor
                 DialogueText.maxVisibleCharacters = m_targetScrollTextCount;
                 Skip = false;
                 SetState(eState.TransitioningOptionsOn);
+                return;
             }
 
             if (m_elapsedScrollTime > timePerChar)
@@ -373,6 +372,7 @@ namespace DialogueEditor
                 if (m_scrollIndex >= m_targetScrollTextCount)
                 {
                     SetState(eState.TransitioningOptionsOn);
+                    return;
                 }
             }
         }
@@ -388,8 +388,11 @@ namespace DialogueEditor
                 return;
             }
 
-            for (int i = 0; i < m_uiOptions.Count; i++)
-                m_uiOptions[i].SetAlpha(t);
+            if (m_uiOptions.Count > 1)
+            {
+                for (int i = 0; i < m_uiOptions.Count; i++)
+                    m_uiOptions[i].SetAlpha(t);
+            }
         }
 
         private void Idle_Update()
@@ -441,8 +444,11 @@ namespace DialogueEditor
                 return;
             }
 
-            for (int i = 0; i < m_uiOptions.Count; i++)
-                m_uiOptions[i].SetAlpha(1 - t);
+            if (m_uiOptions.Count > 1)
+            {
+                for (int i = 0; i < m_uiOptions.Count; i++)
+                    m_uiOptions[i].SetAlpha(1 - t);
+            }
 
             SetColorAlpha(DialogueText, 1 - t);
         }
@@ -560,13 +566,11 @@ namespace DialogueEditor
 
         public void SpeechSelected(SpeechNode speech)
         {
-            Skip = false;
             SetupSpeech(speech);
         }
 
         public void OptionSelected(OptionNode option)
         {
-            Skip = false;
             m_selectedOption = option;
             DoParamAction(option);
             SetState(eState.TransitioningOptionsOff);
@@ -574,7 +578,6 @@ namespace DialogueEditor
 
         public void EndButtonSelected()
         {
-            Skip = false;
             m_selectedOption = null;
             SetState(eState.TransitioningOptionsOff);
         }

@@ -14,14 +14,14 @@ namespace DialogueEditor
         private const float OPTION_BUFFER = 5;
         private const float OPTION_TEXT_BUF_Y = 10;
 
-
-        SerializedProperty BackgroundImageProperty;
-        SerializedProperty BackgroundImageSlicedProperty;
-        SerializedProperty OptionImageProperty;
-        SerializedProperty OptionImageSlicedProperty;
-        SerializedProperty ScrollTextProperty;
-        SerializedProperty ScrollTextSpeedProperty;
-        SerializedProperty AllowMouseInteractionProperty;
+        private SerializedProperty BackgroundImageProperty;
+        private SerializedProperty BackgroundImageSlicedProperty;
+        private SerializedProperty OptionImageProperty;
+        private SerializedProperty OptionImageSlicedProperty;
+        private SerializedProperty ContinueImageProperty;
+        private SerializedProperty ScrollTextProperty;
+        private SerializedProperty ScrollTextSpeedProperty;
+        private SerializedProperty AllowMouseInteractionProperty;
 
         private void OnEnable()
         {
@@ -29,6 +29,7 @@ namespace DialogueEditor
             BackgroundImageSlicedProperty = serializedObject.FindProperty("BackgroundImageSliced");
             OptionImageProperty = serializedObject.FindProperty("OptionImage");
             OptionImageSlicedProperty = serializedObject.FindProperty("OptionImageSliced");
+            ContinueImageProperty = serializedObject.FindProperty("ContinueImage");
             ScrollTextProperty = serializedObject.FindProperty("ScrollText");
             ScrollTextSpeedProperty = serializedObject.FindProperty("ScrollSpeed");
             AllowMouseInteractionProperty = serializedObject.FindProperty("AllowMouseInteraction");
@@ -50,13 +51,18 @@ namespace DialogueEditor
             // Background image
             GUILayout.Label("Dialogue Image Options", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(BackgroundImageProperty);
-            EditorGUILayout.PropertyField(BackgroundImageSlicedProperty); 
+            EditorGUILayout.PropertyField(BackgroundImageSlicedProperty);
             EditorGUILayout.Space();
 
             // Option image
             GUILayout.Label("Dialogue Image Options", EditorStyles.boldLabel);
             EditorGUILayout.PropertyField(OptionImageProperty);
             EditorGUILayout.PropertyField(OptionImageSlicedProperty);
+            EditorGUILayout.Space();
+
+            // Continue image
+            GUILayout.Label("Dialogue Image Options", EditorStyles.boldLabel);
+            EditorGUILayout.PropertyField(ContinueImageProperty);
             EditorGUILayout.Space();
 
             // Text
@@ -110,7 +116,6 @@ namespace DialogueEditor
                 }
             }
 
-
             // Draw icon
             float difference = BOX_HEIGHT - ICON_SIZE;
             Rect iconRect = new Rect(boxRect.x + BUFFER, boxRect.y + difference * 0.5f, ICON_SIZE, ICON_SIZE);
@@ -130,7 +135,6 @@ namespace DialogueEditor
             textStyle.wordWrap = true;
             textStyle.clipping = TextClipping.Clip;
             EditorGUI.LabelField(textRect, PREVIEW_TEXT, textStyle);
-
 
             // Option (left)
             float option_x, option_wid;
