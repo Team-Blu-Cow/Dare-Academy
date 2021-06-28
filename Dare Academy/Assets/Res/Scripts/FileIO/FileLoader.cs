@@ -30,7 +30,7 @@ namespace blu.FileIO
         }
     }
 
-    abstract public class BaseFileLoader<T> : FileLoaderStaticUtility where T : class
+    abstract public class BaseFileLoader<T> : FileLoaderStaticUtility where T : class, IFileFormat
     {
         public static bool createConsoleLogs = false;
 
@@ -78,7 +78,7 @@ namespace blu.FileIO
         }
     }
 
-    public class DebugFileLoader<T> : BaseFileLoader<T> where T : class
+    public class DebugFileLoader<T> : BaseFileLoader<T> where T : class, IFileFormat
     {
         public DebugFileLoader(string in_path) : base(in_path)
         {
@@ -104,7 +104,7 @@ namespace blu.FileIO
         }
     }
 
-    public class BinaryFileLoader<T> : BaseFileLoader<T> where T : class
+    public class BinaryFileLoader<T> : BaseFileLoader<T> where T : class, IFileFormat
     {
         public BinaryFileLoader(string in_path) : base(in_path)
         {
@@ -135,7 +135,7 @@ namespace blu.FileIO
         }
     }
 
-    public class EncryptedFileLoader<T> : BaseFileLoader<T> where T : class
+    public class EncryptedFileLoader<T> : BaseFileLoader<T> where T : class, IFileFormat
     {
         public EncryptedFileLoader(string in_path, Encryptor encryptor) : base(in_path)
         {

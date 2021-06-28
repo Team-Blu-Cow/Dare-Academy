@@ -35,7 +35,7 @@ namespace blu.EditorTools
             config.debugFileLocation = GUILayout.TextField(config.debugFileLocation);
             if (GUILayout.Button("Find", GUILayout.Width(100f)))
             {
-                FileIO.SaveData savedata = new FileIO.SaveData();
+                SaveData savedata = new SaveData();
 
                 string path = EditorUtility.OpenFilePanel("Debug Save File", Application.persistentDataPath, savedata.FileExtension());
                 if (path.Length != 0)

@@ -3,11 +3,90 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Threading.Tasks;
 using blu.FileIO;
+using System;
 
 namespace blu
 {
+    // All data that should be written to disk should be stored within SaveData
+    // Everything in here must be tagged with System.Serializable
+    public class SaveData : IFileFormat, ICloneable
+    {
+        public string FileExtension()
+        {
+            if (UnityEngine.Application.isEditor)
+            { return "uwu-debug"; }
+            else
+            { return "uwu"; }
+        }
+
+        // when adding new members ensure you add them to Clone()
+        public object Clone()
+        {
+            SaveData data = new SaveData();
+
+            data.displayName = this.displayName;
+            data.isAutoSave = this.isAutoSave;
+
+            return data;
+        }
+
+        public string displayName = null;
+        public bool isAutoSave = false;
+    }
+
     public class IOModule : Module
     {
+        // the current save file that has ben loaded from disk
+        public SaveData savedata => m_activeSavedata;
+
+        // check if a valid save file has been loaded
+        public bool isSaveLoaded { get => savedata != null; }
+
+        // if save sloats are currently loaded, this could be false just after an autosave has occured
+        public bool isSaveSlotsLoaded { get => m_saveSlotsLoaded; }
+
+        // a list of every save slot avalible to the player
+        // the SaveSlotData structure can be handed to LoadSaveAsync to load the associated file into memory
+        public List<SaveSlotData> saveSlots { get => m_SaveSlots; }
+
+        private string m_applicationPath = null;
+        private Encryptor m_encryptor = new Encryptor(Crypto.FileEncryptionKeys.key, Crypto.FileEncryptionKeys.iv);
+        private SaveData m_activeSavedata = null;
+        private string m_activeSavedataPath = null;
+        private List<SaveSlotData> m_SaveSlots = new List<SaveSlotData>();
+        private int m_runtimeIdCounter = 0;
+        private const string m_kSaveGameDir = "SavedGames/";
+        private bool m_saveSlotsLoaded = false;
+        private DebugSaveConfigFile m_debugConfig = null;
+        private bool m_usingDebugFile = false;
+        private bool m_allowDebugSaving = false;
+        private const int m_maxNumAutosaves = 3; // Maximum number of autosaves that can exist at a time
+
+        // TODO @matthew add this to the debug options
+        // private bool m_allowFileLoading = true;
+
+        // things are happening in async that shouldnt be and i dont want to debug this
+        private bool m_initialized = false;
+
+        // load a save file into memory
+        public Task<bool> LoadSaveAsync(FileIO.SaveSlotData slotData, bool logToConsole = true) => Task.Run(() => LoadSaveAsyncImpl(slotData, logToConsole));
+
+        // load file in a coroutine
+        // if you are using this method to load files, ensure you check the isSaveLoaded flag when accessing data
+        public IEnumerator LoadSaveEnumerator(FileIO.SaveSlotData slotData, bool logToConsole = true)
+        { yield return LoadSaveAsync(slotData, logToConsole); }
+
+        // creates a new save file
+        public Task<bool> CreateNewSave(string displayName) => Task.Run(() => CreateNewSaveImpl(displayName));
+
+        // write the current contents of saveData to disk
+        public Task<bool> SaveAsync() => Task.Run(() => SaveAsyncImpl());
+
+        public Task<bool> AutoSaveAsync() => Task.Run(() => AutoSaveAsyncImpl());
+
+        public IEnumerator AutoSaveEnumerator()
+        { yield return AutoSaveAsync(); }
+
         public async override void Initialize()
         {
             Debug.Log("[App]: Initializing IO module");
@@ -24,33 +103,15 @@ namespace blu
             m_initialized = true;
         }
 
-        public SaveData savedata => m_activeSavedata;
-        public bool isSaveLoaded { get => savedata != null; }
-        public List<SaveSlotData> saveSlots { get => m_SaveSlots; }
+        public bool DiscardSaveData()
+        {
+            m_activeSavedata = null;
+            m_activeSavedataPath = null;
 
-        private string m_applicationPath = null;
-        private Encryptor m_encryptor = new Encryptor(Crypto.FileEncryptionKeys.key, Crypto.FileEncryptionKeys.iv);
-        private SaveData m_activeSavedata = null;
-        private string m_activeSavedataPath = null;
-        private List<SaveSlotData> m_SaveSlots = new List<SaveSlotData>();
-        private int m_runtimeIdCounter = 0;
-        private const string m_kSaveGameDir = "SavedGames/";
+            return true;
+        }
 
-        private DebugSaveConfigFile m_debugConfig = null;
-        private bool m_usingDebugFile = false;
-        private bool m_allowDebugSaving = false;
-        private bool m_allowFileLoading = true;
-
-        // things are happening in async that shouldnt be and i dont want to debug this
-        private bool m_initialized = false;
-
-        public Task<bool> LoadSaveAsync(FileIO.SaveSlotData slotData, bool logToConsole = true) => Task.Run(() => LoadSaveAsyncImpl(slotData, logToConsole));
-
-        public Task<bool> CreateNewSave(string displayName) => Task.Run(() => CreateNewSaveImpl(displayName));
-
-        public Task<bool> SaveAsync() => Task.Run(() => SaveAsyncImpl());
-
-        private List<string> GetAllFilesOfType<T>(string directory = "") where T : BaseFileFormat, new()
+        private List<string> GetAllFilesOfType<T>(string directory = "") where T : IFileFormat, new()
         {
             string dir = m_applicationPath + "/" + directory;
 
@@ -73,7 +134,7 @@ namespace blu
             return ret;
         }
 
-        private bool CreateFileLoader<T>(out BaseFileLoader<T> fileloader, string path) where T : BaseFileFormat
+        private bool CreateFileLoader<T>(out BaseFileLoader<T> fileloader, string path) where T : class, IFileFormat
         {
             if (UnityEngine.Application.isEditor)
             { fileloader = new DebugFileLoader<T>(path); }
@@ -88,13 +149,14 @@ namespace blu
 
         private bool LoadSaveSlots()
         {
+            m_saveSlotsLoaded = false;
             saveSlots.Clear();
 
             FileLoaderStaticUtility.CreateDirectory(m_applicationPath + "/" + m_kSaveGameDir);
 
             try
             {
-                List<string> files = GetAllFilesOfType<FileIO.SaveData>(m_kSaveGameDir);
+                List<string> files = GetAllFilesOfType<SaveData>(m_kSaveGameDir);
 
                 for (int i = 0; i < files.Count; i++)
                 {
@@ -103,7 +165,7 @@ namespace blu
                     data.m_runtimeID = m_runtimeIdCounter++;
 
                     CreateFileLoader<SaveData>(out BaseFileLoader<SaveData> fileloader, data.m_filepath);
-                    FileIO.SaveData savedata = fileloader.ReadData();
+                    SaveData savedata = fileloader.ReadData();
 
                     if (savedata == null)
                     { continue; }
@@ -113,13 +175,13 @@ namespace blu
                     m_SaveSlots.Add(data);
                 }
             }
-            catch (System.Exception ex) //TODO @Matthew: my guy please rename these, IDK what this does and also stop
-                                        // leaving them, unhandled
+            catch
             {
-                Debug.LogWarning("[App/SettingsModule]: Error while loading Save Slots"); // not in the settings module my guy
+                Debug.LogWarning("[App/IOModule]: Error while loading Save Slots");
                 return false;
             }
 
+            m_saveSlotsLoaded = true;
             return true;
         }
 
@@ -128,6 +190,8 @@ namespace blu
             while (m_initialized == false)
             {
             }
+
+            DiscardSaveData();
 
             if (m_usingDebugFile)
             {
@@ -139,7 +203,7 @@ namespace blu
             }
             m_activeSavedata = null;
 
-            CreateFileLoader<FileIO.SaveData>(out BaseFileLoader<FileIO.SaveData> fileloader, m_activeSavedataPath);
+            CreateFileLoader<SaveData>(out BaseFileLoader<SaveData> fileloader, m_activeSavedataPath);
 
             SaveData savedata = fileloader.ReadData();
 
@@ -159,23 +223,19 @@ namespace blu
         private bool CreateNewSaveImpl(string displayName)
         {
             // check for duplicate
-            for (int i = 0; i < saveSlots.Count; i++)
-            {
-                if (saveSlots[i].m_displayName == displayName)
-                {
-                    return false;
-                }
-            }
-
-            FileIO.SaveSlotData data = new FileIO.SaveSlotData();
-            data.m_displayName = displayName;
-            data.m_runtimeID = m_runtimeIdCounter++;
+            // for (int i = 0; i < saveSlots.Count; i++)
+            // {
+            //     if (saveSlots[i].m_displayName == displayName)
+            //     {
+            //         return false;
+            //     }
+            // }
 
             System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
             int cur_time = (int)(System.DateTime.UtcNow - epochStart).TotalSeconds;
 
             SaveData savedata = new SaveData();
-            savedata.displayName = data.m_displayName;
+            savedata.displayName = displayName;
 
             string filename = m_kSaveGameDir + cur_time.ToString();
             string filepath = m_applicationPath + "/" + filename + "." + savedata.FileExtension();
@@ -197,10 +257,27 @@ namespace blu
 
             if (m_activeSavedataPath != null && m_activeSavedata != null)
             {
-                CreateFileLoader<FileIO.SaveData>(out BaseFileLoader<FileIO.SaveData> fileloader, m_activeSavedataPath);
+                CreateFileLoader<SaveData>(out BaseFileLoader<SaveData> fileloader, m_activeSavedataPath);
                 return fileloader.WriteData(m_activeSavedata);
             }
             return false;
+        }
+
+        private bool AutoSaveAsyncImpl()
+        {
+            // TODO @matthew - delete old autosaves
+
+            SaveData savedata = (SaveData)m_activeSavedata.Clone();
+            savedata.isAutoSave = true;
+
+            string filename = m_kSaveGameDir + "/AutoSaves/" + "autosave";
+            string filepath = m_applicationPath + filename + "." + savedata.FileExtension();
+            CreateFileLoader<SaveData>(out BaseFileLoader<SaveData> fileloader, filepath);
+
+            if (!fileloader.WriteData(savedata))
+            { return false; }
+
+            return LoadSaveSlots();
         }
 
         private DebugSaveConfigFile LoadDebugConfig() //TODO @Matthew: sorry for nit picking but can you please use
