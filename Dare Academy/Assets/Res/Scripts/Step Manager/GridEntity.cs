@@ -177,7 +177,7 @@ public class GridEntity : MonoBehaviour
     {
         // TODO @jay/@matthew : this does not account for a situation where both a pass-through AND a standard conflict are present
 
-        bool passThrough = CheckForPassThrough();
+         bool passThrough = CheckForPassThrough();
 
         List<GridEntity> conflictingEntities;
 
@@ -202,15 +202,17 @@ public class GridEntity : MonoBehaviour
         if (winningEntity != null)
         {
             // resolve mass conflict
-            if(!passThrough)
-                conflictingEntities.Remove(winningEntity);
+            conflictingEntities.Remove(winningEntity);
+
+            if (winningEntity != this && !conflictingEntities.Contains(this))
+                conflictingEntities.Add(this);
 
             // loop through each "losing" entity and move them back a space
             for (int i = conflictingEntities.Count - 1; i >= 0; i--)
             {
-                if (passThrough && (conflictingEntities[i].testDirection != -testDirection && conflictingEntities[i].Speed > 0))
+                if (passThrough && (conflictingEntities[i].testDirection != -winningEntity.testDirection && conflictingEntities[i].Speed > 0))
                     continue;
-                conflictingEntities[i].MoveBack();
+                conflictingEntities[i].MoveBack(winningEntity);
             }
 
             return true;
@@ -269,7 +271,7 @@ public class GridEntity : MonoBehaviour
         m_targetNode = m_currentNode.Neighbors[direction].reference;
     }
 
-    virtual public void MoveBack()
+    virtual public void MoveBack(GridEntity winningEntity)
     {
         /*if (m_targetNode != null && m_currentNode != null)
         {
@@ -287,7 +289,7 @@ public class GridEntity : MonoBehaviour
 
         m_currentNode.RemoveEntity(this);
 
-        m_currentNode = m_currentNode.Neighbors[(-testDirection).RotationToIndex(45)].reference;
+        m_currentNode = winningEntity.m_currentNode.Neighbors[(winningEntity.testDirection).RotationToIndex(45)].reference;
         
         if(m_currentNode == null)
         {
