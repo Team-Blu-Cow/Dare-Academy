@@ -18,7 +18,7 @@ public class GridEntity : MonoBehaviour
 
     [SerializeField] private int m_roomIndex = 0;
 
-    private GridEntityFlags m_flags = new GridEntityFlags();
+    [SerializeField] private GridEntityFlags m_flags = new GridEntityFlags();
 
     public int Mass { get { return m_mass; } set { m_mass = value; } }
     public int Speed { get { return m_speed; } set { m_speed = value; } }
@@ -284,7 +284,9 @@ public class GridEntity : MonoBehaviour
 
         m_currentNode.RemoveEntity(this);
 
-        m_currentNode = winningEntity.m_currentNode.Neighbors[(winningEntity.testDirection).RotationToIndex(45)].reference;
+        Vector2 moveDirection = (m_flags.IsFlagsSet(flags.isPushable))? winningEntity.testDirection : -testDirection;
+
+        m_currentNode = winningEntity.m_currentNode.Neighbors[(moveDirection).RotationToIndex(45)].reference;
 
         if (m_currentNode == null)
         {

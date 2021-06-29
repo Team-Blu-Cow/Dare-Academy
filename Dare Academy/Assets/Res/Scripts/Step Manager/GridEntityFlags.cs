@@ -1,42 +1,25 @@
+using UnityEngine;
+
+[System.Serializable]
 public class GridEntityFlags
 {
+    //[System.Flags]
     public enum Flags : uint
     {
+        // flags
         isPlayer    = 0b00000000000000000000000000000001,
         isAttack    = 0b00000000000000000000000000000010,
         isSolid     = 0b00000000000000000000000000000100,
         isPushable  = 0b00000000000000000000000000001000,
         isKillable  = 0b00000000000000000000000000010000,
-        Flag06      = 0b00000000000000000000000000100000,
-        Flag07      = 0b00000000000000000000000001000000,
-        Flag08      = 0b00000000000000000000000010000000,
-        Flag09      = 0b00000000000000000000000100000000,
-        Flag10      = 0b00000000000000000000001000000000,
-        Flag11      = 0b00000000000000000000010000000000,
-        Flag12      = 0b00000000000000000000100000000000,
-        Flag13      = 0b00000000000000000001000000000000,
-        Flag14      = 0b00000000000000000010000000000000,
-        Flag15      = 0b00000000000000000100000000000000,
-        Flag16      = 0b00000000000000001000000000000000,
-        Flag17      = 0b00000000000000010000000000000000,
-        Flag18      = 0b00000000000000100000000000000000,
-        Flag19      = 0b00000000000001000000000000000000,
-        Flag20      = 0b00000000000010000000000000000000,
-        Flag21      = 0b00000000000100000000000000000000,
-        Flag22      = 0b00000000001000000000000000000000,
-        Flag23      = 0b00000000010000000000000000000000,
-        Flag24      = 0b00000000100000000000000000000000,
-        Flag25      = 0b00000001000000000000000000000000,
-        Flag26      = 0b00000010000000000000000000000000,
-        Flag27      = 0b00000100000000000000000000000000,
-        Flag28      = 0b00001000000000000000000000000000,
-        Flag29      = 0b00010000000000000000000000000000,
-        Flag30      = 0b00100000000000000000000000000000,
-        Flag31      = 0b01000000000000000000000000000000,
-        Flag32      = 0b10000000000000000000000000000000
     }
 
-    private Flags m_flagData = 0;
+    [SerializeField] private Flags m_flagData = 0;
+
+    public static int NumberOfFlags()
+    {
+        return System.Enum.GetNames(typeof(GridEntityFlags.Flags)).Length;
+    }
 
     public void ZeroFlags()
     {
@@ -55,6 +38,20 @@ public class GridEntityFlags
         }
     }
 
+    public static uint Toggle(Flags flags, uint flagData, bool value)
+    {
+        if (value)
+        {
+            flagData = flagData | (uint)flags;
+        }
+        else
+        {
+            flagData = flagData & (uint)~flags;
+        }
+
+        return flagData;
+    }
+
     public void FlipFlags(Flags flags)
     {
         m_flagData = m_flagData ^ flags;
@@ -64,6 +61,15 @@ public class GridEntityFlags
     {
         Flags set = flags & m_flagData;
         if (set == flags)
+            return true;
+
+        return false;
+    }
+
+    public static bool IsFlagSet(Flags flags, uint flagData)
+    {
+        uint set = (uint)flags & flagData;
+        if (set == (uint)flags)
             return true;
 
         return false;
