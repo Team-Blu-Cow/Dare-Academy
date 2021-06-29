@@ -21,7 +21,7 @@ public abstract class GridEntity : MonoBehaviour
     [SerializeField] protected GridEntityFlags m_flags = new GridEntityFlags();
 
     public int Mass { get { return m_mass; } set { m_mass = value; } }
-    public int Speed { get { return m_speed; } set { m_speed = value; } }
+    public int Speed { get { return m_speed; } }
     public int RoomIndex { get { return m_roomIndex; } set { m_roomIndex = value; } }
     public bool isDead { get { return m_health <= 0 && m_flags.IsFlagsSet(flags.isKillable); } }
 
@@ -140,6 +140,8 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void EndStep()
     {
+        m_speed = 0;
+
         if (isDead)
         {
             // TODO @matthew/@jay - don't remove immediately to allow for death animation
@@ -194,22 +196,15 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void ResolveMassConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
-        // TODO @jay/@matthew : this does not account for a situation where both a pass-through AND a standard conflict are present
+        // TODO @jay/@matthew : this does not account for a situation where both a pass-through
 
         int highestMass = int.MinValue;
-        List<GridEntity> highMassObjects = new List<GridEntity>();
 
         foreach (var entity in winning_objects)
         {
             if (entity.Mass > highestMass)
             {
                 highestMass = entity.Mass;
-                highMassObjects.Clear();
-            }
-
-            if (entity.Mass == highestMass)
-            {
-                highMassObjects.Add(entity);
             }
         }
 
@@ -228,10 +223,42 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void ResolveSpeedConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
+        // TODO @jay/@matthew : this does not account for a situation where both a pass-through
+
+        int highestSpeed = int.MinValue;
+
+        foreach (var entity in winning_objects)
+        {
+            if (entity.Speed > highestSpeed)
+            {
+                highestSpeed = entity.Speed;
+            }
+        }
+
+        // loop through each "losing" entity and move them back a space
+        for (int i = winning_objects.Count - 1; i >= 0; i--)
+        {
+            if (winning_objects[i].Speed == highestSpeed)
+            {
+                continue; // this is the winner, we dont push him you silly billy!
+            }
+
+            losing_objects.Add(winning_objects[i]);
+            winning_objects.RemoveAt(i);
+        }
     }
 
     virtual public void ResolvePlayerConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
+        for (int i = winning_objects.Count - 1; i >= 0; i--)
+        {
+            if (winning_objects[i].m_flags.IsFlagsSet(flags.isPlayer))
+            {
+                losing_objects.Add(winning_objects[i]);
+                winning_objects.RemoveAt(i);
+                break;
+            }
+        }
     }
 
     virtual public void ResolveRandomConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
@@ -261,23 +288,32 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-    public void SetTargetNode(Vector2 direction)
+    public void SetTargetNode(Vector2 direction, int distance = 1)
     {
         if (direction == Vector2.zero)
             return;
 
         m_movementDirection = direction;
+        m_speed = distance;
 
         int dir = direction.RotationToIndex(45);
-        SetTargetNode(dir);
+        SetTargetNodeImpl(dir, distance);
     }
 
-    virtual public void SetTargetNode(int direction)
+    private void SetTargetNodeImpl(int direction, int distance)
     {
         Mathf.Clamp(direction, 0, 7);
 
         m_previousNode = null;
-        m_targetNode = m_currentNode.Neighbors[direction].reference;
+
+        m_targetNode = m_currentNode;
+
+        for (int i = 0; i < distance; i++)
+        {
+            GridNode node = m_targetNode.Neighbors[direction].reference;
+            if (node != null)
+                m_targetNode = node;
+        }
     }
 
     public static void PushBackAll(List<GridEntity> losers, GridEntity winningEntity)
