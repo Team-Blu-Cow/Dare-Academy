@@ -36,7 +36,8 @@ namespace blu
             _dialogueCanvas = Instantiate(Resources.Load<GameObject>("prefabs/DialogueCanvas"));
             _dialogueCanvas.name = "Dialogue Canvas";
             //_ContinueButton = GameObject.Find("CanvasManager").transform.Find("ContinueButton").gameObject;
-
+            _ContinueButton = ConversationManager.Instance.DialoguePanel.transform.Find("ContinueButton").gameObject;
+            _ContinueButton.SetActive(false);
             _canvasAnimation = _dialogueCanvas.GetComponentInChildren<Animator>();
             App.GetModule<InputModule>().PlayerController.Disable();                // stop all input other than dialogue
             App.GetModule<InputModule>().SystemController.Disable();                //
@@ -57,11 +58,11 @@ namespace blu
             {
                 if (ConversationManager.Instance.CurrentState == ConversationManager.eState.Idle)
                 {
-                    //_ContinueButton.SetActive(false);
+                    _ContinueButton.SetActive(true);
                 }
                 else
                 {
-                    // _ContinueButton.SetActive(true);
+                   _ContinueButton.SetActive(false);
                 }
                 yield return null;
             }
