@@ -13,7 +13,7 @@ public class StepController
 
     [HideInInspector] public bool m_canStepAgain;
 
-    public const int NUMBER_OF_STEPS = 7;
+    public const int NUMBER_OF_STEPS = 8;
 
     // INITIALISATION METHODS *********************************************************************
     public StepController()
@@ -40,26 +40,30 @@ public class StepController
                         break;
 
                     case 1:
-                        m_entities[j].ResolveMoveStep();
+                        m_entities[j].ResolvePassThrough();
                         break;
 
                     case 2:
-                        m_entities[j].AttackStep();
+                        m_entities[j].ResolveMoveStep();
                         break;
 
                     case 3:
-                        m_entities[j].DamageStep();
+                        m_entities[j].AttackStep();
                         break;
 
                     case 4:
-                        m_entities[j].EndStep();
+                        m_entities[j].DamageStep();
                         break;
 
                     case 5:
-                        m_entities[j].DrawStep();
+                        m_entities[j].EndStep();
                         break;
 
                     case 6:
+                        m_entities[j].DrawStep();
+                        break;
+
+                    case 7:
                         m_entities[j].AnalyseStep();
                         break;
                 }

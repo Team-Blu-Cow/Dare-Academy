@@ -83,6 +83,63 @@ public abstract class GridEntity : MonoBehaviour
         Debug.Log("Move Step");
     }
 
+    virtual public void ResolvePassThrough()
+    {
+        if (!CheckForPassThrough())
+            return;
+
+        // TODO @jay/@matthew : this does not account for a situation where both a pass-through
+        List<GridEntity> conflictingEntities = m_previousNode.GetGridEntities();
+        conflictingEntities.Add(this);
+
+        int highestMass = int.MinValue;
+        int highestSpeed = int.MinValue;
+
+        for (int i = conflictingEntities.Count - 1; i >= 0; i--)
+        {
+            if (conflictingEntities[i].m_movementDirection != -m_movementDirection)
+            {
+                conflictingEntities.RemoveAt(i);
+                continue;
+            }
+
+            if (conflictingEntities[i].Mass > highestMass)
+                highestMass = conflictingEntities[i].Mass;
+
+            if (conflictingEntities[i].Speed > highestSpeed)
+                highestSpeed = conflictingEntities[i].Speed;
+        }
+
+        if (highestMass > int.MinValue)
+        {
+            // mass conflict resolution
+            return;
+        }
+
+
+        if (highestSpeed > int.MinValue)
+        {
+            // speed conflict resolution
+            return;
+        }
+
+        bool isPlayer = false;
+
+        foreach (var entity in conflictingEntities)
+        {
+            if (entity.m_flags.IsFlagsSet(flags.isPlayer))
+                isPlayer = true;
+        }
+
+        if(isPlayer)
+        {
+            // player conflict resolution
+            return;
+        }
+
+        // random conflict resolution
+    }
+
     virtual public void ResolveMoveStep()
     {
         List<GridEntity> winning_objects; // everything
