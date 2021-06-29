@@ -85,22 +85,47 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void ResolveMoveStep()
     {
+        List<GridEntity> winning_objects; // everything
+        List<GridEntity> losing_objects= new List<GridEntity>();
+
+        // bool passThrough = CheckForPassThrough();
+        // if (passThrough)
+        //     winning_objects = m_previousNode.GetGridEntities();
+        // else
+        //     winning_objects = m_currentNode.GetGridEntities();
+
+        winning_objects = m_currentNode.GetGridEntities();
+
         // check for conflict on current node
         if (!CheckForConflict())
             return;
 
-        // check for mass resolution
-        if (ResolveMassConflict())
-            return;
+        if (winning_objects.Count > 1)
+        {
+            // check for mass resolution
+            ResolveMassConflict(ref winning_objects, ref losing_objects);
+        }
 
-        // check for speed resolution
-        ResolveSpeedConflict();
+        if (winning_objects.Count > 1)
+        {
+            // check for speed resolution
+            ResolveSpeedConflict(ref winning_objects, ref losing_objects);
+        }
 
-        // check for player resolution
-        ResolvePlayerConflict();
+        if (winning_objects.Count > 1)
+        {
+            // check for player resolution
+            ResolvePlayerConflict(ref winning_objects, ref losing_objects);
+        }
 
-        // resolve randomly
-        ResolveRandomConflict();
+        if (winning_objects.Count > 1)
+        {
+            // resolve randomly
+            ResolveRandomConflict(ref winning_objects, ref losing_objects);
+        }
+
+        if (winning_objects.Count == 1)
+        { PushBackAll(losing_objects, winning_objects[0]); }
 
         // check for any new conflicts
     }
@@ -167,64 +192,58 @@ public abstract class GridEntity : MonoBehaviour
         return false;
     }
 
-    virtual public bool ResolveMassConflict()
+    virtual public void ResolveMassConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
         // TODO @jay/@matthew : this does not account for a situation where both a pass-through AND a standard conflict are present
 
-        bool passThrough = CheckForPassThrough();
+        int highestMass = int.MinValue;
+        List<GridEntity> highMassObjects = new List<GridEntity>();
 
-        List<GridEntity> conflictingEntities;
-
-        if (passThrough)
-            conflictingEntities = m_previousNode.GetGridEntities();
-        else
-            conflictingEntities = m_currentNode.GetGridEntities();
-
-        GridEntity winningEntity = null;
-
-        foreach (var entity in conflictingEntities)
+        foreach (var entity in winning_objects)
         {
-            if (passThrough && (entity.m_movementDirection != -m_movementDirection && entity.Speed > 0))
-                continue;
-
-            if (Mass > entity.Mass)
-                winningEntity = this;
-            else if (Mass < entity.Mass)
-                winningEntity = entity;
-        }
-
-        if (winningEntity != null)
-        {
-            // resolve mass conflict
-            conflictingEntities.Remove(winningEntity);
-
-            if (winningEntity != this && !conflictingEntities.Contains(this))
-                conflictingEntities.Add(this);
-
-            // loop through each "losing" entity and move them back a space
-            for (int i = conflictingEntities.Count - 1; i >= 0; i--)
+            if (entity.Mass > highestMass)
             {
-                if (passThrough && (conflictingEntities[i].m_movementDirection != -winningEntity.m_movementDirection && conflictingEntities[i].Speed > 0))
-                    continue;
-                conflictingEntities[i].MoveBack(winningEntity);
+                highestMass = entity.Mass;
+                highMassObjects.Clear();
             }
 
-            return true;
+            if (entity.Mass == highestMass)
+            {
+                highMassObjects.Add(entity);
+            }
         }
 
-        return false;
+        // loop through each "losing" entity and move them back a space
+        for (int i = winning_objects.Count - 1; i >= 0; i--)
+        {
+            if (winning_objects[i].Mass == highestMass)
+            {
+                continue; // this is the winner, we dont push him you silly billy!
+            }
+
+            losing_objects.Add(winning_objects[i]);
+            winning_objects.RemoveAt(i);
+        }
     }
 
-    virtual public void ResolveSpeedConflict()
+    virtual public void ResolveSpeedConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
     }
 
-    virtual public void ResolvePlayerConflict()
+    virtual public void ResolvePlayerConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
     }
 
-    virtual public void ResolveRandomConflict()
+    virtual public void ResolveRandomConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
+        for (int i = winning_objects.Count - 1; i > 0; i--)
+        {
+            if (i == 0)
+            { continue; }
+
+            losing_objects.Add(winning_objects[i]);
+            winning_objects.RemoveAt(i);
+        }
     }
 
     // HELPER METHODS *****************************************************************************
@@ -261,22 +280,16 @@ public abstract class GridEntity : MonoBehaviour
         m_targetNode = m_currentNode.Neighbors[direction].reference;
     }
 
-    virtual public void MoveBack(GridEntity winningEntity)
+    public static void PushBackAll(List<GridEntity> losers, GridEntity winningEntity)
     {
-        /*if (m_targetNode != null && m_currentNode != null)
+        foreach (var entity in losers)
         {
-            if (m_previousNode != null)
-                m_previousNode.RemoveEntity(this);
-            m_currentNode.RemoveEntity(this);
-            m_targetNode.RemoveEntity(this);
+            entity.PushBack(winningEntity);
+        }
+    }
 
-            m_previousNode = m_currentNode;
-            m_currentNode = m_targetNode;
-            m_targetNode = null;
-
-            m_currentNode.AddEntity(this);
-        }*/
-
+    virtual public void PushBack(GridEntity winningEntity)
+    {
         m_currentNode.RemoveEntity(this);
 
         Vector2 moveDirection = (m_flags.IsFlagsSet(flags.isPushable))? winningEntity.m_movementDirection : -m_movementDirection;
