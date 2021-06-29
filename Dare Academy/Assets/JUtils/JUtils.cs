@@ -77,7 +77,7 @@ namespace JUtil
         public static float BetterSign(float value)
         {
             //int temp = Mathf.RoundToInt(value);
-            if (value == 0)
+            if (value < 0.00001f && value > -0.00001f)
                 return 0f;
 
             return Mathf.Sign(value);
