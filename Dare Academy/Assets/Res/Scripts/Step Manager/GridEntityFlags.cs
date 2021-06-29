@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class GridEntityFlags
 {
     public enum Flags : uint
@@ -40,14 +36,14 @@ public class GridEntityFlags
         Flag32      = 0b10000000000000000000000000000000
     }
 
-    private uint m_flagData = 0;
+    private Flags m_flagData = 0;
 
     public void ZeroFlags()
     {
         m_flagData = 0;
     }
 
-    public void Toggle(uint flags, bool value)
+    public void Toggle(Flags flags, bool value)
     {
         if (value)
         {
@@ -59,14 +55,14 @@ public class GridEntityFlags
         }
     }
 
-    public void FlipFlags(uint flags)
+    public void FlipFlags(Flags flags)
     {
         m_flagData = m_flagData ^ flags;
     }
 
-    public bool IsFlagsSet(uint flags)
+    public bool IsFlagsSet(Flags flags)
     {
-        uint set = flags & m_flagData;
+        Flags set = flags & m_flagData;
         if (set == flags)
             return true;
 

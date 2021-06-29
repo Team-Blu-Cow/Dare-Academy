@@ -4,6 +4,7 @@ using UnityEngine;
 using blu;
 using JUtil.Grids;
 using JUtil;
+using flags = GridEntityFlags.Flags;
 
 public class GridEntity : MonoBehaviour
 {
@@ -22,7 +23,7 @@ public class GridEntity : MonoBehaviour
     public int Mass { get { return m_mass; } set { m_mass = value; } }
     public int Speed { get { return m_speed; } set { m_speed = value; } }
     public int RoomIndex { get { return m_roomIndex; } set { m_roomIndex = value; } }
-    public bool isDead { get { return m_health <= 0 && m_flags.IsFlagsSet((uint)GridEntityFlags.Flags.isKillable); } }
+    public bool isDead { get { return m_health <= 0 && m_flags.IsFlagsSet(GridEntityFlags.Flags.isKillable); } }
 
     public bool RemoveFromList { get { return m_health <= 0; } }
 
