@@ -199,7 +199,53 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   testDirection: {x: 0, y: 0}
   m_mass: 2
+  m_speed: 1
+  m_health: 1
   m_roomIndex: 0
+  m_stepController:
+    m_entities: []
+    m_currentRoomIndex: 0
+    m_stepTime: 0
+    m_canStepAgain: 0
+  m_currentNode:
+    <gCost>k__BackingField: 0
+    <hCost>k__BackingField: 0
+    <heapIndex>k__BackingField: 0
+    <position>k__BackingField:
+      world: {x: 0, y: 0, z: 0}
+      grid: {x: 0, y: 0}
+    neighbors: {}
+    <roomIndex>k__BackingField: 0
+    <walkable>k__BackingField: 0
+    <overridden>k__BackingField: 0
+    <overriddenDir>k__BackingField: 0
+    m_currentEntities: []
+  m_targetNode:
+    <gCost>k__BackingField: 0
+    <hCost>k__BackingField: 0
+    <heapIndex>k__BackingField: 0
+    <position>k__BackingField:
+      world: {x: 0, y: 0, z: 0}
+      grid: {x: 0, y: 0}
+    neighbors: {}
+    <roomIndex>k__BackingField: 0
+    <walkable>k__BackingField: 0
+    <overridden>k__BackingField: 0
+    <overriddenDir>k__BackingField: 0
+    m_currentEntities: []
+  m_previousNode:
+    <gCost>k__BackingField: 0
+    <hCost>k__BackingField: 0
+    <heapIndex>k__BackingField: 0
+    <position>k__BackingField:
+      world: {x: 0, y: 0, z: 0}
+      grid: {x: 0, y: 0}
+    neighbors: {}
+    <roomIndex>k__BackingField: 0
+    <walkable>k__BackingField: 0
+    <overridden>k__BackingField: 0
+    <overriddenDir>k__BackingField: 0
+    m_currentEntities: []
 --- !u!212 &591762789
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -292,12 +338,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 813624384}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8903513519ff89b40962e7c40a2c9eca, type: 3}
+  m_Script: {fileID: 11500000, guid: 09fdc2c5d32edb14f94fcc3fcc823a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testDirection: {x: 1, y: 0}
   m_mass: 2
   m_roomIndex: 0
+  testDirection: {x: 0, y: 0}
 --- !u!212 &813624386
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3863,12 +3909,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2084711085}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8903513519ff89b40962e7c40a2c9eca, type: 3}
+  m_Script: {fileID: 11500000, guid: 09fdc2c5d32edb14f94fcc3fcc823a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  testDirection: {x: 0, y: -1}
-  m_mass: 3
+  m_mass: 2
   m_roomIndex: 0
+  testDirection: {x: 1, y: 0}
 --- !u!212 &2084711087
 SpriteRenderer:
   m_ObjectHideFlags: 0

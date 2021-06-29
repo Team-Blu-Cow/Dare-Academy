@@ -6,32 +6,32 @@ using JUtil.Grids;
 using JUtil;
 using flags = GridEntityFlags.Flags;
 
-public class GridEntity : MonoBehaviour
+public abstract class GridEntity : MonoBehaviour
 {
     // MEMBERS ************************************************************************************
 
-    public Vector2 testDirection;
+    protected Vector2 m_movementDirection;
 
-    [SerializeField] private int m_mass = 2;
-    private int m_speed     = 1;
-    private int m_health    = 1;
+    [SerializeField] protected int m_mass = 2;
+    protected int m_speed     = 1;
+    protected int m_health    = 1;
 
-    [SerializeField] private int m_roomIndex = 0;
+    [SerializeField] protected int m_roomIndex = 0;
 
-    private GridEntityFlags m_flags = new GridEntityFlags();
+    protected GridEntityFlags m_flags = new GridEntityFlags();
 
     public int Mass { get { return m_mass; } set { m_mass = value; } }
     public int Speed { get { return m_speed; } set { m_speed = value; } }
     public int RoomIndex { get { return m_roomIndex; } set { m_roomIndex = value; } }
-    public bool isDead { get { return m_health <= 0 && m_flags.IsFlagsSet(GridEntityFlags.Flags.isKillable); } }
+    public bool isDead { get { return m_health <= 0 && m_flags.IsFlagsSet(flags.isKillable); } }
 
     public bool RemoveFromList { get { return m_health <= 0; } }
 
-    private StepController m_stepController;
+    protected StepController m_stepController;
 
-    private GridNode m_currentNode = null;
-    private GridNode m_targetNode = null;
-    private GridNode m_previousNode = null;
+    protected GridNode m_currentNode = null;
+    protected GridNode m_targetNode = null;
+    protected GridNode m_previousNode = null;
 
     public GridNodePosition Position
     { get { return m_currentNode.position; } }
@@ -124,11 +124,7 @@ public class GridEntity : MonoBehaviour
         }
     }
 
-    virtual public void AnalyseStep()
-    {
-        // set m_targetPosition
-        SetTargetNode(testDirection);
-    }
+    abstract public void AnalyseStep();
 
     virtual public void DrawStep()
     {
@@ -147,7 +143,7 @@ public class GridEntity : MonoBehaviour
     virtual public bool CheckForPassThrough()
     {
         // check for any objects that have passed through this entity
-        GridNode behindNode = m_currentNode.Neighbors[(-testDirection).RotationToIndex(45)].reference;
+        GridNode behindNode = m_currentNode.Neighbors[(-m_movementDirection).RotationToIndex(45)].reference;
 
         if (behindNode == null)
         {
@@ -162,7 +158,7 @@ public class GridEntity : MonoBehaviour
 
         foreach (GridEntity entity in entities)
         {
-            if (entity.Speed > 0 && entity.testDirection == -testDirection)
+            if (entity.Speed > 0 && entity.m_movementDirection == -m_movementDirection)
             {
                 return true;
             }
@@ -188,7 +184,7 @@ public class GridEntity : MonoBehaviour
 
         foreach (var entity in conflictingEntities)
         {
-            if (passThrough && (entity.testDirection != -testDirection && entity.Speed > 0))
+            if (passThrough && (entity.m_movementDirection != -m_movementDirection && entity.Speed > 0))
                 continue;
 
             if (Mass > entity.Mass)
@@ -208,7 +204,7 @@ public class GridEntity : MonoBehaviour
             // loop through each "losing" entity and move them back a space
             for (int i = conflictingEntities.Count - 1; i >= 0; i--)
             {
-                if (passThrough && (conflictingEntities[i].testDirection != -winningEntity.testDirection && conflictingEntities[i].Speed > 0))
+                if (passThrough && (conflictingEntities[i].m_movementDirection != -winningEntity.m_movementDirection && conflictingEntities[i].Speed > 0))
                     continue;
                 conflictingEntities[i].MoveBack(winningEntity);
             }
@@ -248,13 +244,12 @@ public class GridEntity : MonoBehaviour
 
     public void SetTargetNode(Vector2 direction)
     {
-        int dir;
-        //float angle = direction.GetRotation();
+        if (direction == Vector2.zero)
+            return;
 
-        // dir = Mathf.RoundToInt(angle) / 45;
+        m_movementDirection = direction;
 
-        dir = direction.RotationToIndex(45);
-
+        int dir = direction.RotationToIndex(45);
         SetTargetNode(dir);
     }
 
@@ -284,7 +279,7 @@ public class GridEntity : MonoBehaviour
 
         m_currentNode.RemoveEntity(this);
 
-        m_currentNode = winningEntity.m_currentNode.Neighbors[(winningEntity.testDirection).RotationToIndex(45)].reference;
+        m_currentNode = winningEntity.m_currentNode.Neighbors[(winningEntity.m_movementDirection).RotationToIndex(45)].reference;
 
         if (m_currentNode == null)
         {
