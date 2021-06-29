@@ -11,18 +11,18 @@ public class GridEntity : MonoBehaviour
 
     public Vector2 testDirection;
 
-    private bool m_isAttack = false;
-
     [SerializeField] private int m_mass = 2;
     private int m_speed     = 1;
     private int m_health    = 1;
 
     [SerializeField] private int m_roomIndex = 0;
 
-    public bool IsAttack { get { return m_isAttack; } set { m_isAttack = value; } }
+    private GridEntityFlags m_flags = new GridEntityFlags();
+
     public int Mass { get { return m_mass; } set { m_mass = value; } }
     public int Speed { get { return m_speed; } set { m_speed = value; } }
     public int RoomIndex { get { return m_roomIndex; } set { m_roomIndex = value; } }
+    public bool isDead { get { return m_health <= 0 && m_flags.IsFlagsSet((uint)GridEntityFlags.Flags.isKillable); } }
 
     public bool RemoveFromList { get { return m_health <= 0; } }
 
@@ -114,14 +114,13 @@ public class GridEntity : MonoBehaviour
 
     virtual public void EndStep()
     {
-        if (m_health <= 0)
+        if (isDead)
         {
             // TODO @matthew/@jay - don't remove immediately to allow for death animation
             // kill entity
             m_stepController.RemoveEntity(this);
             GameObject.Destroy(gameObject);
         }
-
     }
 
     virtual public void AnalyseStep()
@@ -132,7 +131,6 @@ public class GridEntity : MonoBehaviour
 
     virtual public void DrawStep()
     {
-        
     }
 
     // RESOLVE MOVE CONFLICT METHODS **************************************************************
@@ -143,7 +141,6 @@ public class GridEntity : MonoBehaviour
             return true;
 
         return CheckForPassThrough();
-        
     }
 
     virtual public bool CheckForPassThrough()
@@ -172,12 +169,12 @@ public class GridEntity : MonoBehaviour
 
         return false;
     }
-    
+
     virtual public bool ResolveMassConflict()
     {
         // TODO @jay/@matthew : this does not account for a situation where both a pass-through AND a standard conflict are present
 
-         bool passThrough = CheckForPassThrough();
+        bool passThrough = CheckForPassThrough();
 
         List<GridEntity> conflictingEntities;
 
@@ -223,17 +220,14 @@ public class GridEntity : MonoBehaviour
 
     virtual public void ResolveSpeedConflict()
     {
-
     }
 
     virtual public void ResolvePlayerConflict()
     {
-
     }
 
     virtual public void ResolveRandomConflict()
     {
-
     }
 
     // HELPER METHODS *****************************************************************************
@@ -256,7 +250,7 @@ public class GridEntity : MonoBehaviour
         int dir;
         //float angle = direction.GetRotation();
 
-       // dir = Mathf.RoundToInt(angle) / 45;
+        // dir = Mathf.RoundToInt(angle) / 45;
 
         dir = direction.RotationToIndex(45);
 
@@ -290,8 +284,8 @@ public class GridEntity : MonoBehaviour
         m_currentNode.RemoveEntity(this);
 
         m_currentNode = winningEntity.m_currentNode.Neighbors[(winningEntity.testDirection).RotationToIndex(45)].reference;
-        
-        if(m_currentNode == null)
+
+        if (m_currentNode == null)
         {
             // TODO @jay/@matthew : enemy has been squashed. kill it?
         }
