@@ -23,7 +23,7 @@ public abstract class GridEntity : MonoBehaviour
     public int Mass { get { return m_mass; } set { m_mass = value; } }
     public int Speed { get { return m_speed; } }
     public int RoomIndex { get { return m_roomIndex; } set { m_roomIndex = value; } }
-    public bool isDead { get { return m_health <= 0 && m_flags.IsFlagsSet(flags.isKillable); } }
+    public bool isDead { get { return (m_health <= 0 || m_currentNode == null) && m_flags.IsFlagsSet(flags.isKillable); } }
 
     public bool RemoveFromList { get { return m_health <= 0; } }
 
@@ -88,31 +88,35 @@ public abstract class GridEntity : MonoBehaviour
         if (!CheckForPassThrough())
             return;
 
-        // TODO @jay/@matthew : this does not account for a situation where both a pass-through
-        List<GridEntity> conflictingEntities = m_previousNode.GetGridEntities();
-        conflictingEntities.Add(this);
+        // TODO @matthew/@jay : this does not respect entities with the isAttack flag yet
+
+        List<GridEntity> winningEntities = new List<GridEntity>(m_previousNode.GetGridEntities());
+        List<GridEntity> losingEntities = new List<GridEntity>();
+        winningEntities.Add(this);
 
         int highestMass = int.MinValue;
         int highestSpeed = int.MinValue;
 
-        for (int i = conflictingEntities.Count - 1; i >= 0; i--)
+        for (int i = winningEntities.Count - 1; i >= 0; i--)
         {
-            if (conflictingEntities[i].m_movementDirection != -m_movementDirection)
+            if (winningEntities[i].m_movementDirection != -m_movementDirection && winningEntities[i] != this)
             {
-                conflictingEntities.RemoveAt(i);
+                winningEntities.RemoveAt(i);
                 continue;
             }
 
-            if (conflictingEntities[i].Mass > highestMass)
-                highestMass = conflictingEntities[i].Mass;
+            if (winningEntities[i].Mass > highestMass)
+                highestMass = winningEntities[i].Mass;
 
-            if (conflictingEntities[i].Speed > highestSpeed)
-                highestSpeed = conflictingEntities[i].Speed;
+            if (winningEntities[i].Speed > highestSpeed)
+                highestSpeed = winningEntities[i].Speed;
         }
 
         if (highestMass > int.MinValue)
         {
             // mass conflict resolution
+            ResolveMassConflict(ref winningEntities, ref losingEntities);
+            RemovePassThrough(winningEntities, losingEntities);
             return;
         }
 
@@ -120,12 +124,14 @@ public abstract class GridEntity : MonoBehaviour
         if (highestSpeed > int.MinValue)
         {
             // speed conflict resolution
+            ResolveSpeedConflict(ref winningEntities, ref losingEntities);
+            RemovePassThrough(winningEntities, losingEntities);
             return;
         }
 
         bool isPlayer = false;
 
-        foreach (var entity in conflictingEntities)
+        foreach (var entity in winningEntities)
         {
             if (entity.m_flags.IsFlagsSet(flags.isPlayer))
                 isPlayer = true;
@@ -134,14 +140,21 @@ public abstract class GridEntity : MonoBehaviour
         if(isPlayer)
         {
             // player conflict resolution
+            ResolvePlayerConflict(ref winningEntities, ref losingEntities);
+            RemovePassThrough(winningEntities, losingEntities);
             return;
         }
 
         // random conflict resolution
+        ResolveRandomConflict(ref winningEntities, ref losingEntities);
+        RemovePassThrough(winningEntities, losingEntities);
     }
 
     virtual public void ResolveMoveStep()
     {
+        if (m_currentNode == null)
+            return;
+
         List<GridEntity> winning_objects; // everything
         List<GridEntity> losing_objects= new List<GridEntity>();
 
@@ -203,8 +216,7 @@ public abstract class GridEntity : MonoBehaviour
         {
             // TODO @matthew/@jay - don't remove immediately to allow for death animation
             // kill entity
-            m_stepController.RemoveEntity(this);
-            GameObject.Destroy(gameObject);
+            KillSelf();
         }
     }
 
@@ -385,17 +397,88 @@ public abstract class GridEntity : MonoBehaviour
     {
         m_currentNode.RemoveEntity(this);
 
-        Vector2 moveDirection = (m_flags.IsFlagsSet(flags.isPushable))? winningEntity.m_movementDirection : -m_movementDirection;
+        Vector2 moveDirection;
+
+        if(m_flags.IsFlagsSet(flags.isPushable))
+        {
+            if(winningEntity.m_previousNode.position.grid == m_currentNode.position.grid - winningEntity.m_movementDirection)
+                moveDirection = winningEntity.m_movementDirection;
+            else
+                moveDirection = -m_movementDirection;
+        }
+        else
+        {
+            if (m_movementDirection == winningEntity.m_movementDirection)
+                moveDirection = m_movementDirection;
+            else
+                moveDirection = -m_movementDirection;
+        }
+            
+
 
         m_currentNode = winningEntity.m_currentNode.Neighbors[(moveDirection).RotationToIndex(45)].reference;
 
         if (m_currentNode == null)
         {
             // TODO @jay/@matthew : enemy has been squashed. kill it?
+            return;
         }
 
         m_previousNode = null;
 
         m_currentNode.AddEntity(this);
+    }
+
+
+    virtual protected void RemovePassThrough(List<GridEntity> winning_objects, List<GridEntity> losing_objects)
+    {
+        // TODO @matthew/@jay : this does not respect entities with the isAttack flag yet
+        GridNode node = winning_objects[0].m_currentNode;
+
+        if(winning_objects[0].m_currentNode.Neighbors[winning_objects[0].m_movementDirection].reference == null)
+        {
+            if(losing_objects[0].m_flags.IsFlagsSet(flags.isSolid))
+            {
+                losing_objects[0].RemoveFromCurrentNode();
+                losing_objects[0].m_currentNode = losing_objects[0].m_previousNode;
+                losing_objects[0].m_previousNode = null;
+                losing_objects[0].m_targetNode = null;
+                losing_objects[0].m_movementDirection = Vector2.zero;
+                losing_objects[0].m_speed = 0;
+
+                winning_objects[0].RemoveFromCurrentNode();
+                //winning_objects[0].m_currentNode.RemoveEntity(winning_objects[0]);
+                winning_objects[0].m_currentNode = winning_objects[0].m_previousNode;
+                winning_objects[0].m_previousNode = null;
+                winning_objects[0].m_targetNode = null;
+                winning_objects[0].m_movementDirection = Vector2.zero;
+                winning_objects[0].m_speed = 0;
+
+                return;
+            }
+
+            // lossing object gets crushed;
+            losing_objects[0].m_health = int.MinValue;
+            return;
+        }
+
+        losing_objects[0].RemoveFromCurrentNode();
+        losing_objects[0].m_currentNode = node;
+        losing_objects[0].m_currentNode.AddEntity(losing_objects[0]);
+        losing_objects[0].m_targetNode = null;
+
+    }
+
+    virtual public void RemoveFromCurrentNode()
+    {
+        if(m_currentNode != null)
+            m_currentNode.RemoveEntity(this);
+    }
+
+    virtual public void KillSelf()
+    {
+        RemoveFromCurrentNode();
+        m_stepController.RemoveEntity(this);
+        GameObject.Destroy(gameObject);
     }
 }

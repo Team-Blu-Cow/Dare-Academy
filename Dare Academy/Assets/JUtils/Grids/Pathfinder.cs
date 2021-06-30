@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
+using JUtil;
 
 namespace JUtil.Grids
 {
@@ -174,6 +175,12 @@ namespace JUtil.Grids
         {
             get { return neighbors[i]; }
             set { neighbors[i] = value; }
+        }
+
+        public NodeNeighbor<T> this[Vector2 dir]
+        {
+            get { return neighbors[dir.RotationToIndex()]; }
+            set { neighbors[dir.RotationToIndex()] = value; }
         }
 
         public NodeNeighborhood(int count)
