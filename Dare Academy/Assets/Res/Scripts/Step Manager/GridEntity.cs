@@ -60,7 +60,7 @@ public abstract class GridEntity : MonoBehaviour
     }
 
     // STEP FLOW METHODS **************************************************************************
-    // step flow: [move] -> [resolve move] -> [attack] -> [damage] -> [end] -> [draw] -> [analyse]
+    // step flow: [move] -> [resolve pass through] -> [resolve move] -> [attack] -> [damage] -> [end] -> [draw] -> [analyse]
 
     virtual public void MoveStep()
     {
@@ -283,7 +283,7 @@ public abstract class GridEntity : MonoBehaviour
         {
             if (winning_objects[i].Mass == highestMass)
             {
-                continue; // this is the winner, we dont push him you silly billy!
+                continue; // this is the winner, we don't push him you silly billy!
             }
 
             losing_objects.Add(winning_objects[i]);
@@ -310,7 +310,7 @@ public abstract class GridEntity : MonoBehaviour
         {
             if (winning_objects[i].Speed == highestSpeed)
             {
-                continue; // this is the winner, we dont push him you silly billy!
+                continue; // this is the winner, we don't push him you silly billy!
             }
 
             losing_objects.Add(winning_objects[i]);
@@ -415,7 +415,7 @@ public abstract class GridEntity : MonoBehaviour
         else
         {
             // if both entities are moving the same direction
-            if (m_movementDirection == winningEntity.m_movementDirection) 
+            if (m_movementDirection == winningEntity.m_movementDirection && m_currentNode.position.grid == winningEntity.Position.grid + winningEntity.m_movementDirection) 
                 moveDirection = m_movementDirection;
             // normal push logic
             else

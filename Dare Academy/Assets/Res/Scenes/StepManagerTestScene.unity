@@ -202,6 +202,7 @@ MonoBehaviour:
   m_flags:
     m_flagData: 16
   testDirection: {x: -1, y: 0}
+  moveSpeed: 1
 --- !u!212 &813624386
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -261,7 +262,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 813624384}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.46, y: 1.5, z: 0}
+  m_LocalPosition: {x: 1.48, y: 1.54, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -3572,8 +3573,9 @@ MonoBehaviour:
   m_mass: 3
   m_roomIndex: 0
   m_flags:
-    m_flagData: 16
+    m_flagData: 20
   testDirection: {x: 0, y: -1}
+  moveSpeed: 1
 --- !u!212 &1349807190
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3633,7 +3635,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1349807188}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.54, y: -3.39, z: 0}
+  m_LocalPosition: {x: 0.49, y: -2.44, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -3874,7 +3876,8 @@ MonoBehaviour:
   m_roomIndex: 0
   m_flags:
     m_flagData: 16
-  testDirection: {x: 1, y: 0}
+  testDirection: {x: 0, y: -1}
+  moveSpeed: 1
 --- !u!212 &2084711087
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3934,7 +3937,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2084711085}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.54, y: 1.52, z: 0}
+  m_LocalPosition: {x: 0.51, y: -4.55, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
