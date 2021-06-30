@@ -97,7 +97,7 @@ public abstract class GridEntity : MonoBehaviour
         int highestMass = int.MinValue;
         int highestSpeed = int.MinValue;
 
-        for (int i = winningEntities.Count - 1; i >= 0; i--)
+        for (int i = winningEntities.Count - 2; i >= 0; i--)
         {
             if (winningEntities[i].m_movementDirection != -m_movementDirection && winningEntities[i] != this)
             {
@@ -105,11 +105,11 @@ public abstract class GridEntity : MonoBehaviour
                 continue;
             }
 
-            if (winningEntities[i].Mass > highestMass)
-                highestMass = winningEntities[i].Mass;
+            if(winningEntities[i].Mass != winningEntities[i+1].Mass)
+                highestMass = (winningEntities[i].Mass > winningEntities[i + 1].Mass)? winningEntities[i].Mass : winningEntities[i + 1].Mass;
 
-            if (winningEntities[i].Speed > highestSpeed)
-                highestSpeed = winningEntities[i].Speed;
+            if (winningEntities[i].Speed != winningEntities[i + 1].Speed)
+                highestMass = (winningEntities[i].Speed > winningEntities[i + 1].Speed) ? winningEntities[i].Speed : winningEntities[i + 1].Speed;
         }
 
         if (highestMass > int.MinValue)
@@ -238,20 +238,21 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public bool CheckForPassThrough()
     {
-        // check for any objects that have passed through this entity
+        // get node behind entity
         GridNode behindNode = m_currentNode.Neighbors[(-m_movementDirection).RotationToIndex(45)].reference;
 
+        // pass through is impossible so return
         if (behindNode == null)
-        {
-            // TODO @jay/@matthew : object is being crushed, kill it i guess.
             return false;
-        }
 
+        // get entities from node
         List<GridEntity> entities = behindNode.GetGridEntities();
 
+        // return if there are no entities
         if (entities == null || entities.Count < 1)
             return false;
 
+        // check for entities that have passed through this entity
         foreach (GridEntity entity in entities)
         {
             if (entity.Speed > 0 && entity.m_movementDirection == -m_movementDirection)
@@ -399,28 +400,35 @@ public abstract class GridEntity : MonoBehaviour
 
         Vector2 moveDirection;
 
+        // determine move direction
         if(m_flags.IsFlagsSet(flags.isPushable))
         {
+            // check to see if entity and winning entity are in the correct position to be pushed by another entity
+            // TODO @matthew/@jay : this does not respect entities that have moved with a speed >= 2 due to
+            // it using the previous node
             if(winningEntity.m_previousNode.position.grid == m_currentNode.position.grid - winningEntity.m_movementDirection)
                 moveDirection = winningEntity.m_movementDirection;
+            // if entity should not be pushed, use regular direction
             else
                 moveDirection = -m_movementDirection;
         }
         else
         {
-            if (m_movementDirection == winningEntity.m_movementDirection)
+            // if both entities are moving the same direction
+            if (m_movementDirection == winningEntity.m_movementDirection) 
                 moveDirection = m_movementDirection;
+            // normal push logic
             else
                 moveDirection = -m_movementDirection;
         }
-            
-
 
         m_currentNode = winningEntity.m_currentNode.Neighbors[(moveDirection).RotationToIndex(45)].reference;
 
         if (m_currentNode == null)
         {
             // TODO @jay/@matthew : enemy has been squashed. kill it?
+            // UPDATE : probably still needs refining, but is dead flag now also detects
+            // if current node is null
             return;
         }
 
@@ -429,14 +437,15 @@ public abstract class GridEntity : MonoBehaviour
         m_currentNode.AddEntity(this);
     }
 
-
     virtual protected void RemovePassThrough(List<GridEntity> winning_objects, List<GridEntity> losing_objects)
     {
         // TODO @matthew/@jay : this does not respect entities with the isAttack flag yet
         GridNode node = winning_objects[0].m_currentNode;
 
+        // if entity is trying to push entity against a wall / edge of grid
         if(winning_objects[0].m_currentNode.Neighbors[winning_objects[0].m_movementDirection].reference == null)
         {
+            // if entity is solid, prevent entities from moving (make them stay where they are)
             if(losing_objects[0].m_flags.IsFlagsSet(flags.isSolid))
             {
                 losing_objects[0].RemoveFromCurrentNode();
@@ -447,7 +456,6 @@ public abstract class GridEntity : MonoBehaviour
                 losing_objects[0].m_speed = 0;
 
                 winning_objects[0].RemoveFromCurrentNode();
-                //winning_objects[0].m_currentNode.RemoveEntity(winning_objects[0]);
                 winning_objects[0].m_currentNode = winning_objects[0].m_previousNode;
                 winning_objects[0].m_previousNode = null;
                 winning_objects[0].m_targetNode = null;
@@ -457,11 +465,12 @@ public abstract class GridEntity : MonoBehaviour
                 return;
             }
 
-            // lossing object gets crushed;
+            // losing object gets crushed
             losing_objects[0].m_health = int.MinValue;
             return;
         }
 
+        // move losing object on top of winning object, to be dealt with in resolve move phase
         losing_objects[0].RemoveFromCurrentNode();
         losing_objects[0].m_currentNode = node;
         losing_objects[0].m_currentNode.AddEntity(losing_objects[0]);

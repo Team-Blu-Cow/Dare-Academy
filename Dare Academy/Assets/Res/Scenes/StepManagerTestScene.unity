@@ -201,7 +201,7 @@ MonoBehaviour:
   m_roomIndex: 0
   m_flags:
     m_flagData: 16
-  testDirection: {x: 1, y: 0}
+  testDirection: {x: -1, y: 0}
 --- !u!212 &813624386
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -261,7 +261,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 813624384}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -1.44, y: 1.48, z: 0}
+  m_LocalPosition: {x: 1.46, y: 1.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -3870,11 +3870,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09fdc2c5d32edb14f94fcc3fcc823a5a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_mass: 2
+  m_mass: 3
   m_roomIndex: 0
   m_flags:
-    m_flagData: 28
-  testDirection: {x: -1, y: 0}
+    m_flagData: 16
+  testDirection: {x: 1, y: 0}
 --- !u!212 &2084711087
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -3934,7 +3934,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2084711085}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.48, y: 1.5, z: 0}
+  m_LocalPosition: {x: -1.54, y: 1.52, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
