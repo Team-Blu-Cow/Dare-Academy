@@ -29,45 +29,56 @@ public class StepController
 
         m_canStepAgain = false;
 
-        for (int i = 0; i < NUMBER_OF_STEPS; i++)
+        for (int j = m_entities.Count - 1; j >= 0; j--)
         {
+            m_entities[j].MoveStep();
+        }
+
+        for (int j = m_entities.Count - 1; j >= 0; j--)
+        {
+            m_entities[j].ResolvePassThrough();
+        }
+
+        
+        int counter = 0;
+        while (CheckForConflicts())
+        {
+            if(counter++ > 10)
+            {
+                Debug.LogWarning("[Step Controller] - conflict could not be resolved");
+                break; // something could not be resolved
+            }
+
             for (int j = m_entities.Count - 1; j >= 0; j--)
             {
-                switch (i)
-                {
-                    case 0:
-                        m_entities[j].MoveStep();
-                        break;
-
-                    case 1:
-                        m_entities[j].ResolvePassThrough();
-                        break;
-
-                    case 2:
-                        m_entities[j].ResolveMoveStep();
-                        break;
-
-                    case 3:
-                        m_entities[j].AttackStep();
-                        break;
-
-                    case 4:
-                        m_entities[j].DamageStep();
-                        break;
-
-                    case 5:
-                        m_entities[j].EndStep();
-                        break;
-
-                    case 6:
-                        m_entities[j].DrawStep();
-                        break;
-
-                    case 7:
-                        m_entities[j].AnalyseStep();
-                        break;
-                }
+                m_entities[j].ResolveMoveStep();
             }
+        } 
+
+
+        for (int j = m_entities.Count - 1; j >= 0; j--)
+        {
+            m_entities[j].AttackStep();
+        }
+
+        for (int j = m_entities.Count - 1; j >= 0; j--)
+        {
+            m_entities[j].DamageStep();
+        }
+
+        for (int j = m_entities.Count - 1; j >= 0; j--)
+        {
+            m_entities[j].EndStep();
+        }
+
+        for (int j = m_entities.Count - 1; j >= 0; j--)
+        {
+            m_entities[j].DrawStep();
+        }
+
+        for (int j = m_entities.Count - 1; j >= 0; j--)
+        {
+            m_entities[j].AnalyseStep();
         }
     }
 
@@ -92,5 +103,17 @@ public class StepController
     public bool RemoveEntity(GridEntity entity)
     {
         return m_entities.Remove(entity);
+    }
+
+    protected bool CheckForConflicts()
+    {
+        for (int j = m_entities.Count - 1; j >= 0; j--)
+        {
+            if(m_entities[j].CheckForConflict())
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }
