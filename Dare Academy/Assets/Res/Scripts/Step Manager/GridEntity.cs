@@ -89,8 +89,6 @@ public abstract class GridEntity : MonoBehaviour
 
             m_currentNode.AddEntity(this);
         }
-
-        Debug.Log("Move Step");
     }
 
     virtual public void ResolvePassThrough()
@@ -138,6 +136,19 @@ public abstract class GridEntity : MonoBehaviour
             return;
         }
 
+        foreach(GridEntity entity in winningEntities)
+        {
+            entity.RemoveFromCurrentNode();
+
+            entity.m_currentNode = entity.m_previousNode;
+
+            entity.AddToCurrentNode();
+
+            entity.m_speed = 0;
+            entity.m_movementDirection = Vector2.zero;
+        }
+
+        /*
         bool isPlayer = false;
 
         foreach (var entity in winningEntities)
@@ -156,7 +167,7 @@ public abstract class GridEntity : MonoBehaviour
 
         // random conflict resolution
         ResolveRandomConflict(ref winningEntities, ref losingEntities);
-        RemovePassThrough(winningEntities, losingEntities);
+        RemovePassThrough(winningEntities, losingEntities);//*/
     }
 
     virtual public void ResolveMoveStep()
@@ -268,7 +279,8 @@ public abstract class GridEntity : MonoBehaviour
         if (m_currentNode.CheckForConflict())
             return true;
 
-        return CheckForPassThrough();
+        return false;
+        //return CheckForPassThrough();
     }
 
     virtual public bool CheckForPassThrough()
@@ -579,8 +591,10 @@ public abstract class GridEntity : MonoBehaviour
         // move losing object on top of winning object, to be dealt with in resolve move phase
         losing_objects[0].RemoveFromCurrentNode();
         losing_objects[0].m_currentNode = node;
-        losing_objects[0].m_currentNode.AddEntity(losing_objects[0]);
+        losing_objects[0].AddToCurrentNode();
         losing_objects[0].m_targetNode = null;
+        losing_objects[0].m_speed = 0;
+        losing_objects[0].m_movementDirection = Vector2.zero;
     }
 
     virtual public void RemoveFromCurrentNode()
