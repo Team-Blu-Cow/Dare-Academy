@@ -227,7 +227,7 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void EndStep()
     {
-        if (m_currentNode.GetGridEntities().Count > 1) // someone messed up bad, people are inside each other
+        if (m_currentNode != null && m_currentNode.GetGridEntities().Count > 1) // someone messed up bad, people are inside each other
         {
             List<GridEntity> entities = m_currentNode.GetGridEntities();
 
