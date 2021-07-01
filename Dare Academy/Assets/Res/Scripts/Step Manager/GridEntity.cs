@@ -334,13 +334,10 @@ public abstract class GridEntity : MonoBehaviour
 
         int highestMass = int.MinValue;
 
-        foreach (var entity in winning_objects)
-        {
-            if (entity.Mass > highestMass)
-            {
-                highestMass = entity.Mass;
-            }
-        }
+        GridEntity top = null;
+        GridEntity bottom = null;
+        GridEntity left = null;
+        GridEntity right = null;
 
         foreach (GridEntity entity in winning_objects)
         {
@@ -349,7 +346,53 @@ public abstract class GridEntity : MonoBehaviour
                 stationary = entity;
                 anyStationary = true;
                 stationaryIsPushable = entity.m_flags.IsFlagsSet(flags.isPushable);
-                break;
+
+                // break;
+            }
+            else
+            {
+                if (entity.m_movementDirection == new Vector2(0, -1))
+                {
+                    top = entity;
+                }
+                if (entity.m_movementDirection == new Vector2(1, 0))
+                {
+                    left = entity;
+                }
+                if (entity.m_movementDirection == new Vector2(-1, 0))
+                {
+                    right = entity;
+                }
+                if (entity.m_movementDirection == new Vector2(0, 1))
+                {
+                    bottom = entity;
+                }
+            }
+        }
+
+        if (right != null && left != null)
+        {
+            winning_objects.Remove(right);
+            losing_objects.Add(right);
+
+            winning_objects.Remove(left);
+            losing_objects.Add(left);
+        }
+
+        if (top != null && bottom != null)
+        {
+            winning_objects.Remove(top);
+            losing_objects.Add(top);
+
+            winning_objects.Remove(bottom);
+            losing_objects.Add(bottom);
+        }
+
+        foreach (var entity in winning_objects)
+        {
+            if (entity.Mass > highestMass)
+            {
+                highestMass = entity.Mass;
             }
         }
 
