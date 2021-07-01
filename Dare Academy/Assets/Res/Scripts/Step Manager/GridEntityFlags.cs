@@ -3,10 +3,8 @@ using UnityEngine;
 [System.Serializable]
 public class GridEntityFlags
 {
-    //[System.Flags]
     public enum Flags : uint
     {
-        // flags
         isPlayer    = 0b00000000000000000000000000000001,
         isAttack    = 0b00000000000000000000000000000010,
         isSolid     = 0b00000000000000000000000000000100,
@@ -27,7 +25,7 @@ public class GridEntityFlags
         m_flagData = 0;
     }
 
-    public void Toggle(Flags flags, bool value)
+    public void SetFlags(Flags flags, bool value)
     {
         if (value)
         {
@@ -39,7 +37,7 @@ public class GridEntityFlags
         }
     }
 
-    public static uint Toggle(Flags flags, uint flagData, bool value)
+    public static uint SetFlags(Flags flags, uint flagData, bool value)
     {
         if (value)
         {

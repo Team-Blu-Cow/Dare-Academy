@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-
 [CustomPropertyDrawer(typeof(GridEntityFlags))]
 public class GridEntityFlagsPropertyDrawer : PropertyDrawer
 {
@@ -14,7 +13,7 @@ public class GridEntityFlagsPropertyDrawer : PropertyDrawer
         float height = EditorGUIUtility.singleLineHeight;
 
         if (property.isExpanded)
-            height += EditorGUIUtility.singleLineHeight * (GridEntityFlags.NumberOfFlags()+1) + (EditorGUIUtility.singleLineHeight/2);
+            height += EditorGUIUtility.singleLineHeight * (GridEntityFlags.NumberOfFlags() + 1) + (EditorGUIUtility.singleLineHeight / 2);
 
         return height;
     }
@@ -54,7 +53,7 @@ public class GridEntityFlagsPropertyDrawer : PropertyDrawer
 
             GridEntityFlags.Flags mask = (GridEntityFlags.Flags)flagValues.GetValue(i);
 
-            flagDataProp.intValue = (int)GridEntityFlags.Toggle(mask, (uint)flagDataProp.intValue, fieldBool);
+            flagDataProp.intValue = (int)GridEntityFlags.SetFlags(mask, (uint)flagDataProp.intValue, fieldBool);
         }
 
         EditorGUI.EndProperty();

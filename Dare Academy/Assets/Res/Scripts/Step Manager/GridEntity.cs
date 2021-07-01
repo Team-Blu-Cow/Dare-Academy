@@ -190,7 +190,7 @@ public abstract class GridEntity : MonoBehaviour
         if (winning_objects.Count > 1)
         {
             // check for stationary objects
-            ResolveConflictStationary(ref winning_objects, ref losing_objects);
+            ResolveStationaryConflict(ref winning_objects, ref losing_objects);
         }
 
         if (winning_objects.Count > 1)
@@ -328,7 +328,7 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-    public void ResolveConflictStationary(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
+    public void ResolveStationaryConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
         bool anyStationary = false;
 
@@ -589,6 +589,6 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void Kill()
     {
-        m_flags.Toggle(flags.isDead, true);
+        m_flags.SetFlags(flags.isDead, true);
     }
 }
