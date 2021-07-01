@@ -276,7 +276,7 @@ public abstract class GridEntity : MonoBehaviour
     virtual public bool CheckForConflict()
     {
         // check for conflict on current node
-        if (m_currentNode.CheckForConflict())
+        if (m_currentNode != null && m_currentNode.CheckForConflict())
             return true;
 
         return false;
@@ -382,24 +382,26 @@ public abstract class GridEntity : MonoBehaviour
             }
         }
 
-        if (right != null && left != null)
+        if (anyStationary)
         {
-            winning_objects.Remove(right);
-            losing_objects.Add(right);
+            if (right != null && left != null)
+            {
+                winning_objects.Remove(right);
+                losing_objects.Add(right);
 
-            winning_objects.Remove(left);
-            losing_objects.Add(left);
+                winning_objects.Remove(left);
+                losing_objects.Add(left);
+            }
+
+            if (top != null && bottom != null)
+            {
+                winning_objects.Remove(top);
+                losing_objects.Add(top);
+
+                winning_objects.Remove(bottom);
+                losing_objects.Add(bottom);
+            }
         }
-
-        if (top != null && bottom != null)
-        {
-            winning_objects.Remove(top);
-            losing_objects.Add(top);
-
-            winning_objects.Remove(bottom);
-            losing_objects.Add(bottom);
-        }
-
         foreach (var entity in winning_objects)
         {
             if (entity.Mass > highestMass)
@@ -662,5 +664,11 @@ public abstract class GridEntity : MonoBehaviour
     virtual public void Kill()
     {
         m_flags.SetFlags(flags.isDead, true);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.white;
+        Gizmos.DrawRay(transform.position, m_movementDirection);
     }
 }

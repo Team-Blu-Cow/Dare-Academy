@@ -11,4 +11,13 @@ public class TestEnitity : GridEntity
     {
         SetTargetNode(testDirection, moveSpeed);
     }
+
+    private void OnDrawGizmos()
+    {
+        if (!Application.isPlaying)
+        {
+            Gizmos.color = Color.white;
+            Gizmos.DrawRay(transform.position, m_movementDirection);
+        }
+    }
 }
