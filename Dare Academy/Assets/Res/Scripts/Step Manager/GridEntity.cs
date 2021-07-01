@@ -23,7 +23,18 @@ public abstract class GridEntity : MonoBehaviour
     public int Mass { get { return m_mass; } set { m_mass = value; } }
     public int Speed { get { return m_speed; } }
     public int RoomIndex { get { return m_roomIndex; } set { m_roomIndex = value; } }
-    public bool isDead { get { return (m_health <= 0 || m_currentNode == null) && m_flags.IsFlagsSet(flags.isKillable); } }
+
+    public bool isDead
+    {
+        get
+        {
+            return
+                (m_health <= 0 && m_flags.IsFlagsSet(flags.isKillable))
+                || m_currentNode == null
+                || m_flags.IsFlagsSet(flags.isDead)
+                ; // fuck you Adam, its staying in :] - Love Matthew & Jay
+        }
+    }
 
     public bool RemoveFromList { get { return m_health <= 0; } }
 
@@ -52,6 +63,7 @@ public abstract class GridEntity : MonoBehaviour
         m_targetNode = m_currentNode;
 
         m_stepController = App.GetModule<LevelModule>().LevelManager.StepController;
+        m_currentNode.AddEntity(this);
 
         if (m_roomIndex == m_stepController.m_currentRoomIndex)
         {
@@ -105,8 +117,8 @@ public abstract class GridEntity : MonoBehaviour
                 continue;
             }
 
-            if(winningEntities[i].Mass != winningEntities[i+1].Mass)
-                highestMass = (winningEntities[i].Mass > winningEntities[i + 1].Mass)? winningEntities[i].Mass : winningEntities[i + 1].Mass;
+            if (winningEntities[i].Mass != winningEntities[i + 1].Mass)
+                highestMass = (winningEntities[i].Mass > winningEntities[i + 1].Mass) ? winningEntities[i].Mass : winningEntities[i + 1].Mass;
 
             if (winningEntities[i].Speed != winningEntities[i + 1].Speed)
                 highestMass = (winningEntities[i].Speed > winningEntities[i + 1].Speed) ? winningEntities[i].Speed : winningEntities[i + 1].Speed;
@@ -119,7 +131,6 @@ public abstract class GridEntity : MonoBehaviour
             RemovePassThrough(winningEntities, losingEntities);
             return;
         }
-
 
         if (highestSpeed > int.MinValue)
         {
@@ -137,7 +148,7 @@ public abstract class GridEntity : MonoBehaviour
                 isPlayer = true;
         }
 
-        if(isPlayer)
+        if (isPlayer)
         {
             // player conflict resolution
             ResolvePlayerConflict(ref winningEntities, ref losingEntities);
@@ -178,6 +189,12 @@ public abstract class GridEntity : MonoBehaviour
 
         if (winning_objects.Count > 1)
         {
+            // check for stationary objects
+            ResolveConflictStationary(ref winning_objects, ref losing_objects);
+        }
+
+        if (winning_objects.Count > 1)
+        {
             // check for speed resolution
             ResolveSpeedConflict(ref winning_objects, ref losing_objects);
         }
@@ -210,6 +227,26 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void EndStep()
     {
+        if (m_currentNode.GetGridEntities().Count > 1) // someone messed up bad, people are inside each other
+        {
+            List<GridEntity> entities = m_currentNode.GetGridEntities();
+
+            int highestMass = int.MinValue;
+
+            foreach (var entity in entities)
+            {
+                if (entity.Mass > highestMass)
+                {
+                    highestMass = entity.Mass;
+                }
+            }
+
+            if (Mass < highestMass)
+            {
+                Kill();
+            }
+        }
+
         m_speed = 0;
 
         if (isDead)
@@ -291,6 +328,32 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
+    public void ResolveConflictStationary(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
+    {
+        bool anyStationary = false;
+
+        foreach (GridEntity entity in winning_objects)
+        {
+            if (entity.m_movementDirection == Vector2.zero)
+            {
+                anyStationary = true;
+                break;
+            }
+        }
+
+        if (anyStationary)
+        {
+            for (int i = winning_objects.Count - 1; i >= 0; i--)
+            {
+                if (winning_objects[i].m_movementDirection != Vector2.zero)
+                {
+                    losing_objects.Add(winning_objects[i]);
+                    winning_objects.RemoveAt(i);
+                }
+            }
+        }
+    }
+
     virtual public void ResolveSpeedConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
         // TODO @jay/@matthew : this does not account for a situation where both a pass-through
@@ -368,6 +431,13 @@ public abstract class GridEntity : MonoBehaviour
 
         int dir = direction.RotationToIndex(45);
         SetTargetNodeImpl(dir, distance);
+
+        if (m_targetNode == m_currentNode) // if entity is not moving
+        {
+            m_targetNode = null;
+            m_movementDirection = Vector2.zero;
+            m_speed = 0;
+        }
     }
 
     private void SetTargetNodeImpl(int direction, int distance)
@@ -401,12 +471,12 @@ public abstract class GridEntity : MonoBehaviour
         Vector2 moveDirection;
 
         // determine move direction
-        if(m_flags.IsFlagsSet(flags.isPushable))
+        if (m_flags.IsFlagsSet(flags.isPushable))
         {
             // check to see if entity and winning entity are in the correct position to be pushed by another entity
             // TODO @matthew/@jay : this does not respect entities that have moved with a speed >= 2 due to
             // it using the previous node
-            if(winningEntity.m_previousNode.position.grid == m_currentNode.position.grid - winningEntity.m_movementDirection)
+            if (winningEntity.m_previousNode.position.grid == m_currentNode.position.grid - winningEntity.m_movementDirection)
                 moveDirection = winningEntity.m_movementDirection;
             // if entity should not be pushed, use regular direction
             else
@@ -415,21 +485,42 @@ public abstract class GridEntity : MonoBehaviour
         else
         {
             // if both entities are moving the same direction
-            if (m_movementDirection == winningEntity.m_movementDirection && m_currentNode.position.grid == winningEntity.Position.grid + winningEntity.m_movementDirection) 
+            if (m_movementDirection == winningEntity.m_movementDirection && m_currentNode.position.grid == winningEntity.Position.grid + winningEntity.m_movementDirection)
                 moveDirection = m_movementDirection;
             // normal push logic
             else
-                moveDirection = -m_movementDirection;
+            {
+                if (m_movementDirection == Vector2.zero)
+                {
+                    moveDirection = winningEntity.m_movementDirection;
+                }
+                else
+                {
+                    moveDirection = -m_movementDirection;
+                }
+            }
         }
+
+        GridNode lastNode = m_currentNode;
+        GridNode winnerLastNode = winningEntity.m_currentNode.Neighbors[(-winningEntity.m_movementDirection).RotationToIndex()].reference;
 
         m_currentNode = winningEntity.m_currentNode.Neighbors[(moveDirection).RotationToIndex(45)].reference;
 
         if (m_currentNode == null)
         {
-            // TODO @jay/@matthew : enemy has been squashed. kill it?
-            // UPDATE : probably still needs refining, but is dead flag now also detects
-            // if current node is null
-            return;
+            if (m_flags.IsFlagsSet(flags.isSolid))
+            {
+                winningEntity.RemoveFromCurrentNode();
+
+                m_currentNode = lastNode;
+                winningEntity.m_currentNode = winnerLastNode;
+
+                winningEntity.AddToCurrentNode();
+            }
+            else
+            {
+                return;
+            }
         }
 
         m_previousNode = null;
@@ -443,10 +534,10 @@ public abstract class GridEntity : MonoBehaviour
         GridNode node = winning_objects[0].m_currentNode;
 
         // if entity is trying to push entity against a wall / edge of grid
-        if(winning_objects[0].m_currentNode.Neighbors[winning_objects[0].m_movementDirection].reference == null)
+        if (winning_objects[0].m_currentNode.Neighbors[winning_objects[0].m_movementDirection].reference == null)
         {
             // if entity is solid, prevent entities from moving (make them stay where they are)
-            if(losing_objects[0].m_flags.IsFlagsSet(flags.isSolid))
+            if (losing_objects[0].m_flags.IsFlagsSet(flags.isSolid))
             {
                 losing_objects[0].RemoveFromCurrentNode();
                 losing_objects[0].m_currentNode = losing_objects[0].m_previousNode;
@@ -475,19 +566,29 @@ public abstract class GridEntity : MonoBehaviour
         losing_objects[0].m_currentNode = node;
         losing_objects[0].m_currentNode.AddEntity(losing_objects[0]);
         losing_objects[0].m_targetNode = null;
-
     }
 
     virtual public void RemoveFromCurrentNode()
     {
-        if(m_currentNode != null)
+        if (m_currentNode != null)
             m_currentNode.RemoveEntity(this);
     }
 
-    virtual public void KillSelf()
+    virtual public void AddToCurrentNode()
+    {
+        if (m_currentNode != null)
+            m_currentNode.AddEntity(this);
+    }
+
+    virtual protected void KillSelf()
     {
         RemoveFromCurrentNode();
         m_stepController.RemoveEntity(this);
         GameObject.Destroy(gameObject);
+    }
+
+    virtual public void Kill()
+    {
+        m_flags.Toggle(flags.isDead, true);
     }
 }

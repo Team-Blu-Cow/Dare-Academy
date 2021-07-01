@@ -12,6 +12,7 @@ public class GridEntityFlags
         isSolid     = 0b00000000000000000000000000000100,
         isPushable  = 0b00000000000000000000000000001000,
         isKillable  = 0b00000000000000000000000000010000,
+        isDead      = 0b00000000000000000000000000100000,
     }
 
     [SerializeField] private Flags m_flagData = 0;
