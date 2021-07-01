@@ -184,7 +184,7 @@ public abstract class GridEntity : MonoBehaviour
         // else
         //     winning_objects = m_currentNode.GetGridEntities();
 
-        winning_objects = m_currentNode.GetGridEntities();
+        winning_objects = new List<GridEntity>(m_currentNode.GetGridEntities());
 
         // check for conflict on current node
         if (!CheckForConflict())
