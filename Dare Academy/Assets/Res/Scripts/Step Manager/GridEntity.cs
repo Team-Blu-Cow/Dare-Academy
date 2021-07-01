@@ -36,8 +36,6 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-    public bool RemoveFromList { get { return m_health <= 0; } }
-
     protected StepController m_stepController;
 
     protected GridNode m_currentNode = null;
@@ -183,14 +181,14 @@ public abstract class GridEntity : MonoBehaviour
 
         if (winning_objects.Count > 1)
         {
-            // check for mass resolution
-            ResolveMassConflict(ref winning_objects, ref losing_objects);
+            // check for stationary objects
+            ResolveStationaryConflict(ref winning_objects, ref losing_objects);
         }
 
         if (winning_objects.Count > 1)
         {
-            // check for stationary objects
-            ResolveStationaryConflict(ref winning_objects, ref losing_objects);
+            // check for mass resolution
+            ResolveMassConflict(ref winning_objects, ref losing_objects);
         }
 
         if (winning_objects.Count > 1)
@@ -330,25 +328,42 @@ public abstract class GridEntity : MonoBehaviour
 
     public void ResolveStationaryConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
+        GridEntity stationary = null;
         bool anyStationary = false;
+        bool stationaryIsPushable = false;
+
+        int highestMass = int.MinValue;
+
+        foreach (var entity in winning_objects)
+        {
+            if (entity.Mass > highestMass)
+            {
+                highestMass = entity.Mass;
+            }
+        }
 
         foreach (GridEntity entity in winning_objects)
         {
             if (entity.m_movementDirection == Vector2.zero)
             {
+                stationary = entity;
                 anyStationary = true;
+                stationaryIsPushable = entity.m_flags.IsFlagsSet(flags.isPushable);
                 break;
             }
         }
 
         if (anyStationary)
         {
-            for (int i = winning_objects.Count - 1; i >= 0; i--)
+            if (!stationaryIsPushable || stationary.Mass == highestMass)
             {
-                if (winning_objects[i].m_movementDirection != Vector2.zero)
+                for (int i = winning_objects.Count - 1; i >= 0; i--)
                 {
-                    losing_objects.Add(winning_objects[i]);
-                    winning_objects.RemoveAt(i);
+                    if (winning_objects[i].m_movementDirection != Vector2.zero)
+                    {
+                        losing_objects.Add(winning_objects[i]);
+                        winning_objects.RemoveAt(i);
+                    }
                 }
             }
         }
