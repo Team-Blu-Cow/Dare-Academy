@@ -9,7 +9,7 @@ public class TestEnitity : GridEntity
 
     public override void AnalyseStep()
     {
-        SetTargetNode(testDirection, moveSpeed);
+        SetMovementDirection(testDirection, moveSpeed);
     }
 
     private void OnDrawGizmos()

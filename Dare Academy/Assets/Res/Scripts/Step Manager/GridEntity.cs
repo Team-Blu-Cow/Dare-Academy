@@ -16,6 +16,8 @@ public abstract class GridEntity : MonoBehaviour
     protected int m_speed     = 1;
     protected int m_health    = 1;
 
+    protected int m_stepsTaken = 0;
+
     [SerializeField] protected int m_roomIndex = 0;
 
     [SerializeField] protected GridEntityFlags m_flags = new GridEntityFlags();
@@ -35,6 +37,8 @@ public abstract class GridEntity : MonoBehaviour
                 ; // fuck you Adam, its staying in :] - Love Matthew & Jay
         }
     }
+
+    public bool isFinishedMoving { get { return m_speed <= m_stepsTaken; } }
 
     protected StepController m_stepController;
 
@@ -70,10 +74,34 @@ public abstract class GridEntity : MonoBehaviour
     }
 
     // STEP FLOW METHODS **************************************************************************
-    // step flow: [move] -> [resolve pass through] -> [resolve move] -> [attack] -> [damage] -> [end] -> [draw] -> [analyse]
 
-    virtual public void MoveStep()
+    // step flow
+    /*
+     *         [pre-move]
+     *         [move]
+     *         [resolve pass through]
+     *         [resolve move]
+     *         [post-move]
+     *         [IF m_stepsTaken != m_speed: GOTO {move}]
+     * virtual [attack]
+     * virtual [damage]
+     *         [end]
+     * virtual [draw]
+     * virtual [analyse]
+     *
+     */
+
+    public void PreMoveStep()
     {
+        if (m_currentNode == null)
+        {
+            m_flags.SetFlags(flags.isDead, true);
+        }
+    }
+
+    public void MoveStep()
+    {
+        SetTargetNode(m_movementDirection);
         // set currentNode to targetNode
         // keep a record of where we came from
         if (m_targetNode != null && m_currentNode != null)
@@ -91,7 +119,7 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-    virtual public void ResolvePassThrough()
+    public void ResolvePassThroughStep()
     {
         if (!CheckForPassThrough())
             return;
@@ -136,7 +164,7 @@ public abstract class GridEntity : MonoBehaviour
             return;
         }
 
-        foreach(GridEntity entity in winningEntities)
+        foreach (GridEntity entity in winningEntities)
         {
             entity.RemoveFromCurrentNode();
 
@@ -170,7 +198,7 @@ public abstract class GridEntity : MonoBehaviour
         RemovePassThrough(winningEntities, losingEntities);//*/
     }
 
-    virtual public void ResolveMoveStep()
+    public void ResolveMoveStep()
     {
         if (m_currentNode == null)
             return;
@@ -226,6 +254,11 @@ public abstract class GridEntity : MonoBehaviour
         // check for any new conflicts
     }
 
+    public void PostMoveStep()
+    {
+        m_stepsTaken++;
+    }
+
     virtual public void AttackStep()
     {
     }
@@ -234,8 +267,9 @@ public abstract class GridEntity : MonoBehaviour
     {
     }
 
-    virtual public void EndStep()
+    public void EndStep()
     {
+        m_stepsTaken = 0;
         if (m_currentNode != null && m_currentNode.GetGridEntities().Count > 1) // someone messed up bad, people are inside each other
         {
             List<GridEntity> entities = m_currentNode.GetGridEntities();
@@ -266,7 +300,10 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-    abstract public void AnalyseStep();
+    virtual public void AnalyseStep()
+    {
+        return;
+    }
 
     virtual public void DrawStep()
     {
@@ -311,7 +348,7 @@ public abstract class GridEntity : MonoBehaviour
         return false;
     }
 
-    virtual public void ResolveMassConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
+    virtual protected void ResolveMassConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
         // TODO @jay/@matthew : this does not account for a situation where both a pass-through
 
@@ -338,7 +375,7 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-    public void ResolveStationaryConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
+    virtual protected void ResolveStationaryConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
         GridEntity stationary = null;
         bool anyStationary = false;
@@ -426,7 +463,7 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-    virtual public void ResolveSpeedConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
+    virtual protected void ResolveSpeedConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
         // TODO @jay/@matthew : this does not account for a situation where both a pass-through
 
@@ -453,7 +490,7 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-    virtual public void ResolvePlayerConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
+    virtual protected void ResolvePlayerConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
         for (int i = winning_objects.Count - 1; i >= 0; i--)
         {
@@ -466,7 +503,7 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-    virtual public void ResolveRandomConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
+    virtual protected void ResolveRandomConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
         for (int i = winning_objects.Count - 1; i > 0; i--)
         {
@@ -493,28 +530,22 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-    public void SetTargetNode(Vector2 direction, int distance = 1)
+    public void SetMovementDirection(Vector2 direction, int speed = 1)
+    {
+        // TODO @matthew/@jay - check this value is valid
+        m_movementDirection = direction;
+        m_speed = speed;
+    }
+
+    protected void SetTargetNode(Vector2 direction, int distance = 1)
     {
         if (direction == Vector2.zero)
             return;
 
         m_movementDirection = direction;
-        m_speed = distance;
 
         int dir = direction.RotationToIndex(45);
-        SetTargetNodeImpl(dir, distance);
-
-        if (m_targetNode == m_currentNode) // if entity is not moving
-        {
-            m_targetNode = null;
-            m_movementDirection = Vector2.zero;
-            m_speed = 0;
-        }
-    }
-
-    private void SetTargetNodeImpl(int direction, int distance)
-    {
-        Mathf.Clamp(direction, 0, 7);
+        Mathf.Clamp(dir, 0, 7);
 
         m_previousNode = null;
 
@@ -526,9 +557,16 @@ public abstract class GridEntity : MonoBehaviour
             if (node != null)
                 m_targetNode = node;
         }
+
+        if (m_targetNode == m_currentNode) // if entity is not moving
+        {
+            m_targetNode = null;
+            m_movementDirection = Vector2.zero;
+            m_speed = 0;
+        }
     }
 
-    public static void PushBackAll(List<GridEntity> losers, GridEntity winningEntity)
+    protected static void PushBackAll(List<GridEntity> losers, GridEntity winningEntity)
     {
         foreach (var entity in losers)
         {
