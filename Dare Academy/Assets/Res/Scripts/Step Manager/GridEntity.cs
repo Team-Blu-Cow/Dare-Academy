@@ -15,7 +15,7 @@ public abstract class GridEntity : MonoBehaviour
     [SerializeField] protected int m_mass = 2;
     protected int m_speed       = 1;
     protected int m_health      = 1;
-    protected int m_stepsTaken  = 0;
+    private int m_stepsTaken    = 0;
 
     [SerializeField] protected int m_roomIndex = 0;
 
@@ -24,6 +24,12 @@ public abstract class GridEntity : MonoBehaviour
     public int Mass { get { return m_mass; } set { m_mass = value; } }
     public int Speed { get { return m_speed; } }
     public int RoomIndex { get { return m_roomIndex; } set { m_roomIndex = value; } }
+
+    public int Health
+    {
+        get { return m_health; }
+        set { m_health = value; }
+    }
 
     public bool isDead
     {
@@ -51,7 +57,7 @@ public abstract class GridEntity : MonoBehaviour
     { get { return m_currentNode.position; } }
 
     // INITIALISATION METHODS *********************************************************************
-    private void Start()
+    protected virtual void Start()
     {
         m_currentNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(transform.position);
         if (m_currentNode == null)
@@ -71,6 +77,8 @@ public abstract class GridEntity : MonoBehaviour
         {
             m_stepController.AddEntity(this);
         }
+
+        AnalyseStep();
     }
 
     // STEP FLOW METHODS **************************************************************************
@@ -78,11 +86,11 @@ public abstract class GridEntity : MonoBehaviour
     // step flow
     /*
      *         [pre-move]
-     *         [move]
-     *         [resolve pass through]
-     *         [resolve move]
+     * virtual [move]
+     * virtual [resolve pass through]
+     * virtual [resolve move]
      *         [post-move]
-     *         [IF m_stepsTaken != m_speed: GOTO {move}]
+     *         IF m_stepsTaken != m_speed: GOTO [move]
      * virtual [attack]
      * virtual [damage]
      *         [end]
@@ -98,7 +106,7 @@ public abstract class GridEntity : MonoBehaviour
             Kill();
     }
 
-    public void MoveStep()
+    virtual public void MoveStep()
     {
         // set our target node based on our m_moveDirection
         // this should be set within the analysis step
@@ -125,14 +133,14 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-    public void ResolvePassThroughStep()
+    virtual public void ResolvePassThroughStep()
     {
         if (!CheckForPassThrough())
             return;
 
         // TODO @matthew/@jay : this does not respect entities with the isAttack flag yet
 
-        List<GridEntity> winningEntities = new List<GridEntity>(m_previousNode.GetGridEntities());
+        List<GridEntity> winningEntities = GetEntitiesOnNode(m_previousNode);
         List<GridEntity> losingEntities = new List<GridEntity>();
         winningEntities.Add(this);
 
@@ -183,7 +191,7 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-    public void ResolveMoveStep()
+    virtual public void ResolveMoveStep()
     {
         if (m_currentNode == null)
             return;
@@ -196,7 +204,7 @@ public abstract class GridEntity : MonoBehaviour
         List<GridEntity> winning_objects; // everything
         List<GridEntity> losing_objects= new List<GridEntity>();
 
-        winning_objects = new List<GridEntity>(m_currentNode.GetGridEntities());
+        winning_objects = GetEntitiesOnNode(m_currentNode);
 
         // check for conflict on current node
         if (!CheckForConflict())
@@ -262,7 +270,7 @@ public abstract class GridEntity : MonoBehaviour
         // someone messed up bad, people are inside each other, lets clean them up
         if (m_currentNode != null && m_currentNode.GetGridEntities().Count > 1)
         {
-            List<GridEntity> entities = m_currentNode.GetGridEntities();
+            List<GridEntity> entities = GetEntitiesOnNode(m_currentNode);
 
             // remove dead entities from tile, we don't care about them
             for (int i = entities.Count - 1; i >= 0; i--)
@@ -274,55 +282,58 @@ public abstract class GridEntity : MonoBehaviour
                 }
             }
 
-            // only log after removing the dead
-            Debug.LogWarning("[GridEntity] - EndStep(): multiple entities on the same tile at end of turn");
-
-            bool playerPresent = false;
-            int highestMass = int.MinValue;
-
-            // find what the highest mass of an entity is
-            foreach (var entity in entities)
+            if (entities.Count > 1)
             {
-                if (entity.Mass > highestMass)
+                // only log after removing the dead
+                Debug.LogWarning("[GridEntity] - EndStep(): multiple entities on the same tile at end of turn");
+
+                bool playerPresent = false;
+                int highestMass = int.MinValue;
+
+                // find what the highest mass of an entity is
+                foreach (var entity in entities)
                 {
-                    highestMass = entity.Mass;
-                    if (entity.isPlayer)
+                    if (entity.Mass > highestMass)
                     {
-                        playerPresent = true;
-                        break; // we don't care about the highest mass anymore
+                        highestMass = entity.Mass;
+                        if (entity.isPlayer)
+                        {
+                            playerPresent = true;
+                            break; // we don't care about the highest mass anymore
+                        }
                     }
                 }
-            }
 
-            // if player is on tile, they take absolute priority
-            if (playerPresent)
-            {
-                for (int i = entities.Count - 1; i >= 0; i--)
+                // if player is on tile, they take absolute priority
+                if (playerPresent)
                 {
-                    if (!entities[i].isPlayer)
+                    for (int i = entities.Count - 1; i >= 0; i--)
+                    {
+                        if (!entities[i].isPlayer)
+                        {
+                            entities[i].Kill();
+                            entities.RemoveAt(i);
+                        }
+                    }
+                }
+                else
+                {
+                    // remove all entities that are not of highest mass
+                    for (int i = entities.Count - 1; i >= 0; i--)
+                    {
+                        if (entities[i].Mass < highestMass)
+                        {
+                            entities[i].Kill();
+                            entities.RemoveAt(i);
+                        }
+                    }
+
+                    // all other options have failed to solve issue - only leave the entity at entities[0] alive
+                    for (int i = entities.Count - 1; i > 0; i--)
                     {
                         entities[i].Kill();
                         entities.RemoveAt(i);
                     }
-                }
-            }
-            else
-            {
-                // remove all entities that are not of highest mass
-                for (int i = entities.Count - 1; i >= 0; i--)
-                {
-                    if (entities[i].Mass < highestMass)
-                    {
-                        entities[i].Kill();
-                        entities.RemoveAt(i);
-                    }
-                }
-
-                // all other options have failed to solve issue - only leave the entity at entities[0] alive
-                for (int i = entities.Count - 1; i > 0; i--)
-                {
-                    entities[i].Kill();
-                    entities.RemoveAt(i);
                 }
             }
         }
@@ -331,7 +342,7 @@ public abstract class GridEntity : MonoBehaviour
         {
             // TODO @matthew/@jay - don't remove immediately to allow for death animation
             // kill entity
-            KillSelf();
+            CleanUp();
         }
     }
 
@@ -347,17 +358,20 @@ public abstract class GridEntity : MonoBehaviour
     virtual public bool CheckForConflict()
     {
         // check for conflict on current node
-        if (m_currentNode != null && m_currentNode.CheckForConflict())
-            return true;
-
+        if (m_currentNode != null)
+        {
+            List<GridEntity> entities = GetEntitiesOnNode(m_currentNode);
+            if (entities.Count > 1)
+                return true;
+        }
         return false;
-        //return CheckForPassThrough();
     }
 
     virtual public bool CheckForPassThrough()
     {
         // get node behind entity
-        GridNode behindNode = m_currentNode.Neighbors[(-m_movementDirection).RotationToIndex(45)].reference;
+        // GridNode behindNode = m_currentNode.Neighbors[(-m_movementDirection).RotationToIndex(45)].reference;
+        GridNode behindNode = m_previousNode;
 
         // pass through is impossible so return
         if (behindNode == null)
@@ -729,7 +743,7 @@ public abstract class GridEntity : MonoBehaviour
             m_currentNode.AddEntity(this);
     }
 
-    virtual protected void KillSelf()
+    virtual protected void CleanUp()
     {
         RemoveFromCurrentNode();
         m_stepController.RemoveEntity(this);
@@ -739,6 +753,26 @@ public abstract class GridEntity : MonoBehaviour
     virtual public void Kill()
     {
         m_flags.SetFlags(flags.isDead, true);
+    }
+
+    protected List<GridEntity> GetEntitiesOnNode(GridNode node, bool discardAttacks = true)
+    {
+        if (node == null)
+            return new List<GridEntity>();
+
+        List<GridEntity> entities = new List<GridEntity>(node.GetGridEntities());
+        if (discardAttacks)
+        {
+            for (int i = entities.Count - 1; i >= 0; i--)
+            {
+                if (entities[i].m_flags.IsFlagsSet(flags.isAttack))
+                {
+                    entities.RemoveAt(i);
+                }
+            }
+        }
+
+        return entities;
     }
 
     private void OnDrawGizmos()
