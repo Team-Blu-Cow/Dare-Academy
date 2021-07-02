@@ -93,7 +93,7 @@ public abstract class GridEntity : MonoBehaviour
 
     public void PreMoveStep()
     {
-        // if not on node kill entity, this will preven next steps from being run
+        // if not on node kill entity, this will prevent next steps from being run
         if (m_currentNode == null)
             Kill();
     }
@@ -264,7 +264,7 @@ public abstract class GridEntity : MonoBehaviour
         {
             List<GridEntity> entities = m_currentNode.GetGridEntities();
 
-            // remove dead entities from tile, we dont care about them
+            // remove dead entities from tile, we don't care about them
             for (int i = entities.Count - 1; i >= 0; i--)
             {
                 if (entities[i].isDead)
@@ -289,7 +289,7 @@ public abstract class GridEntity : MonoBehaviour
                     if (entity.isPlayer)
                     {
                         playerPresent = true;
-                        break; // we dont care about the highest mass anymore
+                        break; // we don't care about the highest mass anymore
                     }
                 }
             }
@@ -384,8 +384,6 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual protected void ResolveMassConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
-        // TODO @jay/@matthew : this does not account for a situation where both a pass-through
-
         int highestMass = int.MinValue;
 
         foreach (var entity in winning_objects)
@@ -499,8 +497,6 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual protected void ResolveSpeedConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
     {
-        // TODO @jay/@matthew : this does not account for a situation where both a pass-through
-
         int highestSpeed = int.MinValue;
 
         foreach (var entity in winning_objects)
@@ -618,8 +614,6 @@ public abstract class GridEntity : MonoBehaviour
         if (m_flags.IsFlagsSet(flags.isPushable))
         {
             // check to see if entity and winning entity are in the correct position to be pushed by another entity
-            // TODO @matthew/@jay : this does not respect entities that have moved with a speed >= 2 due to
-            // it using the previous node
             if (winningEntity.m_previousNode.position.grid == m_currentNode.position.grid - winningEntity.m_movementDirection)
                 moveDirection = winningEntity.m_movementDirection;
             // if entity should not be pushed, use regular direction

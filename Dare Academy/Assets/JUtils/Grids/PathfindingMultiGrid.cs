@@ -63,7 +63,6 @@ namespace JUtil.Grids
                 count++;
             }
 
-            // TODO: pathfinder only works with a single grid, it should work with multiple
             pathfinder = new Pathfinder<T>(Grid<T>.CompositeGridArea(grids.ToArray()));
 
             foreach (var link in nodeOverrides.gridLinks)
