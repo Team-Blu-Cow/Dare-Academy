@@ -37,6 +37,8 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
+    public bool isPlayer { get { return m_flags.IsFlagsSet(flags.isPlayer); } }
+
     public bool isFinishedMoving { get { return m_speed <= m_stepsTaken; } }
 
     protected StepController m_stepController;
@@ -257,24 +259,71 @@ public abstract class GridEntity : MonoBehaviour
         m_stepsTaken = 0;
         m_speed = 0;
 
-        // someone messed up bad, people are inside each other, lets clean the up
+        // someone messed up bad, people are inside each other, lets clean them up
         if (m_currentNode != null && m_currentNode.GetGridEntities().Count > 1)
         {
             List<GridEntity> entities = m_currentNode.GetGridEntities();
 
+            // remove dead entities from tile, we dont care about them
+            for (int i = entities.Count - 1; i >= 0; i--)
+            {
+                if (entities[i].isDead)
+                {
+                    entities[i].Kill();
+                    entities.RemoveAt(i);
+                }
+            }
+
+            // only log after removing the dead
+            Debug.LogWarning("[GridEntity] - EndStep(): multiple entities on the same tile at end of turn");
+
+            bool playerPresent = false;
             int highestMass = int.MinValue;
 
+            // find what the highest mass of an entity is
             foreach (var entity in entities)
             {
                 if (entity.Mass > highestMass)
                 {
                     highestMass = entity.Mass;
+                    if (entity.isPlayer)
+                    {
+                        playerPresent = true;
+                        break; // we dont care about the highest mass anymore
+                    }
                 }
             }
 
-            if (Mass < highestMass)
+            // if player is on tile, they take absolute priority
+            if (playerPresent)
             {
-                Kill();
+                for (int i = entities.Count - 1; i >= 0; i--)
+                {
+                    if (!entities[i].isPlayer)
+                    {
+                        entities[i].Kill();
+                        entities.RemoveAt(i);
+                    }
+                }
+            }
+            else
+            {
+                // remove all entities that are not of highest mass
+                for (int i = entities.Count - 1; i >= 0; i--)
+                {
+                    if (entities[i].Mass < highestMass)
+                    {
+                        entities[i].Kill();
+                        entities.RemoveAt(i);
+                    }
+                }
+
+                // all other options have failed to solve issue - only leave the entity at entities[0] alive
+                for (int i = entities.Count - 1; i > 0; i--)
+                {
+                    entities[i].Kill();
+                    entities.RemoveAt(i);
+                }
             }
         }
 
