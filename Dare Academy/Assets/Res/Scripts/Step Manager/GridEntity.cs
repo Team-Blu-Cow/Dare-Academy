@@ -13,10 +13,9 @@ public abstract class GridEntity : MonoBehaviour
     protected Vector2 m_movementDirection;
 
     [SerializeField] protected int m_mass = 2;
-    protected int m_speed     = 1;
-    protected int m_health    = 1;
-
-    protected int m_stepsTaken = 0;
+    protected int m_speed       = 1;
+    protected int m_health      = 1;
+    protected int m_stepsTaken  = 0;
 
     [SerializeField] protected int m_roomIndex = 0;
 
@@ -62,7 +61,6 @@ public abstract class GridEntity : MonoBehaviour
         m_roomIndex = m_currentNode.roomIndex;
 
         transform.position = Position.world;
-        m_targetNode = m_currentNode;
 
         m_stepController = App.GetModule<LevelModule>().LevelManager.StepController;
         m_currentNode.AddEntity(this);
@@ -93,28 +91,34 @@ public abstract class GridEntity : MonoBehaviour
 
     public void PreMoveStep()
     {
+        // if not on node kill entity, this will preven next steps from being run
         if (m_currentNode == null)
-        {
-            m_flags.SetFlags(flags.isDead, true);
-        }
+            Kill();
     }
 
     public void MoveStep()
     {
+        // set our target node based on our m_moveDirection
+        // this should be set within the analysis step
         SetTargetNode(m_movementDirection);
+
         // set currentNode to targetNode
         // keep a record of where we came from
-        if (m_targetNode != null && m_currentNode != null)
+        if (m_targetNode != null)
         {
+            // remove ourself from currentNode
+            // previous and target node is overkill to account for sloppy programing
             if (m_previousNode != null)
                 m_previousNode.RemoveEntity(this);
             m_currentNode.RemoveEntity(this);
             m_targetNode.RemoveEntity(this);
 
+            // update our position
             m_previousNode = m_currentNode;
             m_currentNode = m_targetNode;
             m_targetNode = null;
 
+            // add ourself to the list of entities currently on the node
             m_currentNode.AddEntity(this);
         }
     }
@@ -175,27 +179,6 @@ public abstract class GridEntity : MonoBehaviour
             entity.m_speed = 0;
             entity.m_movementDirection = Vector2.zero;
         }
-
-        /*
-        bool isPlayer = false;
-
-        foreach (var entity in winningEntities)
-        {
-            if (entity.m_flags.IsFlagsSet(flags.isPlayer))
-                isPlayer = true;
-        }
-
-        if (isPlayer)
-        {
-            // player conflict resolution
-            ResolvePlayerConflict(ref winningEntities, ref losingEntities);
-            RemovePassThrough(winningEntities, losingEntities);
-            return;
-        }
-
-        // random conflict resolution
-        ResolveRandomConflict(ref winningEntities, ref losingEntities);
-        RemovePassThrough(winningEntities, losingEntities);//*/
     }
 
     public void ResolveMoveStep()
@@ -203,14 +186,13 @@ public abstract class GridEntity : MonoBehaviour
         if (m_currentNode == null)
             return;
 
+        // when multiple entities are on the same tile:
+        // all objects will be placed in winning_objects
+        // each stage of the collision resolution process will move objects to losing_objects until only 1 remains
+        // every object that is contained within losing_objects either returns to its starting point or is pushed by the sole remaining object in winning_objects
+
         List<GridEntity> winning_objects; // everything
         List<GridEntity> losing_objects= new List<GridEntity>();
-
-        // bool passThrough = CheckForPassThrough();
-        // if (passThrough)
-        //     winning_objects = m_previousNode.GetGridEntities();
-        // else
-        //     winning_objects = m_currentNode.GetGridEntities();
 
         winning_objects = new List<GridEntity>(m_currentNode.GetGridEntities());
 
@@ -245,6 +227,8 @@ public abstract class GridEntity : MonoBehaviour
         if (winning_objects.Count > 1)
         {
             // resolve randomly
+            // if a solution cant be found pick a random object
+            // in reality, the object picked is always the first one to be initialised by the engine
             ResolveRandomConflict(ref winning_objects, ref losing_objects);
         }
 
@@ -256,6 +240,7 @@ public abstract class GridEntity : MonoBehaviour
 
     public void PostMoveStep()
     {
+        // iterate counter of steps taken this turn, this is reset in End()
         m_stepsTaken++;
     }
 
@@ -270,7 +255,10 @@ public abstract class GridEntity : MonoBehaviour
     public void EndStep()
     {
         m_stepsTaken = 0;
-        if (m_currentNode != null && m_currentNode.GetGridEntities().Count > 1) // someone messed up bad, people are inside each other
+        m_speed = 0;
+
+        // someone messed up bad, people are inside each other, lets clean the up
+        if (m_currentNode != null && m_currentNode.GetGridEntities().Count > 1)
         {
             List<GridEntity> entities = m_currentNode.GetGridEntities();
 
@@ -290,8 +278,6 @@ public abstract class GridEntity : MonoBehaviour
             }
         }
 
-        m_speed = 0;
-
         if (isDead)
         {
             // TODO @matthew/@jay - don't remove immediately to allow for death animation
@@ -302,7 +288,6 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void AnalyseStep()
     {
-        return;
     }
 
     virtual public void DrawStep()
