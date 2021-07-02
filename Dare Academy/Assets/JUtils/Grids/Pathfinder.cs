@@ -183,6 +183,12 @@ namespace JUtil.Grids
             set { neighbors[dir.RotationToIndex()] = value; }
         }
 
+        public NodeNeighbor<T> this[Vector2 dir, int sliceAngle]
+        {
+            get { return neighbors[dir.RotationToIndex(sliceAngle)]; }
+            set { neighbors[dir.RotationToIndex(sliceAngle)] = value; }
+        }
+
         public NodeNeighborhood(int count)
         {
             neighbors = new NodeNeighbor<T>[count];
@@ -222,7 +228,4 @@ namespace JUtil.Grids
             overridden = false;
         }
     }
-
-
-
 }

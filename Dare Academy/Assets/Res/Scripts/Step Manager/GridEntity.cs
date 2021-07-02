@@ -618,7 +618,16 @@ public abstract class GridEntity : MonoBehaviour
                 moveDirection = winningEntity.m_movementDirection;
             // if entity should not be pushed, use regular direction
             else
-                moveDirection = -m_movementDirection;
+            {
+                if (m_movementDirection == Vector2.zero)
+                {
+                    moveDirection = winningEntity.m_movementDirection;
+                }
+                else
+                {
+                    moveDirection = -m_movementDirection;
+                }
+            }
         }
         else
         {
