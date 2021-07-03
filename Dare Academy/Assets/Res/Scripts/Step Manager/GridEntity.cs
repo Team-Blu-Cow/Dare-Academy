@@ -60,18 +60,21 @@ public abstract class GridEntity : MonoBehaviour
     protected virtual void Start()
     {
         m_currentNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(transform.position);
+        
         if (m_currentNode == null)
         {
             m_roomIndex = -1;
             return;
         }
 
+        m_currentNode.AddEntity(this);
         m_roomIndex = m_currentNode.roomIndex;
 
         transform.position = Position.world;
 
         m_stepController = App.GetModule<LevelModule>().LevelManager.StepController;
-        m_currentNode.AddEntity(this);
+
+        m_stepController.RoomChangeEvent += RoomChange;
 
         if (m_roomIndex == m_stepController.m_currentRoomIndex)
         {
@@ -79,6 +82,11 @@ public abstract class GridEntity : MonoBehaviour
         }
 
         AnalyseStep();
+    }
+
+    private void OnDestroy()
+    {
+        m_stepController.RoomChangeEvent -= RoomChange;
     }
 
     // STEP FLOW METHODS **************************************************************************
@@ -262,7 +270,7 @@ public abstract class GridEntity : MonoBehaviour
     {
     }
 
-    public void EndStep()
+    virtual public void EndStep()
     {
         m_stepsTaken = 0;
         m_speed = 0;
@@ -572,6 +580,14 @@ public abstract class GridEntity : MonoBehaviour
             float zz = Mathf.Lerp(transform.position.z, m_currentNode.position.world.z, 0.5f);
             transform.position = new Vector3(xx, yy, zz);
         }
+    }
+
+    virtual public void RoomChange()
+    {
+        if (m_roomIndex == m_stepController.m_currentRoomIndex)
+            m_stepController.AddEntity(this);
+        else
+            m_stepController.RemoveEntity(this);
     }
 
     public void SetMovementDirection(Vector2 direction, int speed = 1)
