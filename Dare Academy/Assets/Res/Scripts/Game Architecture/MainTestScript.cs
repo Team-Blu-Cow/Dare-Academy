@@ -1,18 +1,28 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Threading.Tasks;
+
 using blu;
 
 // had to change this due to a conflict with JUtils
 public class MainTestScript : MonoBehaviour
 {
+    public class TempClass
+    {
+        public int testInteger = 0;
+        public bool testBoolean = true;
+        public float testFloat = 1f;
+    }
+
+    public TempClass test = new TempClass();
+
     private bool _paused;
 
     #region Level Loading
 
     public void LoadLevel(string in_scene)
     {
-        if (Random.value < 0.5f)
+        if (UnityEngine.Random.value < 0.5f)
         {
             App.GetModule<SceneModule>().SwitchScene(in_scene, TransitionType.LRSweep);
             App.GetModule<SceneModule>().SwitchScene(in_scene, TransitionType.LRSweep);
@@ -25,7 +35,7 @@ public class MainTestScript : MonoBehaviour
 
     public void LoadLevel(InputAction.CallbackContext context)
     {
-        if (Random.value < 0.5f)
+        if (UnityEngine.Random.value < 0.5f)
         {
             App.GetModule<SceneModule>().SwitchScene("Level02", TransitionType.LRSweep, LoadingBarType.BottomRightRadial);
         }
