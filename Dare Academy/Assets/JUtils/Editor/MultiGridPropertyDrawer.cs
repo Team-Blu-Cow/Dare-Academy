@@ -5,7 +5,6 @@ using System;
 
 namespace JUtil.Grids
 {
-    
     [CustomPropertyDrawer(typeof(PathfindingMultiGrid<>))]
     public class MultiGridPropertyDrawer : PropertyDrawer
     {
@@ -21,17 +20,17 @@ namespace JUtil.Grids
         [SerializeField] private List<bool> gridDropdowns;
         [SerializeField] private List<bool> overrideDropdowns;
 
-        float lineHeight;
-        float padding;
+        private float lineHeight;
+        private float padding;
 
-        float lineCount;
-        Rect m_position;
+        private float lineCount;
+        private Rect m_position;
 
-        const float overflowWidth = 332;
+        private const float overflowWidth = 332;
 
-        SerializedProperty[] extralists;
+        private SerializedProperty[] extralists;
 
-        Color backgroundColour = new Color(0.5f, 0.5f, 0.5f, 0.2f);
+        private Color backgroundColour = new Color(0.5f, 0.5f, 0.5f, 0.2f);
 
         private GUIStyle BlockColour = new GUIStyle
         {
@@ -107,9 +106,13 @@ namespace JUtil.Grids
         }
 
         private void NewLine() => lineCount += lineHeight + padding;
+
         private void NewLine(float val) => lineCount += (lineHeight + padding) * val;
 
-        private float IndentOffset() { return 10f * EditorGUI.indentLevel; }
+        private float IndentOffset()
+        {
+            return 10f * EditorGUI.indentLevel;
+        }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
@@ -180,7 +183,7 @@ namespace JUtil.Grids
                                 lines += 2;
                                 if (linkProp.FindPropertyRelative("grid1").isExpanded)
                                 {
-                                    lines+=3;
+                                    lines += 3;
                                     if (EditorGUIUtility.currentViewWidth < overflowWidth)
                                         lines++;
                                 }
@@ -189,12 +192,10 @@ namespace JUtil.Grids
                                     lines += 3;
                                     if (EditorGUIUtility.currentViewWidth < overflowWidth)
                                         lines++;
-                                        
                                 }
                             }
                         }
                     }
-                    
                 }
 
                 lines++;
@@ -220,7 +221,6 @@ namespace JUtil.Grids
                 {
                     lines += property.FindPropertyRelative("debugSettings").CountInProperty() + 2;
                 }
-
             }
             return ((lineHeight + padding) * lines) + (padding * paddingLines);
         }
@@ -302,27 +302,25 @@ namespace JUtil.Grids
                 NewLine();
                 rect = GetSingleLineRect();
                 string[] names = Supyrb.SerializedPropertyExtensions.GetValue<string[]>(property.FindPropertyRelative("gridNames"));
-                string linkLabel = "Link " + i.ToString() + "\t( " 
-                    + " " + names[linkProp.FindPropertyRelative("grid1").FindPropertyRelative("index").intValue] 
+                string linkLabel = "Link " + i.ToString() + "\t( "
+                    + " " + names[linkProp.FindPropertyRelative("grid1").FindPropertyRelative("index").intValue]
                     + " ⟷"
                     + " " + names[linkProp.FindPropertyRelative("grid2").FindPropertyRelative("index").intValue]
                     + " )";
 
                 linkProp.isExpanded = EditorGUI.Foldout(rect, linkProp.isExpanded, linkLabel);
 
-                if(linkProp.isExpanded)
+                if (linkProp.isExpanded)
                 {
                     EditorGUI.indentLevel++;
                     NewLine();
 
                     rect = GetSingleLineRect();
-                    
 
                     linkProp.FindPropertyRelative("grid1").isExpanded = EditorGUI.Foldout(rect, linkProp.FindPropertyRelative("grid1").isExpanded, linkProp.FindPropertyRelative("grid1").displayName);
 
                     if (linkProp.FindPropertyRelative("grid1").isExpanded)
                     {
-                        
                         EditorGUI.indentLevel++;
                         NewLine();
 
@@ -360,7 +358,6 @@ namespace JUtil.Grids
                         rect = GetSingleLineRect();
                         EditorGUI.LabelField(rect, "Direction");
 
-
                         EditorGUI.indentLevel--;
                     }
 
@@ -388,7 +385,7 @@ namespace JUtil.Grids
                         NewLine();
                         rect = GetSingleLineRect();
 
-                        rect.x = EditorGUIUtility.labelWidth + IndentOffset()/2 - 5;
+                        rect.x = EditorGUIUtility.labelWidth + IndentOffset() / 2 - 5;
                         rect.width = EditorGUIUtility.fieldWidth;
                         if (EditorGUIUtility.currentViewWidth < overflowWidth)
                             rect.x += 15;
@@ -414,7 +411,6 @@ namespace JUtil.Grids
                 }
             }
 
-
             EditorGUI.indentLevel--;
             EditorGUI.indentLevel--;
         }
@@ -431,13 +427,13 @@ namespace JUtil.Grids
 
                 if (property.FindPropertyRelative("tileData").FindPropertyRelative("tileData").isExpanded)
                 {
-                    NewLine(property.FindPropertyRelative("tileData").FindPropertyRelative("tileData").arraySize+1);
+                    NewLine(property.FindPropertyRelative("tileData").FindPropertyRelative("tileData").arraySize + 1);
                     lineCount += padding * 5;
                 }
 
                 if (property.FindPropertyRelative("tileData").FindPropertyRelative("tilemaps").isExpanded)
                 {
-                    NewLine(property.FindPropertyRelative("tileData").FindPropertyRelative("tilemaps").arraySize+1);
+                    NewLine(property.FindPropertyRelative("tileData").FindPropertyRelative("tilemaps").arraySize + 1);
                     lineCount += padding * 5;
                 }
             }
@@ -452,22 +448,22 @@ namespace JUtil.Grids
             if (property.FindPropertyRelative("debugSettings").isExpanded)
             {
                 rect.height += (lineHeight + padding) * 9;
-                rect.y += lineHeight + (padding*3);
-                rect.x += IndentOffset()*2;
+                rect.y += lineHeight + (padding * 3);
+                rect.x += IndentOffset() * 2;
                 rect.width -= IndentOffset() * 2;
 
                 EditorGUI.DrawRect(rect, backgroundColour);
 
                 //rect.height += (lineHeight + padding);
                 rect.y -= lineHeight + (padding * 3);
-                rect.x -= IndentOffset()*2;
+                rect.x -= IndentOffset() * 2;
                 rect.width += IndentOffset();
             }
-                
+
             EditorGUI.PropertyField(rect, property.FindPropertyRelative("debugSettings"), true);
         }
 
-        private void DrawArrayDropdown(SerializedProperty property, ref bool fold, SerializedProperty[] otherLists, List<bool> boolList )
+        private void DrawArrayDropdown(SerializedProperty property, ref bool fold, SerializedProperty[] otherLists, List<bool> boolList)
         {
             Rect dropdown = GetSingleLineRect();
 
@@ -482,7 +478,6 @@ namespace JUtil.Grids
             //dropdown.width += IndentOffset();
             dropdown.x = EditorGUIUtility.currentViewWidth - 53;// - IndentOffset();
             dropdown.width = 49;// + IndentOffset();
-            
 
             EditorGUI.PropertyField(dropdown, arraySizeProp, GUIContent.none);
             //EditorGUI.FloatField(dropdown, m_position.width);
@@ -566,7 +561,7 @@ namespace JUtil.Grids
                     );
 
                 Rect rect = GetSingleLineRect();
-                rect.width -= IndentOffset()/2;
+                rect.width -= IndentOffset() / 2;
 
                 lineCount += padding;
 
@@ -595,7 +590,6 @@ namespace JUtil.Grids
             }
         }
 
-
         private void DrawGridInfoListButtons(Rect rect, SerializedProperty list, List<bool> boolList, SerializedProperty[] extraLists = null)
         {
             rect.width /= 2;
@@ -609,7 +603,7 @@ namespace JUtil.Grids
                     {
                         array.arraySize += 1;
                         if (array.name == "gridNames")
-                            array.GetArrayElementAtIndex(list.arraySize-1).stringValue = "unnamed grid";
+                            array.GetArrayElementAtIndex(list.arraySize - 1).stringValue = "unnamed grid";
                     }
                 }
 
@@ -618,7 +612,7 @@ namespace JUtil.Grids
 
             rect.x += rect.width;
 
-            if (GUI.Button(rect,removeButtonContent) && list.arraySize > 0)
+            if (GUI.Button(rect, removeButtonContent) && list.arraySize > 0)
             {
                 int oldSize = list.arraySize;
                 if (extraLists != null)

@@ -21,6 +21,8 @@ namespace JUtil
             return null;
         }
 
+        // VECTOR2 HELPER METHODS *****************************************************************
+
         public static Vector2 Rotate(this Vector2 v, float degrees)
         {
             float radians = degrees * Mathf.Deg2Rad;
@@ -33,10 +35,49 @@ namespace JUtil
             return new Vector2(-1*(cos * tx - sin * ty), sin * tx + cos * ty);
         }
 
+        public static float GetRotation(this Vector2 v)
+        {
+            Vector2 v_up = Vector2.up;
+            var sign = BetterSign(v_up.x * v.y - v_up.y * v.x);
+
+            if(sign <= 0)
+                return Vector2.Angle(v_up, v);
+            else
+                return 360 - Vector2.Angle(v_up, v);
+        }
+
+        public static float GetRotation(this Vector2Int v)
+        {
+            Vector2Int v_up = Vector2Int.up;
+            var sign = BetterSign(v_up.x * v.y - v_up.y * v.x);
+
+            if (sign <= 0)
+                return Vector2.Angle(v_up, v);
+            else
+                return 360 - Vector2.Angle(v_up, v);
+        }
+
+        public static int RotationToIndex(this Vector2 v, int sliceSize = 45)
+        {
+            float angle = v.GetRotation();
+
+            return Mathf.RoundToInt(angle) / sliceSize;
+        }
+
+        public static int RotationToIndex(this Vector2Int v, int sliceSize = 45)
+        {
+            float angle = v.GetRotation();
+
+            return Mathf.RoundToInt(angle) / sliceSize;
+        }
+
+        // BETTER SIGN MENTHODS *******************************************************************
+        // Returns -1, 0 or 1 depending on the numbers sign or if it is zero 
+
         public static float BetterSign(float value)
         {
-            int temp = Mathf.RoundToInt(value);
-            if (temp == 0)
+            //int temp = Mathf.RoundToInt(value);
+            if (value < 0.00001f && value > -0.00001f)
                 return 0f;
 
             return Mathf.Sign(value);
@@ -49,6 +90,8 @@ namespace JUtil
 
             return (int)Mathf.Sign(value);
         }
+
+        // PERFORMANCE TESTING METHODS ************************************************************
 
         public static void ShowTime(double ticks, string message)
         {
