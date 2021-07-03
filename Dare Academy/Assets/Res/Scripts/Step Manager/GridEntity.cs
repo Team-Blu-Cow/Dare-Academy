@@ -360,6 +360,9 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void DrawStep()
     {
+        if (m_currentNode == null)
+            return;
+        StartCoroutine(AnimateMove(m_stepController.m_stepTime));
     }
 
     // RESOLVE MOVE CONFLICT METHODS **************************************************************
@@ -567,19 +570,41 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
+    // DRAW STEP METHODS **************************************************************************
+
+    public IEnumerator AnimateMove(float stepTime)
+    {
+        Vector3 startPos = transform.position;
+        Vector3 endPos = m_currentNode.position.world;
+
+        float currentTime = 0;
+
+        while(currentTime < stepTime)
+        {
+            currentTime += Time.deltaTime;
+
+            float xx = Mathf.Lerp(startPos.x, endPos.x, currentTime/stepTime);
+            float yy = Mathf.Lerp(startPos.y, endPos.y, currentTime/stepTime);
+            float zz = Mathf.Lerp(startPos.z, endPos.z, currentTime/stepTime);
+            transform.position = new Vector3(xx, yy, zz);
+
+            yield return null;
+        }
+    }
+
     // HELPER METHODS *****************************************************************************
 
     public void Update()
     {
         if (RoomIndex == -1)
             return;
-        if (m_currentNode != null)
+        /*if (m_currentNode != null)
         {
             float xx = Mathf.Lerp(transform.position.x, m_currentNode.position.world.x, 0.5f);
             float yy = Mathf.Lerp(transform.position.y, m_currentNode.position.world.y, 0.5f);
             float zz = Mathf.Lerp(transform.position.z, m_currentNode.position.world.z, 0.5f);
             transform.position = new Vector3(xx, yy, zz);
-        }
+        }*/
     }
 
     virtual public void RoomChange()

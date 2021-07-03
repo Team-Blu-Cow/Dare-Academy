@@ -3661,9 +3661,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a753e3d70ee54854292db70f5c4b71a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_stepTime: 0.2
   m_stepController:
     m_entities: []
     m_currentRoomIndex: 0
+    m_targetRoomIndex: 0
     m_stepTime: 0.1
     m_canStepAgain: 0
   m_grid:
@@ -3703,6 +3705,7 @@ MonoBehaviour:
       drawNodeConnections: 0
       showPathfindTime: 0
       showGridGenerationTime: 0
+  m_stepTimer: 0
 --- !u!4 &1529092322
 Transform:
   m_ObjectHideFlags: 0

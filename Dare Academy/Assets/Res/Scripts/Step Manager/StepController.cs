@@ -10,9 +10,9 @@ public class StepController
 
     [SerializeField] public int m_currentRoomIndex;
     [SerializeField] public int m_targetRoomIndex;
-    [SerializeField] public float m_stepTime;
+    [HideInInspector] public float m_stepTime;
 
-    [HideInInspector] public bool m_canStepAgain;
+    public bool m_canStepAgain;
 
     // EVENTS *************************************************************************************
     public delegate void RoomChangedDelegate();
@@ -22,6 +22,13 @@ public class StepController
     // INITIALISATION METHODS *********************************************************************
     public StepController()
     {
+        m_stepTime = 1;
+        m_entities = new List<GridEntity>();
+    }
+
+    public StepController(float stepTime)
+    {
+        m_stepTime = stepTime;
         m_entities = new List<GridEntity>();
     }
 
@@ -49,8 +56,6 @@ public class StepController
         CheckForRoomChange();
 
         AnalyseStep();
-
-
     }
 
     public void InitialAnalyse()
