@@ -4,6 +4,7 @@ using UnityEngine;
 using JUtil.Grids;
 using JUtil;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
@@ -61,3 +62,6 @@ public class LevelManager : MonoBehaviour
     }
 
 }
+
+
+

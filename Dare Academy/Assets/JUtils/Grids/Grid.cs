@@ -221,6 +221,12 @@ namespace JUtil.Grids
             world = Vector3.zero;
             grid = Vector2Int.zero;
         }
+
+        public GridNodePosition(GridNodePosition copy)
+        {
+            world = copy.world;
+            grid = copy.grid;
+        }
     }
 
 

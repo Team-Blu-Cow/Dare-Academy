@@ -35,6 +35,17 @@ public class TestControlableEntity : GridEntity
     {
         base.EndStep();
 
+        if(m_currentNode.overridden && m_currentNode.overrideType == JUtil.Grids.NodeOverrideType.SceneConnection)
+        {
+            // transition to a new scene
+            App.GetModule<SceneModule>().SwitchScene(
+                m_currentNode.lvlTransitionInfo.targetSceneName,
+                TransitionType.Slice,
+                LoadingBarType.BottomBar
+                );
+
+        }
+
         if (m_currentNode != null)
         {
             if (m_currentNode.roomIndex != m_roomIndex)
