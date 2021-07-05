@@ -831,7 +831,7 @@ public abstract class GridEntity : MonoBehaviour
         // TODO @matthew - validation checks on input parameters
         if (prefab)
         {
-            GridNode spawnNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(m_currentNode.position.world + direction); ;
+            GridNode spawnNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(sourceNode.position.world + direction); ;
 
             if (spawnNode == null)
                 return false;
