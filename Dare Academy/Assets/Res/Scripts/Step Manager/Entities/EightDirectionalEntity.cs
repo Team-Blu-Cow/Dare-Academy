@@ -31,15 +31,13 @@ public class EightDirectionalEntity : GridEntity
         //player = GameObject.Find("Green").GetComponent<GridEntity>();
     }
 
-
-
     public override void AnalyseStep()
     {
-        if(!isAttacking)
+        if (!isAttacking)
         {
             Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.grid, player.Position.grid);
 
-            if(path.Length > 1)
+            if (path.Length > 1)
             {
                 m_direction = path[1] - path[0];
             }
@@ -65,29 +63,29 @@ public class EightDirectionalEntity : GridEntity
         {
             SpawnBullets();
             m_attackCounter = 0;
-        }       
+        }
     }
 
     protected bool SpawnBullets()
     {
         if (m_bulletPrefab)
         {
-            Vector2[] m_attackDirections;
+            Vector2Int[] m_attackDirections;
             if (isFiringHorizontal)
             {
-                m_attackDirections = new Vector2[] { new Vector2(-1, 0), new Vector2(0, -1), new Vector2(1, 0), new Vector2(0, 1) };
+                m_attackDirections = new Vector2Int[] { new Vector2Int(-1, 0), new Vector2Int(0, -1), new Vector2Int(1, 0), new Vector2Int(0, 1) };
             }
             else
             {
-                m_attackDirections = new Vector2[] { new Vector2(-1, 1), new Vector2(1, -1), new Vector2(1, 1), new Vector2(-1, -1) };
+                m_attackDirections = new Vector2Int[] { new Vector2Int(-1, 1), new Vector2Int(1, -1), new Vector2Int(1, 1), new Vector2Int(-1, -1) };
             }
 
             for (int j = 0; j < 4; j++)
             {
                 Vector3 spawnPosition;
-                if (m_currentNode.Neighbors[m_attackDirections[j].RotationToIndex()].reference != null)
+                if (m_currentNode.GetNeighbour(m_attackDirections[j]) != null)
                 {
-                    spawnPosition = m_currentNode.Neighbors[m_attackDirections[j].RotationToIndex()].reference.position.world;
+                    spawnPosition = m_currentNode.GetNeighbour(m_attackDirections[j]).position.world;
                     GameObject obj = GameObject.Instantiate(m_bulletPrefab, spawnPosition, Quaternion.identity);
 
                     if (obj)
@@ -106,7 +104,6 @@ public class EightDirectionalEntity : GridEntity
                     }
                 }
             }
-            
         }
 
         return false;
