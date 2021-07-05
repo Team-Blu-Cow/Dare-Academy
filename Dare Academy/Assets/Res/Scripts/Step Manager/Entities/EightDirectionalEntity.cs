@@ -36,7 +36,9 @@ public class EightDirectionalEntity : GridEntity
 
     public override void AnalyseStep()
     {
-        Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.grid, player.Position.grid);
+        base.AnalyseStep();
+
+        Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, player.transform.position);
 
         if (path.Length < agroRange)
         {                
@@ -133,7 +135,6 @@ public class EightDirectionalEntity : GridEntity
         {
             if(telegraphPos[i] != new Vector2(0,0))
             {
-                Debug.Log("Drawing gizmos");
                 if(!isAttacking)
                 {
                     Gizmos.color = new Color(0, 0, 0, 0);
