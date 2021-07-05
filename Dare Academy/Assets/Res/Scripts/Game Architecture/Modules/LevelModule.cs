@@ -9,8 +9,8 @@ namespace blu
 
     public class LevelModule : Module
     {
-        private PathfindingMultiGrid<GridNode> m_grid = null;
-        public PathfindingMultiGrid<GridNode> MetaGrid
+        private PathfindingMultiGrid m_grid = null;
+        public PathfindingMultiGrid MetaGrid
         { set { m_grid = value; } get { return m_grid; } }
 
         public Grid<GridNode> Grid(int i)

@@ -5,7 +5,7 @@ using System;
 
 namespace JUtil.Grids
 {
-    [CustomPropertyDrawer(typeof(PathfindingMultiGrid<>))]
+    [CustomPropertyDrawer(typeof(PathfindingMultiGrid))]
     public class MultiGridPropertyDrawer : PropertyDrawer
     {
         private bool initialised = false;

@@ -11,11 +11,11 @@ public class LevelManager : MonoBehaviour
     [SerializeField] float m_stepTime = 0.1f;
     [SerializeField] StepController m_stepController;
 
-    [SerializeField] private PathfindingMultiGrid<GridNode> m_grid = null;
+    [SerializeField] private PathfindingMultiGrid m_grid = null;
 
     public StepController StepController
     { get { return m_stepController; } }
-    public PathfindingMultiGrid<GridNode> Grid
+    public PathfindingMultiGrid Grid
     { set { m_grid = value; } get { return m_grid; } }
 
     [SerializeField] float m_stepTimer = 0;
