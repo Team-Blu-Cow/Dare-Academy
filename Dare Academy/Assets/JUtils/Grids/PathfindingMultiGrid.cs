@@ -18,7 +18,7 @@ namespace JUtil.Grids
 
         [SerializeField] private string[] gridNames;
 
-        [SerializeField] private NodeOverrides nodeOverrides;
+        [SerializeField] private NodeOverrides<T> nodeOverrides;
 
         [SerializeField] private TileDatabase tileData;
 
@@ -70,12 +70,17 @@ namespace JUtil.Grids
                 T node1 = grids[link.grid1.index][link.grid1.position];
                 T node2 = grids[link.grid2.index][link.grid2.position];
 
-                OverrideNode(node1, node2, link.grid1);
-                OverrideNode(node2, node1, link.grid2);
+                CreateGridLinkingNode(node1, node2, link.grid1);
+                CreateGridLinkingNode(node2, node1, link.grid2);
+            }
+
+            foreach (var link in nodeOverrides.sceneLinks)
+            {
+                CreateSceneLinkingNode(link);
             }
         }
 
-        private void OverrideNode(T node, T partner, LinkID link)
+        private void CreateGridLinkingNode(T node, T partner, LinkID link)
         {
             node.overridden = true;
             node.overriddenDir = link.direction;
@@ -83,6 +88,40 @@ namespace JUtil.Grids
             node.Neighbors[link.direction].oneway = false;
             node.Neighbors[link.direction].overridden = true;
             node.Neighbors[link.direction].reference = partner;
+        }
+
+        private void CreateSceneLinkingNode(LevelTransitionInformation link)
+        {
+            T node                  = grids[link.myRoomIndex][link.myNodeIndex];
+            node.overridden         = true;
+            node.overriddenDir      = link.travelDirection;
+            node.lvlTransitionInfo  = link;
+
+            T transitionNode                    = new T();
+            transitionNode.position             = new GridNodePosition(node.position);
+            transitionNode.position.grid        = new Vector2Int(int.MaxValue, int.MaxValue);
+            transitionNode.position.world       = transitionNode.position.world + new Vector3(link.getTravelDirection().x, link.getTravelDirection().y, transitionNode.position.world.z);
+            transitionNode.overridden           = true;
+            transitionNode.overriddenDir        = (-(link.getTravelDirection())).RotationToIndex(45);
+            transitionNode.walkable             = true;
+            transitionNode.Neighbors            = new NodeNeighborhood<T>(8);
+            transitionNode.roomIndex            = link.myRoomIndex;
+            transitionNode.lvlTransitionInfo    = link;
+            transitionNode.overrideType         = NodeOverrideType.SceneConnection;
+
+            int negativeDir = (-(link.getTravelDirection())).RotationToIndex(45);
+
+            node.Neighbors[link.travelDirection].reference      = transitionNode;
+            node.Neighbors[link.travelDirection].connected      = true;
+            node.Neighbors[link.travelDirection].overridden     = true;
+            node.Neighbors[link.travelDirection].offsetVector   = link.getTravelDirection();
+
+            transitionNode.Neighbors[negativeDir].reference     = node;
+            transitionNode.Neighbors[negativeDir].connected     = true;
+            transitionNode.Neighbors[negativeDir].overridden    = true;
+            transitionNode.Neighbors[negativeDir].offsetVector  = -link.getTravelDirection();
+
+            nodeOverrides.sceneTransitionNodes.Add(transitionNode);
         }
 
         // GRID INITIALISATION METHODS ****************************************************************
@@ -267,7 +306,7 @@ namespace JUtil.Grids
                         gridI.DrawGizmos(debugSettings.drawGridColour, debugSettings.drawGridOutlineColour);
                 }
             }
-#endif
+
 
             foreach (var link in nodeOverrides.gridLinks)
             {
@@ -276,7 +315,7 @@ namespace JUtil.Grids
                 if (gridInfo.Length < link.grid1.index || gridInfo.Length < link.grid2.index)
                     continue;
 
-                if (!Application.isPlaying && debugSettings.drawNodes)
+                if (!Application.isPlaying && debugSettings.drawOverWrittenNodes)
                 {
                     Gizmos.DrawSphere(
                         gridInfo[link.grid1.index].ToWorld(link.grid1.position),
@@ -288,7 +327,7 @@ namespace JUtil.Grids
                         );
                 }
 
-                if (debugSettings.drawNodes)
+                if (debugSettings.drawOverWrittenNodes)
                 {
                     Gizmos.DrawLine(
                         gridInfo[link.grid1.index].ToWorld(link.grid1.position),
@@ -301,12 +340,52 @@ namespace JUtil.Grids
                         );
                 }
 
-                if (debugSettings.drawNodeConnections && debugSettings.drawNodes)
+                if (debugSettings.drawNodeConnections && debugSettings.drawOverWrittenNodes)
                     Gizmos.DrawLine(
                         gridInfo[link.grid1.index].ToWorld(link.grid1.position) + (gizmoDirections[link.grid1.direction] * 0.25f),
                         gridInfo[link.grid2.index].ToWorld(link.grid2.position) + (gizmoDirections[link.grid2.direction] * 0.25f)
                         );
             }
+
+            int count = 0;
+            foreach (var link in nodeOverrides.sceneLinks)
+            {
+                Gizmos.color = Color.magenta;
+
+                if (gridInfo.Length < link.myRoomIndex)
+                {
+                    count++;
+                    continue;
+                }
+                    
+
+                if (debugSettings.drawOverWrittenNodes)
+                {
+                    Gizmos.DrawSphere(
+                        gridInfo[link.myRoomIndex].ToWorld(link.myNodeIndex),
+                        gridInfo[link.myRoomIndex].cellSize / 8
+                        );
+
+                    if (EditorApplication.isPlaying)
+                    {
+                        Gizmos.DrawSphere(
+                            nodeOverrides.sceneTransitionNodes[count].position.world,
+                            gridInfo[link.myRoomIndex].cellSize / 8
+                            );
+                    }
+                }
+
+                if (debugSettings.drawOverWrittenNodes)
+                {
+                    Gizmos.DrawLine(
+                        gridInfo[link.myRoomIndex].ToWorld(link.myNodeIndex),
+                        gridInfo[link.myRoomIndex].ToWorld(link.myNodeIndex) + (gizmoDirections[link.travelDirection] * 0.25f)
+                        );
+                }
+
+                count++;
+            }
+#endif
         }
 
         private void DrawNodes(Grid<T> grid)
@@ -445,6 +524,7 @@ namespace JUtil.Grids
 
         [Space(5)]
         public bool drawNodes;
+        public bool drawOverWrittenNodes;
 
         public bool drawNodeConnections;
 
@@ -508,9 +588,13 @@ namespace JUtil.Grids
 
     // GRID NODE OVERRIDER CLASS ********************************************************************************************************************
     [System.Serializable]
-    public class NodeOverrides
+    public class NodeOverrides<T>
     {
         [SerializeField] public GridLink[] gridLinks;
+
+        [SerializeField] public List<LevelTransitionInformation> sceneLinks;
+
+        [HideInInspector] public List<T> sceneTransitionNodes;
     }
 
     // INTER-GRID LINKS *****************************************************************************************************************************
@@ -529,6 +613,29 @@ namespace JUtil.Grids
         [Range(0, 7)] public int direction;
     }
 
+    // LEVEL TRANSITION INFORMATION STRUCT **********************************************************************************************************
+    [System.Serializable]
+    public class LevelTransitionInformation
+    {
+        [Header("Node information")]
+        [SerializeField] public int myRoomIndex;
+        [SerializeField] public Vector2Int myNodeIndex;
+
+        [Header("Transition Information")]
+        [SerializeField] public string targetSceneName;
+        [SerializeField] public int targetRoomIndex;
+        [SerializeField] public Vector2Int targetNodeIndex;
+        [Range(0, 7), SerializeField] private int m_travelDirection;
+
+        public int travelDirection
+        { get { return m_travelDirection; } set { m_travelDirection = value; } }
+        public void SetTravelDirection(Vector2 vec) => m_travelDirection = vec.RotationToIndex();
+        public Vector2 getTravelDirection()
+        {
+            return Vector2.up.Rotate(m_travelDirection * 45);
+        }
+    }
+
     // MULTIGRID NODE INTERFACE *********************************************************************************************************************
     public interface MultiNode
     {
@@ -537,5 +644,16 @@ namespace JUtil.Grids
         public bool walkable { get; set; }
         public bool overridden { get; set; }
         public int overriddenDir { get; set; }
+
+        public NodeOverrideType overrideType { get; set; }
+
+        public LevelTransitionInformation lvlTransitionInfo { get; set; }
+    }
+
+    public enum NodeOverrideType
+    {
+        None = 0,
+        RoomConnection,
+        SceneConnection
     }
 }

@@ -12,12 +12,13 @@ public class TestEnitity : GridEntity
         SetMovementDirection(testDirection, moveSpeed);
     }
 
-    private void OnDrawGizmos()
+    protected void OnDrawGizmos()
     {
         if (!Application.isPlaying)
         {
             Gizmos.color = Color.white;
             Gizmos.DrawRay(transform.position, m_movementDirection);
         }
+
     }
 }

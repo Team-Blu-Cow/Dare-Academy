@@ -4,9 +4,11 @@ using UnityEngine;
 using JUtil.Grids;
 using JUtil;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
+    [SerializeField] float m_stepTime = 0.1f;
     [SerializeField] StepController m_stepController;
 
     [SerializeField] private PathfindingMultiGrid<GridNode> m_grid = null;
@@ -16,11 +18,11 @@ public class LevelManager : MonoBehaviour
     public PathfindingMultiGrid<GridNode> Grid
     { set { m_grid = value; } get { return m_grid; } }
 
-    float m_stepTimer = 0;
+    [SerializeField] float m_stepTimer = 0;
 
     private void Awake()
     {
-        m_stepController = new StepController();
+        m_stepController = new StepController(m_stepTime);
     }
 
     IEnumerator LateStart()
@@ -46,10 +48,11 @@ public class LevelManager : MonoBehaviour
 
     private void Update()
     {
-        if(Keyboard.current.spaceKey.wasPressedThisFrame)
+        if(m_stepController.m_canStepAgain && Keyboard.current.spaceKey.wasPressedThisFrame)
         {
             m_stepController.ExecuteStep();
             m_stepTimer = 0;
+            m_stepController.m_canStepAgain = false;
         }
 
         m_stepTimer += Time.deltaTime;
@@ -59,3 +62,6 @@ public class LevelManager : MonoBehaviour
     }
 
 }
+
+
+

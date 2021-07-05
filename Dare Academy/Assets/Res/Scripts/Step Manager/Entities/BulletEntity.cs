@@ -58,4 +58,9 @@ public class BulletEntity : GridEntity
             Kill();
         }
     }
+
+    public override void RoomChange()
+    {
+        CleanUp();
+    }
 }

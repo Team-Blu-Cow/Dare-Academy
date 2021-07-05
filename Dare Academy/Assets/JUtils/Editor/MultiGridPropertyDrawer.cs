@@ -11,14 +11,16 @@ namespace JUtil.Grids
         private bool initialised = false;
 
         private bool gridsFoldout = false;
-        private bool overridesFoldout = false;
+        private bool gridLinksOverridesFoldout = false;
+        private bool sceneLinksOverridesFoldout = false;
 
         private GUIContent
             addButtonContent = new GUIContent("+", "add group"),
             removeButtonContent = new GUIContent("-", "remove group");
 
         [SerializeField] private List<bool> gridDropdowns;
-        [SerializeField] private List<bool> overrideDropdowns;
+        [SerializeField] private List<bool> gridLinksOverrideDropdowns;
+        [SerializeField] private List<bool> sceneLinksOverrideDropdowns;
 
         private float lineHeight;
         private float padding;
@@ -69,50 +71,7 @@ namespace JUtil.Grids
             "↖"
         };
 
-        private void Initialise(SerializedProperty property)
-        {
-            if (initialised)
-                return;
-
-            SerializedProperty gridProperty = property.FindPropertyRelative("gridInfo");
-            SerializedProperty overrideProperty = property.FindPropertyRelative("nodeOverrides").FindPropertyRelative("gridLinks");
-
-            if (overrideDropdowns == null || overrideDropdowns.Count != overrideProperty.arraySize)
-            {
-                overrideDropdowns = new List<bool>();
-
-                for (int i = 0; i < overrideProperty.arraySize; i++)
-                {
-                    overrideDropdowns.Add(false);
-                }
-            }
-
-            if (gridDropdowns == null || gridDropdowns.Count != gridProperty.arraySize)
-            {
-                gridDropdowns = new List<bool>();
-
-                for (int i = 0; i < gridProperty.arraySize; i++)
-                {
-                    gridDropdowns.Add(false);
-                }
-            }
-
-            extralists = new SerializedProperty[]
-            {
-                property.FindPropertyRelative("gridNames")
-            };
-
-            initialised = true;
-        }
-
-        private void NewLine() => lineCount += lineHeight + padding;
-
-        private void NewLine(float val) => lineCount += (lineHeight + padding) * val;
-
-        private float IndentOffset()
-        {
-            return 10f * EditorGUI.indentLevel;
-        }
+        // DEFAULT PROPERTY DRAWER METHODS **********************************************************************************************************
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
         {
@@ -147,32 +106,8 @@ namespace JUtil.Grids
 
                     SerializedProperty overrideProp = property.FindPropertyRelative("nodeOverrides");
 
-                    if (overridesFoldout)
+                    if (gridLinksOverridesFoldout)
                     {
-                        /*for (int i = 0; i < overrideProp.FindPropertyRelative("gridLinks").arraySize; i++)
-                        {
-                            lines++;
-                            if (overrideProp.FindPropertyRelative("gridLinks").GetArrayElementAtIndex(i).isExpanded)
-                            {
-                                SerializedProperty linkProp = overrideProp.FindPropertyRelative("gridLinks").GetArrayElementAtIndex(i);
-
-                                lines += 2;
-                                if(linkProp.FindPropertyRelative("grid1").isExpanded)
-                                {
-                                    lines += 3;
-                                    if (EditorGUIUtility.currentViewWidth < overflowWidth)
-                                        lines++;
-                                }
-
-                                if (linkProp.FindPropertyRelative("grid2").isExpanded)
-                                {
-                                   lines += 3;
-                                    if (EditorGUIUtility.currentViewWidth < overflowWidth)
-                                        lines++;
-                                }
-                            }
-                        }*/
-                        //lines+= overrideProp.FindPropertyRelative("gridLinks").arraySize;
                         for (int i = 0; i < overrideProp.FindPropertyRelative("gridLinks").arraySize; i++)
                         {
                             lines++;
@@ -194,7 +129,38 @@ namespace JUtil.Grids
                                         lines++;
                                 }
                             }
+
+                            
                         }
+                    }
+
+                    lines++;
+                    // HERE IS THE SCENE OVERRIDES AREA
+
+                    SerializedProperty sceneLinksProp = overrideProp.FindPropertyRelative("sceneLinks");
+
+                    if (sceneLinksProp.isExpanded)
+                    {
+                        if(sceneLinksProp.arraySize > 0)
+                        {
+                            for (int i = 0; i < sceneLinksProp.arraySize; i++)
+                            {
+                                lines++;
+                                if (sceneLinksProp.GetArrayElementAtIndex(i).isExpanded)
+                                {
+                                    if (EditorGUIUtility.currentViewWidth < overflowWidth)
+                                        lines+=2;
+                                    lines += 8;
+                                }
+                            }
+
+                            lines++;
+                        }
+                        else
+                        {
+                            lines += 2;
+                        }
+                        
                     }
                 }
 
@@ -225,12 +191,6 @@ namespace JUtil.Grids
             return ((lineHeight + padding) * lines) + (padding * paddingLines);
         }
 
-        private Rect GetSingleLineRect()
-        {
-            Rect rect = new Rect(m_position.position.x, lineCount, m_position.size.x, EditorGUIUtility.singleLineHeight);
-            return rect;
-        }
-
         public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             Initialise(property);
@@ -254,7 +214,7 @@ namespace JUtil.Grids
             NewLine();
             EditorGUI.indentLevel++;
 
-            DrawPropertyArray(property, ref gridsFoldout);
+            DrawGridInfoEditor(property, ref gridsFoldout);
 
             DrawOverrides(property);
 
@@ -267,6 +227,7 @@ namespace JUtil.Grids
             EditorGUI.EndProperty();
         }
 
+        // GRID OVERRIDE METHODS ********************************************************************************************************************
         private void DrawOverrides(SerializedProperty property)
         {
             NewLine();
@@ -281,140 +242,169 @@ namespace JUtil.Grids
 
             EditorGUI.indentLevel++;
 
+
+            // draw single scene grid links *******************************************************
             NewLine();
 
             SerializedProperty gridLinksProp = overrideProp.FindPropertyRelative("gridLinks");
 
-            DrawArrayDropdown(gridLinksProp, ref overridesFoldout, null, overrideDropdowns);
+            DrawArrayDropdown(gridLinksProp, ref gridLinksOverridesFoldout, null, gridLinksOverrideDropdowns);
 
-            if (!overridesFoldout)
+            if (gridLinksOverridesFoldout)
             {
+                EditorGUI.indentLevel++;
+
+                for (int i = 0; i < gridLinksProp.arraySize; i++)
+                {
+                    DrawGridLinks(property, gridLinksProp, i);
+                }
+
                 EditorGUI.indentLevel--;
-                return;
             }
 
-            EditorGUI.indentLevel++;
+            // draw multi scene grid links ********************************************************
 
-            for (int i = 0; i < gridLinksProp.arraySize; i++)
+            NewLine();
+
+            SerializedProperty sceneLinksProp = overrideProp.FindPropertyRelative("sceneLinks");
+
+            DrawSceneLinks(sceneLinksProp);
+
+            //DrawArrayDropdown(sceneLinksProp, ref sceneLinksOverridesFoldout, null, sceneLinksOverrideDropdowns);
+
+            /*if (sceneLinksOverridesFoldout)
             {
-                SerializedProperty linkProp = gridLinksProp.GetArrayElementAtIndex(i);
+                EditorGUI.indentLevel++;
 
                 NewLine();
-                rect = GetSingleLineRect();
-                string[] names = Supyrb.SerializedPropertyExtensions.GetValue<string[]>(property.FindPropertyRelative("gridNames"));
-                string linkLabel = "Link " + i.ToString() + "\t( "
+
+                for (int i = 0; i < sceneLinksProp.arraySize; i++)
+                {
+                    DrawGridLinks(property, sceneLinksProp, i);
+                }
+
+
+                EditorGUI.indentLevel--;
+            }*/
+
+            EditorGUI.indentLevel--;
+        }
+
+        private void DrawGridLinks(SerializedProperty property, SerializedProperty gridLinksProp, int i)
+        {
+            SerializedProperty linkProp = gridLinksProp.GetArrayElementAtIndex(i);
+
+            NewLine();
+            Rect rect = GetSingleLineRect();
+            string[] names = Supyrb.SerializedPropertyExtensions.GetValue<string[]>(property.FindPropertyRelative("gridNames"));
+            string linkLabel = "Link " + i.ToString() + "\t( "
                     + " " + names[linkProp.FindPropertyRelative("grid1").FindPropertyRelative("index").intValue]
                     + " ⟷"
                     + " " + names[linkProp.FindPropertyRelative("grid2").FindPropertyRelative("index").intValue]
                     + " )";
 
-                linkProp.isExpanded = EditorGUI.Foldout(rect, linkProp.isExpanded, linkLabel);
+            linkProp.isExpanded = EditorGUI.Foldout(rect, linkProp.isExpanded, linkLabel);
 
-                if (linkProp.isExpanded)
+            if (linkProp.isExpanded)
+            {
+                EditorGUI.indentLevel++;
+
+                DrawGridLink(linkProp, 1, names);
+                DrawGridLink(linkProp, 2, names);
+
+                EditorGUI.indentLevel--;
+            }
+        }
+
+        public void DrawGridLink(SerializedProperty linkProp, int num, string[] names)
+        {
+            if (num != 1 && num != 2)
+                return;
+
+            NewLine();
+            Rect rect = GetSingleLineRect();
+            linkProp.FindPropertyRelative("grid" + num.ToString()).isExpanded = EditorGUI.Foldout(rect, linkProp.FindPropertyRelative("grid" + num.ToString()).isExpanded, linkProp.FindPropertyRelative("grid" + num.ToString()).displayName);
+
+            if (linkProp.FindPropertyRelative("grid"+num.ToString()).isExpanded)
+            {
+                EditorGUI.indentLevel++;
+                NewLine();
+
+                rect = GetSingleLineRect();
+                linkProp.FindPropertyRelative("grid" + num.ToString()).FindPropertyRelative("index").intValue = EditorGUI.Popup(rect, "Grid", linkProp.FindPropertyRelative("grid"+num.ToString()).FindPropertyRelative("index").intValue, names);
+
+                NewLine();
+                rect = GetSingleLineRect();
+                EditorGUI.PropertyField(rect, linkProp.FindPropertyRelative("grid"+num.ToString() + ".position"));
+
+                if (EditorGUIUtility.currentViewWidth < overflowWidth)
+                    NewLine();
+
+                NewLine();
+                rect = GetSingleLineRect();
+
+                rect.x = EditorGUIUtility.labelWidth + IndentOffset() / 2 - 5;
+                rect.width = EditorGUIUtility.fieldWidth;
+                if (EditorGUIUtility.currentViewWidth < overflowWidth)
+                    rect.x += 15;
+
+                if (GUI.Button(rect, arrows[linkProp.FindPropertyRelative("grid"+num.ToString() + ".direction").intValue]))
                 {
-                    EditorGUI.indentLevel++;
-                    NewLine();
+                    linkProp.FindPropertyRelative("grid"+num.ToString()+".direction").intValue++;
+                    if (linkProp.FindPropertyRelative("grid"+num.ToString() + ".direction").intValue > 7)
+                        linkProp.FindPropertyRelative("grid"+num.ToString() + ".direction").intValue = 0;
+                }
 
-                    rect = GetSingleLineRect();
+                rect.x += rect.width;
+                rect.width = 100;
+                EditorGUI.IntField(rect, GUIContent.none, linkProp.FindPropertyRelative("grid"+num.ToString() + ".direction").intValue);
 
-                    linkProp.FindPropertyRelative("grid1").isExpanded = EditorGUI.Foldout(rect, linkProp.FindPropertyRelative("grid1").isExpanded, linkProp.FindPropertyRelative("grid1").displayName);
+                rect = GetSingleLineRect();
+                EditorGUI.LabelField(rect, "Direction");
 
-                    if (linkProp.FindPropertyRelative("grid1").isExpanded)
+                EditorGUI.indentLevel--;
+            }
+        }
+
+        public void DrawSceneLinks(SerializedProperty sceneLinksProp)
+        {
+            Rect rect = GetSingleLineRect();
+
+            //EditorGUIUtility.labelWidth = 10f;
+            EditorGUIUtility.fieldWidth -= 100f;
+
+            EditorGUI.PropertyField(rect, sceneLinksProp,true);
+            
+
+            if (sceneLinksProp.isExpanded)
+            {
+                if (sceneLinksProp.arraySize > 0)
+                {
+                    for (int i = 0; i < sceneLinksProp.arraySize; i++)
                     {
-                        EditorGUI.indentLevel++;
                         NewLine();
-
-                        //string[] names = Supyrb.SerializedPropertyExtensions.GetValue<string[]>(property.FindPropertyRelative("gridNames"));
-
-                        rect = GetSingleLineRect();
-                        linkProp.FindPropertyRelative("grid1").FindPropertyRelative("index").intValue = EditorGUI.Popup(rect, "Grid", linkProp.FindPropertyRelative("grid1").FindPropertyRelative("index").intValue, names);
-
-                        NewLine();
-                        rect = GetSingleLineRect();
-                        EditorGUI.PropertyField(rect, linkProp.FindPropertyRelative("grid1.position"));
-
-                        if (EditorGUIUtility.currentViewWidth < overflowWidth)
-                            NewLine();
-
-                        NewLine();
-                        rect = GetSingleLineRect();
-
-                        rect.x = EditorGUIUtility.labelWidth + IndentOffset() / 2 - 5;
-                        rect.width = EditorGUIUtility.fieldWidth;
-                        if (EditorGUIUtility.currentViewWidth < overflowWidth)
-                            rect.x += 15;
-
-                        if (GUI.Button(rect, arrows[linkProp.FindPropertyRelative("grid1.direction").intValue]))
+                        if (sceneLinksProp.GetArrayElementAtIndex(i).isExpanded)
                         {
-                            linkProp.FindPropertyRelative("grid1.direction").intValue++;
-                            if (linkProp.FindPropertyRelative("grid1.direction").intValue > 7)
-                                linkProp.FindPropertyRelative("grid1.direction").intValue = 0;
+                            if (EditorGUIUtility.currentViewWidth < overflowWidth)
+                                NewLine(2);
+                            NewLine(8);
                         }
-
-                        rect.x += rect.width;
-                        rect.width = 100;
-                        EditorGUI.IntField(rect, GUIContent.none, linkProp.FindPropertyRelative("grid1.direction").intValue);
-
-                        rect = GetSingleLineRect();
-                        EditorGUI.LabelField(rect, "Direction");
-
-                        EditorGUI.indentLevel--;
                     }
 
                     NewLine();
-
-                    rect = GetSingleLineRect();
-
-                    linkProp.FindPropertyRelative("grid2").isExpanded = EditorGUI.Foldout(rect, linkProp.FindPropertyRelative("grid2").isExpanded, linkProp.FindPropertyRelative("grid2").displayName);
-
-                    if (linkProp.FindPropertyRelative("grid2").isExpanded)
-                    {
-                        EditorGUI.indentLevel++;
-                        NewLine();
-                        //string[] names = Supyrb.SerializedPropertyExtensions.GetValue<string[]>(property.FindPropertyRelative("gridNames"));
-                        rect = GetSingleLineRect();
-                        linkProp.FindPropertyRelative("grid2").FindPropertyRelative("index").intValue = EditorGUI.Popup(rect, "Grid", linkProp.FindPropertyRelative("grid2").FindPropertyRelative("index").intValue, names);
-
-                        NewLine();
-                        rect = GetSingleLineRect();
-                        EditorGUI.PropertyField(rect, linkProp.FindPropertyRelative("grid2.position"));
-
-                        if (EditorGUIUtility.currentViewWidth < overflowWidth)
-                            NewLine();
-
-                        NewLine();
-                        rect = GetSingleLineRect();
-
-                        rect.x = EditorGUIUtility.labelWidth + IndentOffset() / 2 - 5;
-                        rect.width = EditorGUIUtility.fieldWidth;
-                        if (EditorGUIUtility.currentViewWidth < overflowWidth)
-                            rect.x += 15;
-
-                        if (GUI.Button(rect, arrows[linkProp.FindPropertyRelative("grid2.direction").intValue]))
-                        {
-                            linkProp.FindPropertyRelative("grid2.direction").intValue++;
-                            if (linkProp.FindPropertyRelative("grid2.direction").intValue > 7)
-                                linkProp.FindPropertyRelative("grid2.direction").intValue = 0;
-                        }
-
-                        rect.x += rect.width;
-                        rect.width = 100;
-                        EditorGUI.IntField(rect, GUIContent.none, linkProp.FindPropertyRelative("grid2.direction").intValue);
-
-                        rect = GetSingleLineRect();
-                        EditorGUI.LabelField(rect, "Direction");
-
-                        EditorGUI.indentLevel--;
-                    }
-
-                    EditorGUI.indentLevel--;
+                }
+                else
+                {
+                    NewLine(2);
                 }
             }
 
-            EditorGUI.indentLevel--;
-            EditorGUI.indentLevel--;
+            EditorGUIUtility.fieldWidth += 100f;
+
+            // EditorGUIUtility.labelWidth = 0;
         }
 
+        // TILE DATA METHODS ************************************************************************************************************************
         private void DrawTileData(SerializedProperty property)
         {
             NewLine();
@@ -441,6 +431,7 @@ namespace JUtil.Grids
             EditorGUI.PropertyField(rect, property.FindPropertyRelative("tileData"), true);
         }
 
+        // DEBUG SETTINGS METHODS *******************************************************************************************************************
         private void DrawDebugSettings(SerializedProperty property)
         {
             NewLine();
@@ -463,35 +454,8 @@ namespace JUtil.Grids
             EditorGUI.PropertyField(rect, property.FindPropertyRelative("debugSettings"), true);
         }
 
-        private void DrawArrayDropdown(SerializedProperty property, ref bool fold, SerializedProperty[] otherLists, List<bool> boolList)
-        {
-            Rect dropdown = GetSingleLineRect();
-
-            fold = EditorGUI.Foldout(dropdown, fold, property.displayName);
-
-            SerializedProperty arraySizeProp = property.FindPropertyRelative("Array.size");
-
-            int indentlevelPrev = EditorGUI.indentLevel;
-
-            EditorGUI.indentLevel = 0;
-
-            //dropdown.width += IndentOffset();
-            dropdown.x = EditorGUIUtility.currentViewWidth - 53;// - IndentOffset();
-            dropdown.width = 49;// + IndentOffset();
-
-            EditorGUI.PropertyField(dropdown, arraySizeProp, GUIContent.none);
-            //EditorGUI.FloatField(dropdown, m_position.width);
-
-            dropdown.x = EditorGUIUtility.currentViewWidth - 53 - 50;
-            dropdown.width = 50;
-
-            //DrawListButtons(dropdown, property, extralists);
-            DrawGridInfoListButtons(dropdown, property, boolList, otherLists);
-
-            EditorGUI.indentLevel = indentlevelPrev;
-        }
-
-        private void DrawPropertyArray(SerializedProperty property, ref bool fold)
+        // GRID INFO METHODS ************************************************************************************************************************
+        private void DrawGridInfoEditor(SerializedProperty property, ref bool fold)
         {
             SerializedProperty gridInfoProperty = property.FindPropertyRelative("gridInfo");
             SerializedProperty namesProp = property.FindPropertyRelative("gridNames");
@@ -631,6 +595,97 @@ namespace JUtil.Grids
 
                 boolList.RemoveAt(list.arraySize - 1);
             }
+        }
+
+        // HELPER METHODS ***************************************************************************************************************************
+        private void DrawArrayDropdown(SerializedProperty property, ref bool fold, SerializedProperty[] otherLists, List<bool> boolList)
+        {
+            Rect dropdown = GetSingleLineRect();
+
+            fold = EditorGUI.Foldout(dropdown, fold, property.displayName);
+
+            SerializedProperty arraySizeProp = property.FindPropertyRelative("Array.size");
+
+            int indentlevelPrev = EditorGUI.indentLevel;
+
+            EditorGUI.indentLevel = 0;
+
+            //dropdown.width += IndentOffset();
+            dropdown.x = EditorGUIUtility.currentViewWidth - 53;// - IndentOffset();
+            dropdown.width = 49;// + IndentOffset();
+
+            EditorGUI.PropertyField(dropdown, arraySizeProp, GUIContent.none);
+            //EditorGUI.FloatField(dropdown, m_position.width);
+
+            dropdown.x = EditorGUIUtility.currentViewWidth - 53 - 50;
+            dropdown.width = 50;
+
+            //DrawListButtons(dropdown, property, extralists);
+            DrawGridInfoListButtons(dropdown, property, boolList, otherLists);
+
+            EditorGUI.indentLevel = indentlevelPrev;
+        }
+
+        private Rect GetSingleLineRect()
+        {
+            Rect rect = new Rect(m_position.position.x, lineCount, m_position.size.x, EditorGUIUtility.singleLineHeight);
+            return rect;
+        }
+
+        private float IndentOffset()
+        {
+            return 10f * EditorGUI.indentLevel;
+        }
+
+        private void NewLine() => lineCount += lineHeight + padding;
+
+        private void NewLine(float val) => lineCount += (lineHeight + padding) * val;
+
+        private void Initialise(SerializedProperty property)
+        {
+            if (initialised)
+                return;
+
+            SerializedProperty gridProperty = property.FindPropertyRelative("gridInfo");
+            SerializedProperty gridLinksOverrideProperty = property.FindPropertyRelative("nodeOverrides").FindPropertyRelative("gridLinks");
+            SerializedProperty sceneLinksOverrideProperty = property.FindPropertyRelative("nodeOverrides").FindPropertyRelative("sceneLinks");
+
+            if (gridLinksOverrideDropdowns == null || gridLinksOverrideDropdowns.Count != gridLinksOverrideProperty.arraySize)
+            {
+                gridLinksOverrideDropdowns = new List<bool>();
+
+                for (int i = 0; i < gridLinksOverrideProperty.arraySize; i++)
+                {
+                    gridLinksOverrideDropdowns.Add(false);
+                }
+            }
+
+            if (sceneLinksOverrideDropdowns == null || sceneLinksOverrideDropdowns.Count != sceneLinksOverrideProperty.arraySize)
+            {
+                sceneLinksOverrideDropdowns = new List<bool>();
+
+                for (int i = 0; i < sceneLinksOverrideProperty.arraySize; i++)
+                {
+                    sceneLinksOverrideDropdowns.Add(false);
+                }
+            }
+
+            if (gridDropdowns == null || gridDropdowns.Count != gridProperty.arraySize)
+            {
+                gridDropdowns = new List<bool>();
+
+                for (int i = 0; i < gridProperty.arraySize; i++)
+                {
+                    gridDropdowns.Add(false);
+                }
+            }
+
+            extralists = new SerializedProperty[]
+            {
+                property.FindPropertyRelative("gridNames")
+            };
+
+            initialised = true;
         }
     }//*/
 }
