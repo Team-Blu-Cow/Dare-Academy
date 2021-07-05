@@ -6,18 +6,18 @@ using JUtil;
 
 public class CaterpillerEnemy : GridEntity
 {
-    [SerializeField] private GridEntity followEntity;
-    public GridEntity behindEntity;
+    [SerializeField] private GridEntity m_followEntity;
+    public GridEntity m_behindEntity;
     [SerializeField] private bool head;
 
     private Vector2 m_dir = new Vector2();
-    [SerializeField] private int moveSpeed = 1;
+    [SerializeField] private int m_moveSpeed = 1;
 
     private void OnValidate()
     {
-        if (followEntity.TryGetComponent(out CaterpillerEnemy caterpiller))
+        if (m_followEntity && m_followEntity.TryGetComponent(out CaterpillerEnemy caterpiller))
         {
-            caterpiller.behindEntity = this;
+            caterpiller.m_behindEntity = this;
             head = false;
         }
         else
@@ -36,23 +36,31 @@ public class CaterpillerEnemy : GridEntity
 
     public override void AnalyseStep()
     {
-        Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, followEntity.Position.world);
-
-        Vector3 dir = new Vector3();
-
-        if (path.Length > 1)
+        if (m_followEntity.Position != null)
         {
-            dir = path[1] - path[0];
+            Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, m_followEntity.Position.world);
+
+            Vector3 dir = new Vector3();
+
+            if (path.Length > 1)
+            {
+                dir = path[1] - path[0];
+            }
+            else
+            {
+                Vector2 temp = m_followEntity.Position.grid - Position.grid;
+                dir = new Vector3(temp.x, temp.y, 0);
+            }
+
+            m_dir = new Vector2Int((int)dir.x, (int)dir.y);
         }
         else
         {
-            Vector2 temp = followEntity.Position.grid - Position.grid;
-            dir = new Vector3(temp.x, temp.y, 0);
+            m_dir = Vector2.zero;
         }
 
-        m_dir = new Vector2Int((int)dir.x, (int)dir.y);
-
-        SetMovementDirection(m_dir, moveSpeed);
+        SetMovementDirection(m_dir, m_moveSpeed);
+        base.AnalyseStep();
     }
 
     public override void AttackStep()

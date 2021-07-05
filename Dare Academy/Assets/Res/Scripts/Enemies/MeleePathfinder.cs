@@ -14,7 +14,7 @@ public class MeleePathfinder : GridEntity
     private Vector2 m_dir = new Vector2();
     [SerializeField] private int moveSpeed = 1;
 
-    [SerializeField] private GridEntity player;
+    [SerializeField] private GridEntity m_player;
 
     protected override void Start()
     {
@@ -26,9 +26,9 @@ public class MeleePathfinder : GridEntity
 
     public override void AnalyseStep()
     {
-        if (!m_attack)
+        if (!m_attack && m_player.Position != null)
         {
-            Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.grid, player.Position.grid);
+            Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.grid, m_player.Position.grid);
 
             Vector3 dir = new Vector3();
 
@@ -36,7 +36,7 @@ public class MeleePathfinder : GridEntity
                 dir = path[1] - path[0];
             else if (path.Length == 1)
             {
-                m_attackDirection = player.Position.grid - Position.grid;
+                m_attackDirection = m_player.Position.grid - Position.grid;
                 m_attack = true;
             }
 
@@ -48,6 +48,8 @@ public class MeleePathfinder : GridEntity
         }
 
         SetMovementDirection(m_dir, moveSpeed);
+
+        base.AnalyseStep();
     }
 
     public override void AttackStep()
