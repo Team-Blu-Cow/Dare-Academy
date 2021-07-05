@@ -826,13 +826,13 @@ public abstract class GridEntity : MonoBehaviour
         return entities;
     }
 
-    protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2 direction)
+    protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2 direction, int damage = 1)
     {
         Vector2Int dir = new Vector2Int((int)direction.x, (int)direction.y);
-        return SpawnBullet(prefab, sourceNode, dir);
+        return SpawnBullet(prefab, sourceNode, dir, damage);
     }
 
-    protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2Int direction)
+    protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2Int direction, int damage = 1)
     {
         // TODO @matthew - validation checks on input parameters
         if (prefab)
@@ -843,8 +843,16 @@ public abstract class GridEntity : MonoBehaviour
             if (spawnNode == null)
                 return false;
 
-            if (spawnNode.GetGridEntities().Count > 0)
-                return false;
+            List<GridEntity> entities = spawnNode.GetGridEntities();
+            if (entities.Count > 0)
+            {
+                foreach(GridEntity entity in  entities)
+                {
+                    entity.Health -= damage;
+                }
+
+                return true;
+            }
 
             Vector3 spawnPosition = spawnNode.position.world;
 
@@ -852,8 +860,10 @@ public abstract class GridEntity : MonoBehaviour
             if (obj)
             {
                 BulletEntity bullet = obj.GetComponent<BulletEntity>();
+                
                 if (bullet)
                 {
+                    bullet.m_damage = damage;
                     bullet.m_bulletDirection = direction;
                     return true;
                 }
