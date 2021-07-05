@@ -35,7 +35,7 @@ public class TestControlableEntity : GridEntity
     {
         base.EndStep();
 
-        if (m_currentNode.overridden && m_currentNode.overrideType == JUtil.Grids.NodeOverrideType.SceneConnection)
+        if (m_currentNode.overridden && m_currentNode.overrideType == NodeOverrideType.SceneConnection)
         {
             // transition to a new scene
             App.GetModule<SceneModule>().SwitchScene(
