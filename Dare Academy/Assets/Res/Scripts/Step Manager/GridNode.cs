@@ -1,13 +1,16 @@
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using blu;
 using JUtil.Grids;
-
-
+using JUtil;
 
 [System.Serializable]
 public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNode
 {
     // INTERFACES *****************************************************************************
     public int gCost { get; set; } = 0;
+
     public int hCost { get; set; } = 0;
     public int fCost { get { return gCost + hCost; } }
 
@@ -44,25 +47,23 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
 
     protected List<GridEntity> m_currentEntities = new List<GridEntity>();
 
-    
-
     // METHODS ********************************************************************************
     public GridNode(Grid<GridNode> grid, int x, int y)
     {
-        position            = grid.GetNodePosition(x, y);
-        walkable            = false;
-        overridden          = false;
-        overrideType        = NodeOverrideType.None;
-        lvlTransitionInfo   = null;
+        position = grid.GetNodePosition(x, y);
+        walkable = false;
+        overridden = false;
+        overrideType = NodeOverrideType.None;
+        lvlTransitionInfo = null;
     }
 
     public GridNode()
     {
-        position            = new GridNodePosition();
-        walkable            = false;
-        overridden          = false;
-        overrideType        = NodeOverrideType.None;
-        lvlTransitionInfo   = null;
+        position = new GridNodePosition();
+        walkable = false;
+        overridden = false;
+        overrideType = NodeOverrideType.None;
+        lvlTransitionInfo = null;
     }
 
     public void AddEntity(GridEntity entity)
@@ -86,5 +87,13 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
     public List<GridEntity> GetGridEntities()
     {
         return m_currentEntities;
+    }
+
+    public GridNode GetNeighbour(Vector2Int direction)
+    {
+        if (direction == null)
+            return null;
+
+        return Neighbors[direction.RotationToIndex()].reference;
     }
 }
