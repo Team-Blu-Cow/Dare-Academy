@@ -21,13 +21,18 @@ public class CaterpillerEnemy : GridEntity
 
     public override void AnalyseStep()
     {
-        Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.grid, followEntity.Position.grid);
+        Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, followEntity.Position.world);
 
         Vector3 dir = new Vector3();
 
         if (path.Length > 1)
         {
             dir = path[1] - path[0];
+        }
+        else
+        {
+            Vector2 temp = followEntity.Position.grid - Position.grid;
+            dir = new Vector3(temp.x, temp.y, 0);
         }
 
         m_dir = new Vector2Int((int)dir.x, (int)dir.y);
