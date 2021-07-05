@@ -17,8 +17,7 @@ public class TestEnitity : GridEntity
         if (!Application.isPlaying)
         {
             Gizmos.color = Color.white;
-            Gizmos.DrawRay(transform.position, m_movementDirection);
+            // Gizmos.DrawRay(transform.position, m_movementDirection);
         }
-
     }
 }

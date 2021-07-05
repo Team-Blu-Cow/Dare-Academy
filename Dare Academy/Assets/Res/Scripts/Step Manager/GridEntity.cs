@@ -10,7 +10,7 @@ public abstract class GridEntity : MonoBehaviour
 {
     // MEMBERS ************************************************************************************
 
-    protected Vector2 m_movementDirection;
+    private Vector2 m_movementDirection;
 
     [SerializeField] protected int m_mass = 2;
     protected int m_speed       = 1;
@@ -20,6 +20,8 @@ public abstract class GridEntity : MonoBehaviour
     [SerializeField] protected int m_roomIndex = 0;
 
     [SerializeField] protected GridEntityFlags m_flags = new GridEntityFlags();
+
+    public Vector2 Direction => m_movementDirection;
 
     public int Mass { get { return m_mass; } set { m_mass = value; } }
     public int Speed { get { return m_speed; } }
@@ -60,7 +62,7 @@ public abstract class GridEntity : MonoBehaviour
     protected virtual void Start()
     {
         m_currentNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(transform.position);
-        
+
         if (m_currentNode == null)
         {
             m_roomIndex = -1;
@@ -109,6 +111,8 @@ public abstract class GridEntity : MonoBehaviour
 
     public void PreMoveStep()
     {
+        m_previousNode = null;
+
         // if not on node kill entity, this will prevent next steps from being run
         if (m_currentNode == null)
             Kill();
@@ -579,7 +583,7 @@ public abstract class GridEntity : MonoBehaviour
 
         float currentTime = 0;
 
-        while(currentTime < stepTime)
+        while (currentTime < stepTime)
         {
             currentTime += Time.deltaTime;
 
@@ -814,6 +818,42 @@ public abstract class GridEntity : MonoBehaviour
         }
 
         return entities;
+    }
+
+    protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2 direction)
+    {
+        Vector3 dir = new Vector3(direction.x, direction.y, 0);
+        return SpawnBullet(prefab, sourceNode, dir);
+    }
+
+    protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector3 direction)
+    {
+        // TODO @matthew - validation checks on input parameters
+        if (prefab)
+        {
+            GridNode spawnNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(sourceNode.position.world + direction); ;
+
+            if (spawnNode == null)
+                return false;
+
+            if (spawnNode.GetGridEntities().Count > 0)
+                return false;
+
+            Vector3 spawnPosition = spawnNode.position.world;
+
+            GameObject obj = GameObject.Instantiate(prefab, spawnPosition, Quaternion.identity) ;
+            if (obj)
+            {
+                BulletEntity bullet = obj.GetComponent<BulletEntity>();
+                if (bullet)
+                {
+                    bullet.m_bulletDirection = direction;
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private void OnDrawGizmos()
