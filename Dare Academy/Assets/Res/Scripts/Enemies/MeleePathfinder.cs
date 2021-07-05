@@ -6,7 +6,8 @@ using JUtil;
 
 public class MeleePathfinder : GridEntity
 {
-    private int m_waitCounter = 0;
+    private int m_attackCounter = 0;
+    private int m_waitCounter = 1;
     private bool m_attack = false;
     private Vector2 m_attackDirection = new Vector2();
 
@@ -53,9 +54,16 @@ public class MeleePathfinder : GridEntity
     {
         if (m_attack)
         {
-            m_waitCounter += 1;
+            if (m_waitCounter < 1)
+            {
+                m_waitCounter = 1;
+                m_attack = false;
+                return;
+            }
 
-            if (m_waitCounter > 1)
+            m_attackCounter += 1;
+
+            if (m_attackCounter > 0)
             {
                 GridNode node = m_currentNode.Neighbors[m_attackDirection.RotationToIndex()].reference;
                 if (node != null)
@@ -63,22 +71,13 @@ public class MeleePathfinder : GridEntity
                     List<GridEntity> contents = node.GetGridEntities();
                     foreach (GridEntity entity in contents)
                     {
-                        if (entity.isPlayer)
-                        {
-                            Debug.Log("Hit");
-                            break;
-                        }
+                        //entity.Health -= 1;
+                        Debug.Log("Hit");
                     }
                 }
-                m_waitCounter = 0;
-                m_attack = false;
+                m_attackCounter = 0;
+                m_waitCounter -= 1;
             }
         }
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.white;
-        Gizmos.DrawRay(transform.position, m_dir);
     }
 }
