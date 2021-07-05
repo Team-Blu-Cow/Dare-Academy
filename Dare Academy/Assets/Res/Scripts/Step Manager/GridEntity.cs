@@ -9,7 +9,6 @@ using flags = GridEntityFlags.Flags;
 public abstract class GridEntity : MonoBehaviour
 {
     // MEMBERS ************************************************************************************
-
     private Vector2Int m_movementDirection;
 
     [SerializeField] protected int m_mass = 2;
