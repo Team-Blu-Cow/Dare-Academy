@@ -822,16 +822,16 @@ public abstract class GridEntity : MonoBehaviour
 
     protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2 direction)
     {
-        Vector2Int dirInt = new Vector2Int((int)direction.x, (int)direction.y);
-        return SpawnBullet(prefab, sourceNode, dirInt);
+        Vector3 dir = new Vector3(direction.x, direction.y, 0);
+        return SpawnBullet(prefab, sourceNode, dir);
     }
 
-    protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2Int direction)
+    protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector3 direction)
     {
         // TODO @matthew - validation checks on input parameters
         if (prefab)
         {
-            GridNode spawnNode = m_currentNode.Neighbors[direction.RotationToIndex()].reference;
+            GridNode spawnNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(m_currentNode.position.world + direction); ;
 
             if (spawnNode == null)
                 return false;
