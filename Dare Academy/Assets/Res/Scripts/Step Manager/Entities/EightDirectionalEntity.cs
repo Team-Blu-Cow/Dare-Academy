@@ -6,16 +6,19 @@ using JUtil;
 
 public class EightDirectionalEntity : GridEntity
 {
-    private int m_attackCounter = 0;
+
+    [Header("Attack attributes")]
     [SerializeField] private int m_attackSpeed = 3;
     [SerializeField] private bool isFiringHorizontal = true;
+    [SerializeField] private int agroRange = 5;
+    private int m_attackCounter = 0;
     private bool isAttacking = false;
+    private Vector2[] telegraphPos = { new Vector2(0,0), new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0)};
 
-    [SerializeField] private int m_moveSpeed = 1;
-    [SerializeField] private GridEntity player;
-    private Vector2 m_direction = new Vector2();
 
+    [Header("Resources needed")]
     [SerializeField] private GameObject m_bulletPrefab = null;
+    [SerializeField] private GridEntity player;
 
     protected override void Start()
     {
@@ -28,41 +31,56 @@ public class EightDirectionalEntity : GridEntity
     public void OnValidate()
     {
         m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet");
-        //player = GameObject.Find("Green").GetComponent<GridEntity>();
+        player = GameObject.Find("Green").GetComponent<PlayerEntity>();
     }
 
     public override void AnalyseStep()
     {
-        if (!isAttacking)
-        {
-            Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.grid, player.Position.grid);
+        Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.grid, player.Position.grid);
 
-            if (path.Length > 1)
+        if (path.Length < agroRange)
+        {                
+            if (m_attackCounter >= m_attackSpeed)
             {
-                m_direction = path[1] - path[0];
+                isAttacking = true;
+                TelegraphAttack();
             }
-            else if (path.Length == 1)
-            {
-                //isAttacking = true;
-            }
-
-            m_direction = new Vector2Int((int)m_direction.x, (int)m_direction.y);
         }
-        else
-        {
-            m_direction = Vector2.zero;
-        }
-
-        SetMovementDirection(m_direction, m_moveSpeed);
     }
 
     public override void AttackStep()
     {
         m_attackCounter++;
-        if (m_attackCounter >= m_attackSpeed)
+        if (isAttacking == true)
         {
-            SpawnBullets();
-            m_attackCounter = 0;
+            if (m_attackCounter >= m_attackSpeed)
+            {
+                TelegraphAttack();
+                SpawnBullets();
+                m_attackCounter = 0;                
+            }
+            isAttacking = false;
+        }
+    }
+
+    private void TelegraphAttack()
+    {
+        Vector2Int[] m_attackDirections;
+        if (isFiringHorizontal)
+        {
+            m_attackDirections = new Vector2Int[] { new Vector2Int(-1, 0), new Vector2Int(0, -1), new Vector2Int(1, 0), new Vector2Int(0, 1) };
+        }
+        else
+        {
+            m_attackDirections = new Vector2Int[] { new Vector2Int(-1, 1), new Vector2Int(1, -1), new Vector2Int(1, 1), new Vector2Int(-1, -1) };
+        }
+
+        for (int i = 0; i < 4; i++)
+        {
+            if (m_currentNode.GetNeighbour(m_attackDirections[i]) != null)
+            {
+                telegraphPos[i] = m_currentNode.GetNeighbour(m_attackDirections[i]).position.world;
+            }
         }
     }
 
@@ -86,7 +104,7 @@ public class EightDirectionalEntity : GridEntity
                 if (m_currentNode.GetNeighbour(m_attackDirections[j]) != null)
                 {
                     spawnPosition = m_currentNode.GetNeighbour(m_attackDirections[j]).position.world;
-                    GameObject obj = GameObject.Instantiate(m_bulletPrefab, spawnPosition, Quaternion.identity);
+                    GameObject obj = GameObject.Instantiate(m_bulletPrefab, spawnPosition, Quaternion.identity);                   
 
                     if (obj)
                     {
@@ -97,7 +115,7 @@ public class EightDirectionalEntity : GridEntity
 
                             if (j == 3)
                             {
-                                //isFiringHorizontal = !isFiringHorizontal;
+                                isFiringHorizontal = !isFiringHorizontal;
                                 return true;
                             }
                         }
@@ -107,5 +125,28 @@ public class EightDirectionalEntity : GridEntity
         }
 
         return false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        for(int i = 0; i < 4; i++)
+        {
+            if(telegraphPos[i] != new Vector2(0,0))
+            {
+                Debug.Log("Drawing gizmos");
+                if(!isAttacking)
+                {
+                    Gizmos.color = new Color(0, 0, 0, 0);
+                }
+                else
+                {
+                    Gizmos.color = new Color(Color.yellow.r, Color.yellow.g, Color.yellow.b, 0.25f);
+                }
+                
+                Gizmos.DrawCube(telegraphPos[i], new Vector3(1, 1, 1));
+            }
+        }
+
+        
     }
 }

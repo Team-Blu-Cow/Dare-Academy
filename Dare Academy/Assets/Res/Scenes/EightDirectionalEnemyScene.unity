@@ -291,14 +291,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 985561090}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a03975cddbb69f4cb26cd733c7df167, type: 3}
+  m_Script: {fileID: 11500000, guid: c1fa8dfd2dc779d4786d8b570c32ea28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_mass: 2
   m_roomIndex: 0
   m_flags:
-    m_flagData: 17
-  testDirection: {x: 0, y: 0}
+    m_flagData: 21
   moveSpeed: 1
 --- !u!212 &985561092
 SpriteRenderer:
@@ -519,6 +518,7 @@ MonoBehaviour:
   m_attackSpeed: 3
   isFiringHorizontal: 1
   m_moveSpeed: 1
+  agroRange: 5
   player: {fileID: 985561091}
   m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
 --- !u!212 &1420385870
