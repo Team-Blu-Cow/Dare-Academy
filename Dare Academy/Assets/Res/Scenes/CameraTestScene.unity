@@ -157,7 +157,7 @@ MonoBehaviour:
   m_roomIndex: 0
   m_flags:
     m_flagData: 16
-  testDirection: {x: 1, y: 0}
+  testDirection: {x: 0, y: 0}
   moveSpeed: 1
 --- !u!212 &385606907
 SpriteRenderer:
@@ -6231,10 +6231,12 @@ MonoBehaviour:
     - width: 20
       height: 20
       cellSize: 1
+      cameraPadding: 1.25
       originPosition: {x: -5, y: -15, z: 0}
     - width: 20
       height: 20
       cellSize: 1
+      cameraPadding: 1.25
       originPosition: {x: -28, y: -5, z: 0}
     gridNames:
     - Right grid

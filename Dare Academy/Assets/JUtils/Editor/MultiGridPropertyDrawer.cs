@@ -93,7 +93,7 @@ namespace JUtil.Grids
                             lines += 4;
                             if (EditorGUIUtility.currentViewWidth < overflowWidth)
                                 lines++;
-                            paddingLines += 6;
+                            paddingLines += 7;
                         }
                         i++;
                     }
@@ -129,8 +129,6 @@ namespace JUtil.Grids
                                         lines++;
                                 }
                             }
-
-                            
                         }
                     }
 
@@ -141,7 +139,7 @@ namespace JUtil.Grids
 
                     if (sceneLinksProp.isExpanded)
                     {
-                        if(sceneLinksProp.arraySize > 0)
+                        if (sceneLinksProp.arraySize > 0)
                         {
                             for (int i = 0; i < sceneLinksProp.arraySize; i++)
                             {
@@ -149,7 +147,7 @@ namespace JUtil.Grids
                                 if (sceneLinksProp.GetArrayElementAtIndex(i).isExpanded)
                                 {
                                     if (EditorGUIUtility.currentViewWidth < overflowWidth)
-                                        lines+=2;
+                                        lines += 2;
                                     lines += 8;
                                 }
                             }
@@ -160,7 +158,6 @@ namespace JUtil.Grids
                         {
                             lines += 2;
                         }
-                        
                     }
                 }
 
@@ -242,7 +239,6 @@ namespace JUtil.Grids
 
             EditorGUI.indentLevel++;
 
-
             // draw single scene grid links *******************************************************
             NewLine();
 
@@ -282,7 +278,6 @@ namespace JUtil.Grids
                 {
                     DrawGridLinks(property, sceneLinksProp, i);
                 }
-
 
                 EditorGUI.indentLevel--;
             }*/
@@ -325,17 +320,17 @@ namespace JUtil.Grids
             Rect rect = GetSingleLineRect();
             linkProp.FindPropertyRelative("grid" + num.ToString()).isExpanded = EditorGUI.Foldout(rect, linkProp.FindPropertyRelative("grid" + num.ToString()).isExpanded, linkProp.FindPropertyRelative("grid" + num.ToString()).displayName);
 
-            if (linkProp.FindPropertyRelative("grid"+num.ToString()).isExpanded)
+            if (linkProp.FindPropertyRelative("grid" + num.ToString()).isExpanded)
             {
                 EditorGUI.indentLevel++;
                 NewLine();
 
                 rect = GetSingleLineRect();
-                linkProp.FindPropertyRelative("grid" + num.ToString()).FindPropertyRelative("index").intValue = EditorGUI.Popup(rect, "Grid", linkProp.FindPropertyRelative("grid"+num.ToString()).FindPropertyRelative("index").intValue, names);
+                linkProp.FindPropertyRelative("grid" + num.ToString()).FindPropertyRelative("index").intValue = EditorGUI.Popup(rect, "Grid", linkProp.FindPropertyRelative("grid" + num.ToString()).FindPropertyRelative("index").intValue, names);
 
                 NewLine();
                 rect = GetSingleLineRect();
-                EditorGUI.PropertyField(rect, linkProp.FindPropertyRelative("grid"+num.ToString() + ".position"));
+                EditorGUI.PropertyField(rect, linkProp.FindPropertyRelative("grid" + num.ToString() + ".position"));
 
                 if (EditorGUIUtility.currentViewWidth < overflowWidth)
                     NewLine();
@@ -348,16 +343,16 @@ namespace JUtil.Grids
                 if (EditorGUIUtility.currentViewWidth < overflowWidth)
                     rect.x += 15;
 
-                if (GUI.Button(rect, arrows[linkProp.FindPropertyRelative("grid"+num.ToString() + ".direction").intValue]))
+                if (GUI.Button(rect, arrows[linkProp.FindPropertyRelative("grid" + num.ToString() + ".direction").intValue]))
                 {
-                    linkProp.FindPropertyRelative("grid"+num.ToString()+".direction").intValue++;
-                    if (linkProp.FindPropertyRelative("grid"+num.ToString() + ".direction").intValue > 7)
-                        linkProp.FindPropertyRelative("grid"+num.ToString() + ".direction").intValue = 0;
+                    linkProp.FindPropertyRelative("grid" + num.ToString() + ".direction").intValue++;
+                    if (linkProp.FindPropertyRelative("grid" + num.ToString() + ".direction").intValue > 7)
+                        linkProp.FindPropertyRelative("grid" + num.ToString() + ".direction").intValue = 0;
                 }
 
                 rect.x += rect.width;
                 rect.width = 100;
-                EditorGUI.IntField(rect, GUIContent.none, linkProp.FindPropertyRelative("grid"+num.ToString() + ".direction").intValue);
+                EditorGUI.IntField(rect, GUIContent.none, linkProp.FindPropertyRelative("grid" + num.ToString() + ".direction").intValue);
 
                 rect = GetSingleLineRect();
                 EditorGUI.LabelField(rect, "Direction");
@@ -373,8 +368,7 @@ namespace JUtil.Grids
             //EditorGUIUtility.labelWidth = 10f;
             EditorGUIUtility.fieldWidth -= 100f;
 
-            EditorGUI.PropertyField(rect, sceneLinksProp,true);
-            
+            EditorGUI.PropertyField(rect, sceneLinksProp, true);
 
             if (sceneLinksProp.isExpanded)
             {
@@ -490,7 +484,7 @@ namespace JUtil.Grids
             EditorGUI.indentLevel++;
             EditorGUI.indentLevel++;
             if (fold)
-                background.height += (lineHeight + padding) * ((EditorGUIUtility.currentViewWidth < overflowWidth) ? 4.5f : 3.5f);
+                background.height += (lineHeight + padding) * ((EditorGUIUtility.currentViewWidth < overflowWidth) ? 5.5f : 4.5f);
             background.x += IndentOffset();
             background.width -= IndentOffset();
 
@@ -538,6 +532,10 @@ namespace JUtil.Grids
                 NewLine();
                 rect.y += lineHeight + padding;
                 EditorGUI.PropertyField(rect, GridInfoProperty.FindPropertyRelative("cellSize"));
+
+                NewLine();
+                rect.y += lineHeight + padding;
+                EditorGUI.PropertyField(rect, GridInfoProperty.FindPropertyRelative("cameraPadding"));
 
                 // draw position field
                 NewLine();

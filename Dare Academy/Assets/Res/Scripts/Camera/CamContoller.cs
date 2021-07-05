@@ -12,7 +12,7 @@ namespace blu
         [SerializeField] private Camera _Cam;
 
         private PlayerEntity _player;
-        private bool _keepPlayerInFrame = false;
+        private bool _keepPlayerInFrame = true;
         private Grid<GridNode> _currentRoom;
         [SerializeField] [Range(0, 10)] private float _tolerance = 1.5f;
 
@@ -48,6 +48,7 @@ namespace blu
         {
             Vector3 TargetPosition;
             Grid<GridNode> TargetGrid = App.GetModule<LevelModule>().CurrentRoom;
+            _tolerance = App.GetModule<LevelModule>().MetaGrid.gridInfo[App.GetModule<LevelModule>().StepController.m_currentRoomIndex].cameraPadding;
             TargetPosition = TargetGrid.OriginPosition;
             TargetPosition.y += TargetGrid.Height / 2;
             TargetPosition.x += TargetGrid.Width / 2;
