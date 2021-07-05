@@ -33,31 +33,10 @@ public class TurretEntity : GridEntity
         {
             if (m_attackDirection != Vector2.zero)
             {
-                SpawnBullet();
+                SpawnBullet(m_bulletPrefab, m_currentNode, m_attackDirection);
             }
 
             m_attackCounter = 0;
         }
-    }
-
-    protected bool SpawnBullet()
-    {
-        if (m_bulletPrefab)
-        {
-            Vector3 spawnPosition = m_currentNode.Neighbors[m_attackDirection.RotationToIndex()].reference.position.world;
-
-            GameObject obj = GameObject.Instantiate(m_bulletPrefab,spawnPosition, Quaternion.identity) ;
-            if (obj)
-            {
-                BulletEntity bullet = obj.GetComponent<BulletEntity>();
-                if (bullet)
-                {
-                    bullet.m_bulletDirection = m_attackDirection;
-                    return true;
-                }
-            }
-        }
-
-        return false;
     }
 }

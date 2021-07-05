@@ -7,7 +7,7 @@ using JUtil.Grids;
 
 public class BulletEntity : GridEntity
 {
-    public Vector2 m_bulletDirection = Vector2.zero;
+    public Vector2Int m_bulletDirection = Vector2Int.zero;
     public int m_damage = 1;
 
     private bool m_spawnedThisStep = true;
@@ -39,10 +39,10 @@ public class BulletEntity : GridEntity
 
     public override void AnalyseStep()
     {
-        if (m_bulletDirection == Vector2.zero)
+        if (m_bulletDirection == Vector2Int.zero)
             Kill();
 
-        GridNode nextNode = m_currentNode.Neighbors[m_bulletDirection.RotationToIndex()].reference;
+        GridNode nextNode = m_currentNode.GetNeighbour(m_bulletDirection);
         if (nextNode == null)
             Kill();
 

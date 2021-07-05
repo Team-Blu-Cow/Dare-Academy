@@ -649,7 +649,7 @@ public abstract class GridEntity : MonoBehaviour
 
         for (int i = 0; i < distance; i++)
         {
-            GridNode node = m_targetNode.Neighbors[direction].reference;
+            GridNode node = m_targetNode.GetNeighbour(direction);
             if (node != null)
                 m_targetNode = node;
         }
