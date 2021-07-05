@@ -2785,14 +2785,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1349807188}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1a03975cddbb69f4cb26cd733c7df167, type: 3}
+  m_Script: {fileID: 11500000, guid: c1fa8dfd2dc779d4786d8b570c32ea28, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_mass: 2
   m_roomIndex: 0
   m_flags:
-    m_flagData: 1
-  testDirection: {x: 0, y: 0}
+    m_flagData: 21
   moveSpeed: 1
 --- !u!212 &1349807190
 SpriteRenderer:
@@ -3052,7 +3051,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1608845206}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 3.46, y: -3.47, z: 0}
+  m_LocalPosition: {x: -19.49, y: -2.51, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
