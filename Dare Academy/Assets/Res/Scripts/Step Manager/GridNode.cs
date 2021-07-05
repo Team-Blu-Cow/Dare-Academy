@@ -1,13 +1,16 @@
+using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
+using blu;
 using JUtil.Grids;
-
-
+using JUtil;
 
 [System.Serializable]
 public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNode
 {
     // INTERFACES *****************************************************************************
     public int gCost { get; set; } = 0;
+
     public int hCost { get; set; } = 0;
     public int fCost { get { return gCost + hCost; } }
 
@@ -44,25 +47,23 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
 
     protected List<GridEntity> m_currentEntities = new List<GridEntity>();
 
-    
-
     // METHODS ********************************************************************************
     public GridNode(Grid<GridNode> grid, int x, int y)
     {
-        position            = grid.GetNodePosition(x, y);
-        walkable            = false;
-        overridden          = false;
-        overrideType        = NodeOverrideType.None;
-        lvlTransitionInfo   = null;
+        position = grid.GetNodePosition(x, y);
+        walkable = false;
+        overridden = false;
+        overrideType = NodeOverrideType.None;
+        lvlTransitionInfo = null;
     }
 
     public GridNode()
     {
-        position            = new GridNodePosition();
-        walkable            = false;
-        overridden          = false;
-        overrideType        = NodeOverrideType.None;
-        lvlTransitionInfo   = null;
+        position = new GridNodePosition();
+        walkable = false;
+        overridden = false;
+        overrideType = NodeOverrideType.None;
+        lvlTransitionInfo = null;
     }
 
     public void AddEntity(GridEntity entity)
@@ -86,5 +87,56 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
     public List<GridEntity> GetGridEntities()
     {
         return m_currentEntities;
+    }
+
+    public GridNode GetNeighbour(Vector2Int direction)
+    {
+        if (direction == null)
+            return null;
+
+        if (direction.x != 0 && direction.y != 0)
+        {
+            // diagonal moves are not cached by the grid, we will attempt to find a valid node manually
+
+            Vector2Int dir_x = new Vector2Int(direction.x , 0);
+            Vector2Int dir_y = new Vector2Int(0 , direction.y);
+
+            // X -> Y
+            {
+                GridNode node_x = Neighbors[dir_x.RotationToIndex()].reference;
+                if (node_x != null)
+                {
+                    GridNode node_x_y = node_x.Neighbors[dir_y.RotationToIndex()].reference;
+                    {
+                        if (node_x_y != null)
+                        {
+                            return node_x_y;
+                        }
+                    }
+                }
+            }
+
+            // Y -> X
+            {
+                GridNode node_y = Neighbors[dir_y.RotationToIndex()].reference;
+                if (node_y != null)
+                {
+                    GridNode node_y_x = node_y.Neighbors[dir_x.RotationToIndex()].reference;
+                    {
+                        if (node_y_x != null)
+                        {
+                            return node_y_x;
+                        }
+                    }
+                }
+            }
+        }
+        else
+        {
+            // resolve as normal
+            return Neighbors[direction.RotationToIndex()].reference;
+        }
+
+        return null;
     }
 }

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class TestEnitity : GridEntity
 {
-    [SerializeField] private Vector2 testDirection = new Vector2();
+    [SerializeField] private Vector2Int testDirection = new Vector2Int();
     [SerializeField] private int moveSpeed = 1;
 
     public override void AnalyseStep()
@@ -17,8 +17,7 @@ public class TestEnitity : GridEntity
         if (!Application.isPlaying)
         {
             Gizmos.color = Color.white;
-            Gizmos.DrawRay(transform.position, m_movementDirection);
+            // Gizmos.DrawRay(transform.position, m_movementDirection);
         }
-
     }
 }

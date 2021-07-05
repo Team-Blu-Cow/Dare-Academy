@@ -10,7 +10,7 @@ public class TestScript : MonoBehaviour
 
     public Transform[] positions;
 
-    [SerializeField] private PathfindingMultiGrid<GridNode> grid;
+    [SerializeField] private PathfindingMultiGrid grid;
 
     private void Awake()
     {

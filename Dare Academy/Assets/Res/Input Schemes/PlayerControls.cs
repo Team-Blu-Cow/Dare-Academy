@@ -200,7 +200,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
             ""id"": ""31809891-72d2-4334-bddc-d87af4db1231"",
             ""actions"": [
                 {
-                    ""name"": ""New action"",
+                    ""name"": ""Direction"",
                     ""type"": ""Button"",
                     ""id"": ""ab9bb69b-8d47-4463-9c4e-6adcb135685e"",
                     ""expectedControlType"": ""Button"",
@@ -216,7 +216,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Direction"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -227,7 +227,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Direction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -238,7 +238,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Direction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -249,7 +249,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Direction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -260,7 +260,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Direction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -271,7 +271,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": ""Press"",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Direction"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
@@ -282,7 +282,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Direction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -293,7 +293,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Direction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -304,7 +304,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Direction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 },
@@ -315,7 +315,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Direction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
                 }
@@ -357,7 +357,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_Move_Direction = m_Move.FindAction("Direction", throwIfNotFound: true);
         // Aim
         m_Aim = asset.FindActionMap("Aim", throwIfNotFound: true);
-        m_Aim_Newaction = m_Aim.FindAction("New action", throwIfNotFound: true);
+        m_Aim_Direction = m_Aim.FindAction("Direction", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -440,12 +440,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     // Aim
     private readonly InputActionMap m_Aim;
     private IAimActions m_AimActionsCallbackInterface;
-    private readonly InputAction m_Aim_Newaction;
+    private readonly InputAction m_Aim_Direction;
     public struct AimActions
     {
         private @PlayerControls m_Wrapper;
         public AimActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Newaction => m_Wrapper.m_Aim_Newaction;
+        public InputAction @Direction => m_Wrapper.m_Aim_Direction;
         public InputActionMap Get() { return m_Wrapper.m_Aim; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -455,16 +455,16 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         {
             if (m_Wrapper.m_AimActionsCallbackInterface != null)
             {
-                @Newaction.started -= m_Wrapper.m_AimActionsCallbackInterface.OnNewaction;
-                @Newaction.performed -= m_Wrapper.m_AimActionsCallbackInterface.OnNewaction;
-                @Newaction.canceled -= m_Wrapper.m_AimActionsCallbackInterface.OnNewaction;
+                @Direction.started -= m_Wrapper.m_AimActionsCallbackInterface.OnDirection;
+                @Direction.performed -= m_Wrapper.m_AimActionsCallbackInterface.OnDirection;
+                @Direction.canceled -= m_Wrapper.m_AimActionsCallbackInterface.OnDirection;
             }
             m_Wrapper.m_AimActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @Newaction.started += instance.OnNewaction;
-                @Newaction.performed += instance.OnNewaction;
-                @Newaction.canceled += instance.OnNewaction;
+                @Direction.started += instance.OnDirection;
+                @Direction.performed += instance.OnDirection;
+                @Direction.canceled += instance.OnDirection;
             }
         }
     }
@@ -493,6 +493,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     }
     public interface IAimActions
     {
-        void OnNewaction(InputAction.CallbackContext context);
+        void OnDirection(InputAction.CallbackContext context);
     }
 }

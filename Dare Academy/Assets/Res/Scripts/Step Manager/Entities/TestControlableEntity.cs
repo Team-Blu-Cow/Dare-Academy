@@ -9,7 +9,7 @@ public class TestControlableEntity : GridEntity
     [SerializeField] private Vector2 testDirection = new Vector2();
     [SerializeField] private int moveSpeed = 1;
 
-    PlayerControls input;
+    private PlayerControls input;
 
     protected override void Start()
     {
@@ -23,7 +23,7 @@ public class TestControlableEntity : GridEntity
     public void SetDirection(InputAction.CallbackContext context)
     {
         testDirection = context.ReadValue<Vector2>();
-        m_movementDirection = testDirection;
+        // m_movementDirection = testDirection;
     }
 
     public override void AnalyseStep()
@@ -35,7 +35,7 @@ public class TestControlableEntity : GridEntity
     {
         base.EndStep();
 
-        if(m_currentNode.overridden && m_currentNode.overrideType == JUtil.Grids.NodeOverrideType.SceneConnection)
+        if (m_currentNode.overridden && m_currentNode.overrideType == NodeOverrideType.SceneConnection)
         {
             // transition to a new scene
             App.GetModule<SceneModule>().SwitchScene(
@@ -43,7 +43,6 @@ public class TestControlableEntity : GridEntity
                 TransitionType.Slice,
                 LoadingBarType.BottomBar
                 );
-
         }
 
         if (m_currentNode != null)
@@ -60,7 +59,6 @@ public class TestControlableEntity : GridEntity
 
     private void OnDrawGizmos()
     {
-        
         Gizmos.color = Color.white;
         Gizmos.DrawRay(transform.position, testDirection);
 

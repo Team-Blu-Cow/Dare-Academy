@@ -6,22 +6,25 @@ using UnityEngine.SceneManagement;
 
 namespace blu
 {
-
     public class LevelModule : Module
     {
-        private PathfindingMultiGrid<GridNode> m_grid = null;
-        public PathfindingMultiGrid<GridNode> MetaGrid
+        private PathfindingMultiGrid m_grid = null;
+
+        public PathfindingMultiGrid MetaGrid
         { set { m_grid = value; } get { return m_grid; } }
+
+        public Grid<GridNode> CurrentRoom { get => Grid(StepController.m_currentRoomIndex); }
 
         public Grid<GridNode> Grid(int i)
         { return m_grid.Grid(i); }
 
         private LevelManager m_levelManager = null;
+
         public LevelManager LevelManager
         { get { return m_levelManager; } }
+
         public StepController StepController
         { get { return m_levelManager.StepController; } }
-
 
         private void OnDestroy()
         {
@@ -58,5 +61,4 @@ namespace blu
             m_levelManager.AddEntityToStepController(entity);
         }
     }
-
 }
