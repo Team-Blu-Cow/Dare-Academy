@@ -828,16 +828,23 @@ public abstract class GridEntity : MonoBehaviour
 
     protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2 direction, int damage = 1)
     {
+        if (direction == null)
+            return false;
+
         Vector2Int dir = new Vector2Int((int)direction.x, (int)direction.y);
         return SpawnBullet(prefab, sourceNode, dir, damage);
     }
 
     protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2Int direction, int damage = 1)
     {
-        // TODO @matthew - validation checks on input parameters
+        if (sourceNode == null)
+            return false;
+
+        if (direction == null)
+            return false;
+
         if (prefab)
         {
-            // TODO @jay - we need something faster then GetNodeFromWorld() for doing this
             GridNode spawnNode = sourceNode.GetNeighbour(direction); ;
 
             if (spawnNode == null)
