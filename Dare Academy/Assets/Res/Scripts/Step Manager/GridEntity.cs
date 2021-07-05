@@ -264,6 +264,11 @@ public abstract class GridEntity : MonoBehaviour
     {
         // iterate counter of steps taken this turn, this is reset in End()
         m_stepsTaken++;
+
+        if (m_stepsTaken >= m_speed)
+        {
+            m_movementDirection = Vector2Int.zero;
+        }
     }
 
     virtual public void AttackStep()
