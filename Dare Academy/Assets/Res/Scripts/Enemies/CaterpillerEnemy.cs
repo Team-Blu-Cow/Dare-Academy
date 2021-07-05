@@ -7,9 +7,24 @@ using JUtil;
 public class CaterpillerEnemy : GridEntity
 {
     [SerializeField] private GridEntity followEntity;
+    public GridEntity behindEntity;
+    [SerializeField] private bool head;
 
     private Vector2 m_dir = new Vector2();
     [SerializeField] private int moveSpeed = 1;
+
+    private void OnValidate()
+    {
+        if (followEntity.TryGetComponent(out CaterpillerEnemy caterpiller))
+        {
+            caterpiller.behindEntity = this;
+            head = false;
+        }
+        else
+        {
+            head = true;
+        }
+    }
 
     protected override void Start()
     {
@@ -36,6 +51,7 @@ public class CaterpillerEnemy : GridEntity
         }
 
         m_dir = new Vector2Int((int)dir.x, (int)dir.y);
+
         SetMovementDirection(m_dir, moveSpeed);
     }
 
