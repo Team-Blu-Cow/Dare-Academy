@@ -365,7 +365,7 @@ public abstract class GridEntity : MonoBehaviour
     {
         if (m_currentNode == null)
             return;
-        StartCoroutine(AnimateMove(m_stepController.m_stepTime));
+        StartCoroutine(AnimateMove(m_stepController.stepTime));
     }
 
     // RESOLVE MOVE CONFLICT METHODS **************************************************************
@@ -853,7 +853,7 @@ public abstract class GridEntity : MonoBehaviour
             List<GridEntity> entities = spawnNode.GetGridEntities();
             if (entities.Count > 0)
             {
-                foreach(GridEntity entity in  entities)
+                foreach (GridEntity entity in entities)
                 {
                     entity.Health -= damage;
                 }
@@ -867,7 +867,7 @@ public abstract class GridEntity : MonoBehaviour
             if (obj)
             {
                 BulletEntity bullet = obj.GetComponent<BulletEntity>();
-                
+
                 if (bullet)
                 {
                     bullet.m_damage = damage;
