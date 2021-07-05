@@ -17,6 +17,7 @@ public class MainTestScript : MonoBehaviour
     public TempClass test = new TempClass();
 
     private bool _paused;
+    private bool _flipFlop = true;
 
     #region Level Loading
 
@@ -118,7 +119,12 @@ public class MainTestScript : MonoBehaviour
 
         if (Keyboard.current.mKey.wasPressedThisFrame)
         {
-            Camera.current.GetComponent<CamContoller>().MoveToRoomByIndex(1);
+            if (_flipFlop)
+                App.CameraController.MoveToPosition(new Vector3(-10, 10, 0));
+            else
+                App.CameraController.MoveToCurrentRoom();
+
+            _flipFlop = !_flipFlop;
         }
     }
 }

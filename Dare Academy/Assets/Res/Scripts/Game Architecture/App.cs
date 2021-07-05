@@ -14,10 +14,12 @@ namespace blu
         private List<blu.Module> _modules = new List<blu.Module>();
         private blu.ModuleManager _moduleManager = new blu.ModuleManager();
         private CanvasTool.CanvasManager _canvasManager = null;
+        private blu.CamContoller _cameraController = null;
 
         [HideInInspector] public static List<blu.Module> LoadedModules { get => instance._modules; }
         [HideInInspector] public static Transform Transform { get => instance.transform; }
         [HideInInspector] public static CanvasTool.CanvasManager CanvasManager { get => instance._canvasManager; }
+        [HideInInspector] public static blu.CamContoller CameraController { get => instance._cameraController; }
 
         // set to true if different load orders are required due to
         // start up scenes.
@@ -82,6 +84,13 @@ namespace blu
                 Debug.Log("[App]: Canvas Manager found.");
             else
                 Debug.Log("[App]: Canvas Manager is null.");
+
+            _cameraController = null;
+            _cameraController = FindObjectOfType<blu.CamContoller>();
+            if (_cameraController)
+                Debug.Log("[App]: Camera Controller found.");
+            else
+                Debug.Log("[App]: Camera Controller is null.");
 
             if (App.GetModule<DialogueModule>() != null)
             {
