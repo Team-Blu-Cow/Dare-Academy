@@ -12,9 +12,9 @@ namespace blu
         [SerializeField] private Camera _Cam;
 
         private PlayerEntity _player;
-        private bool _keepPlayerInFrame;
-
-        private Vector3 _currentTarget { get => _virtualCam.Follow.position; }
+        private bool _keepPlayerInFrame = false;
+        private Grid<GridNode> _currentRoom;
+        [SerializeField] [Range(0, 10)] private float _tolerance = 1.5f;
 
         private void Start()
         {
@@ -32,6 +32,16 @@ namespace blu
         private void OnDestroy()
         {
             App.GetModule<LevelModule>().StepController.RoomChangeEvent -= MoveToCurrentRoom;
+        }
+
+        public void KeepPlayerInFrame(bool in_bool = true)
+        {
+            _keepPlayerInFrame = in_bool;
+        }
+
+        public void ToggleKeepPlayerInFrame()
+        {
+            _keepPlayerInFrame = !_keepPlayerInFrame;
         }
 
         public void MoveToCurrentRoom()
@@ -74,13 +84,21 @@ namespace blu
         {
             if (_keepPlayerInFrame)
             {
-                Bounds cameraBounds;
-                cameraBounds = _Cam.OrthographicBounds();
+                //NOTE: if camera is acting weird, very likely due to the fact
+                // that it assumes all grid cells are the size of 1.
+                //
+                // shout at @adam (or @matthew if youre feeling spicy) to fix it
 
-                for (int corner = 0; corner < 4; corner++)
-                {
-                    _player.GetComponent<SpriteRenderer>();
-                }
+                //_virtualCam.Follow.position = _player.transform.position;
+                _virtualCam.Follow.position = new Vector3(
+                    Mathf.Clamp(_player.transform.position.x,
+                    App.GetModule<LevelModule>().CurrentRoom.OriginPosition.x + (_Cam.OrthographicBounds().extents.x - _tolerance),
+                    App.GetModule<LevelModule>().CurrentRoom.OriginPosition.x + App.GetModule<LevelModule>().CurrentRoom.Width - (_Cam.OrthographicBounds().extents.x) + _tolerance),
+
+                    Mathf.Clamp(_player.transform.position.y,
+                    App.GetModule<LevelModule>().CurrentRoom.OriginPosition.y + (_Cam.OrthographicBounds().extents.y - _tolerance),
+                    App.GetModule<LevelModule>().CurrentRoom.OriginPosition.y + App.GetModule<LevelModule>().CurrentRoom.Height - (_Cam.OrthographicBounds().extents.y) + _tolerance),
+                    0);
             }
         }
     }

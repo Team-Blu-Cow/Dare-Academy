@@ -109,7 +109,6 @@ public class MainTestScript : MonoBehaviour
         ExampleLoadData();
     }
 
-    // Update is called once per frame
     private void Update()
     {
         if (Keyboard.current.bKey.wasPressedThisFrame)
