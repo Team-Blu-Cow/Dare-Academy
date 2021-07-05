@@ -115,5 +115,10 @@ public class MainTestScript : MonoBehaviour
         {
             App.GetModule<DialogueModule>().StartDialogue(Resources.Load<GameObject>("Conversations/ExampleZoneName/TestConvoTwo"));
         }
+
+        if (Keyboard.current.mKey.wasPressedThisFrame)
+        {
+            Camera.current.GetComponent<CamContoller>().MoveToRoomByIndex(1);
+        }
     }
 }
