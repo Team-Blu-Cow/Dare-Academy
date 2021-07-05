@@ -10,7 +10,7 @@ public abstract class GridEntity : MonoBehaviour
 {
     // MEMBERS ************************************************************************************
 
-    private Vector2 m_movementDirection;
+    private Vector2Int m_movementDirection;
 
     [SerializeField] protected int m_mass = 2;
     protected int m_speed       = 1;
@@ -21,7 +21,7 @@ public abstract class GridEntity : MonoBehaviour
 
     [SerializeField] protected GridEntityFlags m_flags = new GridEntityFlags();
 
-    public Vector2 Direction => m_movementDirection;
+    public Vector2Int Direction => m_movementDirection;
 
     public int Mass { get { return m_mass; } set { m_mass = value; } }
     public int Speed { get { return m_speed; } }
@@ -199,7 +199,7 @@ public abstract class GridEntity : MonoBehaviour
             entity.AddToCurrentNode();
 
             entity.m_speed = 0;
-            entity.m_movementDirection = Vector2.zero;
+            entity.m_movementDirection = Vector2Int.zero;
         }
     }
 
@@ -621,14 +621,21 @@ public abstract class GridEntity : MonoBehaviour
 
     public void SetMovementDirection(Vector2 direction, int speed = 1)
     {
+        Vector2Int dirInt = new Vector2Int((int)direction.x, (int)direction.y);
+
+        SetMovementDirection(dirInt, speed);
+    }
+
+    public void SetMovementDirection(Vector2Int direction, int speed = 1)
+    {
         // TODO @matthew/@jay - check this value is valid
         m_movementDirection = direction;
         m_speed = speed;
     }
 
-    protected void SetTargetNode(Vector2 direction, int distance = 1)
+    protected void SetTargetNode(Vector2Int direction, int distance = 1)
     {
-        if (direction == Vector2.zero)
+        if (direction == Vector2Int.zero)
             return;
 
         m_movementDirection = direction;
@@ -650,7 +657,7 @@ public abstract class GridEntity : MonoBehaviour
         if (m_targetNode == m_currentNode) // if entity is not moving
         {
             m_targetNode = null;
-            m_movementDirection = Vector2.zero;
+            m_movementDirection = Vector2Int.zero;
             m_speed = 0;
         }
     }
@@ -749,14 +756,14 @@ public abstract class GridEntity : MonoBehaviour
                 losing_objects[0].m_currentNode = losing_objects[0].m_previousNode;
                 losing_objects[0].m_previousNode = null;
                 losing_objects[0].m_targetNode = null;
-                losing_objects[0].m_movementDirection = Vector2.zero;
+                losing_objects[0].m_movementDirection = Vector2Int.zero;
                 losing_objects[0].m_speed = 0;
 
                 winning_objects[0].RemoveFromCurrentNode();
                 winning_objects[0].m_currentNode = winning_objects[0].m_previousNode;
                 winning_objects[0].m_previousNode = null;
                 winning_objects[0].m_targetNode = null;
-                winning_objects[0].m_movementDirection = Vector2.zero;
+                winning_objects[0].m_movementDirection = Vector2Int.zero;
                 winning_objects[0].m_speed = 0;
 
                 return;
@@ -773,7 +780,7 @@ public abstract class GridEntity : MonoBehaviour
         losing_objects[0].AddToCurrentNode();
         losing_objects[0].m_targetNode = null;
         losing_objects[0].m_speed = 0;
-        losing_objects[0].m_movementDirection = Vector2.zero;
+        losing_objects[0].m_movementDirection = Vector2Int.zero;
     }
 
     virtual public void RemoveFromCurrentNode()
@@ -822,16 +829,17 @@ public abstract class GridEntity : MonoBehaviour
 
     protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2 direction)
     {
-        Vector3 dir = new Vector3(direction.x, direction.y, 0);
+        Vector2Int dir = new Vector2Int((int)direction.x, (int)direction.y);
         return SpawnBullet(prefab, sourceNode, dir);
     }
 
-    protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector3 direction)
+    protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2Int direction)
     {
         // TODO @matthew - validation checks on input parameters
         if (prefab)
         {
-            GridNode spawnNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(sourceNode.position.world + direction); ;
+            // TODO @jay - we need something faster then GetNodeFromWorld() for doing this
+            GridNode spawnNode = sourceNode.GetNeighbour(direction); ;
 
             if (spawnNode == null)
                 return false;
@@ -859,6 +867,8 @@ public abstract class GridEntity : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.white;
-        Gizmos.DrawRay(transform.position, m_movementDirection);
+
+        Vector2 rayVec = new Vector2(m_movementDirection.x, m_movementDirection.y);
+        Gizmos.DrawRay(transform.position, rayVec);
     }
 }
