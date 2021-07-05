@@ -16,7 +16,7 @@ public class ArcherEntity : GridEntity
 
     [Header("Move attributes")]
     private Vector2 m_dir = new Vector2();
-    private Vector2 m_lastDir = new Vector2();
+    private Vector2Int m_lastDir = new Vector2Int();
     [SerializeField] private int moveSpeed = 1;
 
     [Header("Resources needed")]
@@ -46,9 +46,12 @@ public class ArcherEntity : GridEntity
         {
             if((alignVector.x <= 3.0f && alignVector.x >= -3.0f) && (alignVector.y <= 3.0f && alignVector.y >= -3.0f))
             {
-                if (m_attackCooldown <= 0)
+                if (!CheckPlayerIsBehindWall())
                 {
-                    isAttacking = true;
+                    if (m_attackCooldown <= 0)
+                    {
+                        isAttacking = true;
+                    }
                 }
             }
         }
@@ -61,12 +64,9 @@ public class ArcherEntity : GridEntity
             {
                 m_dir = path[1] - path[0];
             }
-            else if (path.Length < 5)
-            {
-                
-            }
+
             m_dir = new Vector2Int((int)m_dir.x, (int)m_dir.y);
-            m_lastDir = m_dir;
+            m_lastDir = new Vector2Int((int)m_dir.x, (int)m_dir.y);
         }
         else
         {
@@ -87,7 +87,28 @@ public class ArcherEntity : GridEntity
             SpawnBullet(m_bulletPrefab, m_currentNode, m_lastDir);
             m_attackCounter = 0;
             isAttacking = false;
-            m_attackCooldown = 3;
+            m_attackCooldown = 2;
+        }
+    }
+
+    private bool CheckPlayerIsBehindWall()
+    {
+
+        if (m_currentNode.GetNeighbour(m_lastDir) == null)
+        {
+            return true;
+        }
+        else if (m_currentNode.GetNeighbour(m_lastDir).GetNeighbour(m_lastDir) == null)
+        {
+            return true;
+        }
+        else if (m_currentNode.GetNeighbour(m_lastDir).GetNeighbour(m_lastDir).GetNeighbour(m_lastDir) == null)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
