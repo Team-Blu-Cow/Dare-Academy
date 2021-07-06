@@ -681,7 +681,7 @@ public abstract class GridEntity : MonoBehaviour
         Vector2 moveDirection;
 
         // determine move direction
-        if (m_flags.IsFlagsSet(flags.isPushable))
+        if (m_flags.IsFlagsSet(flags.isPushable) && winningEntity.m_previousNode != null)
         {
             // check to see if entity and winning entity are in the correct position to be pushed by another entity
             if (winningEntity.m_previousNode.position.grid == m_currentNode.position.grid - winningEntity.m_movementDirection)
@@ -738,6 +738,16 @@ public abstract class GridEntity : MonoBehaviour
             {
                 return;
             }
+        }
+
+        if (m_currentNode.GetGridEntities().Count > 0)
+        {
+            winningEntity.RemoveFromCurrentNode();
+
+            m_currentNode = lastNode;
+            winningEntity.m_currentNode = winnerLastNode;
+
+            winningEntity.AddToCurrentNode();
         }
 
         m_previousNode = null;
