@@ -2908,8 +2908,9 @@ MonoBehaviour:
   m_roomIndex: 0
   m_flags:
     m_flagData: 0
-  m_attackCooldown: 0
+  m_attackCooldown: 3
   agroRange: 5
+  m_cooldownCounter: 0
   moveSpeed: 1
   m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
   player: {fileID: 951696285}

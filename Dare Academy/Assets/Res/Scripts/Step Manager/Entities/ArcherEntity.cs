@@ -8,16 +8,15 @@ public class ArcherEntity : GridEntity
 {
 
     [Header("Attack attributes")]
-    [SerializeField] private int m_attackCooldown = 0;
+    [SerializeField] private int m_attackCooldown = 5;
     [SerializeField] private int agroRange = 5;
-    private int m_attackCounter = 0;
+    [SerializeField] private int m_cooldownCounter = 0;
     private bool isAttacking = false;
-    private Vector2[] telegraphPos = { new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0) };
+    private bool isWaiting = false;
 
-    [Header("Move attributes")]
-    private Vector2 m_dir = new Vector2();
-    private Vector2Int m_lastDir = new Vector2Int();
+    [Header("Move attributes")] 
     [SerializeField] private int moveSpeed = 1;
+    private Vector2 m_dir = new Vector2();
 
     [Header("Resources needed")]
     [SerializeField] private GameObject m_bulletPrefab = null;
@@ -41,68 +40,73 @@ public class ArcherEntity : GridEntity
     {
         base.AnalyseStep();
 
-        Vector2 alignVector = player.transform.position - transform.position;
-        if((alignVector.x <= 0.5f && alignVector.x >= -0.5f) || (alignVector.y <= 0.5f && alignVector.y >= -0.5f))
+        Vector2 distanceVector = player.transform.position - transform.position;
+        if ((distanceVector.x <= 0.5f && distanceVector.x >= -0.5f) || (distanceVector.y <= 0.5f && distanceVector.y >= -0.5f))
         {
-            if((alignVector.x <= 3.0f && alignVector.x >= -3.0f) && (alignVector.y <= 3.0f && alignVector.y >= -3.0f))
+            if ((distanceVector.x <= 4.0f && distanceVector.x >= -4.0f) && (distanceVector.y <= 4.0f && distanceVector.y >= -4.0f))
             {
-                if (!CheckPlayerIsBehindWall())
+                if (!CheckPlayerIsBehindWall(m_dir))
                 {
-                    if (m_attackCooldown <= 0)
+                    if (m_cooldownCounter <= 0)
                     {
+                        m_cooldownCounter = m_attackCooldown;
                         isAttacking = true;
                     }
                 }
             }
         }
 
-        if (!isAttacking && m_attackCooldown <= 0)
+        Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, player.transform.position);
+
+        if (!isAttacking && !isWaiting)
         {
-            Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, player.transform.position);
-
-            if (path.Length > 1)
+            if (path.Length <= agroRange)
             {
-                m_dir = path[1] - path[0];
-            }
+                if (path.Length > 1)
+                {
+                    m_dir = path[1] - path[0];
+                }
 
-            m_dir = new Vector2Int((int)m_dir.x, (int)m_dir.y);
-            m_lastDir = new Vector2Int((int)m_dir.x, (int)m_dir.y);
+                m_dir = new Vector2Int((int)m_dir.x, (int)m_dir.y);
+                SetMovementDirection(m_dir, moveSpeed);
+            }
         }
         else
         {
-            if (m_attackCooldown > 0)
-            {
-                m_attackCooldown--;
-                m_dir = Vector2.zero;
-            }            
+           isWaiting = false;
+           SetMovementDirection(Vector2.zero, moveSpeed);         
         }
 
-        SetMovementDirection(m_dir, moveSpeed);
+        if (m_cooldownCounter > 0)
+        {
+            m_cooldownCounter--;
+        }
+
     }
 
     public override void AttackStep()
     {
         if (isAttacking == true)
         {
-            SpawnBullet(m_bulletPrefab, m_currentNode, m_lastDir);
-            m_attackCounter = 0;
+            SpawnBullet(m_bulletPrefab, m_currentNode, m_dir);
             isAttacking = false;
-            m_attackCooldown = 2;
+            isWaiting = true;
         }
     }
 
-    private bool CheckPlayerIsBehindWall()
+    private bool CheckPlayerIsBehindWall(Vector2 direction)
     {
+        Vector2Int m_direction = new Vector2Int((int)direction.x, (int)direction.y);
 
-        if (m_currentNode.GetNeighbour(m_lastDir) == null)
+        if (m_currentNode.GetNeighbour(m_direction) == null)
         {
             return true;
         }
-        else if (m_currentNode.GetNeighbour(m_lastDir).GetNeighbour(m_lastDir) == null)
+        else if (m_currentNode.GetNeighbour(m_direction).GetNeighbour(m_direction) == null)
         {
             return true;
         }
-        else if (m_currentNode.GetNeighbour(m_lastDir).GetNeighbour(m_lastDir).GetNeighbour(m_lastDir) == null)
+        else if (m_currentNode.GetNeighbour(m_direction).GetNeighbour(m_direction).GetNeighbour(m_direction) == null)
         {
             return true;
         }
