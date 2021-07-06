@@ -17,7 +17,7 @@ public class PathfindingMultiGrid
 
     [SerializeField] private string[] gridNames;
 
-    [SerializeField] private NodeOverrides<GridNode> nodeOverrides;
+    [SerializeField] public NodeOverrides<GridNode> nodeOverrides;
 
     [SerializeField] private TileDatabase tileData;
 
