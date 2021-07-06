@@ -21,8 +21,44 @@ public class SlideyBoi : GridEntity
 
     public override void AnalyseStep()
     {
-        bool found = false;
         moveSpeed = 0;
+        bool move;
+
+        m_direction = new Vector2(1, 0);
+        move = CheckLine();
+
+        if (!move)
+        {
+            m_direction = new Vector2(0, 1);
+            move = CheckLine();
+        }
+        if (!move)
+        {
+            m_direction = new Vector2(-1, 0);
+            move = CheckLine();
+        }
+        if (!move)
+        {
+            m_direction = new Vector2(0, -1);
+            move = CheckLine();
+        }
+
+        if (!move)
+        {
+            SetMovementDirection(Vector2.zero, moveSpeed);
+        }
+        else
+        {
+            SetMovementDirection(m_direction, moveSpeed);
+            m_direction = -m_direction;
+        }
+
+        base.AnalyseStep();
+    }
+
+    private bool CheckLine()
+    {
+        bool found = false;
         bool move = false;
 
         GridNode node = m_currentNode.Neighbors[m_direction.RotationToIndex()].reference;
@@ -47,17 +83,7 @@ public class SlideyBoi : GridEntity
             }
         }
 
-        if (!move)
-        {
-            SetMovementDirection(Vector2.zero, moveSpeed);
-        }
-        else
-        {
-            SetMovementDirection(m_direction, moveSpeed);
-            m_direction = -m_direction;
-        }
-
-        base.AnalyseStep();
+        return move;
     }
 
     private void OnDrawGizmos()
@@ -66,12 +92,5 @@ public class SlideyBoi : GridEntity
 
         Vector2 rayVec = new Vector2(Direction.x, Direction.y);
         Gizmos.DrawRay(transform.position, rayVec);
-
-        float offset = (moveSpeed / 2.0f) + 1;
-
-        offset -= 0.5f;
-        offset *= Mathf.Sign(m_direction.y);
-
-        Gizmos.DrawWireCube(transform.position + new Vector3(0, offset, 0), new Vector2(1, moveSpeed));
     }
 }
