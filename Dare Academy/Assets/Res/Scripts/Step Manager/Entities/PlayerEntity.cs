@@ -10,17 +10,18 @@ public class PlayerEntity : GridEntity
     private GameObject m_bulletPrefab = null;
     private Vector2 m_shootDirection = Vector2.zero;
 
-    [SerializeField] private int m_fireRate = 3;
-    private int m_shootCooldown = 0;
-
-    [SerializeField] private int m_currentEnergy = 3;
+    [SerializeField] private int m_maxEnergy = 3;
+    private int m_currentEnergy = 0;
 
     private bool m_shouldDash = false; // flag for if the player is dashing this step
     private int m_dashDistance = 2;
-    private int m_dashEnergyCost = 1;
+    private int m_dashEnergyCost = 3;
+
+    private int m_shootEnergyCost = 3;
 
     [SerializeField] private bool m_allowDash = false; // if the player is allowed to dash
     public int Energy { get => m_currentEnergy; set => m_currentEnergy = value; }
+    public int MaxEnergy { get => m_maxEnergy; set => m_maxEnergy = value; }
 
     // the movement direction stored within GridEntity is cleared every step so we store another copy here
     private Vector2 m_moveDirection = Vector2.zero;
@@ -35,7 +36,7 @@ public class PlayerEntity : GridEntity
     protected override void Start()
     {
         base.Start();
-        m_shootCooldown = m_fireRate;
+        Energy = MaxEnergy;
     }
 
     private void OnEnable()
@@ -113,6 +114,14 @@ public class PlayerEntity : GridEntity
     {
         base.EndStep();
 
+        Energy++;
+
+        if (Energy > MaxEnergy)
+            Energy = MaxEnergy;
+
+        if (Energy < 0)
+            Energy = 0;
+
         if (m_currentNode.overridden && m_currentNode.overrideType == NodeOverrideType.SceneConnection)
         {
             // transition to a new scene
@@ -137,9 +146,7 @@ public class PlayerEntity : GridEntity
 
     public override void AttackStep()
     {
-        m_shootCooldown++;
-
-        if (m_shootCooldown >= m_fireRate)
+        if (Energy >= m_shootEnergyCost)
         {
             if (m_shootDirection != Vector2.zero)
             {
@@ -159,9 +166,11 @@ public class PlayerEntity : GridEntity
                     node = m_currentNode;
                 }
 
-                SpawnBullet(m_bulletPrefab, node, m_shootDirection);
+                if (SpawnBullet(m_bulletPrefab, node, m_shootDirection))
+                {
+                    Energy -= m_shootEnergyCost;
+                }
                 m_shootDirection = Vector2.zero;
-                m_shootCooldown = 0;
             }
         }
     }
