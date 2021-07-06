@@ -218,13 +218,23 @@ namespace JUtil.Grids
 
         public NodeNeighbor<T> this[Vector2 dir]
         {
-            get { return neighbors[dir.RotationToIndex()]; }
+            get 
+            {
+                if (dir == Vector2.zero)
+                    return null;
+                return neighbors[dir.RotationToIndex()];
+            }
             set { neighbors[dir.RotationToIndex()] = value; }
         }
 
         public NodeNeighbor<T> this[Vector2 dir, int sliceAngle]
         {
-            get { return neighbors[dir.RotationToIndex(sliceAngle)]; }
+            get 
+            {
+                if (dir == Vector2.zero)
+                    return null;
+                return neighbors[dir.RotationToIndex(sliceAngle)];
+            }
             set { neighbors[dir.RotationToIndex(sliceAngle)] = value; }
         }
 
