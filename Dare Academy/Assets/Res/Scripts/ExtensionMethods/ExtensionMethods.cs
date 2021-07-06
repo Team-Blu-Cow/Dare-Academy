@@ -27,4 +27,14 @@ public static class ExtensionMethods
             new Vector3(cameraHeight * screenAspect, cameraHeight, 0));
         return bounds;
     }
+
+    public static Bounds OrthographicBounds(this Camera camera, Vector3 in_origin)
+    {
+        float screenAspect = (float)Screen.width / (float)Screen.height;
+        float cameraHeight = camera.orthographicSize * 2;
+        Bounds bounds = new Bounds(
+            in_origin,
+            new Vector3(cameraHeight * screenAspect, cameraHeight, 0));
+        return bounds;
+    }
 }

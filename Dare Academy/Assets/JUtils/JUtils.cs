@@ -22,7 +22,6 @@ namespace JUtil
         }
 
         // VECTOR2 HELPER METHODS *****************************************************************
-
         public static Vector2 Rotate(this Vector2 v, float degrees)
         {
             float radians = degrees * Mathf.Deg2Rad;
