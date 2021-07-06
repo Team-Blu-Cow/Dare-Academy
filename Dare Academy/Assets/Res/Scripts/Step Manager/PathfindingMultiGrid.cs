@@ -13,7 +13,7 @@ public class PathfindingMultiGrid
     // MEMBERS ************************************************************************************
     [SerializeField] private List<Grid<GridNode>> grids;
 
-    [SerializeField] private GridInfo[] gridInfo;
+    [SerializeField] public GridInfo[] gridInfo;
 
     [SerializeField] private string[] gridNames;
 
@@ -91,12 +91,12 @@ public class PathfindingMultiGrid
 
     private void CreateSceneLinkingNode(LevelTransitionInformation link)
     {
-        GridNode node                  = grids[link.myRoomIndex][link.myNodeIndex];
+        GridNode node = grids[link.myRoomIndex][link.myNodeIndex];
         node.overridden = true;
         node.overriddenDir = link.travelDirection;
         node.lvlTransitionInfo = link;
 
-        GridNode transitionNode                    = new GridNode();
+        GridNode transitionNode = new GridNode();
         transitionNode.position = new GridNodePosition(node.position);
         transitionNode.position.grid = new Vector2Int(int.MaxValue, int.MaxValue);
         transitionNode.position.world = transitionNode.position.world + new Vector3(link.getTravelDirection().x, link.getTravelDirection().y, transitionNode.position.world.z);
@@ -555,6 +555,7 @@ public class GridInfo
     [SerializeField, Min(1)] public int width = 2;
     [SerializeField, Min(1)] public int height = 2;
     [SerializeField, Min(0)] public float cellSize = 1;
+    [SerializeField, Min(0)] public float cameraPadding = 1.25f;
     [SerializeField] public Vector3 originPosition = Vector3.zero;
 
     public Vector3 ToWorld(Vector2Int pos) => ToWorld(pos.x, pos.y);

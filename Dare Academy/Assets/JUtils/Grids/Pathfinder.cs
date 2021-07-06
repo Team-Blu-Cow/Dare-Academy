@@ -23,7 +23,7 @@ namespace JUtil.Grids
             area = A;
         }
 
-        public Vector3[] FindPath(T startPos, T targetPos, bool showtime = false)
+        public Vector3[] FindPath(T startPos, T targetPos, bool eightDir = false, bool showtime = false)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -58,7 +58,10 @@ namespace JUtil.Grids
                         break;
                     }
 
-                    CheckNeighbors(currentNode);
+                    if (eightDir)
+                        CheckNeighborsMoore(currentNode);
+                    else
+                        CheckNeighborsVonNeuman(currentNode);
                 }
             }
             if (pathSuccess)
@@ -77,7 +80,7 @@ namespace JUtil.Grids
             return neighbourNode;
         }
 
-        void CheckNeighbors(T currentNode)
+        void CheckNeighborsMoore(T currentNode)
         {
             foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
             {
@@ -101,6 +104,42 @@ namespace JUtil.Grids
                     else
                         openSet.UpdateItem(neighbour);
                 }
+
+            }
+        }
+
+        void CheckNeighborsVonNeuman(T currentNode)
+        {
+            int count = -1;
+            foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
+            {
+                count++;
+                if (count % 2 != 0)
+                {
+                    continue;
+                }
+
+                T neighbour = GetNeighbor(currentNode, neighbourStruct);
+
+                if (!neighbourStruct.connected || neighbour == null)
+                    continue;
+
+                if (!neighbour.IsTraversable() || closedSet.Contains(neighbour))
+                    continue;
+
+                int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
+                if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                {
+                    neighbour.gCost = newMovementCostToNeighbour;
+                    neighbour.hCost = GetDistance(neighbour, targetNode);
+                    neighbour.parent = currentNode;
+
+                    if (!openSet.Contains(neighbour))
+                        openSet.Add(neighbour);
+                    else
+                        openSet.UpdateItem(neighbour);
+                }
+
 
             }
         }

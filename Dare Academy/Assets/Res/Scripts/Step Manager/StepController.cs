@@ -10,14 +10,16 @@ public class StepController
 
     [SerializeField] public int m_currentRoomIndex;
     [SerializeField] public int m_targetRoomIndex;
-    [HideInInspector] public float m_stepTime;
+    private float m_stepTime = 0;
+    private float m_timer = 0;
 
-    public bool m_canStepAgain;
+    public float stepTime { get { return m_stepTime; } set { m_stepTime = value; } }
+    public float timer { get { return m_timer; } set { m_timer = value; } }
 
     // EVENTS *************************************************************************************
     public delegate void RoomChangedDelegate();
-    public event RoomChangedDelegate RoomChangeEvent;
 
+    public event RoomChangedDelegate RoomChangeEvent;
 
     // INITIALISATION METHODS *********************************************************************
     public StepController()
@@ -35,8 +37,10 @@ public class StepController
     // STEP METHODS *******************************************************************************
     public void ExecuteStep()
     {
-        if (!m_canStepAgain)
+        if (m_timer < m_stepTime)
             return;
+
+        m_timer = 0;
 
         do
         {
@@ -164,7 +168,7 @@ public class StepController
 
     public void CheckForRoomChange()
     {
-        if(m_currentRoomIndex != m_targetRoomIndex)
+        if (m_currentRoomIndex != m_targetRoomIndex)
         {
             m_currentRoomIndex = m_targetRoomIndex;
 

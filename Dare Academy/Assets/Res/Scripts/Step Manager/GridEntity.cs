@@ -9,7 +9,6 @@ using flags = GridEntityFlags.Flags;
 public abstract class GridEntity : MonoBehaviour
 {
     // MEMBERS ************************************************************************************
-
     private Vector2Int m_movementDirection;
 
     [SerializeField] protected int m_mass = 2;
@@ -17,7 +16,7 @@ public abstract class GridEntity : MonoBehaviour
     protected int m_health      = 1;
     private int m_stepsTaken    = 0;
 
-    [SerializeField] protected int m_roomIndex = 0;
+    protected int m_roomIndex = 0;
 
     [SerializeField] protected GridEntityFlags m_flags = new GridEntityFlags();
 
@@ -371,7 +370,7 @@ public abstract class GridEntity : MonoBehaviour
     {
         if (m_currentNode == null)
             return;
-        StartCoroutine(AnimateMove(m_stepController.m_stepTime));
+        StartCoroutine(AnimateMove(m_stepController.stepTime));
     }
 
     // RESOLVE MOVE CONFLICT METHODS **************************************************************
@@ -603,7 +602,7 @@ public abstract class GridEntity : MonoBehaviour
 
     // HELPER METHODS *****************************************************************************
 
-    public void Update()
+    virtual protected void Update()
     {
         if (RoomIndex == -1)
             return;
@@ -832,25 +831,40 @@ public abstract class GridEntity : MonoBehaviour
         return entities;
     }
 
-    protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2 direction)
+    protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2 direction, int damage = 1)
     {
+        if (direction == null)
+            return false;
+
         Vector2Int dir = new Vector2Int((int)direction.x, (int)direction.y);
-        return SpawnBullet(prefab, sourceNode, dir);
+        return SpawnBullet(prefab, sourceNode, dir, damage);
     }
 
-    protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2Int direction)
+    protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2Int direction, int damage = 1)
     {
-        // TODO @matthew - validation checks on input parameters
+        if (sourceNode == null)
+            return false;
+
+        if (direction == null)
+            return false;
+
         if (prefab)
         {
-            // TODO @jay - we need something faster then GetNodeFromWorld() for doing this
             GridNode spawnNode = sourceNode.GetNeighbour(direction); ;
 
             if (spawnNode == null)
                 return false;
 
-            if (spawnNode.GetGridEntities().Count > 0)
-                return false;
+            List<GridEntity> entities = spawnNode.GetGridEntities();
+            if (entities.Count > 0)
+            {
+                foreach (GridEntity entity in entities)
+                {
+                    entity.Health -= damage;
+                }
+
+                return true;
+            }
 
             Vector3 spawnPosition = spawnNode.position.world;
 
@@ -858,8 +872,10 @@ public abstract class GridEntity : MonoBehaviour
             if (obj)
             {
                 BulletEntity bullet = obj.GetComponent<BulletEntity>();
+
                 if (bullet)
                 {
+                    bullet.m_damage = damage;
                     bullet.m_bulletDirection = direction;
                     return true;
                 }
