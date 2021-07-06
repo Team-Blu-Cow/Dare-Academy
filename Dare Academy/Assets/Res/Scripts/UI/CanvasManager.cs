@@ -22,7 +22,7 @@ namespace CanvasTool
 
         public Vector2 refrenenceResolution = new Vector2(1600, 900);
 
-        private void OnEnable()
+        private void OnValidate()
         {
             if (canvases == null)
             {
