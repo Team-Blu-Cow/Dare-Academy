@@ -13,6 +13,15 @@ public class PlayerEntity : GridEntity
     [SerializeField] private int m_fireRate = 3;
     private int m_shootCooldown = 0;
 
+    [SerializeField] private int m_currentEnergy = 3;
+
+    private bool m_shouldDash = false; // flag for if the player is dashing this step
+    private int m_dashDistance = 2;
+    private int m_dashEnergyCost = 1;
+
+    [SerializeField] private bool m_allowDash = false; // if the player is allowed to dash
+    public int Energy { get => m_currentEnergy; set => m_currentEnergy = value; }
+
     // the movement direction stored within GridEntity is cleared every step so we store another copy here
     private Vector2 m_moveDirection = Vector2.zero;
 
@@ -35,21 +44,28 @@ public class PlayerEntity : GridEntity
         input.Move.Direction.started += MovePressed;
         input.Move.Direction.canceled += MoveReleased;
         input.Aim.Direction.performed += ShootAction;
+        input.Move.Dash.performed += DashPressed;
     }
 
     private void OnDisable()
     {
         input.Move.Direction.started -= MovePressed;
         input.Move.Direction.canceled -= MoveReleased;
-
         input.Aim.Direction.performed -= ShootAction;
+        input.Move.Dash.performed += DashPressed;
     }
 
     protected void FixedUpdate()
     {
         if (m_moveDirection != Vector2Int.zero)
         {
-            SetMovementDirection(m_moveDirection);
+            int speed = 1;
+            if (m_allowDash && m_shouldDash)
+            {
+                speed = Dash();
+            }
+
+            SetMovementDirection(m_moveDirection, speed);
             App.GetModule<LevelModule>().StepController.ExecuteStep();
         }
     }
@@ -62,7 +78,12 @@ public class PlayerEntity : GridEntity
     protected void MoveReleased(InputAction.CallbackContext context)
     {
         m_moveDirection = Vector2Int.zero;
-        SetMovementDirection(m_moveDirection);
+        SetMovementDirection(Vector2Int.zero);
+    }
+
+    protected void DashPressed(InputAction.CallbackContext context)
+    {
+        m_shouldDash = !m_shouldDash;
     }
 
     protected void ShootAction(InputAction.CallbackContext context)
@@ -157,5 +178,19 @@ public class PlayerEntity : GridEntity
 
         //Gizmos.color = Color.white;
         //Gizmos.DrawRay(transform.position, m_movementDirection);
+    }
+
+    // HELPER METHODS
+
+    private int Dash()
+    {
+        m_shouldDash = false;
+        if (Energy >= m_dashEnergyCost)
+        {
+            Energy -= m_dashEnergyCost;
+            return m_dashDistance;
+        }
+
+        return 1;
     }
 }
