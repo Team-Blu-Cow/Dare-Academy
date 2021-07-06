@@ -16,7 +16,7 @@ public abstract class GridEntity : MonoBehaviour
     protected int m_health      = 1;
     private int m_stepsTaken    = 0;
 
-    [SerializeField] protected int m_roomIndex = 0;
+    protected int m_roomIndex = 0;
 
     [SerializeField] protected GridEntityFlags m_flags = new GridEntityFlags();
 
@@ -597,7 +597,7 @@ public abstract class GridEntity : MonoBehaviour
 
     // HELPER METHODS *****************************************************************************
 
-    public void Update()
+    virtual protected void Update()
     {
         if (RoomIndex == -1)
             return;

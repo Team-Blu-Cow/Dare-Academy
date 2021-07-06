@@ -7,10 +7,14 @@ using JUtil;
 
 public class PlayerEntity : GridEntity
 {
-    [SerializeField] private int moveSpeed = 1;
     private GameObject m_bulletPrefab = null;
-
     private Vector2 m_shootDirection = Vector2.zero;
+
+    [SerializeField] private int m_fireRate = 3;
+    private int m_shootCooldown = 0;
+
+    // the movement direction stored within GridEntity is cleared every step so we store another copy here
+    private Vector2 m_moveDirection = Vector2.zero;
 
     private PlayerControls input;
 
@@ -22,25 +26,43 @@ public class PlayerEntity : GridEntity
     protected override void Start()
     {
         base.Start();
+        m_shootCooldown = m_fireRate;
     }
 
     private void OnEnable()
     {
         input = App.GetModule<InputModule>().PlayerController;
-        input.Move.Direction.performed += MoveAction;
+        input.Move.Direction.started += MovePressed;
+        input.Move.Direction.canceled += MoveReleased;
         input.Aim.Direction.performed += ShootAction;
     }
 
     private void OnDisable()
     {
-        input.Move.Direction.performed -= MoveAction;
+        input.Move.Direction.started -= MovePressed;
+        input.Move.Direction.canceled -= MoveReleased;
+
         input.Aim.Direction.performed -= ShootAction;
     }
 
-    protected void MoveAction(InputAction.CallbackContext context)
+    protected void FixedUpdate()
     {
-        SetMovementDirection(context.ReadValue<Vector2>());
-        App.GetModule<LevelModule>().StepController.ExecuteStep();
+        if (m_moveDirection != Vector2Int.zero)
+        {
+            SetMovementDirection(m_moveDirection);
+            App.GetModule<LevelModule>().StepController.ExecuteStep();
+        }
+    }
+
+    protected void MovePressed(InputAction.CallbackContext context)
+    {
+        m_moveDirection = context.ReadValue<Vector2>();
+    }
+
+    protected void MoveReleased(InputAction.CallbackContext context)
+    {
+        m_moveDirection = Vector2Int.zero;
+        SetMovementDirection(m_moveDirection);
     }
 
     protected void ShootAction(InputAction.CallbackContext context)
@@ -94,26 +116,32 @@ public class PlayerEntity : GridEntity
 
     public override void AttackStep()
     {
-        if (m_shootDirection != Vector2.zero)
-        {
-            GridNode node;
-            if (m_previousNode != null)
-            {
-                node = m_previousNode;
+        m_shootCooldown++;
 
-                if (Direction == m_shootDirection)
+        if (m_shootCooldown >= m_fireRate)
+        {
+            if (m_shootDirection != Vector2.zero)
+            {
+                GridNode node;
+                if (m_previousNode != null)
                 {
+                    node = m_previousNode;
+
+                    if (Direction == m_shootDirection)
+                    {
+                        node = m_currentNode;
+                    }
+                }
+                else
+                {
+                    // player didn't move
                     node = m_currentNode;
                 }
-            }
-            else
-            {
-                // player didn't move
-                node = m_currentNode;
-            }
 
-            SpawnBullet(m_bulletPrefab, node, m_shootDirection);
-            m_shootDirection = Vector2.zero;
+                SpawnBullet(m_bulletPrefab, node, m_shootDirection);
+                m_shootDirection = Vector2.zero;
+                m_shootCooldown = 0;
+            }
         }
     }
 
