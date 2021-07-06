@@ -170,9 +170,10 @@ public class PlayerEntity : GridEntity
                 {
                     Energy -= m_shootEnergyCost;
                 }
-                m_shootDirection = Vector2.zero;
             }
         }
+
+        m_shootDirection = Vector2.zero;
     }
 
     private void OnDrawGizmos()
