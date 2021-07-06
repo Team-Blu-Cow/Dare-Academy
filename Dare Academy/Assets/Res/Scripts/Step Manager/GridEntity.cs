@@ -796,7 +796,7 @@ public abstract class GridEntity : MonoBehaviour
                         }
                     }
 
-                    if (Mass < highestMass)
+                    if (Mass <= highestMass)
                     {
                         this.ForcePushBack(-movDir);
                     }
