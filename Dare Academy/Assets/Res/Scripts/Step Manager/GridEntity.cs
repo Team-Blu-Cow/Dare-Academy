@@ -748,7 +748,7 @@ public abstract class GridEntity : MonoBehaviour
             }
         }
 
-        if (m_currentNode.GetGridEntities().Count > 0)
+        if (m_currentNode.GetGridEntities().Count > 0)// && winningEntity.m_currentNode == this.m_currentNode)
         {
             bool allPushable = true;
             foreach (var entity in m_currentNode.GetGridEntities())
@@ -760,6 +760,12 @@ public abstract class GridEntity : MonoBehaviour
                 }
             }
 
+            Vector2Int movDir = m_movementDirection;
+            if (movDir == Vector2Int.zero)
+            {
+                movDir = winningEntity.m_movementDirection;
+            }
+
             if (allPushable)
             {
                 // recursion babbby
@@ -767,15 +773,38 @@ public abstract class GridEntity : MonoBehaviour
             }
             else
             {
-                ForcePushBack(-moveDirection);
-                //ForcePushBackAll(m_currentNode.GetGridEntities(), );
+                if (winningEntity.m_movementDirection == Vector2Int.zero)
+                {
+                    // check if conflict has already been resolved
+                    // if we are here something has moved into the space behind us as we moved
+                    // this will be solved on next iteration of conflict resolution
+                    if (winningEntity.m_currentNode == this.m_currentNode)
+                    {
+                        this.ForcePushBack(-movDir);
+                    }
+                }
+                else
+                {
+                    int highestMass = int.MinValue;
 
-                // m_currentNode = lastNode;
-                // m_movementDirection = Vector2Int.zero;
-                // PushBackAll(m_currentNode.GetGridEntities(), this);
+                    List<GridEntity> entities = m_currentNode.GetGridEntities();
+                    for (int i = entities.Count - 1; i >= 0; i--)
+                    {
+                        if (highestMass < entities[i].Mass)
+                        {
+                            highestMass = entities[i].Mass;
+                        }
+                    }
 
-                // return
-                // PushBackAll(m_currentNode.GetGridEntities(), this);
+                    if (Mass < highestMass)
+                    {
+                        this.ForcePushBack(-movDir);
+                    }
+                    else
+                    {
+                        ForcePushBackAll(m_currentNode.GetGridEntities(), movDir);
+                    }
+                }
             }
         }
 
@@ -786,7 +815,7 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void ForcePushBack(Vector2Int direction)
     {
-        GridEntity e = this;
+        m_speed = 0;
         RemoveFromCurrentNode();
         m_currentNode = m_currentNode.Neighbors[(direction).RotationToIndex()].reference;
 
