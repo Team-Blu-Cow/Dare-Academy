@@ -22,6 +22,12 @@ namespace blu
             set { blu.App.GetModule<IOModule>().savedata = value; }
         }
 
+        public GameEventFlags EventFlags
+        {
+            get { return ActiveSaveSata.gameEventFlags; }
+            set { ActiveSaveSata.gameEventFlags = value; }
+        }
+
         public PathfindingMultiGrid MetaGrid
         { set { m_grid = value; } get { return m_grid; } }
 

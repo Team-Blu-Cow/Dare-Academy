@@ -9,7 +9,7 @@ namespace blu
 {
     // All data that should be written to disk should be stored within SaveData
     // Everything in here must be tagged with System.Serializable
-    public class SaveData : IFileFormat, ICloneable
+    public class SaveData : IFileFormat
     {
         public string FileExtension()
         {
@@ -19,21 +19,10 @@ namespace blu
             { return "uwu"; }
         }
 
-        // when adding new members ensure you add them to Clone()
-        public object Clone()
-        {
-            SaveData data = new SaveData();
-
-            data.displayName = this.displayName;
-            data.levelId = this.levelId;
-            data.respawnRoomID = this.respawnRoomID;
-
-            return data;
-        }
-
         public string displayName = null;
         public LevelID levelId = LevelID._default;
         public int respawnRoomID = -1;
+        public GameEventFlags gameEventFlags = new GameEventFlags();
     }
 
     public class IOModule : Module
