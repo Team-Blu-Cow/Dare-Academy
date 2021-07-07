@@ -25,7 +25,6 @@ namespace blu
             SaveData data = new SaveData();
 
             data.displayName = this.displayName;
-            data.isAutoSave = this.isAutoSave;
 
             return data;
         }
@@ -36,16 +35,16 @@ namespace blu
 
     public class IOModule : Module
     {
-        // the current save file that has ben loaded from disk
-        public SaveData savedata => m_activeSavedata;
+        // the current save file that has been loaded from disk
+        public SaveData savedata { get { return m_activeSavedata; } set { m_activeSavedata = value; } }
 
         // check if a valid save file has been loaded
         public bool isSaveLoaded { get => savedata != null; }
 
-        // if save sloats are currently loaded, this could be false just after an autosave has occured
+        // if save slots are currently loaded
         public bool isSaveSlotsLoaded { get => m_saveSlotsLoaded; }
 
-        // a list of every save slot avalible to the player
+        // a list of every save slot available to the player
         // the SaveSlotData structure can be handed to LoadSaveAsync to load the associated file into memory
         public List<SaveSlotData> saveSlots { get => m_SaveSlots; }
 
@@ -60,13 +59,22 @@ namespace blu
         private DebugSaveConfigFile m_debugConfig = null;
         private bool m_usingDebugFile = false;
         private bool m_allowDebugSaving = false;
-        private const int m_maxNumAutosaves = 3; // Maximum number of autosaves that can exist at a time
-
         // TODO @matthew add this to the debug options
         // private bool m_allowFileLoading = true;
 
-        // things are happening in async that shouldnt be and i dont want to debug this
+        // things are happening in async that shouldn't be and i dont want to debug this
         private bool m_initialized = false;
+
+        public bool Initialised => m_initialized;
+
+        public Task<bool> awaitInitialised => Task.Run(() => awaitInitialisedImpl());
+
+        private bool awaitInitialisedImpl()
+        {
+            while (!Initialised)
+            { }
+            return true;
+        }
 
         // load a save file into memory
         public Task<bool> LoadSaveAsync(FileIO.SaveSlotData slotData, bool logToConsole = true) => Task.Run(() => LoadSaveAsyncImpl(slotData, logToConsole));
@@ -81,11 +89,6 @@ namespace blu
 
         // write the current contents of saveData to disk
         public Task<bool> SaveAsync() => Task.Run(() => SaveAsyncImpl());
-
-        public Task<bool> AutoSaveAsync() => Task.Run(() => AutoSaveAsyncImpl());
-
-        public IEnumerator AutoSaveEnumerator()
-        { yield return AutoSaveAsync(); }
 
         public async override void Initialize()
         {
@@ -261,23 +264,6 @@ namespace blu
                 return fileloader.WriteData(m_activeSavedata);
             }
             return false;
-        }
-
-        private bool AutoSaveAsyncImpl()
-        {
-            // TODO @matthew - delete old autosaves
-
-            SaveData savedata = (SaveData)m_activeSavedata.Clone();
-            savedata.isAutoSave = true;
-
-            string filename = m_kSaveGameDir + "/AutoSaves/" + "autosave";
-            string filepath = m_applicationPath + filename + "." + savedata.FileExtension();
-            CreateFileLoader<SaveData>(out BaseFileLoader<SaveData> fileloader, filepath);
-
-            if (!fileloader.WriteData(savedata))
-            { return false; }
-
-            return LoadSaveSlots();
         }
 
         private DebugSaveConfigFile LoadDebugConfig() //TODO @Matthew: sorry for nit picking but can you please use

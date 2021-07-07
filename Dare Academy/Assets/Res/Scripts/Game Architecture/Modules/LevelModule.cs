@@ -10,6 +10,9 @@ namespace blu
     {
         private PathfindingMultiGrid m_grid = null;
 
+        private SaveData m_checkpointData = null;
+        private SaveData m_activeSaveData = null;
+
         public PathfindingMultiGrid MetaGrid
         { set { m_grid = value; } get { return m_grid; } }
 
@@ -31,15 +34,31 @@ namespace blu
             SceneManager.sceneLoaded -= LevelChanged;
         }
 
-        public override void Initialize()
+        public async override void Initialize()
         {
             SceneManager.sceneLoaded += LevelChanged;
             m_grid = null;
+
+            IOModule ioModule = App.GetModule<IOModule>();
+
+            await ioModule.awaitInitialised;
+
+            if (ioModule.isSaveLoaded)
+            {
+                m_activeSaveData = (SaveData)ioModule.savedata.Clone();
+            }
+            else
+            {
+                Debug.LogWarning("[Level Module] save file not loaded");
+                m_activeSaveData = new SaveData();
+            }
+
+            m_checkpointData = (SaveData)m_activeSaveData.Clone();
         }
 
         protected override void SetDependancies()
         {
-            m_grid = null;
+            _dependancies.Add(typeof(IOModule));
         }
 
         public void LevelChanged(Scene scene, LoadSceneMode loadSceneMode)
@@ -59,6 +78,27 @@ namespace blu
         public void AddEntityToCurrentRoom(GridEntity entity)
         {
             m_levelManager.AddEntityToStepController(entity);
+        }
+
+        // FILE IO
+
+        private async void SaveGame()
+        {
+            IOModule ioModule = App.GetModule<IOModule>();
+            ioModule.savedata = (SaveData)m_checkpointData.Clone();
+
+            // TODO @matthew - move the await out of here
+            await ioModule.SaveAsync();
+        }
+
+        private void UpdateCheckpoint()
+        {
+            m_checkpointData = (SaveData)m_activeSaveData.Clone();
+        }
+
+        private void ReloadFromCheckpoint()
+        {
+            m_activeSaveData = (SaveData)m_checkpointData.Clone();
         }
     }
 }
