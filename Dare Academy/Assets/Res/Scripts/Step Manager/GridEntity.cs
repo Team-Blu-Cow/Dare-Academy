@@ -186,7 +186,7 @@ public abstract class GridEntity : MonoBehaviour
                 highestMass = (winningEntities[i].Mass > winningEntities[i + 1].Mass) ? winningEntities[i].Mass : winningEntities[i + 1].Mass;
 
             if (winningEntities[i].Speed != winningEntities[i + 1].Speed)
-                highestMass = (winningEntities[i].Speed > winningEntities[i + 1].Speed) ? winningEntities[i].Speed : winningEntities[i + 1].Speed;
+                highestSpeed = (winningEntities[i].Speed > winningEntities[i + 1].Speed) ? winningEntities[i].Speed : winningEntities[i + 1].Speed;
         }
 
         if (highestMass > int.MinValue)
@@ -297,11 +297,14 @@ public abstract class GridEntity : MonoBehaviour
 
     public void PostMoveStep()
     {
-        List<GridEntity> entities = m_currentNode.GetGridEntities();
-        if (!entities.Contains(this))
+        if (m_currentNode != null)
         {
-            Debug.LogWarning($"{gameObject.name} : entity was not on list, adding to node list");
-            AddToCurrentNode();
+            List<GridEntity> entities = m_currentNode.GetGridEntities();
+            if (!entities.Contains(this))
+            {
+                Debug.LogWarning($"{gameObject.name} : entity was not on list, adding to node list");
+                AddToCurrentNode();
+            }
         }
 
         if (m_flags.IsFlagsSet(flags.killOnRoomSwitch) && FailedSwitchingRooms)
@@ -626,113 +629,6 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-    // DRAW STEP METHODS **************************************************************************
-
-    public IEnumerator AnimateMove(float stepTime)
-    {
-        Vector3 startPos = transform.position;
-        Vector3 endPos = m_currentNode.position.world;
-
-        float currentTime = 0;
-
-        while (currentTime < stepTime)
-        {
-            currentTime += Time.deltaTime;
-
-            float xx = Mathf.Lerp(startPos.x, endPos.x, currentTime/stepTime);
-            float yy = Mathf.Lerp(startPos.y, endPos.y, currentTime/stepTime);
-            float zz = Mathf.Lerp(startPos.z, endPos.z, currentTime/stepTime);
-            transform.position = new Vector3(xx, yy, zz);
-
-            yield return null;
-        }
-    }
-
-    // HELPER METHODS *****************************************************************************
-
-    virtual protected void Update()
-    {
-        if (RoomIndex == -1)
-            return;
-        /*if (m_currentNode != null)
-        {
-            float xx = Mathf.Lerp(transform.position.x, m_currentNode.position.world.x, 0.5f);
-            float yy = Mathf.Lerp(transform.position.y, m_currentNode.position.world.y, 0.5f);
-            float zz = Mathf.Lerp(transform.position.z, m_currentNode.position.world.z, 0.5f);
-            transform.position = new Vector3(xx, yy, zz);
-        }*/
-    }
-
-    virtual public void RoomChange()
-    {
-        if (m_roomIndex == m_stepController.m_currentRoomIndex)
-        {
-            m_stepController.AddEntity(this);
-        }
-        else
-        {
-            ResetPosition();
-            m_stepController.RemoveEntity(this);
-        }
-    }
-
-    protected void ResetPosition()
-    {
-        if (m_flags.IsFlagsSet(flags.destroyOnReset))
-        {
-            Kill();
-        }
-        else
-        {
-            RemoveFromCurrentNode();
-            m_currentNode = m_startingNode;
-            AddToCurrentNode();
-        }
-    }
-
-    public void SetMovementDirection(Vector2 direction, int speed = 1)
-    {
-        Vector2Int dirInt = new Vector2Int((int)direction.x, (int)direction.y);
-
-        SetMovementDirection(dirInt, speed);
-    }
-
-    public void SetMovementDirection(Vector2Int direction, int speed = 1)
-    {
-        // TODO @matthew/@jay - check this value is valid
-        m_movementDirection = direction;
-        m_speed = speed;
-    }
-
-    protected void SetTargetNode(Vector2Int direction, int distance = 1)
-    {
-        if (direction == Vector2Int.zero)
-            return;
-
-        m_movementDirection = direction;
-
-        int dir = direction.RotationToIndex(45);
-        Mathf.Clamp(dir, 0, 7);
-
-        m_previousNode = null;
-
-        m_targetNode = m_currentNode;
-
-        for (int i = 0; i < distance; i++)
-        {
-            GridNode node = m_targetNode.GetNeighbour(direction);
-            if (node != null)
-                m_targetNode = node;
-        }
-
-        if (m_targetNode == m_currentNode) // if entity is not moving
-        {
-            m_targetNode = null;
-            m_movementDirection = Vector2Int.zero;
-            m_speed = 0;
-        }
-    }
-
     virtual public bool MoveBack()
     {
         RemoveFromCurrentNode();
@@ -835,6 +731,101 @@ public abstract class GridEntity : MonoBehaviour
         losing_objects[0].m_targetNode = null;
         losing_objects[0].m_speed = 0;
         losing_objects[0].m_movementDirection = Vector2Int.zero;
+    }
+
+    // DRAW STEP METHODS **************************************************************************
+
+    public IEnumerator AnimateMove(float stepTime)
+    {
+        Vector3 startPos = transform.position;
+        Vector3 endPos = m_currentNode.position.world;
+
+        float currentTime = 0;
+
+        while (currentTime < stepTime)
+        {
+            currentTime += Time.deltaTime;
+
+            float xx = Mathf.Lerp(startPos.x, endPos.x, currentTime/stepTime);
+            float yy = Mathf.Lerp(startPos.y, endPos.y, currentTime/stepTime);
+            float zz = Mathf.Lerp(startPos.z, endPos.z, currentTime/stepTime);
+            transform.position = new Vector3(xx, yy, zz);
+
+            yield return null;
+        }
+    }
+
+    // HELPER METHODS *****************************************************************************
+
+    virtual public void RoomChange()
+    {
+        if (m_roomIndex == m_stepController.m_currentRoomIndex)
+        {
+            m_stepController.AddEntity(this);
+        }
+        else
+        {
+            ResetPosition();
+            m_stepController.RemoveEntity(this);
+        }
+    }
+
+    protected void ResetPosition()
+    {
+        if (m_flags.IsFlagsSet(flags.destroyOnReset))
+        {
+            Kill();
+        }
+        else
+        {
+            RemoveFromCurrentNode();
+            m_currentNode = m_startingNode;
+            AddToCurrentNode();
+            transform.position = m_currentNode.position.world;
+        }
+    }
+
+    public void SetMovementDirection(Vector2 direction, int speed = 1)
+    {
+        Vector2Int dirInt = new Vector2Int((int)direction.x, (int)direction.y);
+
+        SetMovementDirection(dirInt, speed);
+    }
+
+    public void SetMovementDirection(Vector2Int direction, int speed = 1)
+    {
+        // TODO @matthew/@jay - check this value is valid
+        m_movementDirection = direction;
+        m_speed = speed;
+    }
+
+    protected void SetTargetNode(Vector2Int direction, int distance = 1)
+    {
+        if (direction == Vector2Int.zero)
+            return;
+
+        m_movementDirection = direction;
+
+        int dir = direction.RotationToIndex(45);
+        Mathf.Clamp(dir, 0, 7);
+
+        m_previousNode = null;
+
+        m_targetNode = m_currentNode;
+
+        for (int i = 0; i < distance; i++)
+        {
+            GridNode node = m_targetNode.GetNeighbour(direction);
+            if (node != null)
+                m_targetNode = node;
+        }
+
+        if (m_targetNode == m_currentNode) // if entity is not moving
+        {
+            m_targetNode = null;
+            m_movementDirection = Vector2Int.zero;
+            m_speed = 0;
+        }
     }
 
     virtual public void RemoveFromCurrentNode()
