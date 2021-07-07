@@ -27,8 +27,7 @@ public class CaterpillerEnemy : GridEntity
     protected override void Start()
     {
         base.Start(); // Run base application
-        m_health = 5; // Set health of compartment to 5
-        m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true);
+        m_health = 1; // Set health of compartment to 1
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true);
     }
 
@@ -42,15 +41,15 @@ public class CaterpillerEnemy : GridEntity
         if (!head) // If this compartment is not the front
         {
             // MIGHT WANT TO CHANGE THIS FOR BURROWING MECHANIC
-            Vector2 followingNode = new Vector2(Position.world.x, Position.world.y); // Failsafe assigning (line 49). Essentially if the front of the caterpillar is gone the rest of the compartments should just stop moving
+            Vector2 followingNode = new Vector2(Position.world.x, Position.world.y);
             
-            if (m_followEntity != null) // If the node exists on the grid
+            if (m_followEntity != null) // If the entity exists on the grid
             {
                 followingNode = m_followEntity.transform.position; // Find the position of the node it is going to be following
             }
             Vector2 temp = followingNode - new Vector2(Position.world.x, Position.world.y); // Find direction for which way the compartment is meant to be moving
             dir = new Vector3(temp.x, temp.y, 0); // Set direction to value calculated above
-            dir = dir.normalized; // Normalize to values between 1 and -1
+            dir = dir.normalized; // Normalize the values between 1 and -1
         }
         else // If it is the front of the head
         {
@@ -72,7 +71,7 @@ public class CaterpillerEnemy : GridEntity
             {
                 if (m_currentNode.GetNeighbour(new Vector2Int((int)dir.x, (int)dir.y)).position.world != m_followEntity.transform.position) // If it is not the player
                 {
-                    dir = CheckDirectionsOfMovement(dir); // Figure out a new direction of movement
+                     dir = CheckDirectionsOfMovement(dir); // Figure out a new direction of movement                   
                 }
             }
 
@@ -93,62 +92,98 @@ public class CaterpillerEnemy : GridEntity
 
         if(GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(1, 0))).Count > 0) // If the caterpillar can't move right
         {
-            if(GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(0, 1))).Count == 0) // Check if it can move up
+            if (m_currentNode.GetNeighbour(new Vector2Int(0, 1)) != null)
             {
-                return new Vector2(0, 1); // If it can then return this direction
+                if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(0, 1))).Count == 0) // Check if it can move up
+                {
+                    return new Vector2(0, 1); // If it can then return this direction
+                }
             }
-            else if(GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(0, -1))).Count == 0) // Check if it can move down
+            else if (m_currentNode.GetNeighbour(new Vector2Int(0, -1)) != null)
             {
-                return new Vector2(0, -1); // If it can then return this direction
+                if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(0, -1))).Count == 0) // Check if it can move down
+                {
+                    return new Vector2(0, -1); // If it can then return this direction
+                }
             }
-            else if(GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(-1, 0))).Count == 0) // Check if it can move left
+            else if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null)
             {
-                return new Vector2(-1, 0); // If it can then return this direction
+                if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(-1, 0))).Count == 0) // Check if it can move left
+                {
+                    return new Vector2(-1, 0); // If it can then return this direction
+                }
             }
         }
         else if(GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(-1, 0))).Count > 0) // If the caterpillar can't move left
         {
-            if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(0, 1))).Count == 0) // Check if it can move up
+            if (m_currentNode.GetNeighbour(new Vector2Int(0, 1)) != null)
             {
-                return new Vector2(0, 1); // If it can then return this direction
+                if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(0, 1))).Count == 0) // Check if it can move up
+                {
+                    return new Vector2(0, 1); // If it can then return this direction
+                }
             }
-            else if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(0, -1))).Count == 0) // Check if it can move down
+            else if (m_currentNode.GetNeighbour(new Vector2Int(0, -1)) != null)
             {
-                return new Vector2(0, -1); // If it can then return this direction
+                if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(0, -1))).Count == 0) // Check if it can move down
+                {
+                    return new Vector2(0, -1); // If it can then return this direction
+                }
             }
-            else if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(1, 0))).Count == 0) // Check if it can move right
+            else if(m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null)
             {
-                return new Vector2(1, 0); // If it can then return this direction
+                if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(1, 0))).Count == 0) // Check if it can move right
+                {
+                    return new Vector2(1, 0); // If it can then return this direction
+                }
             }
         }
         else if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(0, 1))).Count > 0) // If the caterpillar can't move up
         {
-            if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(1, 0))).Count == 0) // Check if it can move right
+            if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null)
             {
-                return new Vector2(1, 0); // If it can then return this direction
+                if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(1, 0))).Count == 0) // Check if it can move right
+                {
+                    return new Vector2(1, 0); // If it can then return this direction
+                }
             }
-            else if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(-1, 0))).Count == 0) // Check if it can move left
+            else if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null)
             {
-                return new Vector2(-1, 0); // If it can then return this direction
+                if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(-1, 0))).Count == 0) // Check if it can move left
+                {
+                    return new Vector2(-1, 0); // If it can then return this direction
+                }
             }
-            else if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(0, -1))).Count == 0) // Check if it can move down
+            else if (m_currentNode.GetNeighbour(new Vector2Int(0, -1)) != null)
             {
-                return new Vector2(0, -1); // If it can then return this direction
+                if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(0, -1))).Count == 0) // Check if it can move down
+                {
+                    return new Vector2(0, -1); // If it can then return this direction
+                }
             }
         }
         else if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(0, -1))).Count > 0) // If the caterpillar can't move down
         {
-            if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(1, 0))).Count == 0) // Check if it can move right
+            if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null)
             {
-                return new Vector2(1, 0); // If it can then return this direction
+                if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(1, 0))).Count == 0) // Check if it can move right
+                {
+                    return new Vector2(1, 0); // If it can then return this direction
+                }
             }
-            else if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(-1, 0))).Count == 0) // Check if it can move left
+            else if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null)
             {
-                return new Vector2(-1, 0); // If it can then return this direction
+                if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(-1, 0))).Count == 0) // Check if it can move left
+                {
+                    return new Vector2(-1, 0); // If it can then return this direction
+                }
             }
-            else if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(0, 1))).Count == 0) // Check if it can move up
+            else if (m_currentNode.GetNeighbour(new Vector2Int(0, 1)) != null)
             {
-                return new Vector2(0, 1); // If it can then return this direction
+                if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(0, 1))).Count == 0) // Check if it can move up
+                {
+                    return new Vector2(0, 1); // If it can then return this direction
+                }
             }
         }
 
