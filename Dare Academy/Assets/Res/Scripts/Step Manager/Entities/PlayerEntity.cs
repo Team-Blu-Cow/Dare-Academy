@@ -185,6 +185,25 @@ public class PlayerEntity : GridEntity
     public override void OnDeath()
     {
         App.GetModule<LevelModule>().ReloadFromCheckpoint();
+
+        RespawnStationEntity respawnStation = RespawnStationEntity.CurrentRespawnStation;
+        if (respawnStation != null)
+        {
+            GridNode respawnPoint = respawnStation.RespawnLocation();
+            if (respawnPoint != null)
+            {
+                RemoveFromCurrentNode();
+                m_currentNode = respawnPoint;
+                m_flags.SetFlags(flags.isDead, false);
+                Health = MaxHealth;
+                Energy = MaxEnergy;
+                transform.position = m_currentNode.position.world;
+                AddToCurrentNode();
+                return;
+            }
+        }
+
+        Debug.LogWarning("Player failed to respawn, reloading scene");
         App.GetModule<SceneModule>().SwitchScene(SceneManager.GetActiveScene().name, TransitionType.LRSweep);
     }
 

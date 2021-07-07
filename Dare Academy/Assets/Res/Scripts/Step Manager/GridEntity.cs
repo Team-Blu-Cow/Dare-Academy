@@ -27,6 +27,8 @@ public abstract class GridEntity : MonoBehaviour
     public int Speed { get { return m_speed; } }
     public int RoomIndex { get { return m_roomIndex; } set { m_roomIndex = value; } }
 
+    public GridEntityFlags Flags => m_flags;
+
     public bool FailedSwitchingRooms => m_failedAttemptToSwitchRoom;
 
     public int Health

@@ -19,6 +19,12 @@ namespace blu
         private SaveData m_checkpointData = null;
         private SaveData m_activeSaveData = null;
 
+        public SaveData ActiveSaveSata
+        {
+            get { return m_activeSaveData; }
+            set { m_activeSaveData = value; }
+        }
+
         public PathfindingMultiGrid MetaGrid
         { set { m_grid = value; } get { return m_grid; } }
 
@@ -76,6 +82,8 @@ namespace blu
                 return;
 
             m_grid = m_levelManager.Grid;
+
+            RespawnStationEntity.CurrentRespawnStation = null;
 
             m_grid.Initialise();
             //m_levelManager.StepController.InitialAnalyse();
