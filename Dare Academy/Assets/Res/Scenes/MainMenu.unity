@@ -2844,7 +2844,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 707421782}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -3210,7 +3210,7 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 0}
+  m_TargetGraphic: {fileID: 784669746}
   m_OnClick:
     m_PersistentCalls:
       m_Calls: []
@@ -3381,9 +3381,9 @@ MonoBehaviour:
     stack: 0
     quit: 0
     test: 0
-    transition: 3
+    transition: 1
     loadingBar: 1
-    sceneName: Level01
+    sceneName: Crashsite Top
     swapScene: 1
     showInEditor: 1
   - canvas:
@@ -6013,7 +6013,7 @@ MonoBehaviour:
     desc: 
     layer: 0
     transition: 0
-    showInEditor: 0
+    showInEditor: 1
   - gameObject: {fileID: 338148371}
     canvas: {fileID: 338148373}
     canvasScaler: {fileID: 338148372}
@@ -6021,7 +6021,7 @@ MonoBehaviour:
     desc: 
     layer: 0
     transition: 0
-    showInEditor: 1
+    showInEditor: 0
   - gameObject: {fileID: 1201197581}
     canvas: {fileID: 1201197583}
     canvasScaler: {fileID: 1201197582}
@@ -6037,7 +6037,7 @@ MonoBehaviour:
     desc: 
     layer: 0
     transition: 0
-    showInEditor: 1
+    showInEditor: 0
   layerNames: []
   startingCanvas:
   - gameObject: {fileID: 0}
