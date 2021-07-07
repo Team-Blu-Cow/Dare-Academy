@@ -115,7 +115,7 @@ namespace JUtil.Grids
 
                             if (linkProp.isExpanded)
                             {
-                                lines += 2;
+                                lines += 3;
                                 if (linkProp.FindPropertyRelative("grid1").isExpanded)
                                 {
                                     lines += 3;
@@ -303,6 +303,9 @@ namespace JUtil.Grids
             if (linkProp.isExpanded)
             {
                 EditorGUI.indentLevel++;
+                NewLine();
+                rect = GetSingleLineRect();
+                EditorGUI.PropertyField(rect, linkProp.FindPropertyRelative("width"));
 
                 DrawGridLink(linkProp, 1, names);
                 DrawGridLink(linkProp, 2, names);
@@ -559,6 +562,10 @@ namespace JUtil.Grids
             if (GUI.Button(rect, addButtonContent))
             {
                 list.arraySize += 1;
+
+                if (list.name == "gridLinks")
+                    list.GetArrayElementAtIndex(list.arraySize - 1).FindPropertyRelative("width").intValue = 1;
+
                 if (extraLists != null)
                 {
                     foreach (var array in extraLists)
@@ -568,6 +575,8 @@ namespace JUtil.Grids
                             array.GetArrayElementAtIndex(list.arraySize - 1).stringValue = "unnamed grid";
                     }
                 }
+
+                
 
                 boolList.Add(true);
             }
@@ -591,7 +600,7 @@ namespace JUtil.Grids
                     list.DeleteArrayElementAtIndex(list.arraySize - 1);
                 }
 
-                boolList.RemoveAt(list.arraySize - 1);
+                boolList.RemoveAt(list.arraySize);
             }
         }
 

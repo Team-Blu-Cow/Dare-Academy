@@ -710,15 +710,8 @@ MonoBehaviour:
     - grid 8
     nodeOverrides:
       gridLinks:
-      - grid1:
-          index: 0
-          position: {x: 0, y: 4}
-          direction: 6
-        grid2:
-          index: 1
-          position: {x: 17, y: 4}
-          direction: 2
-      - grid1:
+      - width: 2
+        grid1:
           index: 0
           position: {x: 0, y: 5}
           direction: 6
@@ -726,15 +719,8 @@ MonoBehaviour:
           index: 1
           position: {x: 17, y: 5}
           direction: 2
-      - grid1:
-          index: 1
-          position: {x: 0, y: 4}
-          direction: 6
-        grid2:
-          index: 2
-          position: {x: 17, y: 4}
-          direction: 2
-      - grid1:
+      - width: 2
+        grid1:
           index: 1
           position: {x: 0, y: 5}
           direction: 6
@@ -742,134 +728,15 @@ MonoBehaviour:
           index: 2
           position: {x: 17, y: 5}
           direction: 2
-      - grid1:
-          index: 2
-          position: {x: 0, y: 4}
-          direction: 6
-        grid2:
-          index: 3
-          position: {x: 17, y: 4}
-          direction: 2
-      - grid1:
-          index: 2
-          position: {x: 0, y: 5}
-          direction: 6
-        grid2:
-          index: 3
-          position: {x: 17, y: 5}
-          direction: 2
-      - grid1:
-          index: 0
-          position: {x: 9, y: 0}
-          direction: 4
-        grid2:
+      - width: 2
+        grid1:
           index: 7
-          position: {x: 9, y: 9}
+          position: {x: 8, y: 9}
           direction: 0
-      - grid1:
+        grid2:
           index: 0
           position: {x: 8, y: 0}
           direction: 4
-        grid2:
-          index: 7
-          position: {x: 8, y: 9}
-          direction: 0
-      - grid1:
-          index: 1
-          position: {x: 9, y: 0}
-          direction: 4
-        grid2:
-          index: 6
-          position: {x: 9, y: 9}
-          direction: 0
-      - grid1:
-          index: 1
-          position: {x: 8, y: 0}
-          direction: 4
-        grid2:
-          index: 6
-          position: {x: 8, y: 9}
-          direction: 0
-      - grid1:
-          index: 2
-          position: {x: 8, y: 0}
-          direction: 4
-        grid2:
-          index: 5
-          position: {x: 8, y: 9}
-          direction: 0
-      - grid1:
-          index: 2
-          position: {x: 9, y: 0}
-          direction: 4
-        grid2:
-          index: 5
-          position: {x: 9, y: 9}
-          direction: 0
-      - grid1:
-          index: 3
-          position: {x: 9, y: 0}
-          direction: 4
-        grid2:
-          index: 4
-          position: {x: 9, y: 9}
-          direction: 0
-      - grid1:
-          index: 3
-          position: {x: 8, y: 0}
-          direction: 4
-        grid2:
-          index: 4
-          position: {x: 8, y: 9}
-          direction: 0
-      - grid1:
-          index: 4
-          position: {x: 17, y: 5}
-          direction: 2
-        grid2:
-          index: 5
-          position: {x: 0, y: 5}
-          direction: 6
-      - grid1:
-          index: 4
-          position: {x: 17, y: 4}
-          direction: 2
-        grid2:
-          index: 5
-          position: {x: 0, y: 4}
-          direction: 6
-      - grid1:
-          index: 5
-          position: {x: 17, y: 4}
-          direction: 2
-        grid2:
-          index: 6
-          position: {x: 0, y: 4}
-          direction: 6
-      - grid1:
-          index: 5
-          position: {x: 17, y: 5}
-          direction: 2
-        grid2:
-          index: 6
-          position: {x: 0, y: 5}
-          direction: 6
-      - grid1:
-          index: 6
-          position: {x: 17, y: 4}
-          direction: 2
-        grid2:
-          index: 7
-          position: {x: 0, y: 4}
-          direction: 6
-      - grid1:
-          index: 6
-          position: {x: 17, y: 5}
-          direction: 2
-        grid2:
-          index: 7
-          position: {x: 0, y: 5}
-          direction: 6
       sceneLinks: []
       sceneTransitionNodes: []
     tileData:

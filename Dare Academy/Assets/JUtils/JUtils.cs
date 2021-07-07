@@ -70,6 +70,13 @@ namespace JUtil
             return Mathf.RoundToInt(angle) / sliceSize;
         }
 
+        public static Vector2 IndexToRotation(this int i, int sliceSize = 45)
+        {
+            float angle = sliceSize * i;
+
+            return Vector2.up.Rotate(angle);
+        }
+
         // BETTER SIGN MENTHODS *******************************************************************
         // Returns -1, 0 or 1 depending on the numbers sign or if it is zero 
 
