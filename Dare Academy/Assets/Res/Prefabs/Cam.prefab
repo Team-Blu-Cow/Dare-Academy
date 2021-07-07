@@ -221,6 +221,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _virtualCam: {fileID: 8776929599507969284}
+  _Cam: {fileID: 0}
+  _tolerance: 1.5
 --- !u!114 &8776929598459375342
 MonoBehaviour:
   m_ObjectHideFlags: 0
