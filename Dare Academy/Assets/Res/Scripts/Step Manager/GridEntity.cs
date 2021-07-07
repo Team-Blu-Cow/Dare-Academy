@@ -279,6 +279,13 @@ public abstract class GridEntity : MonoBehaviour
 
     public void PostMoveStep()
     {
+        List<GridEntity> entities = m_currentNode.GetGridEntities();
+        if (!entities.Contains(this))
+        {
+            Debug.LogWarning($"{gameObject.name} : entity was not on list, adding to node list");
+            AddToCurrentNode();
+        }
+
         // iterate counter of steps taken this turn, this is reset in End()
         m_stepsTaken++;
 
@@ -720,7 +727,7 @@ public abstract class GridEntity : MonoBehaviour
 
         bool return_value = true;
 
-        m_currentNode.RemoveEntity(this);
+        RemoveFromCurrentNode();
 
         GridNode lastNode = m_currentNode;
         m_currentNode = node;
@@ -739,7 +746,7 @@ public abstract class GridEntity : MonoBehaviour
             }
         }
 
-        m_currentNode.AddEntity(this);
+        AddToCurrentNode();
         return return_value;
     }
 
@@ -760,6 +767,7 @@ public abstract class GridEntity : MonoBehaviour
                 losing_objects[0].m_targetNode = null;
                 losing_objects[0].m_movementDirection = Vector2Int.zero;
                 losing_objects[0].m_speed = 0;
+                losing_objects[0].AddToCurrentNode();
 
                 winning_objects[0].RemoveFromCurrentNode();
                 winning_objects[0].m_currentNode = winning_objects[0].m_previousNode;
@@ -767,6 +775,7 @@ public abstract class GridEntity : MonoBehaviour
                 winning_objects[0].m_targetNode = null;
                 winning_objects[0].m_movementDirection = Vector2Int.zero;
                 winning_objects[0].m_speed = 0;
+                winning_objects[0].AddToCurrentNode();
 
                 return;
             }
