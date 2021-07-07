@@ -16,13 +16,10 @@ namespace blu
     {
         private PathfindingMultiGrid m_grid = null;
 
-        private SaveData m_checkpointData = null;
-        private SaveData m_activeSaveData = null;
-
         public SaveData ActiveSaveSata
         {
-            get { return m_activeSaveData; }
-            set { m_activeSaveData = value; }
+            get { return blu.App.GetModule<IOModule>().savedata; }
+            set { blu.App.GetModule<IOModule>().savedata = value; }
         }
 
         public PathfindingMultiGrid MetaGrid
@@ -55,17 +52,11 @@ namespace blu
 
             await ioModule.awaitInitialised;
 
-            if (ioModule.isSaveLoaded)
+            if (!ioModule.isSaveLoaded)
             {
-                m_activeSaveData = (SaveData)ioModule.savedata.Clone();
+                Debug.LogWarning("[Level Module] save file not loaded, creating new save");
+                await ioModule.CreateNewSave("new save", true);
             }
-            else
-            {
-                Debug.LogWarning("[Level Module] save file not loaded");
-                m_activeSaveData = new SaveData();
-            }
-
-            m_checkpointData = (SaveData)m_activeSaveData.Clone();
         }
 
         protected override void SetDependancies()
@@ -98,21 +89,8 @@ namespace blu
 
         public async void SaveGame()
         {
-            IOModule ioModule = App.GetModule<IOModule>();
-            ioModule.savedata = (SaveData)m_checkpointData.Clone();
-
             // TODO @matthew - move the await out of here
-            await ioModule.SaveAsync();
-        }
-
-        public void UpdateCheckpoint()
-        {
-            m_checkpointData = (SaveData)m_activeSaveData.Clone();
-        }
-
-        public void ReloadFromCheckpoint()
-        {
-            m_activeSaveData = (SaveData)m_checkpointData.Clone();
+            await App.GetModule<IOModule>().SaveAsync();
         }
     }
 }

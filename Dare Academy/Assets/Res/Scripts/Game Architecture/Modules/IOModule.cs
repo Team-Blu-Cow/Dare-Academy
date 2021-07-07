@@ -88,7 +88,7 @@ namespace blu
         { yield return LoadSaveAsync(slotData, logToConsole); }
 
         // creates a new save file
-        public Task<bool> CreateNewSave(string displayName) => Task.Run(() => CreateNewSaveImpl(displayName));
+        public Task<bool> CreateNewSave(string displayName, bool loadSave) => Task.Run(() => CreateNewSaveImpl(displayName, loadSave));
 
         // write the current contents of saveData to disk
         public Task<bool> SaveAsync() => Task.Run(() => SaveAsyncImpl());
@@ -226,7 +226,7 @@ namespace blu
             return true;
         }
 
-        private bool CreateNewSaveImpl(string displayName)
+        private bool CreateNewSaveImpl(string displayName, bool loadSave)
         {
             // check for duplicate
             // for (int i = 0; i < saveSlots.Count; i++)
@@ -252,6 +252,12 @@ namespace blu
 
             if (!fileloader.WriteData(savedata))
             { return false; }
+
+            if (loadSave)
+            {
+                m_activeSavedata = savedata;
+                m_activeSavedataPath = filepath;
+            }
 
             return LoadSaveSlots();
         }
