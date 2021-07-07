@@ -25,12 +25,15 @@ namespace blu
             SaveData data = new SaveData();
 
             data.displayName = this.displayName;
+            data.levelId = this.levelId;
+            data.respawnRoomID = this.respawnRoomID;
 
             return data;
         }
 
         public string displayName = null;
-        public bool isAutoSave = false;
+        public LevelID levelId = LevelID._default;
+        public int respawnRoomID = -1;
     }
 
     public class IOModule : Module

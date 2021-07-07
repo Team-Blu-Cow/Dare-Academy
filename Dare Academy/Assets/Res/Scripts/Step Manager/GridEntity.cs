@@ -409,7 +409,7 @@ public abstract class GridEntity : MonoBehaviour
         {
             // TODO @matthew/@jay - don't remove immediately to allow for death animation
             // kill entity
-            CleanUp();
+            OnDeath();
         }
     }
 
@@ -422,6 +422,11 @@ public abstract class GridEntity : MonoBehaviour
         if (m_currentNode == null)
             return;
         StartCoroutine(AnimateMove(m_stepController.stepTime));
+    }
+
+    virtual public void OnDeath()
+    {
+        CleanUp();
     }
 
     // RESOLVE MOVE CONFLICT METHODS **************************************************************

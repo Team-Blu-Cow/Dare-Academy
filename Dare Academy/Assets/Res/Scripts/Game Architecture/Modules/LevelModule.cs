@@ -6,6 +6,12 @@ using UnityEngine.SceneManagement;
 
 namespace blu
 {
+    // for use when saving game to signify which scene should be loaded when opening the game
+    public enum LevelID
+    {
+        _default = 0, // default value, open first level?
+    }
+
     public class LevelModule : Module
     {
         private PathfindingMultiGrid m_grid = null;
@@ -82,7 +88,7 @@ namespace blu
 
         // FILE IO
 
-        private async void SaveGame()
+        public async void SaveGame()
         {
             IOModule ioModule = App.GetModule<IOModule>();
             ioModule.savedata = (SaveData)m_checkpointData.Clone();
@@ -91,12 +97,12 @@ namespace blu
             await ioModule.SaveAsync();
         }
 
-        private void UpdateCheckpoint()
+        public void UpdateCheckpoint()
         {
             m_checkpointData = (SaveData)m_activeSaveData.Clone();
         }
 
-        private void ReloadFromCheckpoint()
+        public void ReloadFromCheckpoint()
         {
             m_activeSaveData = (SaveData)m_checkpointData.Clone();
         }
