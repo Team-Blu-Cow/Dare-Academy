@@ -10,8 +10,18 @@ public class PlayerEntity : GridEntity
     private GameObject m_bulletPrefab = null;
     private Vector2 m_shootDirection = Vector2.zero;
 
-    [SerializeField] private int m_fireRate = 3;
-    private int m_shootCooldown = 0;
+    [SerializeField] private int m_maxEnergy = 3;
+    private int m_currentEnergy = 0;
+
+    private bool m_shouldDash = false; // flag for if the player is dashing this step
+    private int m_dashDistance = 2;
+    private int m_dashEnergyCost = 3;
+
+    private int m_shootEnergyCost = 3;
+
+    [SerializeField] private bool m_allowDash = false; // if the player is allowed to dash
+    public int Energy { get => m_currentEnergy; set => m_currentEnergy = value; }
+    public int MaxEnergy { get => m_maxEnergy; set => m_maxEnergy = value; }
 
     // the movement direction stored within GridEntity is cleared every step so we store another copy here
     private Vector2 m_moveDirection = Vector2.zero;
@@ -26,7 +36,7 @@ public class PlayerEntity : GridEntity
     protected override void Start()
     {
         base.Start();
-        m_shootCooldown = m_fireRate;
+        Energy = MaxEnergy;
     }
 
     private void OnEnable()
@@ -35,21 +45,28 @@ public class PlayerEntity : GridEntity
         input.Move.Direction.started += MovePressed;
         input.Move.Direction.canceled += MoveReleased;
         input.Aim.Direction.performed += ShootAction;
+        input.Move.Dash.performed += DashPressed;
     }
 
     private void OnDisable()
     {
         input.Move.Direction.started -= MovePressed;
         input.Move.Direction.canceled -= MoveReleased;
-
         input.Aim.Direction.performed -= ShootAction;
+        input.Move.Dash.performed += DashPressed;
     }
 
     protected void FixedUpdate()
     {
         if (m_moveDirection != Vector2Int.zero)
         {
-            SetMovementDirection(m_moveDirection);
+            int speed = 1;
+            if (m_allowDash && m_shouldDash)
+            {
+                speed = Dash();
+            }
+
+            SetMovementDirection(m_moveDirection, speed);
             App.GetModule<LevelModule>().StepController.ExecuteStep();
         }
     }
@@ -62,7 +79,12 @@ public class PlayerEntity : GridEntity
     protected void MoveReleased(InputAction.CallbackContext context)
     {
         m_moveDirection = Vector2Int.zero;
-        SetMovementDirection(m_moveDirection);
+        SetMovementDirection(Vector2Int.zero);
+    }
+
+    protected void DashPressed(InputAction.CallbackContext context)
+    {
+        m_shouldDash = !m_shouldDash;
     }
 
     protected void ShootAction(InputAction.CallbackContext context)
@@ -92,6 +114,14 @@ public class PlayerEntity : GridEntity
     {
         base.EndStep();
 
+        Energy++;
+
+        if (Energy > MaxEnergy)
+            Energy = MaxEnergy;
+
+        if (Energy < 0)
+            Energy = 0;
+
         if (m_currentNode.overridden && m_currentNode.overrideType == NodeOverrideType.SceneConnection)
         {
             // transition to a new scene
@@ -116,9 +146,7 @@ public class PlayerEntity : GridEntity
 
     public override void AttackStep()
     {
-        m_shootCooldown++;
-
-        if (m_shootCooldown >= m_fireRate)
+        if (Energy >= m_shootEnergyCost)
         {
             if (m_shootDirection != Vector2.zero)
             {
@@ -138,11 +166,14 @@ public class PlayerEntity : GridEntity
                     node = m_currentNode;
                 }
 
-                SpawnBullet(m_bulletPrefab, node, m_shootDirection);
-                m_shootDirection = Vector2.zero;
-                m_shootCooldown = 0;
+                if (SpawnBullet(m_bulletPrefab, node, m_shootDirection))
+                {
+                    Energy -= m_shootEnergyCost;
+                }
             }
         }
+
+        m_shootDirection = Vector2.zero;
     }
 
     private void OnDrawGizmos()
@@ -157,5 +188,19 @@ public class PlayerEntity : GridEntity
 
         //Gizmos.color = Color.white;
         //Gizmos.DrawRay(transform.position, m_movementDirection);
+    }
+
+    // HELPER METHODS
+
+    private int Dash()
+    {
+        m_shouldDash = false;
+        if (Energy >= m_dashEnergyCost)
+        {
+            Energy -= m_dashEnergyCost;
+            return m_dashDistance;
+        }
+
+        return 1;
     }
 }
