@@ -99,4 +99,9 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
 
         return Neighbors[direction.RotationToIndex()].reference;
     }
+
+    public GridNode GetNodeRelative(Vector2Int offset)
+    {
+        return App.GetModule<blu.LevelModule>().Grid(roomIndex).GetNodeRelative(position.grid, offset);
+    }
 }

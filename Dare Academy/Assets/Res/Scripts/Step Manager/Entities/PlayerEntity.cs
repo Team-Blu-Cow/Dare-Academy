@@ -4,6 +4,8 @@ using UnityEngine;
 using blu;
 using UnityEngine.InputSystem;
 using JUtil;
+using UnityEngine.SceneManagement;
+using flags = GridEntityFlags.Flags;
 
 public class PlayerEntity : GridEntity
 {
@@ -18,6 +20,9 @@ public class PlayerEntity : GridEntity
     private int m_dashEnergyCost = 3;
 
     private int m_shootEnergyCost = 3;
+
+    private int m_maxHealth = 1;
+    public int MaxHealth { get { return m_maxHealth; } set { m_maxHealth = value; } }
 
     [SerializeField] private bool m_allowDash = false; // if the player is allowed to dash
     public int Energy { get => m_currentEnergy; set => m_currentEnergy = value; }
@@ -37,6 +42,7 @@ public class PlayerEntity : GridEntity
     {
         base.Start();
         Energy = MaxEnergy;
+        Health = MaxHealth;
     }
 
     private void OnEnable()
@@ -174,6 +180,29 @@ public class PlayerEntity : GridEntity
         }
 
         m_shootDirection = Vector2.zero;
+    }
+
+    public override void OnDeath()
+    {
+        RespawnStationEntity respawnStation = RespawnStationEntity.CurrentRespawnStation;
+        if (respawnStation != null)
+        {
+            GridNode respawnPoint = respawnStation.RespawnLocation();
+            if (respawnPoint != null)
+            {
+                RemoveFromCurrentNode();
+                m_currentNode = respawnPoint;
+                m_flags.SetFlags(flags.isDead, false);
+                Health = MaxHealth;
+                Energy = MaxEnergy;
+                transform.position = m_currentNode.position.world;
+                AddToCurrentNode();
+                return;
+            }
+        }
+
+        Debug.LogWarning("Player failed to respawn, reloading scene");
+        App.GetModule<SceneModule>().SwitchScene(SceneManager.GetActiveScene().name, TransitionType.LRSweep);
     }
 
     private void OnDrawGizmos()

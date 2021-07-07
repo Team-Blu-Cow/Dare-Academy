@@ -48,36 +48,6 @@ public class MainTestScript : MonoBehaviour
 
     #endregion Level Loading
 
-    #region File IO
-
-    // example of disk read/write
-    private async void ExampleLoadData()
-    {
-        blu.IOModule ioModule = App.GetModule<IOModule>();
-
-        // if no save files exist create a new one
-        if (ioModule.saveSlots.Count == 0)
-        {
-            // the string provided here will be ehats displayed to the user
-            // filename use unix timestamp to guarantee they are unique
-            // yes, this means if you make 2 new save games within a second it wont work, no i not fixing that
-            await ioModule.CreateNewSave("example save name");
-        }
-
-        // load the save from disk
-        // the data within settings.saveSlots[0] includes display name to be shown to the user
-        Task<bool> taskLoadSave = ioModule.LoadSaveAsync(ioModule.saveSlots[0]);
-
-        // we can do other stuff here while waiting for file load
-        await taskLoadSave;
-
-        // we can now access ioModule.settings.savedata which has been read from disk
-        // you should ensure LoadSaveAsync returned true, if it retuens false an error has occured
-        // when we are finished we need to call iomodule.Save() to write updates to this file to disk
-    }
-
-    #endregion File IO
-
     private void PauseGame(InputAction.CallbackContext context)
     {
         Debug.Log("Attempting Pause");
@@ -106,7 +76,6 @@ public class MainTestScript : MonoBehaviour
     private void Start()
     {
         App.GetModule<blu.InputModule>().SystemController.UI.Pause.performed += PauseGame;
-        ExampleLoadData();
     }
 
     private void Update()

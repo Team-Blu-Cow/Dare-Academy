@@ -28,6 +28,8 @@ public abstract class GridEntity : MonoBehaviour
     public int Speed { get { return m_speed; } }
     public int RoomIndex { get { return m_roomIndex; } set { m_roomIndex = value; } }
 
+    public GridEntityFlags Flags => m_flags;
+
     public bool FailedSwitchingRooms => m_failedAttemptToSwitchRoom;
 
     public int Health
@@ -436,7 +438,7 @@ public abstract class GridEntity : MonoBehaviour
         {
             // TODO @matthew/@jay - don't remove immediately to allow for death animation
             // kill entity
-            CleanUp();
+            OnDeath();
         }
     }
 
@@ -480,6 +482,11 @@ public abstract class GridEntity : MonoBehaviour
         m_animationCoroutine = StartCoroutine(AnimateActions());
 
         m_baseSpeed = 0;
+    }
+
+    virtual public void OnDeath()
+    {
+        CleanUp();
     }
 
     // RESOLVE MOVE CONFLICT METHODS **************************************************************
