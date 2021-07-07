@@ -15,6 +15,7 @@ public abstract class GridEntity : MonoBehaviour
     protected int m_speed       = 1;
     protected int m_health      = 1;
     private int m_stepsTaken    = 0;
+    private bool m_failedAttemptToSwitchRoom = false;
 
     protected int m_roomIndex = 0;
 
@@ -25,6 +26,8 @@ public abstract class GridEntity : MonoBehaviour
     public int Mass { get { return m_mass; } set { m_mass = value; } }
     public int Speed { get { return m_speed; } }
     public int RoomIndex { get { return m_roomIndex; } set { m_roomIndex = value; } }
+
+    public bool FailedSwitchingRooms => m_failedAttemptToSwitchRoom;
 
     public int Health
     {
@@ -53,6 +56,7 @@ public abstract class GridEntity : MonoBehaviour
     protected GridNode m_currentNode = null;
     protected GridNode m_targetNode = null;
     protected GridNode m_previousNode = null;
+    protected GridNode m_startingNode = null;
 
     public GridNodePosition Position
     { get { return m_currentNode.position; } }
@@ -82,6 +86,8 @@ public abstract class GridEntity : MonoBehaviour
             m_stepController.AddEntity(this);
         }
 
+        m_startingNode = m_currentNode;
+
         AnalyseStep();
     }
 
@@ -95,7 +101,7 @@ public abstract class GridEntity : MonoBehaviour
     // step flow
     /*
      *         [pre-move]
-     * virtual [move]
+     *         [move]
      * virtual [resolve pass through]
      * virtual [resolve move]
      *         [post-move]
@@ -110,6 +116,7 @@ public abstract class GridEntity : MonoBehaviour
 
     public void PreMoveStep()
     {
+        // allows checking if an entity moved this step
         m_previousNode = null;
 
         // if not on node kill entity, this will prevent next steps from being run
@@ -117,11 +124,22 @@ public abstract class GridEntity : MonoBehaviour
             Kill();
     }
 
-    virtual public void MoveStep()
+    public void MoveStep()
     {
         // set our target node based on our m_moveDirection
         // this should be set within the analysis step
         SetTargetNode(m_movementDirection);
+
+        m_failedAttemptToSwitchRoom = false;
+        if (m_currentNode != null && m_targetNode != null)
+        {
+            // check if entity is allowed to move between rooms and if next tile is in a different room
+            if (!m_flags.IsFlagsSet(flags.allowRoomSwitching) && m_currentNode.roomIndex != m_targetNode.roomIndex)
+            {
+                m_failedAttemptToSwitchRoom = true;
+                return;
+            }
+        }
 
         // set currentNode to targetNode
         // keep a record of where we came from
@@ -284,6 +302,11 @@ public abstract class GridEntity : MonoBehaviour
         {
             Debug.LogWarning($"{gameObject.name} : entity was not on list, adding to node list");
             AddToCurrentNode();
+        }
+
+        if (m_flags.IsFlagsSet(flags.killOnRoomSwitch) && FailedSwitchingRooms)
+        {
+            Kill();
         }
 
         // iterate counter of steps taken this turn, this is reset in End()
@@ -643,9 +666,28 @@ public abstract class GridEntity : MonoBehaviour
     virtual public void RoomChange()
     {
         if (m_roomIndex == m_stepController.m_currentRoomIndex)
+        {
             m_stepController.AddEntity(this);
+        }
         else
+        {
+            ResetPosition();
             m_stepController.RemoveEntity(this);
+        }
+    }
+
+    protected void ResetPosition()
+    {
+        if (m_flags.IsFlagsSet(flags.destroyOnReset))
+        {
+            Kill();
+        }
+        else
+        {
+            RemoveFromCurrentNode();
+            m_currentNode = m_startingNode;
+            AddToCurrentNode();
+        }
     }
 
     public void SetMovementDirection(Vector2 direction, int speed = 1)
