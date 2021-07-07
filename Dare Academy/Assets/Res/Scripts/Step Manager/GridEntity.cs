@@ -12,7 +12,8 @@ public abstract class GridEntity : MonoBehaviour
     private Vector2Int m_movementDirection;
 
     [SerializeField] protected int m_mass = 2;
-    protected int m_speed       = 1;
+    protected int m_baseSpeed   = 1;
+    private int m_speed   = 1;
     protected int m_health      = 1;
     private int m_stepsTaken    = 0;
     private bool m_failedAttemptToSwitchRoom = false;
@@ -57,9 +58,14 @@ public abstract class GridEntity : MonoBehaviour
     protected GridNode m_targetNode = null;
     protected GridNode m_previousNode = null;
     protected GridNode m_startingNode = null;
+    protected GridNode m_initialNode = null;
 
     public GridNodePosition Position
     { get { return m_currentNode.position; } }
+
+    protected Queue<GridEnityAction> m_animationQueue;
+    protected List<GridEnityAction> m_actionList;
+    protected Coroutine m_animationCoroutine;
 
     // INITIALISATION METHODS *********************************************************************
     protected virtual void Start()
@@ -88,6 +94,11 @@ public abstract class GridEntity : MonoBehaviour
 
         m_startingNode = m_currentNode;
 
+        m_animationQueue = new Queue<GridEnityAction>();
+        m_actionList = new List<GridEnityAction>();
+
+        m_speed = m_baseSpeed;
+
         AnalyseStep();
     }
 
@@ -113,6 +124,16 @@ public abstract class GridEntity : MonoBehaviour
      * virtual [analyse]
      *
      */
+
+    public void ResetAnimations()
+    {
+        if (m_animationCoroutine != null)
+            StopCoroutine(m_animationCoroutine);
+
+        m_actionList.Clear();
+
+        m_initialNode = m_currentNode;
+    }
 
     public void PreMoveStep()
     {
@@ -156,6 +177,8 @@ public abstract class GridEntity : MonoBehaviour
             m_previousNode = m_currentNode;
             m_currentNode = m_targetNode;
             m_targetNode = null;
+
+            AddAnimationAction(m_currentNode.position, ActionTypes.MOVE);
 
             // add ourself to the list of entities currently on the node
             m_currentNode.AddEntity(this);
@@ -212,6 +235,10 @@ public abstract class GridEntity : MonoBehaviour
             entity.m_currentNode = entity.m_previousNode;
 
             entity.AddToCurrentNode();
+
+            entity.ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
+
+            entity.AddAnimationAction(ActionTypes.MOVE);
 
             entity.m_speed = 0;
             entity.m_movementDirection = Vector2Int.zero;
@@ -421,7 +448,38 @@ public abstract class GridEntity : MonoBehaviour
     {
         if (m_currentNode == null)
             return;
-        StartCoroutine(AnimateMove(m_stepController.stepTime));
+
+        //StartCoroutine(AnimateMove(m_stepController.m_stepTime));
+
+        //return;
+
+        if (m_actionList.Count < 1)
+            return;
+
+        if (m_baseSpeed > 1)
+        {
+            int passthroughCount = 0;
+            int pushbackCount = 0;
+
+            for (int i = m_actionList.Count-1; i >= 1; i--)
+            {
+                if (m_actionList[i-1].type == ActionTypes.PASSTHROUGH)
+                    passthroughCount++;
+
+                if (m_actionList[i-1].type == ActionTypes.PUSHBACK)
+                    pushbackCount++;
+
+                if (passthroughCount > 1 && m_actionList[i].type == ActionTypes.MOVE)
+                    m_actionList.RemoveAt(i);
+
+                if (pushbackCount > 1 && m_actionList[i].type == ActionTypes.MOVE)
+                    m_actionList.RemoveAt(i);
+            }
+        }
+
+        m_animationCoroutine = StartCoroutine(AnimateActions());
+
+        m_baseSpeed = 0;
     }
 
     // RESOLVE MOVE CONFLICT METHODS **************************************************************
@@ -634,6 +692,8 @@ public abstract class GridEntity : MonoBehaviour
         RemoveFromCurrentNode();
         m_currentNode = m_previousNode;
         AddToCurrentNode();
+        ModifyPreviousAction(ActionTypes.PUSHBACK, true);
+        AddAnimationAction(ActionTypes.MOVE);
         m_previousNode = null;
         return true;
     }
@@ -670,6 +730,8 @@ public abstract class GridEntity : MonoBehaviour
         GridNode lastNode = m_currentNode;
         m_currentNode = node;
 
+        
+
         List<GridEntity> entities = m_currentNode.GetGridEntities();
 
         for (int i = entities.Count - 1; i >= 0; i--)
@@ -682,6 +744,12 @@ public abstract class GridEntity : MonoBehaviour
                 m_currentNode = lastNode;
                 return_value = false;
             }
+        }
+
+        if (return_value)
+        {
+            ModifyPreviousAction(ActionTypes.PUSHBACK, true);
+            AddAnimationAction(m_currentNode, ActionTypes.MOVE);
         }
 
         AddToCurrentNode();
@@ -706,6 +774,8 @@ public abstract class GridEntity : MonoBehaviour
                 losing_objects[0].m_movementDirection = Vector2Int.zero;
                 losing_objects[0].m_speed = 0;
                 losing_objects[0].AddToCurrentNode();
+                losing_objects[0].ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
+                losing_objects[0].AddAnimationAction(ActionTypes.MOVE);
 
                 winning_objects[0].RemoveFromCurrentNode();
                 winning_objects[0].m_currentNode = winning_objects[0].m_previousNode;
@@ -714,6 +784,8 @@ public abstract class GridEntity : MonoBehaviour
                 winning_objects[0].m_movementDirection = Vector2Int.zero;
                 winning_objects[0].m_speed = 0;
                 winning_objects[0].AddToCurrentNode();
+                winning_objects[0].ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
+                winning_objects[0].AddAnimationAction(ActionTypes.MOVE);
 
                 return;
             }
@@ -731,9 +803,64 @@ public abstract class GridEntity : MonoBehaviour
         losing_objects[0].m_targetNode = null;
         losing_objects[0].m_speed = 0;
         losing_objects[0].m_movementDirection = Vector2Int.zero;
+        losing_objects[0].ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
+        losing_objects[0].AddAnimationAction(ActionTypes.MOVE);
     }
 
     // DRAW STEP METHODS **************************************************************************
+
+    public IEnumerator AnimateActions()
+    {
+        float animTime = m_stepController.stepTime/ m_actionList.Count;
+
+        int count = m_actionList.Count;
+
+        //m_actionList.Reverse();
+
+        for (int i = 0; i < count; i++)
+        {
+            GridEnityAction action = m_actionList[0];
+            m_actionList.RemoveAt(0);
+
+            yield return StartCoroutine(AnimateAction(animTime, action));
+
+            yield return null;
+        }
+    }
+
+    public IEnumerator AnimateAction(float animTime, GridEnityAction action)
+    {
+        Vector3 startPos = transform.position;
+        Vector3 endPos = action.targetPosition;
+
+        switch (action.type)
+        {
+            case ActionTypes.PASSTHROUGH:
+                endPos = Vector3.Lerp(startPos, endPos, 0.15f);
+                animTime *= 0.33f;
+                break;
+
+            case ActionTypes.PUSHBACK:
+                endPos = Vector3.Lerp(startPos, endPos, 0.35f);
+                animTime *= 0.55f;
+                break;
+        }
+
+
+        float currentTime = 0;
+
+        while (currentTime < animTime)
+        {
+            currentTime += Time.deltaTime;
+
+            float xx = Mathf.Lerp(startPos.x, endPos.x, currentTime/animTime);
+            float yy = Mathf.Lerp(startPos.y, endPos.y, currentTime/animTime);
+            float zz = Mathf.Lerp(startPos.z, endPos.z, currentTime/animTime);
+            transform.position = new Vector3(xx, yy, zz);
+
+            yield return null;
+        }
+    }
 
     public IEnumerator AnimateMove(float stepTime)
     {
@@ -753,6 +880,41 @@ public abstract class GridEntity : MonoBehaviour
 
             yield return null;
         }
+    }
+
+
+
+    public void AddAnimationAction(GridNode node, ActionTypes type) => AddAnimationAction(node.position, type);
+    public void AddAnimationAction(ActionTypes type) => AddAnimationAction(m_currentNode.position, type);
+    public void AddAnimationAction(GridNodePosition position, ActionTypes type)
+    {
+        GridEnityAction action = new GridEnityAction();
+        action.position = position;
+        action.type = type;
+        m_actionList.Add(action);
+        //m_animationQueue.Enqueue(action);
+    }
+
+    public void ModifyPreviousAction(ActionTypes type, bool conditional = false, ActionTypes condition = ActionTypes.MOVE)
+    {
+        if (m_actionList.Count <= 0)
+            return;
+
+        if(!conditional || m_actionList[m_actionList.Count - 1].type == condition)
+            m_actionList[m_actionList.Count - 1].type = type;
+            
+        //m_animationQueue.Enqueue(action);
+    }
+
+    public void ModifyPreviousAction(GridEnityAction action, bool conditional = false, ActionTypes condition = ActionTypes.MOVE)
+    {
+        if (m_actionList.Count <= 0)
+            return;
+
+        if (!conditional || m_actionList[m_actionList.Count - 1].type == condition)
+            m_actionList[m_actionList.Count - 1] = new GridEnityAction(action);
+
+        //m_animationQueue.Enqueue(action);
     }
 
     // HELPER METHODS *****************************************************************************
@@ -796,7 +958,8 @@ public abstract class GridEntity : MonoBehaviour
     {
         // TODO @matthew/@jay - check this value is valid
         m_movementDirection = direction;
-        m_speed = speed;
+        m_speed             = speed;
+        m_baseSpeed         = speed;
     }
 
     protected void SetTargetNode(Vector2Int direction, int distance = 1)

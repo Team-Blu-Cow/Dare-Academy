@@ -254,7 +254,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mass: 3
   m_flags:
-    m_flagData: 24
+    m_flagData: 28
   testDirection: {x: -1, y: 0}
   moveSpeed: 1
 --- !u!212 &373878756
@@ -298,7 +298,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_Sprite: {fileID: 7482667652216324306, guid: db750325989564987a34393247d883b4, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 1, g: 0, b: 0.85813475, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -416,7 +416,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 747074801}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1.52, y: -1.5, z: 0}
+  m_LocalPosition: {x: -2.58, y: -4.26, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -455,7 +455,8 @@ MonoBehaviour:
   m_mass: 2
   m_flags:
     m_flagData: 93
-  m_fireRate: 3
+  m_maxEnergy: 3
+  m_allowDash: 0
 --- !u!212 &1023704565
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -555,7 +556,7 @@ MonoBehaviour:
   m_flags:
     m_flagData: 24
   testDirection: {x: 1, y: 0}
-  moveSpeed: 1
+  moveSpeed: 2
 --- !u!212 &1325425153
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -661,42 +662,42 @@ MonoBehaviour:
     - width: 18
       height: 10
       cellSize: 1
-      cameraPadding: 0
+      cameraPadding: 1.25
       originPosition: {x: -5, y: -5, z: 0}
     - width: 18
       height: 10
       cellSize: 1
-      cameraPadding: 0
+      cameraPadding: 1.25
       originPosition: {x: -24, y: -5, z: 0}
     - width: 18
       height: 10
       cellSize: 1
-      cameraPadding: 0
+      cameraPadding: 1.25
       originPosition: {x: -43, y: -5, z: 0}
     - width: 18
       height: 10
       cellSize: 1
-      cameraPadding: 0
+      cameraPadding: 1.25
       originPosition: {x: -62, y: -5, z: 0}
     - width: 18
       height: 10
       cellSize: 1
-      cameraPadding: 0
+      cameraPadding: 1.25
       originPosition: {x: -62, y: -16, z: 0}
     - width: 18
       height: 10
       cellSize: 1
-      cameraPadding: 0
+      cameraPadding: 1.25
       originPosition: {x: -43, y: -16, z: 0}
     - width: 18
       height: 10
       cellSize: 1
-      cameraPadding: 0
+      cameraPadding: 1.25
       originPosition: {x: -24, y: -16, z: 0}
     - width: 18
       height: 10
       cellSize: 1
-      cameraPadding: 0
+      cameraPadding: 1.25
       originPosition: {x: -5, y: -16, z: 0}
     gridNames:
     - grid 1
