@@ -184,8 +184,6 @@ public class PlayerEntity : GridEntity
 
     public override void OnDeath()
     {
-        App.GetModule<LevelModule>().ReloadFromCheckpoint();
-
         RespawnStationEntity respawnStation = RespawnStationEntity.CurrentRespawnStation;
         if (respawnStation != null)
         {

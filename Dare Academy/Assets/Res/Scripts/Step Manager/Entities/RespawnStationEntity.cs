@@ -53,7 +53,6 @@ public class RespawnStationEntity : GridEntity
         if (nextToPlayer)
         {
             blu.App.GetModule<blu.LevelModule>().ActiveSaveSata.respawnRoomID = this.RoomIndex;
-            blu.App.GetModule<blu.LevelModule>().UpdateCheckpoint();
 
             m_currentRespawnStation = this;
         }
