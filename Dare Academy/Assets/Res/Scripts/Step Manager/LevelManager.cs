@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
-    [SerializeField] private float m_stepTime = 0.1f;
+    [SerializeField] private float m_stepTime = 0.2f;
     [SerializeField] private StepController m_stepController;
 
     [SerializeField] private PathfindingMultiGrid m_grid = null;

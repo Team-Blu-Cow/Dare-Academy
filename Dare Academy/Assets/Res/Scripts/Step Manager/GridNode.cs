@@ -94,6 +94,9 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
         if (direction == null)
             return null;
 
+        if (direction == Vector2Int.zero)
+            return this;
+
         return Neighbors[direction.RotationToIndex()].reference;
     }
 }

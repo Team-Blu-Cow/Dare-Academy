@@ -25,6 +25,14 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Dash"",
+                    ""type"": ""Button"",
+                    ""id"": ""5924ef30-089b-465d-b38d-b7b3abdf25f5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -192,6 +200,28 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Direction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3a636da3-1f4c-4843-bcbb-828b6e725ddc"",
+                    ""path"": ""<Keyboard>/#(Q)"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB&Mouse"",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b53ce5ee-c194-4fb4-875c-099ba64e4de5"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""gamepad"",
+                    ""action"": ""Dash"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -355,6 +385,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         // Move
         m_Move = asset.FindActionMap("Move", throwIfNotFound: true);
         m_Move_Direction = m_Move.FindAction("Direction", throwIfNotFound: true);
+        m_Move_Dash = m_Move.FindAction("Dash", throwIfNotFound: true);
         // Aim
         m_Aim = asset.FindActionMap("Aim", throwIfNotFound: true);
         m_Aim_Direction = m_Aim.FindAction("Direction", throwIfNotFound: true);
@@ -408,11 +439,13 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputActionMap m_Move;
     private IMoveActions m_MoveActionsCallbackInterface;
     private readonly InputAction m_Move_Direction;
+    private readonly InputAction m_Move_Dash;
     public struct MoveActions
     {
         private @PlayerControls m_Wrapper;
         public MoveActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Direction => m_Wrapper.m_Move_Direction;
+        public InputAction @Dash => m_Wrapper.m_Move_Dash;
         public InputActionMap Get() { return m_Wrapper.m_Move; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -425,6 +458,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Direction.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnDirection;
                 @Direction.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnDirection;
                 @Direction.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnDirection;
+                @Dash.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnDash;
+                @Dash.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnDash;
+                @Dash.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnDash;
             }
             m_Wrapper.m_MoveActionsCallbackInterface = instance;
             if (instance != null)
@@ -432,6 +468,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Direction.started += instance.OnDirection;
                 @Direction.performed += instance.OnDirection;
                 @Direction.canceled += instance.OnDirection;
+                @Dash.started += instance.OnDash;
+                @Dash.performed += instance.OnDash;
+                @Dash.canceled += instance.OnDash;
             }
         }
     }
@@ -490,6 +529,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     public interface IMoveActions
     {
         void OnDirection(InputAction.CallbackContext context);
+        void OnDash(InputAction.CallbackContext context);
     }
     public interface IAimActions
     {
