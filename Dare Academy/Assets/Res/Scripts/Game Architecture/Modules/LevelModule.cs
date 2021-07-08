@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using JUtil.Grids;
 using UnityEngine.SceneManagement;
+using System.Threading.Tasks;
 
 namespace blu
 {
@@ -78,7 +79,7 @@ namespace blu
             _dependancies.Add(typeof(IOModule));
         }
 
-        public void LevelChanged(Scene scene, LoadSceneMode loadSceneMode)
+        public async void LevelChanged(Scene scene, LoadSceneMode loadSceneMode)
         {
             m_levelManager = null;
             m_levelManager = FindObjectOfType<LevelManager>();
@@ -107,6 +108,19 @@ namespace blu
             App.GetModule<IOModule>().savedata.gameEventFlags = m_gameEventFlags._FlagData;
             // TODO @matthew - move the await out of here
             await App.GetModule<IOModule>().SaveAsync();
+        }
+
+        public Task<bool> AwaitSaveLoad()
+        {
+            return Task.Run(() => AwaitSaveLoadImpl());
+        }
+
+        internal bool AwaitSaveLoadImpl()
+        {
+            blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
+            while (levelModule.IsSaveLoaded == false)
+            { }
+            return true;
         }
     }
 }

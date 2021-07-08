@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Threading.Tasks;
 
 public class PlayerAbilities
 {
@@ -74,7 +73,7 @@ public class PlayerAbilities
     {
         blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
 
-        await Task.Run(() => AwaitSaveLoadImpl());
+        await levelModule.AwaitSaveLoad();
 
         if (levelModule.ActiveSaveSata.shootUnlocked)
         {
@@ -167,13 +166,5 @@ public class PlayerAbilities
                 Debug.LogWarning("[Player Abilities] - unexpected value");
                 break;
         }
-    }
-
-    private bool AwaitSaveLoadImpl()
-    {
-        blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
-        while (levelModule.IsSaveLoaded == false)
-        { }
-        return true;
     }
 }
