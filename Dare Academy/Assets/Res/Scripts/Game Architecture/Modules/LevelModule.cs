@@ -15,6 +15,7 @@ namespace blu
     public class LevelModule : Module
     {
         private PathfindingMultiGrid m_grid = null;
+        private GameEventFlags m_gameEventFlags = new GameEventFlags();
 
         public SaveData ActiveSaveSata
         {
@@ -24,8 +25,8 @@ namespace blu
 
         public GameEventFlags EventFlags
         {
-            get { return ActiveSaveSata.gameEventFlags; }
-            set { ActiveSaveSata.gameEventFlags = value; }
+            get { return m_gameEventFlags; }
+            set { m_gameEventFlags = value; }
         }
 
         public PathfindingMultiGrid MetaGrid
@@ -63,6 +64,8 @@ namespace blu
                 Debug.LogWarning("[Level Module] save file not loaded, creating new save");
                 await ioModule.CreateNewSave("new save", true);
             }
+
+            m_gameEventFlags.FlagData = ActiveSaveSata.gameEventFlags;
         }
 
         protected override void SetDependancies()
@@ -82,6 +85,8 @@ namespace blu
 
             RespawnStationEntity.CurrentRespawnStation = null;
 
+            m_gameEventFlags.FlagData = ActiveSaveSata.gameEventFlags;
+
             m_grid.Initialise();
             //m_levelManager.StepController.InitialAnalyse();
         }
@@ -95,6 +100,7 @@ namespace blu
 
         public async void SaveGame()
         {
+            App.GetModule<IOModule>().savedata.gameEventFlags = m_gameEventFlags.FlagData;
             // TODO @matthew - move the await out of here
             await App.GetModule<IOModule>().SaveAsync();
         }

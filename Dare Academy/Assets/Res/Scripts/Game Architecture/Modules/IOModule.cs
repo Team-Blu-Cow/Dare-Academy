@@ -21,8 +21,8 @@ namespace blu
 
         public string displayName = null;
         public LevelID levelId = LevelID._default;
+        public long gameEventFlags = 0;
         public int respawnRoomID = -1;
-        public GameEventFlags gameEventFlags = new GameEventFlags();
     }
 
     public class IOModule : Module
