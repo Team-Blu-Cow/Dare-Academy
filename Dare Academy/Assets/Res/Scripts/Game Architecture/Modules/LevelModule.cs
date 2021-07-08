@@ -84,8 +84,7 @@ namespace blu
             m_grid = m_levelManager.Grid;
 
             RespawnStationEntity.CurrentRespawnStation = null;
-
-            m_gameEventFlags.FlagData = ActiveSaveSata.gameEventFlags;
+            //m_gameEventFlags.FlagData = ActiveSaveSata.gameEventFlags;
 
             m_grid.Initialise();
             //m_levelManager.StepController.InitialAnalyse();
