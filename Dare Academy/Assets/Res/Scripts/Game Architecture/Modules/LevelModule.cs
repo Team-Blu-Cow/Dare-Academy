@@ -79,7 +79,7 @@ namespace blu
             _dependancies.Add(typeof(IOModule));
         }
 
-        public async void LevelChanged(Scene scene, LoadSceneMode loadSceneMode)
+        public void LevelChanged(Scene scene, LoadSceneMode loadSceneMode)
         {
             m_levelManager = null;
             m_levelManager = FindObjectOfType<LevelManager>();
