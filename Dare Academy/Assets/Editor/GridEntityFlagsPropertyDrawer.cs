@@ -13,7 +13,7 @@ public class GridEntityFlagsPropertyDrawer : PropertyDrawer
         float height = EditorGUIUtility.singleLineHeight;
 
         if (property.isExpanded)
-            height += EditorGUIUtility.singleLineHeight * (GridEntityFlags.NumberOfFlags() + 1) + (EditorGUIUtility.singleLineHeight / 2);
+            height += EditorGUIUtility.singleLineHeight * (GridEntityFlags.NumberOfFlags() + 2);
 
         return height;
     }
@@ -36,9 +36,15 @@ public class GridEntityFlagsPropertyDrawer : PropertyDrawer
 
         util.NewLine();
         Rect rect = util.GetSingleLineRect();
-        EditorGUI.IntField(rect, flagDataProp.intValue);
+
+
+        string hexValue = flagDataProp.intValue.ToString("X");
+        hexValue = EditorGUI.TextField(rect, hexValue);
+        flagDataProp.intValue = int.Parse(hexValue, System.Globalization.NumberStyles.HexNumber);
 
         string[] flagNames = flagDataProp.enumNames;
+
+
         System.Array flagValues = System.Enum.GetValues(typeof(GridEntityFlags.Flags));
 
         for (int i = 0; i < GridEntityFlags.NumberOfFlags(); i++)

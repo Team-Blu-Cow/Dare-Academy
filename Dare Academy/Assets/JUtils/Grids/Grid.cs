@@ -170,6 +170,9 @@ namespace JUtil.Grids
             return pos;
         }
 
+
+        public T GetNodeRelative(GridNodePosition pos, int x_offset, int y_offest)  => GetNodeRelative(pos.grid.x, pos.grid.y, x_offset, y_offest);
+        public T GetNodeRelative(GridNodePosition pos, Vector2Int offset)           => GetNodeRelative(pos.grid.x, pos.grid.y, offset.x, offset.y);
         public T GetNodeRelative(Vector2Int initPos, int x_offset, int y_offest)    => GetNodeRelative(initPos.x, initPos.y, x_offset, y_offest);
         public T GetNodeRelative(int x, int y, Vector2Int offset)                   => GetNodeRelative(x, y, offset.x, offset.y);
         public T GetNodeRelative(Vector2Int initPos, Vector2Int offset)             => GetNodeRelative(initPos.x, initPos.y, offset.x, offset.y);

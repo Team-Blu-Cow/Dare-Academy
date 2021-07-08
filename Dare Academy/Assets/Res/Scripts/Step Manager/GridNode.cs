@@ -94,6 +94,14 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
         if (direction == null)
             return null;
 
+        if (direction == Vector2Int.zero)
+            return this;
+
         return Neighbors[direction.RotationToIndex()].reference;
+    }
+
+    public GridNode GetNodeRelative(Vector2Int offset)
+    {
+        return App.GetModule<blu.LevelModule>().Grid(roomIndex).GetNodeRelative(position.grid, offset);
     }
 }

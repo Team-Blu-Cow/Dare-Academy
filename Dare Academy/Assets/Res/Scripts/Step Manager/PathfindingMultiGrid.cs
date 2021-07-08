@@ -69,8 +69,14 @@ public class PathfindingMultiGrid
             GridNode node1 = grids[link.grid1.index][link.grid1.position];
             GridNode node2 = grids[link.grid2.index][link.grid2.position];
 
-            CreateGridLinkingNode(node1, node2, link.grid1);
-            CreateGridLinkingNode(node2, node1, link.grid2);
+            Vector2Int grid1Offset = Vector2Int.RoundToInt( link.grid1.direction.IndexToRotation().Rotate(90));
+            Vector2Int grid2Offset = Vector2Int.RoundToInt( link.grid2.direction.IndexToRotation().Rotate(-90));
+
+            for (int i = 0; i < link.width; i++)
+            {
+                CreateGridLinkingNode(node1, node2, link.grid1, link.grid2.index, i, grid1Offset, grid2Offset);
+                CreateGridLinkingNode(node2, node1, link.grid2, link.grid1.index, i, grid2Offset, grid1Offset);
+            }
         }
 
         foreach (var link in nodeOverrides.sceneLinks)
@@ -79,14 +85,23 @@ public class PathfindingMultiGrid
         }
     }
 
-    private void CreateGridLinkingNode(GridNode node, GridNode partner, LinkID link)
+    private void CreateGridLinkingNode(GridNode node, GridNode partner, LinkID link, int otherIndex, int i, Vector2Int offset, Vector2Int otherOffset)
     {
-        node.overridden = true;
-        node.overriddenDir = link.direction;
-        node.Neighbors[link.direction].connected = true;
-        node.Neighbors[link.direction].oneway = false;
-        node.Neighbors[link.direction].overridden = true;
-        node.Neighbors[link.direction].reference = partner;
+        GridNode thisNode = node;
+        GridNode partnerNode = partner;
+        if (i > 0)
+        {
+            thisNode = grids[link.index].GetNodeRelative(node.position, offset * i);
+            partner = grids[otherIndex].GetNodeRelative(partner.position, otherOffset * i);
+        }
+        
+
+        thisNode.overridden = true;
+        thisNode.overriddenDir = link.direction;
+        thisNode.Neighbors[link.direction].connected = true;
+        thisNode.Neighbors[link.direction].oneway = false;
+        thisNode.Neighbors[link.direction].overridden = true;
+        thisNode.Neighbors[link.direction].reference = partner;
     }
 
     private void CreateSceneLinkingNode(LevelTransitionInformation link)
@@ -322,36 +337,43 @@ public class PathfindingMultiGrid
             if (gridInfo.Length < link.grid1.index || gridInfo.Length < link.grid2.index)
                 continue;
 
-            if (!Application.isPlaying && debugSettings.drawOverWrittenNodes)
-            {
-                Gizmos.DrawSphere(
-                    gridInfo[link.grid1.index].ToWorld(link.grid1.position),
-                    gridInfo[link.grid1.index].cellSize / 8
-                    );
-                Gizmos.DrawSphere(
-                    gridInfo[link.grid2.index].ToWorld(link.grid2.position),
-                    gridInfo[link.grid2.index].cellSize / 8
-                    );
-            }
-
             if (debugSettings.drawOverWrittenNodes)
             {
-                Gizmos.DrawLine(
-                    gridInfo[link.grid1.index].ToWorld(link.grid1.position),
-                    gridInfo[link.grid1.index].ToWorld(link.grid1.position) + (gizmoDirections[link.grid1.direction] * 0.25f)
-                    );
+                Vector2 grid1Offset_2 = link.grid1.direction.IndexToRotation().Rotate(90);
+                Vector2 grid2Offset_2 = link.grid2.direction.IndexToRotation().Rotate(-90);
 
-                Gizmos.DrawLine(
-                    gridInfo[link.grid2.index].ToWorld(link.grid2.position),
-                    gridInfo[link.grid2.index].ToWorld(link.grid2.position) + (gizmoDirections[link.grid2.direction] * 0.25f)
-                    );
+                Vector3 grid1Offset = new Vector3(grid1Offset_2.x, grid1Offset_2.y, 0);
+                Vector3 grid2Offset = new Vector3(grid2Offset_2.x, grid2Offset_2.y, 0);
+
+                for (int i = 0; i < link.width; i++)
+                {
+                    Gizmos.DrawSphere(
+                        gridInfo[link.grid1.index].ToWorld(link.grid1.position) + (grid1Offset*i),
+                        gridInfo[link.grid1.index].cellSize / 8
+                        );
+                    Gizmos.DrawSphere(
+                        gridInfo[link.grid2.index].ToWorld(link.grid2.position) + (grid2Offset * i),
+                        gridInfo[link.grid2.index].cellSize / 8
+                        );
+
+                    Gizmos.DrawRay(
+                        gridInfo[link.grid1.index].ToWorld(link.grid1.position) + (grid1Offset * i),
+                        gizmoDirections[link.grid1.direction] * 0.25f
+                        );
+
+                    Gizmos.DrawRay(
+                        gridInfo[link.grid2.index].ToWorld(link.grid2.position) + (grid2Offset * i),
+                        gizmoDirections[link.grid2.direction] * 0.25f
+                        );
+
+                    Gizmos.DrawLine(
+                        (gridInfo[link.grid1.index].ToWorld(link.grid1.position) + (grid1Offset * i)) + (gizmoDirections[link.grid1.direction] * 0.25f),
+                        (gridInfo[link.grid2.index].ToWorld(link.grid2.position) + (grid2Offset * i)) + (gizmoDirections[link.grid2.direction] * 0.25f)
+                        );
+                }
+
+
             }
-
-            if (debugSettings.drawNodeConnections && debugSettings.drawOverWrittenNodes)
-                Gizmos.DrawLine(
-                    gridInfo[link.grid1.index].ToWorld(link.grid1.position) + (gizmoDirections[link.grid1.direction] * 0.25f),
-                    gridInfo[link.grid2.index].ToWorld(link.grid2.position) + (gizmoDirections[link.grid2.direction] * 0.25f)
-                    );
         }
 
         int count = 0;
@@ -609,8 +631,16 @@ public class NodeOverrides<GridNode>
 [System.Serializable]
 public struct GridLink
 {
+    public int width;
     public LinkID grid1;
     public LinkID grid2;
+
+    public GridLink(int w)
+    {
+        width = 1;
+        grid1 = new LinkID();
+        grid2 = new LinkID();
+    }
 }
 
 [System.Serializable]

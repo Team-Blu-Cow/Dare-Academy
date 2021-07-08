@@ -42,6 +42,8 @@ public class StepController
 
         m_timer = 0;
 
+        ResetAnimations();
+
         do
         {
             PreMoveStep();
@@ -72,6 +74,14 @@ public class StepController
     }
 
     // STEP STAGES ********************************************************************************
+
+    public void ResetAnimations()
+    {
+        for (int j = m_entities.Count - 1; j >= 0; j--)
+        {
+            m_entities[j].ResetAnimations();
+        }
+    }
 
     public void PreMoveStep()
     {

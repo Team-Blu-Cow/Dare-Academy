@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -22,6 +21,22 @@ namespace blu.EditorTools
     {
         private string filepath = "";
         private Dictionary<string, object> fileData = null;
+        private bool m_flagsFoldoutExpanded = false;
+        private Vector2 m_scrollPos = Vector2.zero;
+        private Vector2 m_flagsScrollPos = Vector2.zero;
+
+        public void OnValidate()
+        {
+            if (filepath != null && filepath.Length > 0)
+            {
+                bool success = OpenFile(filepath);
+                if (!success)
+                {
+                    filepath = "";
+                    fileData = null;
+                }
+            }
+        }
 
         public void OnEnable()
         {
@@ -30,6 +45,11 @@ namespace blu.EditorTools
         private Dictionary<string, object> ParseJson(string json)
         {
             return JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+        }
+
+        private string SerializeJson(Dictionary<string, object> structure)
+        {
+            return JsonConvert.SerializeObject(structure);
         }
 
         private bool OpenFile(string path)
@@ -54,7 +74,7 @@ namespace blu.EditorTools
 
         private bool SaveFile()
         {
-            string json = JsonConvert.SerializeObject(fileData);
+            string json = SerializeJson(fileData);
             System.IO.File.WriteAllText(filepath, json);
             return true;
         }
@@ -76,32 +96,42 @@ namespace blu.EditorTools
 
             if (fileData != null)
             {
-                foreach (string key in fileData.Keys)
+                m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos);
+
+                string[] keys = new string[fileData.Keys.Count];
+                fileData.Keys.CopyTo(keys, 0);
+                for (int k = 0; k < keys.Length; k++)
                 {
                     // do something with entry.Value or entry.Key
                     GUILayout.BeginHorizontal();
 
-                    GUILayout.Label(key, GUILayout.Width(100f));
-                    string oldValue = fileData[key].ToString();
+                    GUILayout.Label(keys[k], GUILayout.Width(100f));
 
                     // check if object is still json, this will be a subclass
                     // TODO @Matthew - deal with this so it can be modified in editor
-                    if (fileData[key].GetType() == new Newtonsoft.Json.Linq.JObject().GetType())
+                    if (fileData[keys[k]].GetType() == new Newtonsoft.Json.Linq.JObject().GetType())
                     {
-                        GUILayout.Label("DATA NOT READABLE IN EDITOR");
+                        DataNotReadable();
                         GUILayout.EndHorizontal();
                         continue;
                     }
 
-                    string newValue = GUILayout.TextField(oldValue);
+                    switch (keys[k])
+                    {
+                        case "gameEventFlags":
+                            fileData[keys[k]] = DisplayGameEventFlags((long)fileData[keys[k]]);
+                            break;
+
+                        default:
+                            // fallback for built in types
+                            fileData[keys[k]] = GUILayout.TextField(fileData[keys[k]].ToString());
+                            break;
+                    }
 
                     GUILayout.EndHorizontal();
-                    if (oldValue != newValue)
-                    {
-                        fileData[key] = (object)newValue;
-                        break;
-                    }
                 }
+
+                GUILayout.EndScrollView();
 
                 GUILayout.Space(10);
                 GUILayout.BeginHorizontal();
@@ -119,6 +149,34 @@ namespace blu.EditorTools
 
                 GUILayout.EndHorizontal();
             }
+        }
+
+        private void DataNotReadable()
+        {
+            GUILayout.Label("DATA NOT READABLE IN EDITOR");
+        }
+
+        private long DisplayGameEventFlags(long gameEventFlags)
+        {
+            string[] flagNames = System.Enum.GetNames(typeof(GameEventFlags.Flags));
+            System.Array flagValues = System.Enum.GetValues(typeof(GameEventFlags.Flags));
+
+            m_flagsFoldoutExpanded = EditorGUILayout.Foldout(m_flagsFoldoutExpanded, "flags");
+            if (m_flagsFoldoutExpanded)
+            {
+                m_flagsScrollPos = EditorGUILayout.BeginScrollView(m_flagsScrollPos, GUILayout.Height(120));
+                for (int i = 0; i < flagNames.Length; i++)
+                {
+                    bool fieldBool = GameEventFlags.IsFlagSet((GameEventFlags.Flags)flagValues.GetValue(i), gameEventFlags);
+
+                    fieldBool = GUILayout.Toggle(fieldBool, flagNames[i]);
+                    GameEventFlags.Flags mask = (GameEventFlags.Flags)flagValues.GetValue(i);
+                    gameEventFlags = GameEventFlags.SetFlags(mask, gameEventFlags, fieldBool);
+                }
+                EditorGUILayout.EndScrollView();
+            }
+
+            return gameEventFlags;
         }
     }
 }

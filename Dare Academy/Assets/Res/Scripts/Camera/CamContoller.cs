@@ -91,15 +91,25 @@ namespace blu
                 // shout at @adam (or @matthew if youre feeling spicy) to fix it
 
                 //_virtualCam.Follow.position = _player.transform.position;
-                _virtualCam.Follow.position = new Vector3(
-                    Mathf.Clamp(_player.transform.position.x,
-                    App.GetModule<LevelModule>().CurrentRoom.OriginPosition.x + (_Cam.OrthographicBounds().extents.x - _tolerance),
-                    App.GetModule<LevelModule>().CurrentRoom.OriginPosition.x + App.GetModule<LevelModule>().CurrentRoom.Width - (_Cam.OrthographicBounds().extents.x) + _tolerance),
 
-                    Mathf.Clamp(_player.transform.position.y,
+                float xFollow = 0;
+                float yFollow = 0;
+
+                if (_Cam.OrthographicBounds().extents.y * 2 > App.GetModule<LevelModule>().CurrentRoom.Height)
+                    yFollow = App.GetModule<LevelModule>().CurrentRoom.OriginPosition.y + App.GetModule<LevelModule>().CurrentRoom.Height / 2;
+                else
+                    yFollow = Mathf.Clamp(_player.transform.position.y,
                     App.GetModule<LevelModule>().CurrentRoom.OriginPosition.y + (_Cam.OrthographicBounds().extents.y - _tolerance),
-                    App.GetModule<LevelModule>().CurrentRoom.OriginPosition.y + App.GetModule<LevelModule>().CurrentRoom.Height - (_Cam.OrthographicBounds().extents.y) + _tolerance),
-                    0);
+                    App.GetModule<LevelModule>().CurrentRoom.OriginPosition.y + App.GetModule<LevelModule>().CurrentRoom.Height - (_Cam.OrthographicBounds().extents.y) + _tolerance);
+
+                if (_Cam.OrthographicBounds().extents.x * 2 > App.GetModule<LevelModule>().CurrentRoom.Width)
+                    xFollow = App.GetModule<LevelModule>().CurrentRoom.OriginPosition.x + App.GetModule<LevelModule>().CurrentRoom.Width / 2;
+                else
+                    xFollow = Mathf.Clamp(_player.transform.position.x,
+                    App.GetModule<LevelModule>().CurrentRoom.OriginPosition.x + (_Cam.OrthographicBounds().extents.x - _tolerance),
+                    App.GetModule<LevelModule>().CurrentRoom.OriginPosition.x + App.GetModule<LevelModule>().CurrentRoom.Width - (_Cam.OrthographicBounds().extents.x) + _tolerance);
+
+                _virtualCam.Follow.position = new Vector3(xFollow, yFollow, 0);
             }
         }
     }

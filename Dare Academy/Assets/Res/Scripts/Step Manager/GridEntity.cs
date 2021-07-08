@@ -12,9 +12,11 @@ public abstract class GridEntity : MonoBehaviour
     private Vector2Int m_movementDirection;
 
     [SerializeField] protected int m_mass = 2;
-    protected int m_speed       = 1;
+    protected int m_baseSpeed   = 1;
+    private int m_speed   = 1;
     protected int m_health      = 1;
     private int m_stepsTaken    = 0;
+    private bool m_failedAttemptToSwitchRoom = false;
 
     protected int m_roomIndex = 0;
 
@@ -25,6 +27,10 @@ public abstract class GridEntity : MonoBehaviour
     public int Mass { get { return m_mass; } set { m_mass = value; } }
     public int Speed { get { return m_speed; } }
     public int RoomIndex { get { return m_roomIndex; } set { m_roomIndex = value; } }
+
+    public GridEntityFlags Flags => m_flags;
+
+    public bool FailedSwitchingRooms => m_failedAttemptToSwitchRoom;
 
     public int Health
     {
@@ -53,9 +59,15 @@ public abstract class GridEntity : MonoBehaviour
     protected GridNode m_currentNode = null;
     protected GridNode m_targetNode = null;
     protected GridNode m_previousNode = null;
+    protected GridNode m_startingNode = null;
+    protected GridNode m_initialNode = null;
 
     public GridNodePosition Position
     { get { return m_currentNode.position; } }
+
+    protected Queue<GridEnityAction> m_animationQueue;
+    protected List<GridEnityAction> m_actionList;
+    protected Coroutine m_animationCoroutine;
 
     // INITIALISATION METHODS *********************************************************************
     protected virtual void Start()
@@ -82,6 +94,13 @@ public abstract class GridEntity : MonoBehaviour
             m_stepController.AddEntity(this);
         }
 
+        m_startingNode = m_currentNode;
+
+        m_animationQueue = new Queue<GridEnityAction>();
+        m_actionList = new List<GridEnityAction>();
+
+        m_speed = m_baseSpeed;
+
         AnalyseStep();
     }
 
@@ -95,7 +114,7 @@ public abstract class GridEntity : MonoBehaviour
     // step flow
     /*
      *         [pre-move]
-     * virtual [move]
+     *         [move]
      * virtual [resolve pass through]
      * virtual [resolve move]
      *         [post-move]
@@ -108,8 +127,19 @@ public abstract class GridEntity : MonoBehaviour
      *
      */
 
+    public void ResetAnimations()
+    {
+        if (m_animationCoroutine != null)
+            StopCoroutine(m_animationCoroutine);
+
+        m_actionList.Clear();
+
+        m_initialNode = m_currentNode;
+    }
+
     public void PreMoveStep()
     {
+        // allows checking if an entity moved this step
         m_previousNode = null;
 
         // if not on node kill entity, this will prevent next steps from being run
@@ -117,11 +147,22 @@ public abstract class GridEntity : MonoBehaviour
             Kill();
     }
 
-    virtual public void MoveStep()
+    public void MoveStep()
     {
         // set our target node based on our m_moveDirection
         // this should be set within the analysis step
         SetTargetNode(m_movementDirection);
+
+        m_failedAttemptToSwitchRoom = false;
+        if (m_currentNode != null && m_targetNode != null)
+        {
+            // check if entity is allowed to move between rooms and if next tile is in a different room
+            if (!m_flags.IsFlagsSet(flags.allowRoomSwitching) && m_currentNode.roomIndex != m_targetNode.roomIndex)
+            {
+                m_failedAttemptToSwitchRoom = true;
+                return;
+            }
+        }
 
         // set currentNode to targetNode
         // keep a record of where we came from
@@ -139,6 +180,8 @@ public abstract class GridEntity : MonoBehaviour
             m_currentNode = m_targetNode;
             m_targetNode = null;
 
+            AddAnimationAction(m_currentNode.position, ActionTypes.MOVE);
+
             // add ourself to the list of entities currently on the node
             m_currentNode.AddEntity(this);
         }
@@ -148,8 +191,6 @@ public abstract class GridEntity : MonoBehaviour
     {
         if (!CheckForPassThrough())
             return;
-
-        // TODO @matthew/@jay : this does not respect entities with the isAttack flag yet
 
         List<GridEntity> winningEntities = GetEntitiesOnNode(m_previousNode);
         List<GridEntity> losingEntities = new List<GridEntity>();
@@ -170,7 +211,7 @@ public abstract class GridEntity : MonoBehaviour
                 highestMass = (winningEntities[i].Mass > winningEntities[i + 1].Mass) ? winningEntities[i].Mass : winningEntities[i + 1].Mass;
 
             if (winningEntities[i].Speed != winningEntities[i + 1].Speed)
-                highestMass = (winningEntities[i].Speed > winningEntities[i + 1].Speed) ? winningEntities[i].Speed : winningEntities[i + 1].Speed;
+                highestSpeed = (winningEntities[i].Speed > winningEntities[i + 1].Speed) ? winningEntities[i].Speed : winningEntities[i + 1].Speed;
         }
 
         if (highestMass > int.MinValue)
@@ -196,6 +237,10 @@ public abstract class GridEntity : MonoBehaviour
             entity.m_currentNode = entity.m_previousNode;
 
             entity.AddToCurrentNode();
+
+            entity.ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
+
+            entity.AddAnimationAction(ActionTypes.MOVE);
 
             entity.m_speed = 0;
             entity.m_movementDirection = Vector2Int.zero;
@@ -254,13 +299,48 @@ public abstract class GridEntity : MonoBehaviour
         }
 
         if (winning_objects.Count == 1)
-        { PushBackAll(losing_objects, winning_objects[0]); }
+        {
+            bool success = true;
+            for (int i = losing_objects.Count - 1; i >= 0; i--)
+            {
+                if (losing_objects[i].m_previousNode != null)
+                {
+                    losing_objects[i].MoveBack();
+                }
+                else
+                {
+                    if (!losing_objects[i].PushBack(winning_objects[0].Direction, winning_objects[0].Mass))
+                    {
+                        success = false;
+                    }
+                }
+            }
+            if (!success)
+            {
+                winning_objects[0].MoveBack();
+            }
+        }
 
         // check for any new conflicts
     }
 
     public void PostMoveStep()
     {
+        if (m_currentNode != null)
+        {
+            List<GridEntity> entities = m_currentNode.GetGridEntities();
+            if (!entities.Contains(this))
+            {
+                Debug.LogWarning($"{gameObject.name} : entity was not on list, adding to node list");
+                AddToCurrentNode();
+            }
+        }
+
+        if (m_flags.IsFlagsSet(flags.killOnRoomSwitch) && FailedSwitchingRooms)
+        {
+            Kill();
+        }
+
         // iterate counter of steps taken this turn, this is reset in End()
         m_stepsTaken++;
 
@@ -358,7 +438,7 @@ public abstract class GridEntity : MonoBehaviour
         {
             // TODO @matthew/@jay - don't remove immediately to allow for death animation
             // kill entity
-            CleanUp();
+            OnDeath();
         }
     }
 
@@ -370,7 +450,43 @@ public abstract class GridEntity : MonoBehaviour
     {
         if (m_currentNode == null)
             return;
-        StartCoroutine(AnimateMove(m_stepController.stepTime));
+
+        //StartCoroutine(AnimateMove(m_stepController.m_stepTime));
+
+        //return;
+
+        if (m_actionList.Count < 1)
+            return;
+
+        if (m_baseSpeed > 1)
+        {
+            int passthroughCount = 0;
+            int pushbackCount = 0;
+
+            for (int i = m_actionList.Count-1; i >= 1; i--)
+            {
+                if (m_actionList[i-1].type == ActionTypes.PASSTHROUGH)
+                    passthroughCount++;
+
+                if (m_actionList[i-1].type == ActionTypes.PUSHBACK)
+                    pushbackCount++;
+
+                if (passthroughCount > 1 && m_actionList[i].type == ActionTypes.MOVE)
+                    m_actionList.RemoveAt(i);
+
+                if (pushbackCount > 1 && m_actionList[i].type == ActionTypes.MOVE)
+                    m_actionList.RemoveAt(i);
+            }
+        }
+
+        m_animationCoroutine = StartCoroutine(AnimateActions());
+
+        m_baseSpeed = 0;
+    }
+
+    virtual public void OnDeath()
+    {
+        CleanUp();
     }
 
     // RESOLVE MOVE CONFLICT METHODS **************************************************************
@@ -578,7 +694,180 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
+    virtual public bool MoveBack()
+    {
+        RemoveFromCurrentNode();
+        m_currentNode = m_previousNode;
+        AddToCurrentNode();
+        ModifyPreviousAction(ActionTypes.PUSHBACK, true);
+        AddAnimationAction(ActionTypes.MOVE);
+        m_previousNode = null;
+        return true;
+    }
+
+    virtual public bool PushBack(Vector2Int direction, int force)
+    {
+        if (force < Mass)
+            return false;
+
+        if (m_currentNode == null)
+            return true;
+
+        if (!m_flags.IsFlagsSet(flags.isPushable))
+        {
+            return false;
+        }
+
+        GridNode node = m_currentNode.GetNeighbour(direction);
+        if (node == null)
+        {
+            if (!m_flags.IsFlagsSet(flags.isSolid))
+            {
+                RemoveFromCurrentNode();
+                m_currentNode = null;
+                return true;
+            }
+            return false;
+        }
+
+        bool return_value = true;
+
+        RemoveFromCurrentNode();
+
+        GridNode lastNode = m_currentNode;
+        m_currentNode = node;
+
+        
+
+        List<GridEntity> entities = m_currentNode.GetGridEntities();
+
+        for (int i = entities.Count - 1; i >= 0; i--)
+        {
+            // TODO @matthew - if entities are moving in the same direction, combine their mass
+            bool success = entities[i].PushBack(direction, force - entities[i].Mass);
+
+            if (!success)
+            {
+                m_currentNode = lastNode;
+                return_value = false;
+            }
+        }
+
+        if (return_value)
+        {
+            ModifyPreviousAction(ActionTypes.PUSHBACK, true);
+            AddAnimationAction(m_currentNode, ActionTypes.MOVE);
+        }
+
+        AddToCurrentNode();
+        return return_value;
+    }
+
+    virtual protected void RemovePassThrough(List<GridEntity> winning_objects, List<GridEntity> losing_objects)
+    {
+        // TODO @matthew/@jay : this does not respect entities with the isAttack flag yet
+        GridNode node = winning_objects[0].m_currentNode;
+
+        // if entity is trying to push entity against a wall / edge of grid
+        if (winning_objects[0].m_currentNode.Neighbors[winning_objects[0].m_movementDirection].reference == null)
+        {
+            // if entity is solid, prevent entities from moving (make them stay where they are)
+            if (losing_objects[0].m_flags.IsFlagsSet(flags.isSolid))
+            {
+                losing_objects[0].RemoveFromCurrentNode();
+                losing_objects[0].m_currentNode = losing_objects[0].m_previousNode;
+                losing_objects[0].m_previousNode = null;
+                losing_objects[0].m_targetNode = null;
+                losing_objects[0].m_movementDirection = Vector2Int.zero;
+                losing_objects[0].m_speed = 0;
+                losing_objects[0].AddToCurrentNode();
+                losing_objects[0].ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
+                losing_objects[0].AddAnimationAction(ActionTypes.MOVE);
+
+                winning_objects[0].RemoveFromCurrentNode();
+                winning_objects[0].m_currentNode = winning_objects[0].m_previousNode;
+                winning_objects[0].m_previousNode = null;
+                winning_objects[0].m_targetNode = null;
+                winning_objects[0].m_movementDirection = Vector2Int.zero;
+                winning_objects[0].m_speed = 0;
+                winning_objects[0].AddToCurrentNode();
+                winning_objects[0].ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
+                winning_objects[0].AddAnimationAction(ActionTypes.MOVE);
+
+                return;
+            }
+
+            // losing object gets crushed
+            losing_objects[0].m_health = int.MinValue;
+            return;
+        }
+
+        // move losing object on top of winning object, to be dealt with in resolve move phase
+        losing_objects[0].RemoveFromCurrentNode();
+        losing_objects[0].m_currentNode = node;
+        losing_objects[0].AddToCurrentNode();
+        losing_objects[0].m_previousNode = null;
+        losing_objects[0].m_targetNode = null;
+        losing_objects[0].m_speed = 0;
+        losing_objects[0].m_movementDirection = Vector2Int.zero;
+        losing_objects[0].ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
+        losing_objects[0].AddAnimationAction(ActionTypes.MOVE);
+    }
+
     // DRAW STEP METHODS **************************************************************************
+
+    public IEnumerator AnimateActions()
+    {
+        float animTime = m_stepController.stepTime/ m_actionList.Count;
+
+        int count = m_actionList.Count;
+
+        //m_actionList.Reverse();
+
+        for (int i = 0; i < count; i++)
+        {
+            GridEnityAction action = m_actionList[0];
+            m_actionList.RemoveAt(0);
+
+            yield return StartCoroutine(AnimateAction(animTime, action));
+
+            yield return null;
+        }
+    }
+
+    public IEnumerator AnimateAction(float animTime, GridEnityAction action)
+    {
+        Vector3 startPos = transform.position;
+        Vector3 endPos = action.targetPosition;
+
+        switch (action.type)
+        {
+            case ActionTypes.PASSTHROUGH:
+                endPos = Vector3.Lerp(startPos, endPos, 0.15f);
+                animTime *= 0.33f;
+                break;
+
+            case ActionTypes.PUSHBACK:
+                endPos = Vector3.Lerp(startPos, endPos, 0.35f);
+                animTime *= 0.55f;
+                break;
+        }
+
+
+        float currentTime = 0;
+
+        while (currentTime < animTime)
+        {
+            currentTime += Time.deltaTime;
+
+            float xx = Mathf.Lerp(startPos.x, endPos.x, currentTime/animTime);
+            float yy = Mathf.Lerp(startPos.y, endPos.y, currentTime/animTime);
+            float zz = Mathf.Lerp(startPos.z, endPos.z, currentTime/animTime);
+            transform.position = new Vector3(xx, yy, zz);
+
+            yield return null;
+        }
+    }
 
     public IEnumerator AnimateMove(float stepTime)
     {
@@ -600,27 +889,69 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-    // HELPER METHODS *****************************************************************************
 
-    virtual protected void Update()
+
+    public void AddAnimationAction(GridNode node, ActionTypes type) => AddAnimationAction(node.position, type);
+    public void AddAnimationAction(ActionTypes type) => AddAnimationAction(m_currentNode.position, type);
+    public void AddAnimationAction(GridNodePosition position, ActionTypes type)
     {
-        if (RoomIndex == -1)
-            return;
-        /*if (m_currentNode != null)
-        {
-            float xx = Mathf.Lerp(transform.position.x, m_currentNode.position.world.x, 0.5f);
-            float yy = Mathf.Lerp(transform.position.y, m_currentNode.position.world.y, 0.5f);
-            float zz = Mathf.Lerp(transform.position.z, m_currentNode.position.world.z, 0.5f);
-            transform.position = new Vector3(xx, yy, zz);
-        }*/
+        GridEnityAction action = new GridEnityAction();
+        action.position = position;
+        action.type = type;
+        m_actionList.Add(action);
+        //m_animationQueue.Enqueue(action);
     }
+
+    public void ModifyPreviousAction(ActionTypes type, bool conditional = false, ActionTypes condition = ActionTypes.MOVE)
+    {
+        if (m_actionList.Count <= 0)
+            return;
+
+        if(!conditional || m_actionList[m_actionList.Count - 1].type == condition)
+            m_actionList[m_actionList.Count - 1].type = type;
+            
+        //m_animationQueue.Enqueue(action);
+    }
+
+    public void ModifyPreviousAction(GridEnityAction action, bool conditional = false, ActionTypes condition = ActionTypes.MOVE)
+    {
+        if (m_actionList.Count <= 0)
+            return;
+
+        if (!conditional || m_actionList[m_actionList.Count - 1].type == condition)
+            m_actionList[m_actionList.Count - 1] = new GridEnityAction(action);
+
+        //m_animationQueue.Enqueue(action);
+    }
+
+    // HELPER METHODS *****************************************************************************
 
     virtual public void RoomChange()
     {
         if (m_roomIndex == m_stepController.m_currentRoomIndex)
+        {
             m_stepController.AddEntity(this);
+        }
         else
+        {
+            ResetPosition();
             m_stepController.RemoveEntity(this);
+        }
+    }
+
+    protected void ResetPosition()
+    {
+        if (m_flags.IsFlagsSet(flags.destroyOnReset))
+        {
+            Kill();
+        }
+        else
+        {
+            RemoveFromCurrentNode();
+            m_currentNode = m_startingNode;
+            AddToCurrentNode();
+            transform.position = m_currentNode.position.world;
+        }
     }
 
     public void SetMovementDirection(Vector2 direction, int speed = 1)
@@ -634,7 +965,8 @@ public abstract class GridEntity : MonoBehaviour
     {
         // TODO @matthew/@jay - check this value is valid
         m_movementDirection = direction;
-        m_speed = speed;
+        m_speed             = speed;
+        m_baseSpeed         = speed;
     }
 
     protected void SetTargetNode(Vector2Int direction, int distance = 1)
@@ -664,137 +996,6 @@ public abstract class GridEntity : MonoBehaviour
             m_movementDirection = Vector2Int.zero;
             m_speed = 0;
         }
-    }
-
-    protected static void PushBackAll(List<GridEntity> losers, GridEntity winningEntity)
-    {
-        foreach (var entity in losers)
-        {
-            entity.PushBack(winningEntity);
-        }
-    }
-
-    virtual public void PushBack(GridEntity winningEntity)
-    {
-        m_currentNode.RemoveEntity(this);
-
-        Vector2 moveDirection;
-
-        // determine move direction
-        if (m_flags.IsFlagsSet(flags.isPushable) && winningEntity.m_previousNode != null)
-        {
-            // check to see if entity and winning entity are in the correct position to be pushed by another entity
-            if (winningEntity.m_previousNode.position.grid == m_currentNode.position.grid - winningEntity.m_movementDirection)
-                moveDirection = winningEntity.m_movementDirection;
-            // if entity should not be pushed, use regular direction
-            else
-            {
-                if (m_movementDirection == Vector2.zero)
-                {
-                    moveDirection = winningEntity.m_movementDirection;
-                }
-                else
-                {
-                    moveDirection = -m_movementDirection;
-                }
-            }
-        }
-        else
-        {
-            // if both entities are moving the same direction
-            if (m_movementDirection == winningEntity.m_movementDirection && m_currentNode.position.grid == winningEntity.Position.grid + winningEntity.m_movementDirection)
-                moveDirection = m_movementDirection;
-            // normal push logic
-            else
-            {
-                if (m_movementDirection == Vector2.zero)
-                {
-                    moveDirection = winningEntity.m_movementDirection;
-                }
-                else
-                {
-                    moveDirection = -m_movementDirection;
-                }
-            }
-        }
-
-        GridNode lastNode = m_currentNode;
-        GridNode winnerLastNode = winningEntity.m_currentNode.Neighbors[(-winningEntity.m_movementDirection).RotationToIndex()].reference;
-
-        m_currentNode = winningEntity.m_currentNode.Neighbors[(moveDirection).RotationToIndex(45)].reference;
-
-        if (m_currentNode == null)
-        {
-            if (m_flags.IsFlagsSet(flags.isSolid))
-            {
-                winningEntity.RemoveFromCurrentNode();
-
-                m_currentNode = lastNode;
-                winningEntity.m_currentNode = winnerLastNode;
-
-                winningEntity.AddToCurrentNode();
-            }
-            else
-            {
-                return;
-            }
-        }
-
-        if (m_currentNode.GetGridEntities().Count > 0)
-        {
-            winningEntity.RemoveFromCurrentNode();
-
-            m_currentNode = lastNode;
-            winningEntity.m_currentNode = winnerLastNode;
-
-            winningEntity.AddToCurrentNode();
-        }
-
-        m_previousNode = null;
-
-        m_currentNode.AddEntity(this);
-    }
-
-    virtual protected void RemovePassThrough(List<GridEntity> winning_objects, List<GridEntity> losing_objects)
-    {
-        // TODO @matthew/@jay : this does not respect entities with the isAttack flag yet
-        GridNode node = winning_objects[0].m_currentNode;
-
-        // if entity is trying to push entity against a wall / edge of grid
-        if (winning_objects[0].m_currentNode.Neighbors[winning_objects[0].m_movementDirection].reference == null)
-        {
-            // if entity is solid, prevent entities from moving (make them stay where they are)
-            if (losing_objects[0].m_flags.IsFlagsSet(flags.isSolid))
-            {
-                losing_objects[0].RemoveFromCurrentNode();
-                losing_objects[0].m_currentNode = losing_objects[0].m_previousNode;
-                losing_objects[0].m_previousNode = null;
-                losing_objects[0].m_targetNode = null;
-                losing_objects[0].m_movementDirection = Vector2Int.zero;
-                losing_objects[0].m_speed = 0;
-
-                winning_objects[0].RemoveFromCurrentNode();
-                winning_objects[0].m_currentNode = winning_objects[0].m_previousNode;
-                winning_objects[0].m_previousNode = null;
-                winning_objects[0].m_targetNode = null;
-                winning_objects[0].m_movementDirection = Vector2Int.zero;
-                winning_objects[0].m_speed = 0;
-
-                return;
-            }
-
-            // losing object gets crushed
-            losing_objects[0].m_health = int.MinValue;
-            return;
-        }
-
-        // move losing object on top of winning object, to be dealt with in resolve move phase
-        losing_objects[0].RemoveFromCurrentNode();
-        losing_objects[0].m_currentNode = node;
-        losing_objects[0].AddToCurrentNode();
-        losing_objects[0].m_targetNode = null;
-        losing_objects[0].m_speed = 0;
-        losing_objects[0].m_movementDirection = Vector2Int.zero;
     }
 
     virtual public void RemoveFromCurrentNode()
