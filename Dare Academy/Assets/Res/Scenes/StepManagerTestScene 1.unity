@@ -7414,7 +7414,8 @@ MonoBehaviour:
   m_mass: 2
   m_flags:
     m_flagData: 29
-  m_fireRate: 3
+  m_maxEnergy: 3
+  m_allowDash: 0
 --- !u!212 &1349807190
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -8269,7 +8270,8 @@ MonoBehaviour:
     - Left grid
     nodeOverrides:
       gridLinks:
-      - grid1:
+      - width: 1
+        grid1:
           index: 1
           position: {x: 19, y: 4}
           direction: 2
