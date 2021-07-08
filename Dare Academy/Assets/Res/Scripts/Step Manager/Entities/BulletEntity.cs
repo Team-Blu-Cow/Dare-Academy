@@ -17,6 +17,7 @@ public class BulletEntity : GridEntity
         base.Start();
         m_flags.SetFlags(flags.isAttack, true);
         m_health = 1;
+        m_animationController = GetComponent<GridEntityAnimationController>();
     }
 
     public override void ResolvePassThroughStep()

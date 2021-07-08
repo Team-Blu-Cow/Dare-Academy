@@ -28,8 +28,9 @@ public class PlayerEntity : GridEntity
 
     private PlayerControls input;
 
-    public void OnValidate()
+    protected void OnValidate()
     {
+        base.OnValidate();
         m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet");
     }
 

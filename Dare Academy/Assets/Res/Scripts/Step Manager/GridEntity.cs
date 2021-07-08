@@ -6,6 +6,7 @@ using JUtil.Grids;
 using JUtil;
 using flags = GridEntityFlags.Flags;
 
+[RequireComponent(typeof(GridEntityAnimationController))]
 public abstract class GridEntity : MonoBehaviour
 {
     // MEMBERS ************************************************************************************
@@ -13,7 +14,7 @@ public abstract class GridEntity : MonoBehaviour
 
     [SerializeField] protected int m_mass = 2;
     protected int m_baseSpeed   = 1;
-    private int m_speed   = 1;
+    private int m_speed         = 1;
     protected int m_health      = 1;
     private int m_stepsTaken    = 0;
     private bool m_failedAttemptToSwitchRoom = false;
@@ -67,6 +68,8 @@ public abstract class GridEntity : MonoBehaviour
     protected List<GridEnityAction> m_actionList;
     protected Coroutine m_animationCoroutine;
 
+    protected GridEntityAnimationController m_animationController;
+
     // INITIALISATION METHODS *********************************************************************
     protected virtual void Start()
     {
@@ -107,6 +110,10 @@ public abstract class GridEntity : MonoBehaviour
         m_stepController.RoomChangeEvent -= RoomChange;
     }
 
+    protected void OnValidate()
+    {
+        m_animationController = GetComponent<GridEntityAnimationController>();
+    }
     // STEP FLOW METHODS **************************************************************************
 
     // step flow
@@ -178,7 +185,7 @@ public abstract class GridEntity : MonoBehaviour
             m_currentNode = m_targetNode;
             m_targetNode = null;
 
-            AddAnimationAction(m_currentNode.position, ActionTypes.MOVE);
+            AddAnimationAction(m_currentNode.position, ActionTypes.MOVE, "walk");
 
             // add ourself to the list of entities currently on the node
             m_currentNode.AddEntity(this);
@@ -238,7 +245,7 @@ public abstract class GridEntity : MonoBehaviour
 
             entity.ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
 
-            entity.AddAnimationAction(ActionTypes.MOVE);
+            entity.AddAnimationAction(ActionTypes.MOVE, "walk");
 
             entity.m_speed = 0;
             entity.m_movementDirection = Vector2Int.zero;
@@ -693,7 +700,7 @@ public abstract class GridEntity : MonoBehaviour
         m_currentNode = m_previousNode;
         AddToCurrentNode();
         ModifyPreviousAction(ActionTypes.PUSHBACK, true);
-        AddAnimationAction(ActionTypes.MOVE);
+        AddAnimationAction(ActionTypes.MOVE, "walk");
         m_previousNode = null;
         return true;
     }
@@ -749,7 +756,7 @@ public abstract class GridEntity : MonoBehaviour
         if (return_value)
         {
             ModifyPreviousAction(ActionTypes.PUSHBACK, true);
-            AddAnimationAction(m_currentNode, ActionTypes.MOVE);
+            AddAnimationAction(m_currentNode, ActionTypes.MOVE, "walk");
         }
 
         AddToCurrentNode();
@@ -775,7 +782,7 @@ public abstract class GridEntity : MonoBehaviour
                 losing_objects[0].m_speed = 0;
                 losing_objects[0].AddToCurrentNode();
                 losing_objects[0].ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
-                losing_objects[0].AddAnimationAction(ActionTypes.MOVE);
+                losing_objects[0].AddAnimationAction(ActionTypes.MOVE, "walk");
 
                 winning_objects[0].RemoveFromCurrentNode();
                 winning_objects[0].m_currentNode = winning_objects[0].m_previousNode;
@@ -785,7 +792,7 @@ public abstract class GridEntity : MonoBehaviour
                 winning_objects[0].m_speed = 0;
                 winning_objects[0].AddToCurrentNode();
                 winning_objects[0].ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
-                winning_objects[0].AddAnimationAction(ActionTypes.MOVE);
+                winning_objects[0].AddAnimationAction(ActionTypes.MOVE, "walk");
 
                 return;
             }
@@ -804,7 +811,7 @@ public abstract class GridEntity : MonoBehaviour
         losing_objects[0].m_speed = 0;
         losing_objects[0].m_movementDirection = Vector2Int.zero;
         losing_objects[0].ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
-        losing_objects[0].AddAnimationAction(ActionTypes.MOVE);
+        losing_objects[0].AddAnimationAction(ActionTypes.MOVE, "walk");
     }
 
     // DRAW STEP METHODS **************************************************************************
@@ -849,6 +856,8 @@ public abstract class GridEntity : MonoBehaviour
 
         float currentTime = 0;
 
+        m_animationController.PlayAnimation(action.animationName, animTime);
+
         while (currentTime < animTime)
         {
             currentTime += Time.deltaTime;
@@ -882,17 +891,15 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-
-
-    public void AddAnimationAction(GridNode node, ActionTypes type) => AddAnimationAction(node.position, type);
-    public void AddAnimationAction(ActionTypes type) => AddAnimationAction(m_currentNode.position, type);
-    public void AddAnimationAction(GridNodePosition position, ActionTypes type)
+    public void AddAnimationAction(GridNode node, ActionTypes type, string animationName)   => AddAnimationAction(node.position, type, animationName);
+    public void AddAnimationAction(ActionTypes type, string animationName)                  => AddAnimationAction(m_currentNode.position, type, animationName);
+    public void AddAnimationAction(GridNodePosition position, ActionTypes type, string animationName)
     {
-        GridEnityAction action = new GridEnityAction();
-        action.position = position;
-        action.type = type;
+        GridEnityAction action  = new GridEnityAction();
+        action.position         = position;
+        action.type             = type;
+        action.animationName    = animationName;
         m_actionList.Add(action);
-        //m_animationQueue.Enqueue(action);
     }
 
     public void ModifyPreviousAction(ActionTypes type, bool conditional = false, ActionTypes condition = ActionTypes.MOVE)
