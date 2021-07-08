@@ -65,7 +65,7 @@ namespace blu
                 await ioModule.CreateNewSave("new save", true);
             }
 
-            m_gameEventFlags.FlagData = ActiveSaveSata.gameEventFlags;
+            m_gameEventFlags._FlagData = ActiveSaveSata.gameEventFlags;
         }
 
         protected override void SetDependancies()
@@ -86,6 +86,7 @@ namespace blu
             RespawnStationEntity.CurrentRespawnStation = null;
             //m_gameEventFlags.FlagData = ActiveSaveSata.gameEventFlags;
 
+
             m_grid.Initialise();
             //m_levelManager.StepController.InitialAnalyse();
         }
@@ -99,7 +100,7 @@ namespace blu
 
         public async void SaveGame()
         {
-            App.GetModule<IOModule>().savedata.gameEventFlags = m_gameEventFlags.FlagData;
+            App.GetModule<IOModule>().savedata.gameEventFlags = m_gameEventFlags._FlagData;
             // TODO @matthew - move the await out of here
             await App.GetModule<IOModule>().SaveAsync();
         }

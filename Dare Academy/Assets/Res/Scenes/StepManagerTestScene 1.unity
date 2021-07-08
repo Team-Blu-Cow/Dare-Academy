@@ -2776,7 +2776,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mass: 3
   m_flags:
-    m_flagData: 16
+    m_flagData: 0
   testDirection: {x: 1, y: 0}
   moveSpeed: 1
 --- !u!212 &813624386
@@ -7024,8 +7024,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mass: 2
   m_flags:
-    m_flagData: 93
-  m_fireRate: 3
+    m_flagData: 0
+  m_maxEnergy: 3
+  m_allowDash: 0
 --- !u!212 &1349807190
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -7437,7 +7438,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mass: 1
   m_flags:
-    m_flagData: 12
+    m_flagData: 0
   testDirection: {x: 0, y: 0}
   moveSpeed: 0
 --- !u!212 &1461657168
@@ -7802,7 +7803,8 @@ MonoBehaviour:
     - Left grid
     nodeOverrides:
       gridLinks:
-      - grid1:
+      - width: 0
+        grid1:
           index: 1
           position: {x: 19, y: 4}
           direction: 2

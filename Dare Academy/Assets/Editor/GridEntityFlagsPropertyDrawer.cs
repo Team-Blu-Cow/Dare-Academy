@@ -13,7 +13,7 @@ public class GridEntityFlagsPropertyDrawer : PropertyDrawer
         float height = EditorGUIUtility.singleLineHeight;
 
         if (property.isExpanded)
-            height += EditorGUIUtility.singleLineHeight * (GridEntityFlags.NumberOfFlags() + 2);
+            height += EditorGUIUtility.singleLineHeight * (BitFlagsBase.NumberOfFlags<GridEntityFlags.Flags>() + 2);
 
         return height;
     }
@@ -37,21 +37,19 @@ public class GridEntityFlagsPropertyDrawer : PropertyDrawer
         util.NewLine();
         Rect rect = util.GetSingleLineRect();
 
-
         string hexValue = flagDataProp.intValue.ToString("X");
         hexValue = EditorGUI.TextField(rect, hexValue);
         flagDataProp.intValue = int.Parse(hexValue, System.Globalization.NumberStyles.HexNumber);
 
-        string[] flagNames = flagDataProp.enumNames;
-
+        string[] flagNames = BitFlagsBase.FlagNames<GridEntityFlags.Flags>();
 
         System.Array flagValues = System.Enum.GetValues(typeof(GridEntityFlags.Flags));
 
-        for (int i = 0; i < GridEntityFlags.NumberOfFlags(); i++)
+        for (int i = 0; i < BitFlagsBase.NumberOfFlags<GridEntityFlags.Flags>(); i++)
         {
             util.NewLine();
 
-            bool fieldBool = GridEntityFlags.IsFlagSet((GridEntityFlags.Flags)flagValues.GetValue(i), (uint)flagDataProp.intValue);
+            bool fieldBool = GridEntityFlags.IsFlagSet((int)flagValues.GetValue(i), flagDataProp.intValue);
 
             rect = util.GetSingleLineRect();
 
@@ -59,7 +57,7 @@ public class GridEntityFlagsPropertyDrawer : PropertyDrawer
 
             GridEntityFlags.Flags mask = (GridEntityFlags.Flags)flagValues.GetValue(i);
 
-            flagDataProp.intValue = (int)GridEntityFlags.SetFlags(mask, (uint)flagDataProp.intValue, fieldBool);
+            flagDataProp.intValue = (int)GridEntityFlags.SetFlags((int)mask, (int)flagDataProp.intValue, fieldBool);
         }
 
         EditorGUI.EndProperty();

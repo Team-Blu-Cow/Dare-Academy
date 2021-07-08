@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 using Newtonsoft.Json;
+using System;
 
 namespace blu.EditorTools
 {
@@ -119,7 +120,7 @@ namespace blu.EditorTools
                     switch (keys[k])
                     {
                         case "gameEventFlags":
-                            fileData[keys[k]] = DisplayGameEventFlags((long)fileData[keys[k]]);
+                            fileData[keys[k]] = DisplayGameEventFlags((Int64)fileData[keys[k]]);
                             break;
 
                         default:
@@ -156,7 +157,7 @@ namespace blu.EditorTools
             GUILayout.Label("DATA NOT READABLE IN EDITOR");
         }
 
-        private long DisplayGameEventFlags(long gameEventFlags)
+        private Int64 DisplayGameEventFlags(Int64 gameEventFlags)
         {
             string[] flagNames = System.Enum.GetNames(typeof(GameEventFlags.Flags));
             System.Array flagValues = System.Enum.GetValues(typeof(GameEventFlags.Flags));
@@ -167,11 +168,11 @@ namespace blu.EditorTools
                 m_flagsScrollPos = EditorGUILayout.BeginScrollView(m_flagsScrollPos, GUILayout.Height(120));
                 for (int i = 0; i < flagNames.Length; i++)
                 {
-                    bool fieldBool = GameEventFlags.IsFlagSet((GameEventFlags.Flags)flagValues.GetValue(i), gameEventFlags);
+                    bool fieldBool = GameEventFlags.IsFlagSet((Int64)flagValues.GetValue(i), gameEventFlags);
 
                     fieldBool = GUILayout.Toggle(fieldBool, flagNames[i]);
                     GameEventFlags.Flags mask = (GameEventFlags.Flags)flagValues.GetValue(i);
-                    gameEventFlags = GameEventFlags.SetFlags(mask, gameEventFlags, fieldBool);
+                    gameEventFlags = GameEventFlags.SetFlags((Int64)mask, gameEventFlags, fieldBool);
                 }
                 EditorGUILayout.EndScrollView();
             }

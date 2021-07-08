@@ -1,8 +1,8 @@
 using System;
 
-public class GameEventFlags : BitFlags_64
+public class BitFlags_64 : BitFlagsBase
 {
-    public enum Flags : Int64
+    public enum Flags_64Base : Int64
     {
         Flag_01         = 0x0000_0000_0000_0001,
         Flag_02         = 0x0000_0000_0000_0002,
@@ -76,7 +76,38 @@ public class GameEventFlags : BitFlags_64
         Flag_63         = 0x4000_0000_0000_0000,
     }
 
-    public void SetFlags(Flags flags, bool value)
+    [UnityEngine.SerializeField] protected Int64 m_flagData = 0;
+
+    public virtual Int64 _FlagData
+    {
+        get { return m_flagData; }
+        set { m_flagData = value; }
+    }
+
+    public void ZeroFlags() => m_flagData = 0;
+
+    public void SetFlags(Int64 flags, bool value)
+    {
+        if (value)
+            m_flagData = m_flagData | flags;
+        else
+            m_flagData = m_flagData & ~flags;
+    }
+
+    public void FlipFlags(Int64 flags)
+    {
+        m_flagData = m_flagData ^ flags;
+    }
+
+    public bool IsFlagsSet(Int64 flags)
+    {
+        if ((flags & m_flagData) == flags)
+            return true;
+
+        return false;
+    }
+
+    public void SetFlags(Flags_64Base flags, bool value)
     {
         if (value)
             m_flagData = m_flagData | (Int64)flags;
@@ -84,14 +115,32 @@ public class GameEventFlags : BitFlags_64
             m_flagData = m_flagData & ~(Int64)flags;
     }
 
-    public void FlipFlags(Flags flags)
+    public void FlipFlags(Flags_64Base flags)
     {
         m_flagData = m_flagData ^ (Int64)flags;
     }
 
-    public bool IsFlagsSet(Flags flags)
+    public bool IsFlagsSet(Flags_64Base flags)
     {
         if (((Int64)flags & m_flagData) == (Int64)flags)
+            return true;
+
+        return false;
+    }
+
+    public static Int64 SetFlags(Int64 flags, Int64 flagData, bool value)
+    {
+        if (value)
+            flagData = flagData | flags;
+        else
+            flagData = flagData & (Int64)~flags;
+
+        return flagData;
+    }
+
+    public static bool IsFlagSet(Int64 flags, Int64 flagData)
+    {
+        if (((Int64)flags & flagData) == (Int64)flags)
             return true;
 
         return false;
