@@ -23,6 +23,10 @@ namespace blu
         public LevelID levelId = LevelID._default;
         public System.Int64 gameEventFlags = 0;
         public int respawnRoomID = -1;
+
+        public bool shootUnlocked = false;
+        public bool dashUnlocked = true;
+        public bool blockUnlocked = true;
     }
 
     public class IOModule : Module

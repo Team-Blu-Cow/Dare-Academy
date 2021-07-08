@@ -25,14 +25,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
-                },
-                {
-                    ""name"": ""Dash"",
-                    ""type"": ""Button"",
-                    ""id"": ""5924ef30-089b-465d-b38d-b7b3abdf25f5"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -200,39 +192,49 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Direction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""3a636da3-1f4c-4843-bcbb-828b6e725ddc"",
-                    ""path"": ""<Keyboard>/#(Q)"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""KB&Mouse"",
-                    ""action"": ""Dash"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""b53ce5ee-c194-4fb4-875c-099ba64e4de5"",
-                    ""path"": ""<Gamepad>/buttonWest"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""Dash"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
                 }
             ]
         },
         {
-            ""name"": ""Aim"",
+            ""name"": ""Ability"",
             ""id"": ""31809891-72d2-4334-bddc-d87af4db1231"",
             ""actions"": [
                 {
                     ""name"": ""Direction"",
                     ""type"": ""Button"",
                     ""id"": ""ab9bb69b-8d47-4463-9c4e-6adcb135685e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""AbilityMode"",
+                    ""type"": ""Button"",
+                    ""id"": ""5314b8c6-3e77-4b1b-9a9c-7f87eafb7a68"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""SwapAbilityR"",
+                    ""type"": ""Button"",
+                    ""id"": ""6016c215-0a11-43f1-975b-23d3c177c549"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""SwapAbilityL"",
+                    ""type"": ""Button"",
+                    ""id"": ""84fdb7d5-0c13-4a3e-9778-08969f504a55"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""CancelAbility"",
+                    ""type"": ""Button"",
+                    ""id"": ""a234393d-6b6e-42c0-b05e-20a777f96004"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -348,6 +350,50 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Direction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""caf03df1-e514-4573-b13c-457478f73762"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB&Mouse"",
+                    ""action"": ""AbilityMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""815c7b70-8379-492f-92e3-84b243d1dcc3"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB&Mouse"",
+                    ""action"": ""SwapAbilityR"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0e82c512-2e7e-4045-b1fc-c6a5b981e411"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""KB&Mouse"",
+                    ""action"": ""SwapAbilityL"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f10b2e7a-2dd9-4760-b527-d723c165fa07"",
+                    ""path"": ""<Keyboard>/backspace"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""CancelAbility"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -385,10 +431,13 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         // Move
         m_Move = asset.FindActionMap("Move", throwIfNotFound: true);
         m_Move_Direction = m_Move.FindAction("Direction", throwIfNotFound: true);
-        m_Move_Dash = m_Move.FindAction("Dash", throwIfNotFound: true);
-        // Aim
-        m_Aim = asset.FindActionMap("Aim", throwIfNotFound: true);
-        m_Aim_Direction = m_Aim.FindAction("Direction", throwIfNotFound: true);
+        // Ability
+        m_Ability = asset.FindActionMap("Ability", throwIfNotFound: true);
+        m_Ability_Direction = m_Ability.FindAction("Direction", throwIfNotFound: true);
+        m_Ability_AbilityMode = m_Ability.FindAction("AbilityMode", throwIfNotFound: true);
+        m_Ability_SwapAbilityR = m_Ability.FindAction("SwapAbilityR", throwIfNotFound: true);
+        m_Ability_SwapAbilityL = m_Ability.FindAction("SwapAbilityL", throwIfNotFound: true);
+        m_Ability_CancelAbility = m_Ability.FindAction("CancelAbility", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -439,13 +488,11 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputActionMap m_Move;
     private IMoveActions m_MoveActionsCallbackInterface;
     private readonly InputAction m_Move_Direction;
-    private readonly InputAction m_Move_Dash;
     public struct MoveActions
     {
         private @PlayerControls m_Wrapper;
         public MoveActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Direction => m_Wrapper.m_Move_Direction;
-        public InputAction @Dash => m_Wrapper.m_Move_Dash;
         public InputActionMap Get() { return m_Wrapper.m_Move; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -458,9 +505,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Direction.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnDirection;
                 @Direction.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnDirection;
                 @Direction.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnDirection;
-                @Dash.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnDash;
-                @Dash.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnDash;
-                @Dash.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnDash;
             }
             m_Wrapper.m_MoveActionsCallbackInterface = instance;
             if (instance != null)
@@ -468,46 +512,75 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Direction.started += instance.OnDirection;
                 @Direction.performed += instance.OnDirection;
                 @Direction.canceled += instance.OnDirection;
-                @Dash.started += instance.OnDash;
-                @Dash.performed += instance.OnDash;
-                @Dash.canceled += instance.OnDash;
             }
         }
     }
     public MoveActions @Move => new MoveActions(this);
 
-    // Aim
-    private readonly InputActionMap m_Aim;
-    private IAimActions m_AimActionsCallbackInterface;
-    private readonly InputAction m_Aim_Direction;
-    public struct AimActions
+    // Ability
+    private readonly InputActionMap m_Ability;
+    private IAbilityActions m_AbilityActionsCallbackInterface;
+    private readonly InputAction m_Ability_Direction;
+    private readonly InputAction m_Ability_AbilityMode;
+    private readonly InputAction m_Ability_SwapAbilityR;
+    private readonly InputAction m_Ability_SwapAbilityL;
+    private readonly InputAction m_Ability_CancelAbility;
+    public struct AbilityActions
     {
         private @PlayerControls m_Wrapper;
-        public AimActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Direction => m_Wrapper.m_Aim_Direction;
-        public InputActionMap Get() { return m_Wrapper.m_Aim; }
+        public AbilityActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Direction => m_Wrapper.m_Ability_Direction;
+        public InputAction @AbilityMode => m_Wrapper.m_Ability_AbilityMode;
+        public InputAction @SwapAbilityR => m_Wrapper.m_Ability_SwapAbilityR;
+        public InputAction @SwapAbilityL => m_Wrapper.m_Ability_SwapAbilityL;
+        public InputAction @CancelAbility => m_Wrapper.m_Ability_CancelAbility;
+        public InputActionMap Get() { return m_Wrapper.m_Ability; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(AimActions set) { return set.Get(); }
-        public void SetCallbacks(IAimActions instance)
+        public static implicit operator InputActionMap(AbilityActions set) { return set.Get(); }
+        public void SetCallbacks(IAbilityActions instance)
         {
-            if (m_Wrapper.m_AimActionsCallbackInterface != null)
+            if (m_Wrapper.m_AbilityActionsCallbackInterface != null)
             {
-                @Direction.started -= m_Wrapper.m_AimActionsCallbackInterface.OnDirection;
-                @Direction.performed -= m_Wrapper.m_AimActionsCallbackInterface.OnDirection;
-                @Direction.canceled -= m_Wrapper.m_AimActionsCallbackInterface.OnDirection;
+                @Direction.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnDirection;
+                @Direction.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnDirection;
+                @Direction.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnDirection;
+                @AbilityMode.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnAbilityMode;
+                @AbilityMode.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnAbilityMode;
+                @AbilityMode.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnAbilityMode;
+                @SwapAbilityR.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnSwapAbilityR;
+                @SwapAbilityR.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnSwapAbilityR;
+                @SwapAbilityR.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnSwapAbilityR;
+                @SwapAbilityL.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnSwapAbilityL;
+                @SwapAbilityL.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnSwapAbilityL;
+                @SwapAbilityL.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnSwapAbilityL;
+                @CancelAbility.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnCancelAbility;
+                @CancelAbility.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnCancelAbility;
+                @CancelAbility.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnCancelAbility;
             }
-            m_Wrapper.m_AimActionsCallbackInterface = instance;
+            m_Wrapper.m_AbilityActionsCallbackInterface = instance;
             if (instance != null)
             {
                 @Direction.started += instance.OnDirection;
                 @Direction.performed += instance.OnDirection;
                 @Direction.canceled += instance.OnDirection;
+                @AbilityMode.started += instance.OnAbilityMode;
+                @AbilityMode.performed += instance.OnAbilityMode;
+                @AbilityMode.canceled += instance.OnAbilityMode;
+                @SwapAbilityR.started += instance.OnSwapAbilityR;
+                @SwapAbilityR.performed += instance.OnSwapAbilityR;
+                @SwapAbilityR.canceled += instance.OnSwapAbilityR;
+                @SwapAbilityL.started += instance.OnSwapAbilityL;
+                @SwapAbilityL.performed += instance.OnSwapAbilityL;
+                @SwapAbilityL.canceled += instance.OnSwapAbilityL;
+                @CancelAbility.started += instance.OnCancelAbility;
+                @CancelAbility.performed += instance.OnCancelAbility;
+                @CancelAbility.canceled += instance.OnCancelAbility;
             }
         }
     }
-    public AimActions @Aim => new AimActions(this);
+    public AbilityActions @Ability => new AbilityActions(this);
     private int m_KBMouseSchemeIndex = -1;
     public InputControlScheme KBMouseScheme
     {
@@ -529,10 +602,13 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     public interface IMoveActions
     {
         void OnDirection(InputAction.CallbackContext context);
-        void OnDash(InputAction.CallbackContext context);
     }
-    public interface IAimActions
+    public interface IAbilityActions
     {
         void OnDirection(InputAction.CallbackContext context);
+        void OnAbilityMode(InputAction.CallbackContext context);
+        void OnSwapAbilityR(InputAction.CallbackContext context);
+        void OnSwapAbilityL(InputAction.CallbackContext context);
+        void OnCancelAbility(InputAction.CallbackContext context);
     }
 }

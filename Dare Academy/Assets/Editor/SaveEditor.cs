@@ -125,7 +125,7 @@ namespace blu.EditorTools
 
                         default:
                             // fallback for built in types
-                            fileData[keys[k]] = GUILayout.TextField(fileData[keys[k]].ToString());
+                            fileData[keys[k]] = DefaultFieldHandleing(fileData[keys[k]]);
                             break;
                     }
 
@@ -155,6 +155,23 @@ namespace blu.EditorTools
         private void DataNotReadable()
         {
             GUILayout.Label("DATA NOT READABLE IN EDITOR");
+        }
+
+        private object DefaultFieldHandleing(object field)
+        {
+            System.Type type = fileData.GetType();
+
+            if (field is bool)
+            {
+                return GUILayout.Toggle((bool)field, "");
+            }
+
+            if (field is int)
+            {
+                field = EditorGUILayout.IntField((int)field);
+            }
+
+            return GUILayout.TextField(field.ToString());
         }
 
         private Int64 DisplayGameEventFlags(Int64 gameEventFlags)

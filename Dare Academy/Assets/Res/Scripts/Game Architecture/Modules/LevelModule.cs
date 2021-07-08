@@ -23,6 +23,11 @@ namespace blu
             set { blu.App.GetModule<IOModule>().savedata = value; }
         }
 
+        public bool IsSaveLoaded
+        {
+            get => ActiveSaveSata != null;
+        }
+
         public GameEventFlags EventFlags
         {
             get { return m_gameEventFlags; }
@@ -85,7 +90,6 @@ namespace blu
 
             RespawnStationEntity.CurrentRespawnStation = null;
             //m_gameEventFlags.FlagData = ActiveSaveSata.gameEventFlags;
-
 
             m_grid.Initialise();
             //m_levelManager.StepController.InitialAnalyse();
