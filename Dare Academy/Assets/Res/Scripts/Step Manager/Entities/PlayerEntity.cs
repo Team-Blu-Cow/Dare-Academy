@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 
 using flags = GridEntityFlags.Flags;
+using interalFlags = GridEntityInternalFlags.Flags;
 using AbilityEnum = PlayerAbilities.AbilityEnum;
 
 public class PlayerEntity : GridEntity
@@ -236,7 +237,7 @@ public class PlayerEntity : GridEntity
             {
                 RemoveFromCurrentNode();
                 m_currentNode = respawnPoint;
-                m_flags.SetFlags(flags.isDead, false);
+                m_internalFlags.SetFlags(interalFlags.isDead, false);
                 Health = MaxHealth;
                 Energy = MaxEnergy;
                 transform.position = m_currentNode.position.world;

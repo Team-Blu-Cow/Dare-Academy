@@ -5,6 +5,7 @@ using blu;
 using JUtil.Grids;
 using JUtil;
 using flags = GridEntityFlags.Flags;
+using interalFlags = GridEntityInternalFlags.Flags;
 
 public abstract class GridEntity : MonoBehaviour
 {
@@ -21,6 +22,7 @@ public abstract class GridEntity : MonoBehaviour
     protected int m_roomIndex = 0;
 
     [SerializeField] protected GridEntityFlags m_flags = new GridEntityFlags();
+    protected GridEntityInternalFlags m_internalFlags = new GridEntityInternalFlags();
 
     public Vector2Int Direction => m_movementDirection;
 
@@ -45,7 +47,7 @@ public abstract class GridEntity : MonoBehaviour
             return
                 (m_health <= 0 && m_flags.IsFlagsSet(flags.isKillable))
                 || m_currentNode == null
-                || m_flags.IsFlagsSet(flags.isDead)
+                || m_internalFlags.IsFlagsSet(interalFlags.isDead)
                 ; // fuck you Adam, its staying in :] - Love Matthew & Jay
         }
     }
@@ -463,12 +465,12 @@ public abstract class GridEntity : MonoBehaviour
             int passthroughCount = 0;
             int pushbackCount = 0;
 
-            for (int i = m_actionList.Count-1; i >= 1; i--)
+            for (int i = m_actionList.Count - 1; i >= 1; i--)
             {
-                if (m_actionList[i-1].type == ActionTypes.PASSTHROUGH)
+                if (m_actionList[i - 1].type == ActionTypes.PASSTHROUGH)
                     passthroughCount++;
 
-                if (m_actionList[i-1].type == ActionTypes.PUSHBACK)
+                if (m_actionList[i - 1].type == ActionTypes.PUSHBACK)
                     pushbackCount++;
 
                 if (passthroughCount > 1 && m_actionList[i].type == ActionTypes.MOVE)
@@ -737,8 +739,6 @@ public abstract class GridEntity : MonoBehaviour
         GridNode lastNode = m_currentNode;
         m_currentNode = node;
 
-        
-
         List<GridEntity> entities = m_currentNode.GetGridEntities();
 
         for (int i = entities.Count - 1; i >= 0; i--)
@@ -853,7 +853,6 @@ public abstract class GridEntity : MonoBehaviour
                 break;
         }
 
-
         float currentTime = 0;
 
         while (currentTime < animTime)
@@ -889,10 +888,10 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-
-
     public void AddAnimationAction(GridNode node, ActionTypes type) => AddAnimationAction(node.position, type);
+
     public void AddAnimationAction(ActionTypes type) => AddAnimationAction(m_currentNode.position, type);
+
     public void AddAnimationAction(GridNodePosition position, ActionTypes type)
     {
         GridEnityAction action = new GridEnityAction();
@@ -907,9 +906,9 @@ public abstract class GridEntity : MonoBehaviour
         if (m_actionList.Count <= 0)
             return;
 
-        if(!conditional || m_actionList[m_actionList.Count - 1].type == condition)
+        if (!conditional || m_actionList[m_actionList.Count - 1].type == condition)
             m_actionList[m_actionList.Count - 1].type = type;
-            
+
         //m_animationQueue.Enqueue(action);
     }
 
@@ -965,8 +964,8 @@ public abstract class GridEntity : MonoBehaviour
     {
         // TODO @matthew/@jay - check this value is valid
         m_movementDirection = direction;
-        m_speed             = speed;
-        m_baseSpeed         = speed;
+        m_speed = speed;
+        m_baseSpeed = speed;
     }
 
     protected void SetTargetNode(Vector2Int direction, int distance = 1)
@@ -1019,7 +1018,7 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void Kill()
     {
-        m_flags.SetFlags(flags.isDead, true);
+        m_internalFlags.SetFlags(interalFlags.isDead, true);
     }
 
     protected List<GridEntity> GetEntitiesOnNode(GridNode node, bool discardAttacks = true)

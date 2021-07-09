@@ -10,10 +10,10 @@ public class GridEntityFlags : BitFlags_32
         isSolid             = 0b00000000000000000000000000000100,
         isPushable          = 0b00000000000000000000000000001000,
         isKillable          = 0b00000000000000000000000000010000,
-        isDead              = 0b00000000000000000000000000100000,
-        allowRoomSwitching  = 0b00000000000000000000000001000000,
-        destroyOnReset      = 0b00000000000000000000000010000000,
-        killOnRoomSwitch    = 0b00000000000000000000000100000000,
+        allowRoomSwitching  = 0b00000000000000000000000000100000,
+        destroyOnReset      = 0b00000000000000000000000001000000,
+        killOnRoomSwitch    = 0b00000000000000000000000010000000,
+        refectAllBullets    = 0b00000000000000000000000100000000,
     }
 
     public void SetFlags(Flags flags, bool value)
