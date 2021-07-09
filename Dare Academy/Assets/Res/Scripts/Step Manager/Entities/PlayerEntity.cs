@@ -16,6 +16,9 @@ public class PlayerEntity : GridEntity
     [SerializeField] private PlayerAbilities m_abilities = new PlayerAbilities();
     [SerializeField] private bool m_abilityMode = false;
 
+    // if the scene switch has been triggered but the entity has not been destroyeds
+    private bool m_sceneHasSwitched = false;
+
     public PlayerAbilities Abilities
     {
         get => m_abilities;
@@ -143,7 +146,8 @@ public class PlayerEntity : GridEntity
         {
             SetMovementDirection(m_moveDirection, 1);
             m_moveDirection = Vector2Int.zero;
-            App.GetModule<LevelModule>().StepController.ExecuteStep();
+            if (!m_sceneHasSwitched)
+                App.GetModule<LevelModule>().StepController.ExecuteStep();
         }
     }
 
@@ -158,7 +162,7 @@ public class PlayerEntity : GridEntity
         Vector2 vec2 = context.ReadValue<Vector2>();
         m_inputDirection = new Vector2Int(Mathf.RoundToInt(vec2.x), Mathf.RoundToInt(vec2.y));
 
-        if(m_abilityMode)
+        if (m_abilityMode)
         {
             float headX = 0;
             float headY = 0;
@@ -215,6 +219,7 @@ public class PlayerEntity : GridEntity
         {
             if (m_currentNode.overrideType == NodeOverrideType.SceneConnection)
             {
+                m_sceneHasSwitched = true;
                 App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
                 // transition to a new scene
                 App.GetModule<SceneModule>().SwitchScene(
@@ -224,7 +229,7 @@ public class PlayerEntity : GridEntity
                     );
             }
 
-            if(m_currentNode.overrideType == NodeOverrideType.LostWoodsConnection)
+            if (m_currentNode.overrideType == NodeOverrideType.LostWoodsConnection)
             {
                 // check lost woods count
 
@@ -236,8 +241,6 @@ public class PlayerEntity : GridEntity
                 //    m_currentNode.lvlTransitionInfo.transitionType,
                 //    m_currentNode.lvlTransitionInfo.loadType
                 //    );
-
-
             }
         }
 
@@ -303,7 +306,6 @@ public class PlayerEntity : GridEntity
         {
             if (m_abilityDirection != Vector2.zero)
             {
-				
                 GridNode node;
                 if (m_previousNode != null)
                 {
