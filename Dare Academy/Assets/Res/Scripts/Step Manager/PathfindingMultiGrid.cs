@@ -81,7 +81,12 @@ public class PathfindingMultiGrid
 
         foreach (var link in nodeOverrides.sceneLinks)
         {
-            CreateSceneLinkingNode(link);
+            Vector2Int gridOffset = Vector2Int.RoundToInt( link.travelDirection.IndexToRotation().Rotate(90));
+
+            for (int i = 0; i < link.width; i++)
+            {
+                CreateSceneLinkingNode(link, gridOffset, i);
+            }
         }
     }
 
@@ -104,9 +109,11 @@ public class PathfindingMultiGrid
         thisNode.Neighbors[link.direction].reference = partner;
     }
 
-    private void CreateSceneLinkingNode(LevelTransitionInformation link)
+    private void CreateSceneLinkingNode(LevelTransitionInformation link, Vector2Int gridOffset, int i)
     {
-        GridNode node = grids[link.myRoomIndex][link.myNodeIndex];
+        GridNode node = grids[link.myRoomIndex][link.myNodeIndex + (gridOffset * i)];
+        if (node == null)
+            return;
         node.overridden = true;
         node.overriddenDir = link.travelDirection;
         node.lvlTransitionInfo = link;
@@ -120,6 +127,7 @@ public class PathfindingMultiGrid
         transitionNode.walkable = true;
         transitionNode.Neighbors = new NodeNeighborhood<GridNode>(8);
         transitionNode.roomIndex = link.myRoomIndex;
+        transitionNode.lvlTransitionIndexOffset = i;
         transitionNode.lvlTransitionInfo = link;
         transitionNode.overrideType = NodeOverrideType.SceneConnection;
 
@@ -387,28 +395,32 @@ public class PathfindingMultiGrid
                 continue;
             }
 
+            Vector2 gridOffset_2 = link.travelDirection.IndexToRotation().Rotate(90);
+
+            Vector3 gridOffset = new Vector3(gridOffset_2.x, gridOffset_2.y, 0);
+
             if (debugSettings.drawOverWrittenNodes)
             {
-                Gizmos.DrawSphere(
-                    gridInfo[link.myRoomIndex].ToWorld(link.myNodeIndex),
-                    gridInfo[link.myRoomIndex].cellSize / 8
-                    );
-
-                if (EditorApplication.isPlaying)
+                for (int i = 0; i < link.width; i++)
                 {
                     Gizmos.DrawSphere(
-                        nodeOverrides.sceneTransitionNodes[count].position.world,
+                        gridInfo[link.myRoomIndex].ToWorld(link.myNodeIndex) + (gridOffset * i),
                         gridInfo[link.myRoomIndex].cellSize / 8
                         );
-                }
-            }
 
-            if (debugSettings.drawOverWrittenNodes)
-            {
-                Gizmos.DrawLine(
-                    gridInfo[link.myRoomIndex].ToWorld(link.myNodeIndex),
-                    gridInfo[link.myRoomIndex].ToWorld(link.myNodeIndex) + (gizmoDirections[link.travelDirection] * 0.25f)
-                    );
+                    if (Application.isPlaying)
+                    {
+                        Gizmos.DrawSphere(
+                            nodeOverrides.sceneTransitionNodes[count].position.world + (gridOffset * i),
+                            gridInfo[link.myRoomIndex].cellSize / 8
+                            );
+                    }
+
+                    Gizmos.DrawRay(
+                        gridInfo[link.myRoomIndex].ToWorld(link.myNodeIndex) + (gridOffset * i),
+                        gizmoDirections[link.travelDirection] * 0.25f
+                        );
+                }
             }
 
             count++;
@@ -655,9 +667,10 @@ public struct LinkID
 [System.Serializable]
 public class LevelTransitionInformation
 {
+    [SerializeField] public int width;
+
     [Header("Node information")]
     [SerializeField] public int myRoomIndex;
-
     [SerializeField] public Vector2Int myNodeIndex;
 
     [Header("Transition Information")]
@@ -690,6 +703,8 @@ public interface MultiNode
     public NodeOverrideType overrideType { get; set; }
 
     public LevelTransitionInformation lvlTransitionInfo { get; set; }
+
+    public int lvlTransitionIndexOffset { get; set; }
 }
 
 public enum NodeOverrideType
