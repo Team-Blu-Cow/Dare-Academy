@@ -3,17 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using blu;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 using JUtil;
 
-public class MiniMapGen : MonoBehaviour
+public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler
 {
     private GridInfo[] gridInfo;
     private NodeOverrides<GridNode> links;
     private List<GameObject> squares = new List<GameObject>();
+    private RectTransform rect;
 
     private void Start()
     {
+        rect = GetComponent<RectTransform>();
         DrawMap();
+        App.GetModule<InputModule>().SystemController.MapControlls.Move.started += ctx => Move(ctx);
     }
 
     public void DrawMap()
@@ -33,10 +38,11 @@ public class MiniMapGen : MonoBehaviour
             // Draw and place the room box
             GameObject tempRoom = new GameObject("Room");
             tempRoom.AddComponent<Image>();
-            tempRoom.transform.parent = transform;
-            tempRoom.GetComponent<RectTransform>().localScale = Vector3.one;
-            tempRoom.GetComponent<RectTransform>().sizeDelta = new Vector2(grid.width, grid.height);
-            tempRoom.GetComponent<RectTransform>().localPosition = grid.originPosition + (new Vector3(grid.width, grid.height, 0) / 2);
+            RectTransform rect = tempRoom.GetComponent<RectTransform>();
+            tempRoom.transform.SetParent(transform.GetChild(0));
+            rect.localScale = Vector3.one;
+            rect.sizeDelta = new Vector2(grid.width, grid.height);
+            rect.localPosition = grid.originPosition + (new Vector3(grid.width, grid.height, 0) / 2);
 
             squares.Add(tempRoom);
         }
@@ -53,13 +59,31 @@ public class MiniMapGen : MonoBehaviour
 
             GameObject tempLink = new GameObject("Link");
             tempLink.AddComponent<Image>();
-            tempLink.transform.parent = transform;
-            tempLink.GetComponent<RectTransform>().sizeDelta = new Vector2(length, link.width);
-            tempLink.GetComponent<RectTransform>().localScale = Vector3.one;
-            tempLink.GetComponent<RectTransform>().localPosition = (linkStart + linkEnd) / 2;
-            tempLink.GetComponent<RectTransform>().rotation = Quaternion.Euler(0, 0, angle);
+            RectTransform rect = tempLink.GetComponent<RectTransform>();
+            tempLink.transform.SetParent(transform.GetChild(1));
+            rect.sizeDelta = new Vector2(length, link.width);
+            rect.localScale = Vector3.one;
+            rect.localPosition = (linkStart + linkEnd) / 2;
+            rect.rotation = Quaternion.Euler(0, 0, angle);
 
             squares.Add(tempLink);
         }
+    }
+
+    public void OnScroll(PointerEventData eventData)
+    {
+        Vector3 scale = (Vector3.one / 2) * eventData.scrollDelta.y;
+        rect = GetComponent<RectTransform>();
+
+        rect.anchoredPosition *= scale.x;
+        transform.localScale += scale;
+    }
+
+    public void OnDrag(PointerEventData eventData)
+    {
+    }
+
+    private void Move(InputAction.CallbackContext ctx)
+    {
     }
 }
