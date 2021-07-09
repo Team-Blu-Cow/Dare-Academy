@@ -408,6 +408,9 @@ MonoBehaviour:
         offsetVector: {x: 0, y: 0}
         offsetIndex: 0
         m_travelDirection: 4
+        transitionType: 1
+        loadType: 1
+        overrideType: 2
       sceneTransitionNodes: []
     tileData:
       tileData:

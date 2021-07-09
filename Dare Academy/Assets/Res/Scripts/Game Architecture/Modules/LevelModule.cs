@@ -56,6 +56,14 @@ namespace blu
         public LevelTransitionInformation lvlTransitionInfo
         { get { return m_lvlTransitionInfo; } set { m_lvlTransitionInfo = value; } }
 
+        private PersistantSceneData m_persistantSceneData = new PersistantSceneData();
+
+        public PersistantSceneData persistantSceneData
+        {
+            get { return m_persistantSceneData; }
+
+            set { m_persistantSceneData = value; }
+        }
 
         private GameObject m_playerPrefab;
 
@@ -80,7 +88,7 @@ namespace blu
 
             m_gameEventFlags._FlagData = ActiveSaveSata.gameEventFlags;
 
-            if(m_playerPrefab == null )
+            if (m_playerPrefab == null)
                 m_playerPrefab = Resources.Load<GameObject>("prefabs/Entities/Player");
         }
 
@@ -104,8 +112,6 @@ namespace blu
 
             m_grid.Initialise();
 
-            
-
             if (m_playerPrefab == null)
                 m_playerPrefab = Resources.Load<GameObject>("prefabs/Entities/Player");
 
@@ -114,7 +120,7 @@ namespace blu
                 Vector3 pos = m_grid.Grid(m_levelManager.m_defaultPlayerSpawnIndex)[m_levelManager.m_defaultPlayerPosition].position.world;
 
                 m_levelManager.StepController.m_currentRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
-                m_levelManager.StepController.m_targetRoomIndex  = m_levelManager.m_defaultPlayerSpawnIndex;
+                m_levelManager.StepController.m_targetRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
 
                 Instantiate(m_playerPrefab, pos, Quaternion.identity);
             }
@@ -175,5 +181,13 @@ namespace blu
             { }
             return true;
         }
+    }
+
+    public class PersistantSceneData
+    {
+        public int _MisplacedForestCounter = 0;
+        public Vector2Int _direction = Vector2Int.zero;
+        public GameObject _soundEmitter = null;
+        public bool _switching = false;
     }
 }

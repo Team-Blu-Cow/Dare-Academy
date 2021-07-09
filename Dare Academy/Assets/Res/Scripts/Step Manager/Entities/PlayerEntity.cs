@@ -231,16 +231,45 @@ public class PlayerEntity : GridEntity
 
             if (m_currentNode.overrideType == NodeOverrideType.LostWoodsConnection)
             {
+                m_sceneHasSwitched = true;
                 // check lost woods count
+                if (!App.GetModule<LevelModule>().persistantSceneData._switching)
+                {
+                    App.GetModule<LevelModule>().persistantSceneData._switching = true;
 
-                // if (count >= 0)
-                //App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-                // transition to a new scene
-                //App.GetModule<SceneModule>().SwitchScene(
-                //    m_currentNode.lvlTransitionInfo.targetSceneName,
-                //    m_currentNode.lvlTransitionInfo.transitionType,
-                //    m_currentNode.lvlTransitionInfo.loadType
-                //    );
+                    App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+
+                    if (App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter == 0 && LastDirection == Vector2Int.down)
+                    {
+                        Destroy(App.GetModule<LevelModule>().persistantSceneData._soundEmitter);
+                        App.GetModule<LevelModule>().persistantSceneData = new PersistantSceneData();
+
+                        App.GetModule<SceneModule>().SwitchScene(
+                            "Crashsite Top",
+                            m_currentNode.lvlTransitionInfo.transitionType,
+                            m_currentNode.lvlTransitionInfo.loadType
+                            );
+                    }
+                    else
+                    {
+                        if (LastDirection == App.GetModule<LevelModule>().persistantSceneData._direction)
+                        {
+                            App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter++;
+                            Debug.Log(App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter);
+                        }
+                        else
+                        {
+                            App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter = 0;
+                            Debug.Log(App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter);
+                        }
+
+                        App.GetModule<SceneModule>().SwitchScene(
+                        m_currentNode.lvlTransitionInfo.targetSceneName,
+                        m_currentNode.lvlTransitionInfo.transitionType,
+                        m_currentNode.lvlTransitionInfo.loadType
+                        );
+                    }
+                }
             }
         }
 
