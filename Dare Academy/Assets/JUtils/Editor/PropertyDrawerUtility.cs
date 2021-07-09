@@ -23,6 +23,12 @@ namespace JUtil
             padding = EditorGUIUtility.standardVerticalSpacing;
         }
 
+        static public int IndentLevel
+        {
+            get => EditorGUI.indentLevel;
+            set => EditorGUI.indentLevel = value;
+        }
+
         public void NewLine() => lineCount += lineHeight + padding;
 
         public void NewLine(float val) => lineCount += (lineHeight + padding) * val;
@@ -35,6 +41,7 @@ namespace JUtil
         public Rect GetSingleLineRect()
         {
             Rect rect = new Rect(m_position.position.x, lineCount, m_position.size.x, EditorGUIUtility.singleLineHeight);
+            rect.x += IndentOffset();
             return rect;
         }
     }

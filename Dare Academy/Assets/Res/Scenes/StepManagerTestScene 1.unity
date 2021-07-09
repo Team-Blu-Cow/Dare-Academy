@@ -7024,9 +7024,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_mass: 2
   m_flags:
-    m_flagData: 0
-  m_maxEnergy: 3
-  m_allowDash: 0
+    m_flagData: 1
+  m_abilities:
+    m_activeAbility: 0
+  m_abilityMode: 0
+  m_useAbility: 0
+  m_currentEnergy: 0
 --- !u!212 &1349807190
 SpriteRenderer:
   m_ObjectHideFlags: 0

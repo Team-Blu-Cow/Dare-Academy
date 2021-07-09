@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class PlayerAbilities
 {
     public enum AbilityEnum
@@ -14,11 +15,16 @@ public class PlayerAbilities
 
     private List<AbilityEnum> m_avalibleAbilities = new List<AbilityEnum>();
 
-    [SerializeField] protected AbilityEnum m_activeAbility = AbilityEnum.Shoot;
+    [SerializeField] protected AbilityEnum m_activeAbility = AbilityEnum.None;
 
     public AbilityEnum GetActiveAbility()
     {
         return m_activeAbility;
+    }
+
+    public void SetActiveAbility(AbilityEnum ability)
+    {
+        m_activeAbility = ability;
     }
 
     public AbilityEnum LeftAbility()
@@ -86,6 +92,11 @@ public class PlayerAbilities
         if (levelModule.ActiveSaveSata.blockUnlocked)
         {
             Unlock(AbilityEnum.Block, false);
+        }
+
+        if (m_avalibleAbilities.Count > 0)
+        {
+            m_activeAbility = m_avalibleAbilities[0];
         }
     }
 

@@ -13,7 +13,7 @@ public class GridEntityFlagsPropertyDrawer : PropertyDrawer
         float height = EditorGUIUtility.singleLineHeight;
 
         if (property.isExpanded)
-            height += EditorGUIUtility.singleLineHeight * (BitFlagsBase.NumberOfFlags<GridEntityFlags.Flags>() + 2);
+            height += 5 + EditorGUIUtility.singleLineHeight * (BitFlagsBase.NumberOfFlags<GridEntityFlags.Flags>() + 2);
 
         return height;
     }
@@ -31,6 +31,8 @@ public class GridEntityFlagsPropertyDrawer : PropertyDrawer
             EditorGUI.EndProperty();
             return;
         }
+
+        JUtil.PropertyDrawerUtility.IndentLevel++;
 
         SerializedProperty flagDataProp = property.FindPropertyRelative("m_flagData");
 
@@ -60,6 +62,7 @@ public class GridEntityFlagsPropertyDrawer : PropertyDrawer
             flagDataProp.intValue = (int)GridEntityFlags.SetFlags((int)mask, (int)flagDataProp.intValue, fieldBool);
         }
 
+        JUtil.PropertyDrawerUtility.IndentLevel--;
         EditorGUI.EndProperty();
     }
 }//*/

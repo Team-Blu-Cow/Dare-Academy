@@ -1,19 +1,26 @@
-using System.Collections;
-using System.Collections.Generic;
+#define PLAYERENTITY_HOLD_FOR_ABILITY_MODE
+
 using UnityEngine;
 using blu;
 using UnityEngine.InputSystem;
-using JUtil;
 using UnityEngine.SceneManagement;
+
 using flags = GridEntityFlags.Flags;
+using AbilityEnum = PlayerAbilities.AbilityEnum;
 
 public class PlayerEntity : GridEntity
 {
     // ABILITIES
 
-    private bool m_abilityMode = false;
-    private bool m_useAbility = false;
-    private PlayerAbilities m_abilities = new PlayerAbilities();
+    [SerializeField] private PlayerAbilities m_abilities = new PlayerAbilities();
+    [SerializeField] private bool m_abilityMode = false;
+    [SerializeField] private bool m_useAbility = false;
+
+    public PlayerAbilities Abilities
+    {
+        get => m_abilities;
+        set => m_abilities = value;
+    }
 
     // HEALTH
 
@@ -22,7 +29,7 @@ public class PlayerEntity : GridEntity
 
     // ENERGY
 
-    private int m_currentEnergy = 0;
+    [SerializeField] private int m_currentEnergy = 0;
     private int m_maxEnergy = 3;
 
     public int Energy { get => m_currentEnergy; set => m_currentEnergy = value; }
@@ -30,15 +37,20 @@ public class PlayerEntity : GridEntity
 
     private int m_dashEnergyCost = 3;
     private int m_shootEnergyCost = 3;
+#pragma warning disable  CS0414// variable assigned but never used
     private int m_blockEnergyCost = 3;
+#pragma warning restore  CS0414
 
     // OTHER
 
     private PlayerControls input;
     private GameObject m_bulletPrefab = null;
+#pragma warning disable CS0414 // variable assigned but never used
     private int m_dashDistance = 2;
-    private Vector2 m_moveDirection = Vector2.zero;
-    private Vector2 m_abilityDirection = Vector2.zero;
+#pragma warning restore CS0414
+
+    private Vector2Int m_moveDirection = Vector2Int.zero;
+    private Vector2Int m_abilityDirection = Vector2Int.zero;
 
     public void OnValidate()
     {
@@ -61,8 +73,12 @@ public class PlayerEntity : GridEntity
 
         input.Ability.Direction.performed += AbilityDirection;
 
+#if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
         input.Ability.AbilityMode.started += EnterAbilityMode;
         input.Ability.AbilityMode.canceled += ExitAbilityMode;
+#else
+        input.Ability.AbilityMode.started += ToggleAbilityMode;
+#endif
 
         input.Ability.CancelAbility.performed += CancelAbility;
 
@@ -77,8 +93,12 @@ public class PlayerEntity : GridEntity
 
         input.Ability.Direction.performed -= AbilityDirection;
 
+#if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
         input.Ability.AbilityMode.started -= EnterAbilityMode;
         input.Ability.AbilityMode.canceled -= ExitAbilityMode;
+#else
+        input.Ability.AbilityMode.started -= ToggleAbilityMode;
+#endif
 
         input.Ability.CancelAbility.performed -= CancelAbility;
 
@@ -88,22 +108,33 @@ public class PlayerEntity : GridEntity
 
     protected void FixedUpdate()
     {
+        if (m_abilityMode)
+            return;
+
+        if (m_useAbility && Abilities.GetActiveAbility() == AbilityEnum.Dash)
+        {
+            m_useAbility = false;
+            if (Dash())
+            {
+                SetMovementDirection(m_abilityDirection, 2);
+                m_abilityDirection = Vector2Int.zero;
+
+                App.GetModule<LevelModule>().StepController.ExecuteStep();
+                return;
+            }
+        }
+
         if (m_moveDirection != Vector2Int.zero)
         {
-            int speed = 1;
-            // if (ActiveAbility == ActiveAbilityEnum.Dash)
-            // {
-            //     speed = Dash();
-            // }
-
-            SetMovementDirection(m_moveDirection, speed);
+            SetMovementDirection(m_moveDirection, 1);
             App.GetModule<LevelModule>().StepController.ExecuteStep();
         }
     }
 
     protected void MovePressed(InputAction.CallbackContext context)
     {
-        m_moveDirection = context.ReadValue<Vector2>();
+        Vector2 vec2 = context.ReadValue<Vector2>();
+        m_moveDirection = new Vector2Int(Mathf.RoundToInt(vec2.x), Mathf.RoundToInt(vec2.y));
     }
 
     protected void MoveReleased(InputAction.CallbackContext context)
@@ -112,51 +143,37 @@ public class PlayerEntity : GridEntity
         SetMovementDirection(Vector2Int.zero);
     }
 
-    protected void AbilityAction(InputAction.CallbackContext context)
-    {
-        Vector2 dir = context.ReadValue<Vector2>();
+    protected void ToggleAbilityMode(InputAction.CallbackContext context) => m_abilityMode = !m_abilityMode;
 
-        if (m_abilityDirection == Vector2.zero)
-        {
-            m_abilityDirection = dir;
-            return;
-        }
-        else
-        {
-            if (m_abilityDirection == dir)
-            {
-                //cancel ability
-                m_abilityDirection = Vector2.zero;
-            }
-            else
-            {
-                m_abilityDirection = dir;
-            }
-        }
-    }
+    protected void EnterAbilityMode(InputAction.CallbackContext context) => m_abilityMode = true;
 
-    protected void EnterAbilityMode(InputAction.CallbackContext context)
-    {
-    }
-
-    protected void ExitAbilityMode(InputAction.CallbackContext context)
-    {
-    }
+    protected void ExitAbilityMode(InputAction.CallbackContext context) => m_abilityMode = false;
 
     protected void CancelAbility(InputAction.CallbackContext context)
     {
+        m_abilityMode = false;
+        m_useAbility = false;
     }
 
     protected void CycleAbilityR(InputAction.CallbackContext context)
     {
+        m_abilities.SetActiveAbility(m_abilities.RightAbility());
     }
 
     protected void CycleAbilityL(InputAction.CallbackContext context)
     {
+        m_abilities.SetActiveAbility(m_abilities.LeftAbility());
     }
 
     protected void AbilityDirection(InputAction.CallbackContext context)
     {
+        if (!m_abilityMode)
+            return;
+
+        m_useAbility = true;
+
+        Vector2 vec2 = context.ReadValue<Vector2>();
+        m_abilityDirection = new Vector2Int(Mathf.RoundToInt(vec2.x), Mathf.RoundToInt(vec2.y));
     }
 
     public override void EndStep()
@@ -195,8 +212,9 @@ public class PlayerEntity : GridEntity
 
     public override void AttackStep()
     {
-        // if (ActiveAbility == ActiveAbilityEnum.Shoot)
+        // if (m_useAbility && m_abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Shoot)
         // {
+        //     m_useAbility = false;
         //     Shoot();
         // }
     }
@@ -266,20 +284,19 @@ public class PlayerEntity : GridEntity
             }
         }
 
-        m_abilityDirection = Vector2.zero;
+        m_abilityDirection = Vector2Int.zero;
     }
 
-    private int Dash()
+    private bool Dash()
     {
         if (Energy >= m_dashEnergyCost)
         {
             if (m_abilityDirection != Vector2.zero)
             {
                 Energy -= m_dashEnergyCost;
-                return m_dashDistance;
+                return true;
             }
         }
-
-        return 1;
+        return false;
     }
 }
