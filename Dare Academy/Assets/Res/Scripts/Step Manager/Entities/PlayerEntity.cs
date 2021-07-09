@@ -15,7 +15,6 @@ public class PlayerEntity : GridEntity
 
     [SerializeField] private PlayerAbilities m_abilities = new PlayerAbilities();
     [SerializeField] private bool m_abilityMode = false;
-    [SerializeField] private bool m_useAbility = false;
 
     public PlayerAbilities Abilities
     {
@@ -64,6 +63,7 @@ public class PlayerEntity : GridEntity
         Energy = MaxEnergy;
         Health = MaxHealth;
         m_abilities.Initialise();
+        base.OnValidate();
     }
 
     private void OnEnable()
@@ -103,11 +103,8 @@ public class PlayerEntity : GridEntity
         input.Ability.SwapAbilityR.performed -= CycleAbilityR;
     }
 
-    protected void FixedUpdate()
+    protected void Update()
     {
-        if (Abilities.GetActiveAbility() == AbilityEnum.None)
-            m_useAbility = false;
-
         if (m_abilityMode)
         {
             m_moveDirection = Vector2Int.zero;
@@ -160,6 +157,18 @@ public class PlayerEntity : GridEntity
     {
         Vector2 vec2 = context.ReadValue<Vector2>();
         m_inputDirection = new Vector2Int(Mathf.RoundToInt(vec2.x), Mathf.RoundToInt(vec2.y));
+
+        if(m_abilityMode)
+        {
+            float headX = 0;
+            float headY = 0;
+            if (Mathf.Abs(m_inputDirection.x) > Mathf.Abs(m_inputDirection.y))
+                headX = m_inputDirection.x;
+            else
+                headY = m_inputDirection.y;
+
+            m_animationController.SetHeadDirection(headX, headY);
+        }
     }
 
     protected void WASDReleased(InputAction.CallbackContext context)
@@ -178,7 +187,6 @@ public class PlayerEntity : GridEntity
     protected void CancelAbility(InputAction.CallbackContext context)
     {
         m_abilityMode = false;
-        m_useAbility = false;
     }
 
     protected void CycleAbilityR(InputAction.CallbackContext context)
@@ -205,11 +213,12 @@ public class PlayerEntity : GridEntity
 
         if (m_currentNode.overridden && m_currentNode.overrideType == NodeOverrideType.SceneConnection)
         {
+            App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
             // transition to a new scene
             App.GetModule<SceneModule>().SwitchScene(
                 m_currentNode.lvlTransitionInfo.targetSceneName,
-                TransitionType.Slice,
-                LoadingBarType.BottomBar
+                m_currentNode.lvlTransitionInfo.transitionType,
+                m_currentNode.lvlTransitionInfo.loadType
                 );
         }
 
@@ -227,9 +236,8 @@ public class PlayerEntity : GridEntity
 
     public override void AttackStep()
     {
-        if (m_useAbility && !m_abilityMode && m_abilities.GetActiveAbility() == AbilityEnum.Shoot)
+        if (!m_abilityMode && m_abilities.GetActiveAbility() == AbilityEnum.Shoot)
         {
-            m_useAbility = false;
             Shoot();
         }
     }
@@ -276,16 +284,6 @@ public class PlayerEntity : GridEntity
         {
             if (m_abilityDirection != Vector2.zero)
             {
-				
-				float headX = 0;
-				float headY = 0;
-				if (Mathf.Abs(m_abilityDirection.x) > Mathf.Abs(m_abilityDirection.y))
-					headX = m_abilityDirection.x;
-				else
-					headY = m_abilityDirection.y;
-
-				m_animationController.SetHeadDirection(headX, headY);
-				
 				
                 GridNode node;
                 if (m_previousNode != null)

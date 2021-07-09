@@ -9,6 +9,9 @@ using UnityEngine.SceneManagement;
 public class LevelManager : MonoBehaviour
 {
     [SerializeField] private float m_stepTime = 0.2f;
+    [SerializeField] public int m_defaultPlayerSpawnIndex;
+    [SerializeField] public Vector2Int m_defaultPlayerPosition;
+
     [SerializeField] private StepController m_stepController;
 
     [SerializeField] private PathfindingMultiGrid m_grid = null;

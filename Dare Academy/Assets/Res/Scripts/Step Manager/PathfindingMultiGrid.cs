@@ -127,8 +127,9 @@ public class PathfindingMultiGrid
         transitionNode.walkable = true;
         transitionNode.Neighbors = new NodeNeighborhood<GridNode>(8);
         transitionNode.roomIndex = link.myRoomIndex;
-        transitionNode.lvlTransitionIndexOffset = i;
-        transitionNode.lvlTransitionInfo = link;
+        transitionNode.lvlTransitionInfo = new LevelTransitionInformation(link);
+        transitionNode.lvlTransitionInfo.offsetIndex = (link.width-1) - i;
+        transitionNode.lvlTransitionInfo.offsetVector = gridOffset;
         transitionNode.overrideType = NodeOverrideType.SceneConnection;
 
         int negativeDir = (-(link.getTravelDirection())).RotationToIndex(45);
@@ -678,7 +679,28 @@ public class LevelTransitionInformation
 
     [SerializeField] public int targetRoomIndex;
     [SerializeField] public Vector2Int targetNodeIndex;
+    [SerializeField, HideInInspector] public Vector2Int offsetVector;
+    [SerializeField, HideInInspector] public int offsetIndex;
     [Range(0, 7), SerializeField] private int m_travelDirection;
+    [SerializeField] public blu.TransitionType transitionType;
+    [SerializeField] public blu.LoadingBarType loadType;
+
+    public LevelTransitionInformation(LevelTransitionInformation in_lvlInfo)
+    {
+        myRoomIndex         = in_lvlInfo.myRoomIndex;
+        myNodeIndex         = in_lvlInfo.myNodeIndex;
+
+        targetSceneName     = in_lvlInfo.targetSceneName;
+        targetRoomIndex     = in_lvlInfo.targetRoomIndex;
+        targetNodeIndex     = in_lvlInfo.targetNodeIndex;
+
+        offsetVector        = in_lvlInfo.offsetVector;
+        offsetIndex         = in_lvlInfo.offsetIndex;
+        m_travelDirection   = in_lvlInfo.travelDirection;
+
+        transitionType      = in_lvlInfo.transitionType;
+        loadType            = in_lvlInfo.loadType;
+    }
 
     public int travelDirection
     { get { return m_travelDirection; } set { m_travelDirection = value; } }

@@ -148,7 +148,7 @@ namespace JUtil.Grids
                                 {
                                     if (EditorGUIUtility.currentViewWidth < overflowWidth)
                                         lines += 2;
-                                    lines += 10;
+                                    lines += 12;
                                 }
                             }
 
@@ -384,7 +384,7 @@ namespace JUtil.Grids
                         {
                             if (EditorGUIUtility.currentViewWidth < overflowWidth)
                                 NewLine(2);
-                            NewLine(10);
+                            NewLine(12);
                         }
                     }
 
