@@ -45,9 +45,7 @@ public class PlayerEntity : GridEntity
 
     private PlayerControls input;
     private GameObject m_bulletPrefab = null;
-#pragma warning disable CS0414 // variable assigned but never used
     private int m_dashDistance = 2;
-#pragma warning restore CS0414
 
     private Vector2Int m_moveDirection = Vector2Int.zero;
     private Vector2Int m_abilityDirection = Vector2Int.zero;
@@ -116,7 +114,7 @@ public class PlayerEntity : GridEntity
             m_useAbility = false;
             if (Dash())
             {
-                SetMovementDirection(m_abilityDirection, 2);
+                SetMovementDirection(m_abilityDirection, m_dashDistance);
                 m_abilityDirection = Vector2Int.zero;
 
                 App.GetModule<LevelModule>().StepController.ExecuteStep();
@@ -212,11 +210,11 @@ public class PlayerEntity : GridEntity
 
     public override void AttackStep()
     {
-        // if (m_useAbility && m_abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Shoot)
-        // {
-        //     m_useAbility = false;
-        //     Shoot();
-        // }
+        if (m_useAbility && !m_abilityMode && m_abilities.GetActiveAbility() == AbilityEnum.Shoot)
+        {
+            m_useAbility = false;
+            Shoot();
+        }
     }
 
     public override void OnDeath()
