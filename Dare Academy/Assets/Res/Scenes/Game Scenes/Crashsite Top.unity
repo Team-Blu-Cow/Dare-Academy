@@ -178,6 +178,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cam
       objectReference: {fileID: 0}
+    - target: {fileID: 8776929598459375335, guid: d1f5618a211dc7842beadbc924ed3c98, type: 3}
+      propertyPath: _Cam
+      value: 
+      objectReference: {fileID: 1038980383}
     - target: {fileID: 8776929598459375341, guid: d1f5618a211dc7842beadbc924ed3c98, type: 3}
       propertyPath: _currentType
       value: 2
@@ -245,11 +249,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6700572929682122056, guid: 7b6d5c7562e09de4484fa47eedcaa311, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 9.53
+      value: 9.75
       objectReference: {fileID: 0}
     - target: {fileID: 6700572929682122056, guid: 7b6d5c7562e09de4484fa47eedcaa311, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 4.52
+      value: 3.38
       objectReference: {fileID: 0}
     - target: {fileID: 6700572929682122056, guid: 7b6d5c7562e09de4484fa47eedcaa311, type: 3}
       propertyPath: m_LocalPosition.z
@@ -357,12 +361,12 @@ MonoBehaviour:
       cameraPadding: 1.25
       originPosition: {x: -31, y: -18, z: 0}
     - width: 13
-      height: 13
+      height: 14
       cellSize: 1
       cameraPadding: 1.25
-      originPosition: {x: -45, y: -25, z: 0}
+      originPosition: {x: -45, y: -26, z: 0}
     - width: 11
-      height: 14
+      height: 13
       cellSize: 1
       cameraPadding: 1.25
       originPosition: {x: -43, y: -40, z: 0}
@@ -438,7 +442,7 @@ MonoBehaviour:
           direction: 6
         grid2:
           index: 6
-          position: {x: 12, y: 12}
+          position: {x: 12, y: 13}
           direction: 2
       - width: 5
         grid1:
@@ -447,9 +451,15 @@ MonoBehaviour:
           direction: 4
         grid2:
           index: 7
-          position: {x: 10, y: 13}
+          position: {x: 10, y: 12}
           direction: 0
-      sceneLinks: []
+      sceneLinks:
+      - myRoomIndex: 7
+        myNodeIndex: {x: 8, y: 0}
+        targetSceneName: Crashsite Bottom
+        targetRoomIndex: 0
+        targetNodeIndex: {x: 2, y: 8}
+        m_travelDirection: 4
       sceneTransitionNodes: []
     tileData:
       tileData:
@@ -482,6 +492,11 @@ Transform:
 --- !u!4 &869095691 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8776929598459375328, guid: d1f5618a211dc7842beadbc924ed3c98, type: 3}
+  m_PrefabInstance: {fileID: 222241887}
+  m_PrefabAsset: {fileID: 0}
+--- !u!20 &1038980383 stripped
+Camera:
+  m_CorrespondingSourceObject: {fileID: 8776929598459375329, guid: d1f5618a211dc7842beadbc924ed3c98, type: 3}
   m_PrefabInstance: {fileID: 222241887}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &1532191544
