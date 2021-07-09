@@ -72,6 +72,12 @@ public class PlayerEntity : GridEntity
         }
     }
 
+    public override void AnalyseStep()
+    {
+        if (m_moveDirection != Vector2.zero)
+            m_animationController.SetDirection(m_moveDirection.x, 1);
+    }
+
     protected void MovePressed(InputAction.CallbackContext context)
     {
         m_moveDirection = context.ReadValue<Vector2>();
@@ -92,6 +98,15 @@ public class PlayerEntity : GridEntity
     {
         Vector2 dir = context.ReadValue<Vector2>();
 
+        float headX = 0;
+        float headY = 0;
+        if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
+            headX = dir.x;
+        else
+            headY = dir.y;
+
+        m_animationController.SetHeadDirection(headX, headY);
+
         if (m_shootDirection == Vector2.zero)
         {
             m_shootDirection = dir;
@@ -107,6 +122,8 @@ public class PlayerEntity : GridEntity
             else
             {
                 m_shootDirection = dir;
+
+                
             }
         }
     }

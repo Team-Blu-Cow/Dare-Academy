@@ -10,6 +10,8 @@ public class TestEnitity : GridEntity
     public override void AnalyseStep()
     {
         SetMovementDirection(testDirection, moveSpeed);
+
+        m_animationController.SetDirection(testDirection.x, 1);
     }
 
     protected void OnDrawGizmos()
