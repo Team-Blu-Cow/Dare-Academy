@@ -13,12 +13,12 @@ public abstract class GridEntity : MonoBehaviour
     // MEMBERS ************************************************************************************
     private Vector2Int m_movementDirection;
 
-    [SerializeField] protected int m_mass = 2;
-    protected int m_baseSpeed   = 1;
-    private int m_speed         = 1;
-    protected int m_health      = 1;
-    private int m_stepsTaken    = 0;
-    private bool m_failedAttemptToSwitchRoom = false;
+    [SerializeField] protected int m_mass       = 2;
+    protected int m_baseSpeed                   = 1;
+    private int m_speed                         = 1;
+    protected int m_health                      = 1;
+    private int m_stepsTaken                    = 0;
+    private bool m_failedAttemptToSwitchRoom    = false;
 
     protected int m_roomIndex = 0;
 
@@ -118,10 +118,10 @@ public abstract class GridEntity : MonoBehaviour
     {
         m_animationController = GetComponent<GridEntityAnimationController>();
     }
+
     // STEP FLOW METHODS **************************************************************************
 
-    // step flow
-    /*
+    /*  step flow
      *         [pre-move]
      *         [move]
      * virtual [resolve pass through]

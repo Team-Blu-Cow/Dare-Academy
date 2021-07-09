@@ -130,7 +130,7 @@ public class PathfindingMultiGrid
         transitionNode.lvlTransitionInfo = new LevelTransitionInformation(link);
         transitionNode.lvlTransitionInfo.offsetIndex = (link.width-1) - i;
         transitionNode.lvlTransitionInfo.offsetVector = gridOffset;
-        transitionNode.overrideType = NodeOverrideType.SceneConnection;
+        transitionNode.overrideType = link.overrideType;
 
         int negativeDir = (-(link.getTravelDirection())).RotationToIndex(45);
 
@@ -684,6 +684,12 @@ public class LevelTransitionInformation
     [Range(0, 7), SerializeField] private int m_travelDirection;
     [SerializeField] public blu.TransitionType transitionType;
     [SerializeField] public blu.LoadingBarType loadType;
+    [SerializeField] public NodeOverrideType overrideType;
+
+    public LevelTransitionInformation()
+    {
+        overrideType = NodeOverrideType.SceneConnection;
+    }
 
     public LevelTransitionInformation(LevelTransitionInformation in_lvlInfo)
     {
@@ -700,6 +706,8 @@ public class LevelTransitionInformation
 
         transitionType      = in_lvlInfo.transitionType;
         loadType            = in_lvlInfo.loadType;
+
+        overrideType        = in_lvlInfo.overrideType;
     }
 
     public int travelDirection
@@ -733,5 +741,6 @@ public enum NodeOverrideType
 {
     None = 0,
     RoomConnection,
-    SceneConnection
+    SceneConnection,
+    LostWoodsConnection
 }

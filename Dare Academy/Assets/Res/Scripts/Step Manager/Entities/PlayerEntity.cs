@@ -211,15 +211,34 @@ public class PlayerEntity : GridEntity
         if (Energy < 0)
             Energy = 0;
 
-        if (m_currentNode.overridden && m_currentNode.overrideType == NodeOverrideType.SceneConnection)
+        if (m_currentNode.overridden)
         {
-            App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-            // transition to a new scene
-            App.GetModule<SceneModule>().SwitchScene(
-                m_currentNode.lvlTransitionInfo.targetSceneName,
-                m_currentNode.lvlTransitionInfo.transitionType,
-                m_currentNode.lvlTransitionInfo.loadType
-                );
+            if (m_currentNode.overrideType == NodeOverrideType.SceneConnection)
+            {
+                App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+                // transition to a new scene
+                App.GetModule<SceneModule>().SwitchScene(
+                    m_currentNode.lvlTransitionInfo.targetSceneName,
+                    m_currentNode.lvlTransitionInfo.transitionType,
+                    m_currentNode.lvlTransitionInfo.loadType
+                    );
+            }
+
+            if(m_currentNode.overrideType == NodeOverrideType.LostWoodsConnection)
+            {
+                // check lost woods count
+
+                // if (count >= 0)
+                //App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+                // transition to a new scene
+                //App.GetModule<SceneModule>().SwitchScene(
+                //    m_currentNode.lvlTransitionInfo.targetSceneName,
+                //    m_currentNode.lvlTransitionInfo.transitionType,
+                //    m_currentNode.lvlTransitionInfo.loadType
+                //    );
+
+
+            }
         }
 
         if (m_currentNode != null)
