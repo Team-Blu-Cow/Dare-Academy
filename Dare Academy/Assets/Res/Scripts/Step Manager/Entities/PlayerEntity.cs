@@ -106,6 +106,9 @@ public class PlayerEntity : GridEntity
 
     protected void FixedUpdate()
     {
+        if (Abilities.GetActiveAbility() == AbilityEnum.None)
+            m_useAbility = false;
+
         if (m_abilityMode)
             return;
 
