@@ -11,6 +11,7 @@ public enum ActionTypes
 
 public class GridEnityAction
 {
+    public string animationName;
     public ActionTypes type;
     public JUtil.Grids.GridNodePosition position;
     public Vector3 targetPosition { get { return position.world; } }

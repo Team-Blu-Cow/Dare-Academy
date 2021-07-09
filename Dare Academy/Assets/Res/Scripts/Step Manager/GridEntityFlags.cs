@@ -37,3 +37,15 @@ public class GridEntityFlags : BitFlags_32
         return false;
     }
 }
+
+public class BitFlag<T> where T : System.Enum 
+{
+    T flags;
+
+    T m_flagData;
+
+    public void editBits()
+    {
+
+    }
+}

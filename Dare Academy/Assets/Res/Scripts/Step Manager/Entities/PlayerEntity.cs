@@ -52,8 +52,9 @@ public class PlayerEntity : GridEntity
     private Vector2Int m_abilityDirection = Vector2Int.zero;
     private Vector2Int m_inputDirection = Vector2Int.zero;
 
-    public void OnValidate()
+    protected void OnValidate()
     {
+        base.OnValidate();
         m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet");
     }
 
@@ -147,6 +148,12 @@ public class PlayerEntity : GridEntity
             m_moveDirection = Vector2Int.zero;
             App.GetModule<LevelModule>().StepController.ExecuteStep();
         }
+    }
+
+    public override void AnalyseStep()
+    {
+        if (m_moveDirection != Vector2.zero)
+            m_animationController.SetDirection(m_moveDirection.x, 1);
     }
 
     protected void WASDPressed(InputAction.CallbackContext context)
@@ -269,6 +276,17 @@ public class PlayerEntity : GridEntity
         {
             if (m_abilityDirection != Vector2.zero)
             {
+				
+				float headX = 0;
+				float headY = 0;
+				if (Mathf.Abs(m_abilityDirection.x) > Mathf.Abs(m_abilityDirection.y))
+					headX = m_abilityDirection.x;
+				else
+					headY = m_abilityDirection.y;
+
+				m_animationController.SetHeadDirection(headX, headY);
+				
+				
                 GridNode node;
                 if (m_previousNode != null)
                 {
