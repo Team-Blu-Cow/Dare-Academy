@@ -16,7 +16,7 @@ public class PlayerEntity : GridEntity
     [SerializeField] private PlayerAbilities m_abilities = new PlayerAbilities();
     [SerializeField] private bool m_abilityMode = false;
 
-    // if the scene switch has been triggered but the entity has not been destroyeds
+    // if the scene switch has been triggered but the entity has not been destroyed
     private bool m_sceneHasSwitched = false;
 
     public PlayerAbilities Abilities
