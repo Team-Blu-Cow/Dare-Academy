@@ -42,6 +42,7 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
     public int overriddenDir { get; set; }
     public NodeOverrideType overrideType { get; set; }
     public LevelTransitionInformation lvlTransitionInfo { get; set; }
+    public int lvlTransitionIndexOffset { get; set; }
 
     // MEMBERS ********************************************************************************
 

@@ -454,8 +454,9 @@ MonoBehaviour:
           position: {x: 10, y: 12}
           direction: 0
       sceneLinks:
-      - myRoomIndex: 7
-        myNodeIndex: {x: 8, y: 0}
+      - width: 5
+        myRoomIndex: 7
+        myNodeIndex: {x: 10, y: 0}
         targetSceneName: Crashsite Bottom
         targetRoomIndex: 0
         targetNodeIndex: {x: 2, y: 8}
