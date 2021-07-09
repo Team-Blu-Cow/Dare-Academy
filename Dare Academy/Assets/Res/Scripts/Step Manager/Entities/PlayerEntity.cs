@@ -49,6 +49,7 @@ public class PlayerEntity : GridEntity
 
     private Vector2Int m_moveDirection = Vector2Int.zero;
     private Vector2Int m_abilityDirection = Vector2Int.zero;
+    private Vector2Int m_inputDirection = Vector2Int.zero;
 
     public void OnValidate()
     {
@@ -66,10 +67,8 @@ public class PlayerEntity : GridEntity
     private void OnEnable()
     {
         input = App.GetModule<InputModule>().PlayerController;
-        input.Move.Direction.started += MovePressed;
-        input.Move.Direction.canceled += MoveReleased;
-
-        input.Ability.Direction.performed += AbilityDirection;
+        input.Move.Direction.started += WASDPressed;
+        input.Move.Direction.canceled += WASDReleased;
 
 #if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
         input.Ability.AbilityMode.started += EnterAbilityMode;
@@ -86,10 +85,8 @@ public class PlayerEntity : GridEntity
 
     private void OnDisable()
     {
-        input.Move.Direction.started -= MovePressed;
-        input.Move.Direction.canceled -= MoveReleased;
-
-        input.Ability.Direction.performed -= AbilityDirection;
+        input.Move.Direction.started -= WASDPressed;
+        input.Move.Direction.canceled -= WASDReleased;
 
 #if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
         input.Ability.AbilityMode.started -= EnterAbilityMode;
@@ -110,36 +107,56 @@ public class PlayerEntity : GridEntity
             m_useAbility = false;
 
         if (m_abilityMode)
-            return;
-
-        if (m_useAbility && Abilities.GetActiveAbility() == AbilityEnum.Dash)
         {
-            m_useAbility = false;
+            m_moveDirection = Vector2Int.zero;
+
+            if (m_inputDirection != Vector2Int.zero)
+            {
+                m_abilityDirection = m_inputDirection;
+                m_inputDirection = Vector2Int.zero;
+            }
+        }
+        else
+        {
+            if (m_inputDirection != Vector2Int.zero)
+            {
+                m_moveDirection = m_inputDirection;
+            }
+        }
+
+        if (Abilities.GetActiveAbility() == AbilityEnum.Dash && !m_abilityMode && m_abilityDirection != Vector2Int.zero)
+        {
             if (Dash())
             {
                 SetMovementDirection(m_abilityDirection, m_dashDistance);
                 m_abilityDirection = Vector2Int.zero;
-
                 App.GetModule<LevelModule>().StepController.ExecuteStep();
-                return;
+            }
+            else
+            {
+                // failed to dash, no enough energy
+                // TODO @matthew/@adam - sound effect here
+                m_abilityDirection = Vector2Int.zero;
             }
         }
 
         if (m_moveDirection != Vector2Int.zero)
         {
             SetMovementDirection(m_moveDirection, 1);
+            m_moveDirection = Vector2Int.zero;
             App.GetModule<LevelModule>().StepController.ExecuteStep();
         }
     }
 
-    protected void MovePressed(InputAction.CallbackContext context)
+    protected void WASDPressed(InputAction.CallbackContext context)
     {
         Vector2 vec2 = context.ReadValue<Vector2>();
-        m_moveDirection = new Vector2Int(Mathf.RoundToInt(vec2.x), Mathf.RoundToInt(vec2.y));
+        m_inputDirection = new Vector2Int(Mathf.RoundToInt(vec2.x), Mathf.RoundToInt(vec2.y));
     }
 
-    protected void MoveReleased(InputAction.CallbackContext context)
+    protected void WASDReleased(InputAction.CallbackContext context)
     {
+        m_inputDirection = Vector2Int.zero;
         m_moveDirection = Vector2Int.zero;
         SetMovementDirection(Vector2Int.zero);
     }
@@ -164,17 +181,6 @@ public class PlayerEntity : GridEntity
     protected void CycleAbilityL(InputAction.CallbackContext context)
     {
         m_abilities.SetActiveAbility(m_abilities.LeftAbility());
-    }
-
-    protected void AbilityDirection(InputAction.CallbackContext context)
-    {
-        if (!m_abilityMode)
-            return;
-
-        m_useAbility = true;
-
-        Vector2 vec2 = context.ReadValue<Vector2>();
-        m_abilityDirection = new Vector2Int(Mathf.RoundToInt(vec2.x), Mathf.RoundToInt(vec2.y));
     }
 
     public override void EndStep()

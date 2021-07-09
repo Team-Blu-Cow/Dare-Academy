@@ -25,6 +25,22 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Step"",
+                    ""type"": ""Button"",
+                    ""id"": ""5cd42ae5-fbb7-4695-abac-917154a20c35"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""Interact"",
+                    ""type"": ""Button"",
+                    ""id"": ""0c6e4a77-4f0c-4767-8a0a-1bdc82e20b95"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -192,6 +208,28 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""action"": ""Direction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d5fbfa61-d695-447f-9936-150613164d6d"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Step"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""872341c3-5118-4d9f-932e-0da7fa9538bc"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -199,14 +237,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
             ""name"": ""Ability"",
             ""id"": ""31809891-72d2-4334-bddc-d87af4db1231"",
             ""actions"": [
-                {
-                    ""name"": ""Direction"",
-                    ""type"": ""Button"",
-                    ""id"": ""ab9bb69b-8d47-4463-9c4e-6adcb135685e"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
                 {
                     ""name"": ""AbilityMode"",
                     ""type"": ""Button"",
@@ -242,116 +272,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
             ],
             ""bindings"": [
                 {
-                    ""name"": ""Keyboard Arrow Keys"",
-                    ""id"": ""4d49f016-21e8-4997-b893-f0791e466fa4"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""9631a29a-8dc0-4cba-b764-512edfd8fca1"",
-                    ""path"": ""<Keyboard>/upArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""df868a76-8480-4e0d-8d70-0ade98348b3c"",
-                    ""path"": ""<Keyboard>/downArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""497b5c5b-3dc0-4588-88f5-18c2ab1ee97e"",
-                    ""path"": ""<Keyboard>/leftArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""beb88276-16a6-42dd-98e7-adf6ce3c60b1"",
-                    ""path"": ""<Keyboard>/rightArrow"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""Gamepad Right Stick"",
-                    ""id"": ""313254a4-33a4-47e9-a2d8-0b8569eb437b"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": ""Press"",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""453bab5d-b34a-44bd-96ed-2124b54e683a"",
-                    ""path"": ""<Gamepad>/rightStick/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""3728a6fa-809c-4835-8020-71c0258375a9"",
-                    ""path"": ""<Gamepad>/rightStick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""f242f74f-1308-4423-8282-ec66bcf5b386"",
-                    ""path"": ""<Gamepad>/rightStick/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""8001f7e1-4f27-47ea-8519-142586c8535f"",
-                    ""path"": ""<Gamepad>/rightStick/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
                     ""name"": """",
                     ""id"": ""caf03df1-e514-4573-b13c-457478f73762"",
                     ""path"": ""<Keyboard>/space"",
@@ -365,7 +285,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""815c7b70-8379-492f-92e3-84b243d1dcc3"",
-                    ""path"": ""<Keyboard>/e"",
+                    ""path"": ""<Keyboard>/3"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&Mouse"",
@@ -376,7 +296,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""0e82c512-2e7e-4045-b1fc-c6a5b981e411"",
-                    ""path"": ""<Keyboard>/q"",
+                    ""path"": ""<Keyboard>/1"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&Mouse"",
@@ -431,9 +351,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         // Move
         m_Move = asset.FindActionMap("Move", throwIfNotFound: true);
         m_Move_Direction = m_Move.FindAction("Direction", throwIfNotFound: true);
+        m_Move_Step = m_Move.FindAction("Step", throwIfNotFound: true);
+        m_Move_Interact = m_Move.FindAction("Interact", throwIfNotFound: true);
         // Ability
         m_Ability = asset.FindActionMap("Ability", throwIfNotFound: true);
-        m_Ability_Direction = m_Ability.FindAction("Direction", throwIfNotFound: true);
         m_Ability_AbilityMode = m_Ability.FindAction("AbilityMode", throwIfNotFound: true);
         m_Ability_SwapAbilityR = m_Ability.FindAction("SwapAbilityR", throwIfNotFound: true);
         m_Ability_SwapAbilityL = m_Ability.FindAction("SwapAbilityL", throwIfNotFound: true);
@@ -488,11 +409,15 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     private readonly InputActionMap m_Move;
     private IMoveActions m_MoveActionsCallbackInterface;
     private readonly InputAction m_Move_Direction;
+    private readonly InputAction m_Move_Step;
+    private readonly InputAction m_Move_Interact;
     public struct MoveActions
     {
         private @PlayerControls m_Wrapper;
         public MoveActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
         public InputAction @Direction => m_Wrapper.m_Move_Direction;
+        public InputAction @Step => m_Wrapper.m_Move_Step;
+        public InputAction @Interact => m_Wrapper.m_Move_Interact;
         public InputActionMap Get() { return m_Wrapper.m_Move; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -505,6 +430,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Direction.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnDirection;
                 @Direction.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnDirection;
                 @Direction.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnDirection;
+                @Step.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnStep;
+                @Step.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnStep;
+                @Step.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnStep;
+                @Interact.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnInteract;
+                @Interact.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnInteract;
+                @Interact.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnInteract;
             }
             m_Wrapper.m_MoveActionsCallbackInterface = instance;
             if (instance != null)
@@ -512,6 +443,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @Direction.started += instance.OnDirection;
                 @Direction.performed += instance.OnDirection;
                 @Direction.canceled += instance.OnDirection;
+                @Step.started += instance.OnStep;
+                @Step.performed += instance.OnStep;
+                @Step.canceled += instance.OnStep;
+                @Interact.started += instance.OnInteract;
+                @Interact.performed += instance.OnInteract;
+                @Interact.canceled += instance.OnInteract;
             }
         }
     }
@@ -520,7 +457,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     // Ability
     private readonly InputActionMap m_Ability;
     private IAbilityActions m_AbilityActionsCallbackInterface;
-    private readonly InputAction m_Ability_Direction;
     private readonly InputAction m_Ability_AbilityMode;
     private readonly InputAction m_Ability_SwapAbilityR;
     private readonly InputAction m_Ability_SwapAbilityL;
@@ -529,7 +465,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     {
         private @PlayerControls m_Wrapper;
         public AbilityActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Direction => m_Wrapper.m_Ability_Direction;
         public InputAction @AbilityMode => m_Wrapper.m_Ability_AbilityMode;
         public InputAction @SwapAbilityR => m_Wrapper.m_Ability_SwapAbilityR;
         public InputAction @SwapAbilityL => m_Wrapper.m_Ability_SwapAbilityL;
@@ -543,9 +478,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         {
             if (m_Wrapper.m_AbilityActionsCallbackInterface != null)
             {
-                @Direction.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnDirection;
-                @Direction.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnDirection;
-                @Direction.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnDirection;
                 @AbilityMode.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnAbilityMode;
                 @AbilityMode.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnAbilityMode;
                 @AbilityMode.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnAbilityMode;
@@ -562,9 +494,6 @@ public class @PlayerControls : IInputActionCollection, IDisposable
             m_Wrapper.m_AbilityActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @Direction.started += instance.OnDirection;
-                @Direction.performed += instance.OnDirection;
-                @Direction.canceled += instance.OnDirection;
                 @AbilityMode.started += instance.OnAbilityMode;
                 @AbilityMode.performed += instance.OnAbilityMode;
                 @AbilityMode.canceled += instance.OnAbilityMode;
@@ -602,10 +531,11 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     public interface IMoveActions
     {
         void OnDirection(InputAction.CallbackContext context);
+        void OnStep(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
     }
     public interface IAbilityActions
     {
-        void OnDirection(InputAction.CallbackContext context);
         void OnAbilityMode(InputAction.CallbackContext context);
         void OnSwapAbilityR(InputAction.CallbackContext context);
         void OnSwapAbilityL(InputAction.CallbackContext context);

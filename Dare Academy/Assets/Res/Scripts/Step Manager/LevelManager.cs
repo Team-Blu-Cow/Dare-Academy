@@ -49,7 +49,7 @@ public class LevelManager : MonoBehaviour
     {
         StepController.timer += Time.deltaTime;
 
-        if (Keyboard.current.enterKey.isPressed)
+        if (Keyboard.current.qKey.isPressed)
         {
             m_stepController.ExecuteStep();
         }
