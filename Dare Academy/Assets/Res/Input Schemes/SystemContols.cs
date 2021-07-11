@@ -280,7 +280,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 {
                     ""name"": ""up"",
                     ""id"": ""810a3689-5dfe-41d9-8267-f9658e188e58"",
-                    ""path"": ""<Keyboard>/w"",
+                    ""path"": ""<Keyboard>/upArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&Mouse"",
@@ -291,7 +291,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 {
                     ""name"": ""down"",
                     ""id"": ""46df4acd-ac61-4520-b14e-7db109db8491"",
-                    ""path"": ""<Keyboard>/s"",
+                    ""path"": ""<Keyboard>/downArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&Mouse"",
@@ -302,7 +302,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 {
                     ""name"": ""left"",
                     ""id"": ""55334bec-a54a-4d96-82a1-5c5b8027a6c4"",
-                    ""path"": ""<Keyboard>/a"",
+                    ""path"": ""<Keyboard>/leftArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&Mouse"",
@@ -313,7 +313,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 {
                     ""name"": ""right"",
                     ""id"": ""dc3cd7c2-b3e9-4bbf-b012-907592853c49"",
-                    ""path"": ""<Keyboard>/d"",
+                    ""path"": ""<Keyboard>/rightArrow"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&Mouse"",
