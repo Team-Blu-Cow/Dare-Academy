@@ -1,12 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using System.Numerics;
+using System;
 
-[System.Serializable]
-public class GameEventFlags
+public class GameEventFlags : BitFlags_64
 {
-    public enum Flags : long
+    public enum Flags : Int64
     {
         Flag_01         = 0x0000_0000_0000_0001,
         Flag_02         = 0x0000_0000_0000_0002,
@@ -80,68 +76,22 @@ public class GameEventFlags
         Flag_63         = 0x4000_0000_0000_0000,
     }
 
-    [SerializeField] private long m_flagData = 0;
-
-    public long FlagData
-    {
-        get { return m_flagData; }
-        set { m_flagData = value; }
-    }
-
-    public static int NumberOfFlags()
-    {
-        return System.Enum.GetNames(typeof(GridEntityFlags.Flags)).Length;
-    }
-
-    public void ZeroFlags()
-    {
-        m_flagData = 0;
-    }
-
     public void SetFlags(Flags flags, bool value)
     {
         if (value)
-        {
-            m_flagData = m_flagData | (long)flags;
-        }
+            m_flagData = m_flagData | (Int64)flags;
         else
-        {
-            m_flagData = m_flagData & ~(long)flags;
-        }
+            m_flagData = m_flagData & ~(Int64)flags;
     }
 
     public void FlipFlags(Flags flags)
     {
-        m_flagData = m_flagData ^ (long)flags;
+        m_flagData = m_flagData ^ (Int64)flags;
     }
 
     public bool IsFlagsSet(Flags flags)
     {
-        Flags set = flags & (Flags)m_flagData;
-        if (set == flags)
-            return true;
-
-        return false;
-    }
-
-    public static long SetFlags(Flags flags, long flagData, bool value)
-    {
-        if (value)
-        {
-            flagData = flagData | (long)flags;
-        }
-        else
-        {
-            flagData = flagData & (long)~flags;
-        }
-
-        return flagData;
-    }
-
-    public static bool IsFlagSet(Flags flags, long flagData)
-    {
-        long set = (long)flags & flagData;
-        if (set == (long)flags)
+        if (((Int64)flags & m_flagData) == (Int64)flags)
             return true;
 
         return false;

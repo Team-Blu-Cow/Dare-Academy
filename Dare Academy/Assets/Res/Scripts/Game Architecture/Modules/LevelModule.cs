@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using JUtil.Grids;
 using UnityEngine.SceneManagement;
+using System.Threading.Tasks;
 
 namespace blu
 {
@@ -21,6 +22,11 @@ namespace blu
         {
             get { return blu.App.GetModule<IOModule>().savedata; }
             set { blu.App.GetModule<IOModule>().savedata = value; }
+        }
+
+        public bool IsSaveLoaded
+        {
+            get => ActiveSaveSata != null;
         }
 
         public GameEventFlags EventFlags
@@ -45,6 +51,22 @@ namespace blu
         public StepController StepController
         { get { return m_levelManager.StepController; } }
 
+        private LevelTransitionInformation m_lvlTransitionInfo;
+
+        public LevelTransitionInformation lvlTransitionInfo
+        { get { return m_lvlTransitionInfo; } set { m_lvlTransitionInfo = value; } }
+
+        private PersistantSceneData m_persistantSceneData = new PersistantSceneData();
+
+        public PersistantSceneData persistantSceneData
+        {
+            get { return m_persistantSceneData; }
+
+            set { m_persistantSceneData = value; }
+        }
+
+        private GameObject m_playerPrefab;
+
         private void OnDestroy()
         {
             SceneManager.sceneLoaded -= LevelChanged;
@@ -53,7 +75,6 @@ namespace blu
         public async override void Initialize()
         {
             SceneManager.sceneLoaded += LevelChanged;
-            m_grid = null;
 
             IOModule ioModule = App.GetModule<IOModule>();
 
@@ -65,7 +86,10 @@ namespace blu
                 await ioModule.CreateNewSave("new save", true);
             }
 
-            m_gameEventFlags.FlagData = ActiveSaveSata.gameEventFlags;
+            m_gameEventFlags._FlagData = ActiveSaveSata.gameEventFlags;
+
+            if (m_playerPrefab == null)
+                m_playerPrefab = Resources.Load<GameObject>("prefabs/Entities/Player");
         }
 
         protected override void SetDependancies()
@@ -87,6 +111,47 @@ namespace blu
             //m_gameEventFlags.FlagData = ActiveSaveSata.gameEventFlags;
 
             m_grid.Initialise();
+
+            if (m_playerPrefab == null)
+                m_playerPrefab = Resources.Load<GameObject>("prefabs/Entities/Player");
+
+            if (m_lvlTransitionInfo == null)
+            {
+                Vector3 pos = m_grid.Grid(m_levelManager.m_defaultPlayerSpawnIndex)[m_levelManager.m_defaultPlayerPosition].position.world;
+
+                m_levelManager.StepController.m_currentRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
+                m_levelManager.StepController.m_targetRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
+
+                Instantiate(m_playerPrefab, pos, Quaternion.identity);
+            }
+            else
+            {
+                Vector2Int nodePos = m_lvlTransitionInfo.targetNodeIndex + ((-m_lvlTransitionInfo.offsetVector) * m_lvlTransitionInfo.offsetIndex);
+
+                GridNode node = m_grid.Grid(m_lvlTransitionInfo.targetRoomIndex)[nodePos];
+
+                if (node == null)
+                {
+                    node = m_grid.Grid(m_lvlTransitionInfo.targetRoomIndex)[m_lvlTransitionInfo.targetNodeIndex];
+                }
+
+                Vector3 pos;
+
+                if (node == null)
+                {
+                    pos = m_grid.Grid(m_levelManager.m_defaultPlayerSpawnIndex)[m_levelManager.m_defaultPlayerPosition].position.world;
+                    m_levelManager.StepController.m_currentRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
+                    m_levelManager.StepController.m_targetRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
+                }
+                else
+                {
+                    pos = node.position.world;
+                    m_levelManager.StepController.m_currentRoomIndex = m_lvlTransitionInfo.targetRoomIndex;
+                    m_levelManager.StepController.m_targetRoomIndex = m_lvlTransitionInfo.targetRoomIndex;
+                }
+
+                Instantiate(m_playerPrefab, pos, Quaternion.identity);
+            }
             //m_levelManager.StepController.InitialAnalyse();
         }
 
@@ -99,9 +164,30 @@ namespace blu
 
         public async void SaveGame()
         {
-            App.GetModule<IOModule>().savedata.gameEventFlags = m_gameEventFlags.FlagData;
+            App.GetModule<IOModule>().savedata.gameEventFlags = m_gameEventFlags._FlagData;
             // TODO @matthew - move the await out of here
             await App.GetModule<IOModule>().SaveAsync();
         }
+
+        public Task<bool> AwaitSaveLoad()
+        {
+            return Task.Run(() => AwaitSaveLoadImpl());
+        }
+
+        internal bool AwaitSaveLoadImpl()
+        {
+            blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
+            while (levelModule.IsSaveLoaded == false)
+            { }
+            return true;
+        }
+    }
+
+    public class PersistantSceneData
+    {
+        public int _MisplacedForestCounter = 0;
+        public Vector2Int _direction = Vector2Int.zero;
+        public GameObject _soundEmitter = null;
+        public bool _switching = false;
     }
 }

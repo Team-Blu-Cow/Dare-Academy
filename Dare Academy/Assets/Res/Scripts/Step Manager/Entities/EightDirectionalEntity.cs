@@ -6,18 +6,18 @@ using JUtil;
 
 public class EightDirectionalEntity : GridEntity
 {
-
     [Header("Attack attributes")]
     [SerializeField] private int m_attackSpeed = 3;
+
     [SerializeField] private bool isFiringHorizontal = true;
     [SerializeField] private int agroRange = 5;
     private int m_attackCounter = 0;
     private bool isAttacking = false;
-    private Vector2[] telegraphPos = { new Vector2(0,0), new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0)};
-
+    private Vector2[] telegraphPos = { new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0) };
 
     [Header("Resources needed")]
     [SerializeField] private GameObject m_bulletPrefab = null;
+
     [SerializeField] private GridEntity player;
 
     protected override void Start()
@@ -40,12 +40,15 @@ public class EightDirectionalEntity : GridEntity
 
         Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, player.transform.position);
 
-        if (path.Length < agroRange)
-        {                
-            if (m_attackCounter >= m_attackSpeed)
+        if (path != null)
+        {
+            if (path.Length < agroRange)
             {
-                isAttacking = true;
-                TelegraphAttack();
+                if (m_attackCounter >= m_attackSpeed)
+                {
+                    isAttacking = true;
+                    TelegraphAttack();
+                }
             }
         }
     }
@@ -59,7 +62,7 @@ public class EightDirectionalEntity : GridEntity
             {
                 TelegraphAttack();
                 SpawnBullets();
-                m_attackCounter = 0;                
+                m_attackCounter = 0;
             }
             isAttacking = false;
         }
@@ -106,7 +109,7 @@ public class EightDirectionalEntity : GridEntity
                 if (m_currentNode.GetNeighbour(m_attackDirections[j]) != null)
                 {
                     spawnPosition = m_currentNode.GetNeighbour(m_attackDirections[j]).position.world;
-                    GameObject obj = GameObject.Instantiate(m_bulletPrefab, spawnPosition, Quaternion.identity);                   
+                    GameObject obj = GameObject.Instantiate(m_bulletPrefab, spawnPosition, Quaternion.identity);
 
                     if (obj)
                     {
@@ -131,11 +134,11 @@ public class EightDirectionalEntity : GridEntity
 
     private void OnDrawGizmos()
     {
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
-            if(telegraphPos[i] != new Vector2(0,0))
+            if (telegraphPos[i] != new Vector2(0, 0))
             {
-                if(!isAttacking)
+                if (!isAttacking)
                 {
                     Gizmos.color = new Color(0, 0, 0, 0);
                 }
@@ -143,11 +146,9 @@ public class EightDirectionalEntity : GridEntity
                 {
                     Gizmos.color = new Color(Color.yellow.r, Color.yellow.g, Color.yellow.b, 0.25f);
                 }
-                
+
                 Gizmos.DrawCube(telegraphPos[i], new Vector3(1, 1, 1));
             }
         }
-
-        
     }
 }

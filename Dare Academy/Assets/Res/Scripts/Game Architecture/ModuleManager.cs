@@ -23,6 +23,7 @@ namespace blu
             //
             if (typeof(T) == typeof(Module))
             {
+
                 Debug.LogWarning("[App/ModuleManager]: Attempted instantiation of abstract module type: " + typeof(T).ToString());
                 return;
             }

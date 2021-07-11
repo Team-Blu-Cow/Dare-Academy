@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using Newtonsoft.Json;
+using System;
+using System.Reflection;
 
 namespace blu.EditorTools
 {
@@ -20,7 +20,7 @@ namespace blu.EditorTools
     public class SaveEditor : EditorWindow
     {
         private string filepath = "";
-        private Dictionary<string, object> fileData = null;
+        private SaveData savedata = null;
         private bool m_flagsFoldoutExpanded = false;
         private Vector2 m_scrollPos = Vector2.zero;
         private Vector2 m_flagsScrollPos = Vector2.zero;
@@ -33,7 +33,7 @@ namespace blu.EditorTools
                 if (!success)
                 {
                     filepath = "";
-                    fileData = null;
+                    savedata = null;
                 }
             }
         }
@@ -42,30 +42,16 @@ namespace blu.EditorTools
         {
         }
 
-        private Dictionary<string, object> ParseJson(string json)
-        {
-            return JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
-        }
-
-        private string SerializeJson(Dictionary<string, object> structure)
-        {
-            return JsonConvert.SerializeObject(structure);
-        }
-
         private bool OpenFile(string path)
         {
             if (path.Length != 0)
             {
                 if (System.IO.File.Exists(path))
                 {
-                    // ensure latest version of file format is used
-                    FileIO.BaseFileLoader<SaveData> fileloader = new FileIO.DebugFileLoader<SaveData>(path);
-                    SaveData savedata = fileloader.ReadData();
-                    fileloader.WriteData(savedata);
-
                     filepath = path;
-                    string json = System.IO.File.ReadAllText(filepath);
-                    fileData = ParseJson(json);
+                    FileIO.BaseFileLoader<SaveData> fileloader = new FileIO.DebugFileLoader<SaveData>(filepath);
+                    savedata = fileloader.ReadData();
+
                     return true;
                 }
             }
@@ -74,9 +60,8 @@ namespace blu.EditorTools
 
         private bool SaveFile()
         {
-            string json = SerializeJson(fileData);
-            System.IO.File.WriteAllText(filepath, json);
-            return true;
+            FileIO.BaseFileLoader<SaveData> fileloader = new FileIO.DebugFileLoader<SaveData>(filepath);
+            return fileloader.WriteData(savedata);
         }
 
         public void OnGUI()
@@ -94,40 +79,35 @@ namespace blu.EditorTools
             GUILayout.EndHorizontal();
             GUILayout.Space(15);
 
-            if (fileData != null)
+            if (savedata != null)
             {
                 m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos);
 
-                string[] keys = new string[fileData.Keys.Count];
-                fileData.Keys.CopyTo(keys, 0);
-                for (int k = 0; k < keys.Length; k++)
+                Type type = typeof(SaveData);
+                FieldInfo[] fieldInfo = type.GetFields();
+
+                for (int i = 0; i < fieldInfo.Length; i++)
                 {
-                    // do something with entry.Value or entry.Key
+                    object obj = fieldInfo[i].GetValue(savedata);
+                    string name = fieldInfo[i].Name;
+
                     GUILayout.BeginHorizontal();
 
-                    GUILayout.Label(keys[k], GUILayout.Width(100f));
+                    GUILayout.Label(name, GUILayout.Width(100f));
 
-                    // check if object is still json, this will be a subclass
-                    // TODO @Matthew - deal with this so it can be modified in editor
-                    if (fileData[keys[k]].GetType() == new Newtonsoft.Json.Linq.JObject().GetType())
-                    {
-                        DataNotReadable();
-                        GUILayout.EndHorizontal();
-                        continue;
-                    }
-
-                    switch (keys[k])
+                    switch (name)
                     {
                         case "gameEventFlags":
-                            fileData[keys[k]] = DisplayGameEventFlags((long)fileData[keys[k]]);
+                            obj = DisplayGameEventFlags((Int64)obj);
                             break;
 
                         default:
                             // fallback for built in types
-                            fileData[keys[k]] = GUILayout.TextField(fileData[keys[k]].ToString());
+                            obj = DefaultFieldHandleing(obj);
                             break;
                     }
 
+                    fieldInfo[i].SetValue(savedata, obj);
                     GUILayout.EndHorizontal();
                 }
 
@@ -156,7 +136,68 @@ namespace blu.EditorTools
             GUILayout.Label("DATA NOT READABLE IN EDITOR");
         }
 
-        private long DisplayGameEventFlags(long gameEventFlags)
+        private object DefaultFieldHandleing(object field)
+        {
+            if (field is bool)
+            {
+                return GUILayout.Toggle((bool)field, "");
+            }
+
+            if (field is int)
+            {
+                return EditorGUILayout.IntField((int)field);
+            }
+
+            if (field is long)
+            {
+                return EditorGUILayout.LongField((long)field);
+            }
+
+            if (field is System.String)
+            {
+                return EditorGUILayout.TextField((System.String)field);
+            }
+
+            if (field is float)
+            {
+                return EditorGUILayout.FloatField((float)field);
+            }
+
+            if (field is double)
+            {
+                return EditorGUILayout.DoubleField((double)field);
+            }
+
+            if (field is Vector2)
+            {
+                return EditorGUILayout.Vector2Field("", (Vector2)field);
+            }
+
+            if (field is Vector2Int)
+            {
+                return EditorGUILayout.Vector2IntField("", (Vector2Int)field);
+            }
+
+            if (field is Vector3)
+            {
+                return EditorGUILayout.Vector3Field("", (Vector3)field);
+            }
+
+            if (field is Vector3Int)
+            {
+                return EditorGUILayout.Vector3IntField("", (Vector3Int)field);
+            }
+
+            if (field is Vector4)
+            {
+                return EditorGUILayout.Vector4Field("", (Vector4)field);
+            }
+
+            DataNotReadable();
+            return field;
+        }
+
+        private Int64 DisplayGameEventFlags(Int64 gameEventFlags)
         {
             string[] flagNames = System.Enum.GetNames(typeof(GameEventFlags.Flags));
             System.Array flagValues = System.Enum.GetValues(typeof(GameEventFlags.Flags));
@@ -167,11 +208,11 @@ namespace blu.EditorTools
                 m_flagsScrollPos = EditorGUILayout.BeginScrollView(m_flagsScrollPos, GUILayout.Height(120));
                 for (int i = 0; i < flagNames.Length; i++)
                 {
-                    bool fieldBool = GameEventFlags.IsFlagSet((GameEventFlags.Flags)flagValues.GetValue(i), gameEventFlags);
+                    bool fieldBool = GameEventFlags.IsFlagSet((Int64)flagValues.GetValue(i), gameEventFlags);
 
                     fieldBool = GUILayout.Toggle(fieldBool, flagNames[i]);
                     GameEventFlags.Flags mask = (GameEventFlags.Flags)flagValues.GetValue(i);
-                    gameEventFlags = GameEventFlags.SetFlags(mask, gameEventFlags, fieldBool);
+                    gameEventFlags = GameEventFlags.SetFlags((Int64)mask, gameEventFlags, fieldBool);
                 }
                 EditorGUILayout.EndScrollView();
             }

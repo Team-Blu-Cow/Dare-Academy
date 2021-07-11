@@ -1,40 +1,62 @@
-using System.Collections;
-using System.Collections.Generic;
+#define PLAYERENTITY_HOLD_FOR_ABILITY_MODE
+
 using UnityEngine;
 using blu;
 using UnityEngine.InputSystem;
-using JUtil;
 using UnityEngine.SceneManagement;
+
 using flags = GridEntityFlags.Flags;
+using interalFlags = GridEntityInternalFlags.Flags;
+using AbilityEnum = PlayerAbilities.AbilityEnum;
 
 public class PlayerEntity : GridEntity
 {
-    private GameObject m_bulletPrefab = null;
-    private Vector2 m_shootDirection = Vector2.zero;
+    // ABILITIES
 
-    [SerializeField] private int m_maxEnergy = 3;
-    private int m_currentEnergy = 0;
+    [SerializeField] private PlayerAbilities m_abilities = new PlayerAbilities();
+    [SerializeField] private bool m_abilityMode = false;
 
-    private bool m_shouldDash = false; // flag for if the player is dashing this step
-    private int m_dashDistance = 2;
-    private int m_dashEnergyCost = 3;
+    // if the scene switch has been triggered but the entity has not been destroyed
+    private bool m_sceneHasSwitched = false;
 
-    private int m_shootEnergyCost = 3;
+    public PlayerAbilities Abilities
+    {
+        get => m_abilities;
+        set => m_abilities = value;
+    }
+
+    // HEALTH
 
     private int m_maxHealth = 1;
     public int MaxHealth { get { return m_maxHealth; } set { m_maxHealth = value; } }
 
-    [SerializeField] private bool m_allowDash = false; // if the player is allowed to dash
+    // ENERGY
+
+    [SerializeField] private int m_currentEnergy = 0;
+    private int m_maxEnergy = 3;
+
     public int Energy { get => m_currentEnergy; set => m_currentEnergy = value; }
     public int MaxEnergy { get => m_maxEnergy; set => m_maxEnergy = value; }
 
-    // the movement direction stored within GridEntity is cleared every step so we store another copy here
-    private Vector2 m_moveDirection = Vector2.zero;
+    private int m_dashEnergyCost = 3;
+    private int m_shootEnergyCost = 3;
+#pragma warning disable  CS0414// variable assigned but never used
+    private int m_blockEnergyCost = 3;
+#pragma warning restore  CS0414
+
+    // OTHER
 
     private PlayerControls input;
+    private GameObject m_bulletPrefab = null;
+    private int m_dashDistance = 2;
 
-    public void OnValidate()
+    private Vector2Int m_moveDirection = Vector2Int.zero;
+    private Vector2Int m_abilityDirection = Vector2Int.zero;
+    private Vector2Int m_inputDirection = Vector2Int.zero;
+
+    protected void OnValidate()
     {
+        base.OnValidate();
         m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet");
     }
 
@@ -43,77 +65,142 @@ public class PlayerEntity : GridEntity
         base.Start();
         Energy = MaxEnergy;
         Health = MaxHealth;
+        m_abilities.Initialise();
+        base.OnValidate();
     }
 
     private void OnEnable()
     {
         input = App.GetModule<InputModule>().PlayerController;
-        input.Move.Direction.started += MovePressed;
-        input.Move.Direction.canceled += MoveReleased;
-        input.Aim.Direction.performed += ShootAction;
-        input.Move.Dash.performed += DashPressed;
+        input.Move.Direction.started += WASDPressed;
+        input.Move.Direction.canceled += WASDReleased;
+
+#if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
+        input.Ability.AbilityMode.started += EnterAbilityMode;
+        input.Ability.AbilityMode.canceled += ExitAbilityMode;
+#else
+        input.Ability.AbilityMode.started += ToggleAbilityMode;
+#endif
+
+        input.Ability.CancelAbility.performed += CancelAbility;
+
+        input.Ability.SwapAbilityL.performed += CycleAbilityL;
+        input.Ability.SwapAbilityR.performed += CycleAbilityR;
     }
 
     private void OnDisable()
     {
-        input.Move.Direction.started -= MovePressed;
-        input.Move.Direction.canceled -= MoveReleased;
-        input.Aim.Direction.performed -= ShootAction;
-        input.Move.Dash.performed += DashPressed;
+        input.Move.Direction.started -= WASDPressed;
+        input.Move.Direction.canceled -= WASDReleased;
+
+#if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
+        input.Ability.AbilityMode.started -= EnterAbilityMode;
+        input.Ability.AbilityMode.canceled -= ExitAbilityMode;
+#else
+        input.Ability.AbilityMode.started -= ToggleAbilityMode;
+#endif
+
+        input.Ability.CancelAbility.performed -= CancelAbility;
+
+        input.Ability.SwapAbilityL.performed -= CycleAbilityL;
+        input.Ability.SwapAbilityR.performed -= CycleAbilityR;
     }
 
-    protected void FixedUpdate()
+    protected void Update()
     {
+        if (m_abilityMode)
+        {
+            m_moveDirection = Vector2Int.zero;
+
+            if (m_inputDirection != Vector2Int.zero)
+            {
+                m_abilityDirection = m_inputDirection;
+                m_inputDirection = Vector2Int.zero;
+            }
+        }
+        else
+        {
+            if (m_inputDirection != Vector2Int.zero)
+            {
+                m_moveDirection = m_inputDirection;
+            }
+        }
+
+        if (Abilities.GetActiveAbility() == AbilityEnum.Dash && !m_abilityMode && m_abilityDirection != Vector2Int.zero)
+        {
+            if (Dash())
+            {
+                SetMovementDirection(m_abilityDirection, m_dashDistance);
+                m_abilityDirection = Vector2Int.zero;
+                App.GetModule<LevelModule>().StepController.ExecuteStep();
+            }
+            else
+            {
+                // failed to dash, no enough energy
+                // TODO @matthew/@adam - sound effect here
+                m_abilityDirection = Vector2Int.zero;
+            }
+        }
+
         if (m_moveDirection != Vector2Int.zero)
         {
-            int speed = 1;
-            if (m_allowDash && m_shouldDash)
-            {
-                speed = Dash();
-            }
-
-            SetMovementDirection(m_moveDirection, speed);
-            App.GetModule<LevelModule>().StepController.ExecuteStep();
+            SetMovementDirection(m_moveDirection, 1);
+            m_moveDirection = Vector2Int.zero;
+            if (!m_sceneHasSwitched)
+                App.GetModule<LevelModule>().StepController.ExecuteStep();
         }
     }
 
-    protected void MovePressed(InputAction.CallbackContext context)
+    public override void AnalyseStep()
     {
-        m_moveDirection = context.ReadValue<Vector2>();
+        if (m_moveDirection != Vector2.zero)
+            m_animationController.SetDirection(m_moveDirection.x, 1);
     }
 
-    protected void MoveReleased(InputAction.CallbackContext context)
+    protected void WASDPressed(InputAction.CallbackContext context)
     {
+        Vector2 vec2 = context.ReadValue<Vector2>();
+        m_inputDirection = new Vector2Int(Mathf.RoundToInt(vec2.x), Mathf.RoundToInt(vec2.y));
+
+        if (m_abilityMode)
+        {
+            float headX = 0;
+            float headY = 0;
+            if (Mathf.Abs(m_inputDirection.x) > Mathf.Abs(m_inputDirection.y))
+                headX = m_inputDirection.x;
+            else
+                headY = m_inputDirection.y;
+
+            m_animationController.SetHeadDirection(headX, headY);
+        }
+    }
+
+    protected void WASDReleased(InputAction.CallbackContext context)
+    {
+        m_inputDirection = Vector2Int.zero;
         m_moveDirection = Vector2Int.zero;
         SetMovementDirection(Vector2Int.zero);
     }
 
-    protected void DashPressed(InputAction.CallbackContext context)
+    protected void ToggleAbilityMode(InputAction.CallbackContext context) => m_abilityMode = !m_abilityMode;
+
+    protected void EnterAbilityMode(InputAction.CallbackContext context) => m_abilityMode = true;
+
+    protected void ExitAbilityMode(InputAction.CallbackContext context) => m_abilityMode = false;
+
+    protected void CancelAbility(InputAction.CallbackContext context)
     {
-        m_shouldDash = !m_shouldDash;
+        m_abilityMode = false;
     }
 
-    protected void ShootAction(InputAction.CallbackContext context)
+    protected void CycleAbilityR(InputAction.CallbackContext context)
     {
-        Vector2 dir = context.ReadValue<Vector2>();
+        m_abilities.SetActiveAbility(m_abilities.RightAbility());
+    }
 
-        if (m_shootDirection == Vector2.zero)
-        {
-            m_shootDirection = dir;
-            return;
-        }
-        else
-        {
-            if (m_shootDirection == dir)
-            {
-                //cancel shot
-                m_shootDirection = Vector2.zero;
-            }
-            else
-            {
-                m_shootDirection = dir;
-            }
-        }
+    protected void CycleAbilityL(InputAction.CallbackContext context)
+    {
+        m_abilities.SetActiveAbility(m_abilities.LeftAbility());
     }
 
     public override void EndStep()
@@ -128,14 +215,62 @@ public class PlayerEntity : GridEntity
         if (Energy < 0)
             Energy = 0;
 
-        if (m_currentNode.overridden && m_currentNode.overrideType == NodeOverrideType.SceneConnection)
+        if (m_currentNode.overridden)
         {
-            // transition to a new scene
-            App.GetModule<SceneModule>().SwitchScene(
-                m_currentNode.lvlTransitionInfo.targetSceneName,
-                TransitionType.Slice,
-                LoadingBarType.BottomBar
-                );
+            if (m_currentNode.overrideType == NodeOverrideType.SceneConnection)
+            {
+                m_sceneHasSwitched = true;
+                App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+                // transition to a new scene
+                App.GetModule<SceneModule>().SwitchScene(
+                    m_currentNode.lvlTransitionInfo.targetSceneName,
+                    m_currentNode.lvlTransitionInfo.transitionType,
+                    m_currentNode.lvlTransitionInfo.loadType
+                    );
+            }
+
+            if (m_currentNode.overrideType == NodeOverrideType.LostWoodsConnection)
+            {
+                m_sceneHasSwitched = true;
+                // check lost woods count
+                if (!App.GetModule<LevelModule>().persistantSceneData._switching)
+                {
+                    App.GetModule<LevelModule>().persistantSceneData._switching = true;
+
+                    App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+
+                    if (App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter == 0 && LastDirection == Vector2Int.down)
+                    {
+                        Destroy(App.GetModule<LevelModule>().persistantSceneData._soundEmitter);
+                        App.GetModule<LevelModule>().persistantSceneData = new PersistantSceneData();
+
+                        App.GetModule<SceneModule>().SwitchScene(
+                            "Crashsite Top",
+                            m_currentNode.lvlTransitionInfo.transitionType,
+                            m_currentNode.lvlTransitionInfo.loadType
+                            );
+                    }
+                    else
+                    {
+                        if (LastDirection == App.GetModule<LevelModule>().persistantSceneData._direction)
+                        {
+                            App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter++;
+                            Debug.Log(App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter);
+                        }
+                        else
+                        {
+                            App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter = 0;
+                            Debug.Log(App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter);
+                        }
+
+                        App.GetModule<SceneModule>().SwitchScene(
+                        m_currentNode.lvlTransitionInfo.targetSceneName,
+                        m_currentNode.lvlTransitionInfo.transitionType,
+                        m_currentNode.lvlTransitionInfo.loadType
+                        );
+                    }
+                }
+            }
         }
 
         if (m_currentNode != null)
@@ -152,34 +287,10 @@ public class PlayerEntity : GridEntity
 
     public override void AttackStep()
     {
-        if (Energy >= m_shootEnergyCost)
+        if (!m_abilityMode && m_abilities.GetActiveAbility() == AbilityEnum.Shoot)
         {
-            if (m_shootDirection != Vector2.zero)
-            {
-                GridNode node;
-                if (m_previousNode != null)
-                {
-                    node = m_previousNode;
-
-                    if (Direction == m_shootDirection)
-                    {
-                        node = m_currentNode;
-                    }
-                }
-                else
-                {
-                    // player didn't move
-                    node = m_currentNode;
-                }
-
-                if (SpawnBullet(m_bulletPrefab, node, m_shootDirection))
-                {
-                    Energy -= m_shootEnergyCost;
-                }
-            }
+            Shoot();
         }
-
-        m_shootDirection = Vector2.zero;
     }
 
     public override void OnDeath()
@@ -192,7 +303,7 @@ public class PlayerEntity : GridEntity
             {
                 RemoveFromCurrentNode();
                 m_currentNode = respawnPoint;
-                m_flags.SetFlags(flags.isDead, false);
+                m_internalFlags.SetFlags(interalFlags.isDead, false);
                 Health = MaxHealth;
                 Energy = MaxEnergy;
                 transform.position = m_currentNode.position.world;
@@ -207,29 +318,59 @@ public class PlayerEntity : GridEntity
 
     private void OnDrawGizmos()
     {
-        if (m_shootDirection != Vector2.zero)
+        if (m_abilityDirection != Vector2.zero)
         {
-            Vector3 gizmoRay = new Vector3(m_shootDirection.x, m_shootDirection.y, 0);
+            Vector3 gizmoRay = new Vector3(m_abilityDirection.x, m_abilityDirection.y, 0);
 
             Gizmos.color = Color.white;
             Gizmos.DrawRay(transform.position, gizmoRay);
         }
-
-        //Gizmos.color = Color.white;
-        //Gizmos.DrawRay(transform.position, m_movementDirection);
     }
 
     // HELPER METHODS
 
-    private int Dash()
+    private void Shoot()
     {
-        m_shouldDash = false;
-        if (Energy >= m_dashEnergyCost)
+        if (Energy >= m_shootEnergyCost)
         {
-            Energy -= m_dashEnergyCost;
-            return m_dashDistance;
+            if (m_abilityDirection != Vector2.zero)
+            {
+                GridNode node;
+                if (m_previousNode != null)
+                {
+                    node = m_previousNode;
+
+                    if (Direction == m_abilityDirection)
+                    {
+                        node = m_currentNode;
+                    }
+                }
+                else
+                {
+                    // player didn't move
+                    node = m_currentNode;
+                }
+
+                if (SpawnBullet(m_bulletPrefab, node, m_abilityDirection))
+                {
+                    Energy -= m_shootEnergyCost;
+                }
+            }
         }
 
-        return 1;
+        m_abilityDirection = Vector2Int.zero;
+    }
+
+    private bool Dash()
+    {
+        if (Energy >= m_dashEnergyCost)
+        {
+            if (m_abilityDirection != Vector2.zero)
+            {
+                Energy -= m_dashEnergyCost;
+                return true;
+            }
+        }
+        return false;
     }
 }

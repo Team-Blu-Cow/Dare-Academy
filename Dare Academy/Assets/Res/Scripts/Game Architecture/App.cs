@@ -67,12 +67,11 @@ namespace blu
 
         private void AddBaselineModules()
         {
+            _moduleManager.AddModule<blu.LevelModule>();
             _moduleManager.AddModule<blu.SettingsModule>();
             _moduleManager.AddModule<blu.SceneModule>();
             _moduleManager.AddModule<blu.InputModule>();
-            _moduleManager.AddModule<blu.IOModule>();
             _moduleManager.AddModule<blu.DialogueModule>();
-            _moduleManager.AddModule<blu.LevelModule>();
             //_moduleManager.AddModule<blu.AudioModule>(); // not nessessary, included for readablility
         }
 

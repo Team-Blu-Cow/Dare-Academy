@@ -2,21 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using flags = GridEntityFlags.Flags;
-using JUtil;
-using JUtil.Grids;
 
 public class BulletEntity : GridEntity
 {
     public Vector2Int m_bulletDirection = Vector2Int.zero;
     public int m_damage = 1;
 
-    private bool m_spawnedThisStep = true;
-
     protected override void Start()
     {
         base.Start();
         m_flags.SetFlags(flags.isAttack, true);
         m_health = 1;
+        m_animationController = GetComponent<GridEntityAnimationController>();
     }
 
     public override void ResolvePassThroughStep()

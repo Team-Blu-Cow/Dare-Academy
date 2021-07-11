@@ -81,7 +81,12 @@ public class PathfindingMultiGrid
 
         foreach (var link in nodeOverrides.sceneLinks)
         {
-            CreateSceneLinkingNode(link);
+            Vector2Int gridOffset = Vector2Int.RoundToInt( link.travelDirection.IndexToRotation().Rotate(90));
+
+            for (int i = 0; i < link.width; i++)
+            {
+                CreateSceneLinkingNode(link, gridOffset, i);
+            }
         }
     }
 
@@ -104,9 +109,11 @@ public class PathfindingMultiGrid
         thisNode.Neighbors[link.direction].reference = partner;
     }
 
-    private void CreateSceneLinkingNode(LevelTransitionInformation link)
+    private void CreateSceneLinkingNode(LevelTransitionInformation link, Vector2Int gridOffset, int i)
     {
-        GridNode node = grids[link.myRoomIndex][link.myNodeIndex];
+        GridNode node = grids[link.myRoomIndex][link.myNodeIndex + (gridOffset * i)];
+        if (node == null)
+            return;
         node.overridden = true;
         node.overriddenDir = link.travelDirection;
         node.lvlTransitionInfo = link;
@@ -120,8 +127,10 @@ public class PathfindingMultiGrid
         transitionNode.walkable = true;
         transitionNode.Neighbors = new NodeNeighborhood<GridNode>(8);
         transitionNode.roomIndex = link.myRoomIndex;
-        transitionNode.lvlTransitionInfo = link;
-        transitionNode.overrideType = NodeOverrideType.SceneConnection;
+        transitionNode.lvlTransitionInfo = new LevelTransitionInformation(link);
+        transitionNode.lvlTransitionInfo.offsetIndex = (link.width-1) - i;
+        transitionNode.lvlTransitionInfo.offsetVector = gridOffset;
+        transitionNode.overrideType = link.overrideType;
 
         int negativeDir = (-(link.getTravelDirection())).RotationToIndex(45);
 
@@ -387,28 +396,32 @@ public class PathfindingMultiGrid
                 continue;
             }
 
+            Vector2 gridOffset_2 = link.travelDirection.IndexToRotation().Rotate(90);
+
+            Vector3 gridOffset = new Vector3(gridOffset_2.x, gridOffset_2.y, 0);
+
             if (debugSettings.drawOverWrittenNodes)
             {
-                Gizmos.DrawSphere(
-                    gridInfo[link.myRoomIndex].ToWorld(link.myNodeIndex),
-                    gridInfo[link.myRoomIndex].cellSize / 8
-                    );
-
-                if (EditorApplication.isPlaying)
+                for (int i = 0; i < link.width; i++)
                 {
                     Gizmos.DrawSphere(
-                        nodeOverrides.sceneTransitionNodes[count].position.world,
+                        gridInfo[link.myRoomIndex].ToWorld(link.myNodeIndex) + (gridOffset * i),
                         gridInfo[link.myRoomIndex].cellSize / 8
                         );
-                }
-            }
 
-            if (debugSettings.drawOverWrittenNodes)
-            {
-                Gizmos.DrawLine(
-                    gridInfo[link.myRoomIndex].ToWorld(link.myNodeIndex),
-                    gridInfo[link.myRoomIndex].ToWorld(link.myNodeIndex) + (gizmoDirections[link.travelDirection] * 0.25f)
-                    );
+                    if (Application.isPlaying)
+                    {
+                        Gizmos.DrawSphere(
+                            nodeOverrides.sceneTransitionNodes[count].position.world + (gridOffset * i),
+                            gridInfo[link.myRoomIndex].cellSize / 8
+                            );
+                    }
+
+                    Gizmos.DrawRay(
+                        gridInfo[link.myRoomIndex].ToWorld(link.myNodeIndex) + (gridOffset * i),
+                        gizmoDirections[link.travelDirection] * 0.25f
+                        );
+                }
             }
 
             count++;
@@ -655,9 +668,10 @@ public struct LinkID
 [System.Serializable]
 public class LevelTransitionInformation
 {
+    [SerializeField] public int width;
+
     [Header("Node information")]
     [SerializeField] public int myRoomIndex;
-
     [SerializeField] public Vector2Int myNodeIndex;
 
     [Header("Transition Information")]
@@ -665,7 +679,36 @@ public class LevelTransitionInformation
 
     [SerializeField] public int targetRoomIndex;
     [SerializeField] public Vector2Int targetNodeIndex;
+    [SerializeField, HideInInspector] public Vector2Int offsetVector;
+    [SerializeField, HideInInspector] public int offsetIndex;
     [Range(0, 7), SerializeField] private int m_travelDirection;
+    [SerializeField] public blu.TransitionType transitionType;
+    [SerializeField] public blu.LoadingBarType loadType;
+    [SerializeField] public NodeOverrideType overrideType;
+
+    public LevelTransitionInformation()
+    {
+        overrideType = NodeOverrideType.SceneConnection;
+    }
+
+    public LevelTransitionInformation(LevelTransitionInformation in_lvlInfo)
+    {
+        myRoomIndex         = in_lvlInfo.myRoomIndex;
+        myNodeIndex         = in_lvlInfo.myNodeIndex;
+
+        targetSceneName     = in_lvlInfo.targetSceneName;
+        targetRoomIndex     = in_lvlInfo.targetRoomIndex;
+        targetNodeIndex     = in_lvlInfo.targetNodeIndex;
+
+        offsetVector        = in_lvlInfo.offsetVector;
+        offsetIndex         = in_lvlInfo.offsetIndex;
+        m_travelDirection   = in_lvlInfo.travelDirection;
+
+        transitionType      = in_lvlInfo.transitionType;
+        loadType            = in_lvlInfo.loadType;
+
+        overrideType        = in_lvlInfo.overrideType;
+    }
 
     public int travelDirection
     { get { return m_travelDirection; } set { m_travelDirection = value; } }
@@ -690,11 +733,14 @@ public interface MultiNode
     public NodeOverrideType overrideType { get; set; }
 
     public LevelTransitionInformation lvlTransitionInfo { get; set; }
+
+    public int lvlTransitionIndexOffset { get; set; }
 }
 
 public enum NodeOverrideType
 {
     None = 0,
     RoomConnection,
-    SceneConnection
+    SceneConnection,
+    LostWoodsConnection
 }
