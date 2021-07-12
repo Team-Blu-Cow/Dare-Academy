@@ -95,7 +95,9 @@ public class BulletEntity : GridEntity
                 m_currentNode = node;
                 AddToCurrentNode();
                 m_previousNode = null;
-                // TODO @Jay - animation for successful bullet reflection
+
+                // animation for successful bullet reflection
+                AddAnimationAction(ActionTypes.MOVE, "");
             }
             m_passthrough = false;
         }

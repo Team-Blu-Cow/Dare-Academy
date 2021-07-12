@@ -114,7 +114,7 @@ public abstract class GridEntity : MonoBehaviour
         m_stepController.RoomChangeEvent -= RoomChange;
     }
 
-    protected void OnValidate()
+    protected virtual void OnValidate()
     {
         m_animationController = GetComponent<GridEntityAnimationController>();
     }
