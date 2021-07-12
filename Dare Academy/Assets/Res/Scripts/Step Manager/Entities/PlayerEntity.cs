@@ -251,10 +251,10 @@ public class PlayerEntity : GridEntity
                 if (!App.GetModule<LevelModule>().persistantSceneData._switching)
                 {
                     App.GetModule<LevelModule>().persistantSceneData._switching = true;
-                    App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
 
                     if (App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter == 0 && LastDirection == Vector2Int.down)
                     {
+                        App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
                         Destroy(App.GetModule<LevelModule>().persistantSceneData._soundEmitter);
                         App.GetModule<LevelModule>().persistantSceneData = new PersistantSceneData();
 
@@ -264,8 +264,24 @@ public class PlayerEntity : GridEntity
                             m_currentNode.lvlTransitionInfo.loadType
                             );
                     }
+                    else if (App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter >= 3)
+                    {
+                        m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(0, 3);
+                        m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
+                        m_currentNode.lvlTransitionInfo.targetRoomIndex = 3;
+                        App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+                        Destroy(App.GetModule<LevelModule>().persistantSceneData._soundEmitter);
+                        App.GetModule<LevelModule>().persistantSceneData = new PersistantSceneData();
+
+                        App.GetModule<SceneModule>().SwitchScene(
+                        m_currentNode.lvlTransitionInfo.targetSceneName,
+                        m_currentNode.lvlTransitionInfo.transitionType,
+                        m_currentNode.lvlTransitionInfo.loadType
+                        );
+                    }
                     else
                     {
+                        App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
                         if (LastDirection == App.GetModule<LevelModule>().persistantSceneData._direction)
                         {
                             App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter++;
