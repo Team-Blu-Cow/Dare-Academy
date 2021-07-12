@@ -41,37 +41,53 @@ public class MisplacedForestManager : MonoBehaviour
         }
         else
         {
-            switch (Random.Range(0, 4))
-            {
-                case 0:
-                    App.GetModule<LevelModule>().persistantSceneData._direction = Vector2Int.down;
+            bool validDirection = false;
+            do
+                switch (Random.Range(0, 4))
+                {
+                    case 0:
+                        if (App.GetModule<LevelModule>().persistantSceneData._direction == Vector2Int.up)
+                            break;
 
-                    App.GetModule<LevelModule>().persistantSceneData._soundEmitter.transform.position = new Vector3(0, -App.GetModule<LevelModule>().CurrentRoom.Width / 2, 0);
-                    break;
+                        App.GetModule<LevelModule>().persistantSceneData._direction = Vector2Int.down;
 
-                case 1:
-                    App.GetModule<LevelModule>().persistantSceneData._direction = Vector2Int.left;
+                        App.GetModule<LevelModule>().persistantSceneData._soundEmitter.transform.position = new Vector3(0, -App.GetModule<LevelModule>().CurrentRoom.Width / 2, 0);
+                        validDirection = true;
+                        break;
 
-                    App.GetModule<LevelModule>().persistantSceneData._soundEmitter.transform.position = new Vector3(App.GetModule<LevelModule>().CurrentRoom.OriginPosition.x, 0, 0);
-                    break;
+                    case 1:
+                        if (App.GetModule<LevelModule>().persistantSceneData._direction == Vector2Int.right)
+                            break;
+                        App.GetModule<LevelModule>().persistantSceneData._direction = Vector2Int.left;
 
-                case 2:
-                    App.GetModule<LevelModule>().persistantSceneData._direction = Vector2Int.up;
+                        App.GetModule<LevelModule>().persistantSceneData._soundEmitter.transform.position = new Vector3(App.GetModule<LevelModule>().CurrentRoom.OriginPosition.x, 0, 0);
+                        validDirection = true;
+                        break;
 
-                    App.GetModule<LevelModule>().persistantSceneData._soundEmitter.transform.position = new Vector3(0, App.GetModule<LevelModule>().CurrentRoom.Height / 2, 0);
-                    break;
+                    case 2:
+                        if (App.GetModule<LevelModule>().persistantSceneData._direction == Vector2Int.down)
+                            break;
+                        App.GetModule<LevelModule>().persistantSceneData._direction = Vector2Int.up;
 
-                case 3:
-                    App.GetModule<LevelModule>().persistantSceneData._direction = Vector2Int.right;
+                        App.GetModule<LevelModule>().persistantSceneData._soundEmitter.transform.position = new Vector3(0, App.GetModule<LevelModule>().CurrentRoom.Height / 2, 0);
+                        validDirection = true;
+                        break;
 
-                    App.GetModule<LevelModule>().persistantSceneData._soundEmitter.transform.position = new Vector3(App.GetModule<LevelModule>().CurrentRoom.Width / 2, 0, 0);
-                    break;
+                    case 3:
+                        if (App.GetModule<LevelModule>().persistantSceneData._direction == Vector2Int.left)
+                            break;
+                        App.GetModule<LevelModule>().persistantSceneData._direction = Vector2Int.right;
 
-                default:
-                    App.GetModule<LevelModule>().persistantSceneData._direction = Vector2Int.zero;
-                    Debug.LogError("Invalid Misplaced Woods start direction");
-                    break;
-            }
+                        App.GetModule<LevelModule>().persistantSceneData._soundEmitter.transform.position = new Vector3(App.GetModule<LevelModule>().CurrentRoom.Width / 2, 0, 0);
+                        validDirection = true;
+                        break;
+
+                    default:
+                        App.GetModule<LevelModule>().persistantSceneData._direction = Vector2Int.zero;
+                        Debug.LogError("Invalid Misplaced Woods start direction");
+                        break;
+                }
+            while (!validDirection);
         }
     }
 }
