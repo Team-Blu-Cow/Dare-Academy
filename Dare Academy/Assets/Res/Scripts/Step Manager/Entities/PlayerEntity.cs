@@ -16,6 +16,9 @@ public class PlayerEntity : GridEntity
     [SerializeField] private PlayerAbilities m_abilities = new PlayerAbilities();
     [SerializeField] private bool m_abilityMode = false;
 
+    // if the scene switch has been triggered but the entity has not been destroyed
+    private bool m_sceneHasSwitched = false;
+
     public PlayerAbilities Abilities
     {
         get => m_abilities;
@@ -158,7 +161,8 @@ public class PlayerEntity : GridEntity
         {
             SetMovementDirection(m_moveDirection, 1);
             m_moveDirection = Vector2Int.zero;
-            App.GetModule<LevelModule>().StepController.ExecuteStep();
+            if (!m_sceneHasSwitched)
+                App.GetModule<LevelModule>().StepController.ExecuteStep();
         }
     }
 
@@ -230,6 +234,7 @@ public class PlayerEntity : GridEntity
         {
             if (m_currentNode.overrideType == NodeOverrideType.SceneConnection)
             {
+                m_sceneHasSwitched = true;
                 App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
                 // transition to a new scene
                 App.GetModule<SceneModule>().SwitchScene(
@@ -241,16 +246,44 @@ public class PlayerEntity : GridEntity
 
             if (m_currentNode.overrideType == NodeOverrideType.LostWoodsConnection)
             {
+                m_sceneHasSwitched = true;
                 // check lost woods count
+                if (!App.GetModule<LevelModule>().persistantSceneData._switching)
+                {
+                    App.GetModule<LevelModule>().persistantSceneData._switching = true;
+                    App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
 
-                // if (count >= 0)
-                //App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-                // transition to a new scene
-                //App.GetModule<SceneModule>().SwitchScene(
-                //    m_currentNode.lvlTransitionInfo.targetSceneName,
-                //    m_currentNode.lvlTransitionInfo.transitionType,
-                //    m_currentNode.lvlTransitionInfo.loadType
-                //    );
+                    if (App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter == 0 && LastDirection == Vector2Int.down)
+                    {
+                        Destroy(App.GetModule<LevelModule>().persistantSceneData._soundEmitter);
+                        App.GetModule<LevelModule>().persistantSceneData = new PersistantSceneData();
+
+                        App.GetModule<SceneModule>().SwitchScene(
+                            "Crashsite Top",
+                            m_currentNode.lvlTransitionInfo.transitionType,
+                            m_currentNode.lvlTransitionInfo.loadType
+                            );
+                    }
+                    else
+                    {
+                        if (LastDirection == App.GetModule<LevelModule>().persistantSceneData._direction)
+                        {
+                            App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter++;
+                            Debug.Log(App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter);
+                        }
+                        else
+                        {
+                            App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter = 0;
+                            Debug.Log(App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter);
+                        }
+
+                        App.GetModule<SceneModule>().SwitchScene(
+                        m_currentNode.lvlTransitionInfo.targetSceneName,
+                        m_currentNode.lvlTransitionInfo.transitionType,
+                        m_currentNode.lvlTransitionInfo.loadType
+                        );
+                    }
+                }
             }
         }
 

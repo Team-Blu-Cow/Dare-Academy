@@ -13,12 +13,14 @@ public abstract class GridEntity : MonoBehaviour
     // MEMBERS ************************************************************************************
     private Vector2Int m_movementDirection;
 
-    [SerializeField] protected int m_mass       = 2;
-    protected int m_baseSpeed                   = 1;
-    private int m_speed                         = 1;
-    protected int m_health                      = 1;
-    private int m_stepsTaken                    = 0;
-    private bool m_failedAttemptToSwitchRoom    = false;
+    private Vector2Int m_lastMovementDiretion = Vector2Int.zero;
+
+    [SerializeField] protected int m_mass = 2;
+    protected int m_baseSpeed = 1;
+    private int m_speed = 1;
+    protected int m_health = 1;
+    private int m_stepsTaken = 0;
+    private bool m_failedAttemptToSwitchRoom = false;
 
     protected int m_roomIndex = 0;
 
@@ -26,6 +28,7 @@ public abstract class GridEntity : MonoBehaviour
     protected GridEntityInternalFlags m_internalFlags = new GridEntityInternalFlags();
 
     public Vector2Int Direction => m_movementDirection;
+    public Vector2Int LastDirection => m_lastMovementDiretion;
 
     public int Mass { get { return m_mass; } set { m_mass = value; } }
     public int Speed { get { return m_speed; } }
@@ -158,6 +161,11 @@ public abstract class GridEntity : MonoBehaviour
 
     public void MoveStep()
     {
+        if (m_movementDirection != Vector2Int.zero)
+        {
+            m_lastMovementDiretion = m_movementDirection;
+        }
+
         // set our target node based on our m_moveDirection
         // this should be set within the analysis step
         SetTargetNode(m_movementDirection);
@@ -267,7 +275,7 @@ public abstract class GridEntity : MonoBehaviour
         // every object that is contained within losing_objects either returns to its starting point or is pushed by the sole remaining object in winning_objects
 
         List<GridEntity> winning_objects; // everything
-        List<GridEntity> losing_objects= new List<GridEntity>();
+        List<GridEntity> losing_objects = new List<GridEntity>();
 
         winning_objects = GetEntitiesOnNode(m_currentNode);
 
@@ -837,7 +845,7 @@ public abstract class GridEntity : MonoBehaviour
 
     public IEnumerator AnimateActions()
     {
-        float animTime = m_stepController.stepTime/ m_actionList.Count;
+        float animTime = m_stepController.stepTime / m_actionList.Count;
 
         int count = m_actionList.Count;
 
@@ -880,9 +888,9 @@ public abstract class GridEntity : MonoBehaviour
         {
             currentTime += Time.deltaTime;
 
-            float xx = Mathf.Lerp(startPos.x, endPos.x, currentTime/animTime);
-            float yy = Mathf.Lerp(startPos.y, endPos.y, currentTime/animTime);
-            float zz = Mathf.Lerp(startPos.z, endPos.z, currentTime/animTime);
+            float xx = Mathf.Lerp(startPos.x, endPos.x, currentTime / animTime);
+            float yy = Mathf.Lerp(startPos.y, endPos.y, currentTime / animTime);
+            float zz = Mathf.Lerp(startPos.z, endPos.z, currentTime / animTime);
             transform.position = new Vector3(xx, yy, zz);
 
             yield return null;
@@ -900,9 +908,9 @@ public abstract class GridEntity : MonoBehaviour
         {
             currentTime += Time.deltaTime;
 
-            float xx = Mathf.Lerp(startPos.x, endPos.x, currentTime/stepTime);
-            float yy = Mathf.Lerp(startPos.y, endPos.y, currentTime/stepTime);
-            float zz = Mathf.Lerp(startPos.z, endPos.z, currentTime/stepTime);
+            float xx = Mathf.Lerp(startPos.x, endPos.x, currentTime / stepTime);
+            float yy = Mathf.Lerp(startPos.y, endPos.y, currentTime / stepTime);
+            float zz = Mathf.Lerp(startPos.z, endPos.z, currentTime / stepTime);
             transform.position = new Vector3(xx, yy, zz);
 
             yield return null;
@@ -915,7 +923,7 @@ public abstract class GridEntity : MonoBehaviour
 
     public void AddAnimationAction(GridNodePosition position, ActionTypes type, string animationName)
     {
-        GridEnityAction action  = new GridEnityAction();
+        GridEnityAction action = new GridEnityAction();
         action.position = position;
         action.type = type;
         action.animationName = animationName;
@@ -1105,7 +1113,7 @@ public abstract class GridEntity : MonoBehaviour
 
             Vector3 spawnPosition = spawnNode.position.world;
 
-            GameObject obj = GameObject.Instantiate(prefab, spawnPosition, Quaternion.identity) ;
+            GameObject obj = GameObject.Instantiate(prefab, spawnPosition, Quaternion.identity);
             if (obj)
             {
                 BulletEntity bullet = obj.GetComponent<BulletEntity>();
