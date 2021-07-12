@@ -11807,9 +11807,9 @@ MonoBehaviour:
       drawGrid: 1
       drawGridOutlineColour: {r: 1, g: 1, b: 1, a: 1}
       drawGridColour: {r: 1, g: 1, b: 1, a: 0.1}
-      drawNodes: 1
+      drawNodes: 0
       drawOverWrittenNodes: 1
-      drawNodeConnections: 1
+      drawNodeConnections: 0
       showPathfindTime: 0
       showGridGenerationTime: 0
 --- !u!4 &710934676

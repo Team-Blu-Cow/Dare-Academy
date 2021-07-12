@@ -117,7 +117,7 @@ public abstract class GridEntity : MonoBehaviour
         m_stepController.RoomChangeEvent -= RoomChange;
     }
 
-    protected void OnValidate()
+    protected virtual void OnValidate()
     {
         m_animationController = GetComponent<GridEntityAnimationController>();
     }
@@ -450,6 +450,18 @@ public abstract class GridEntity : MonoBehaviour
                 }
             }
         }
+
+        const interalFlags fl =
+            interalFlags.refectBullets_N |
+            interalFlags.refectBullets_E |
+            interalFlags.refectBullets_S |
+            interalFlags.refectBullets_W |
+            interalFlags.refectBullets_NE |
+            interalFlags.refectBullets_NW |
+            interalFlags.refectBullets_SE |
+            interalFlags.refectBullets_SW ;
+
+        m_internalFlags.SetFlags(fl, false);
 
         if (isDead)
         {
@@ -942,6 +954,12 @@ public abstract class GridEntity : MonoBehaviour
 
     // HELPER METHODS *****************************************************************************
 
+    protected void UpdateTransform()
+    {
+        if (m_currentNode != null)
+            transform.position = m_currentNode.position.world;
+    }
+
     virtual public void RoomChange()
     {
         if (m_roomIndex == m_stepController.m_currentRoomIndex)
@@ -966,7 +984,7 @@ public abstract class GridEntity : MonoBehaviour
             RemoveFromCurrentNode();
             m_currentNode = m_startingNode;
             AddToCurrentNode();
-            transform.position = m_currentNode.position.world;
+            UpdateTransform();
         }
     }
 
@@ -1112,7 +1130,45 @@ public abstract class GridEntity : MonoBehaviour
         return false;
     }
 
-    private void OnDrawGizmos()
+    public bool ShouldReflectBullet(Vector2Int incomingDirection)
+    {
+        if (m_flags.IsFlagsSet(flags.refectAllBullets))
+        { return true; }
+
+        if (m_internalFlags.IsFlagsSet(interalFlags.refectBullets_S) && incomingDirection == Vector2Int.up)
+        { return true; }
+
+        if (m_internalFlags.IsFlagsSet(interalFlags.refectBullets_W) && incomingDirection == Vector2Int.right)
+        { return true; }
+
+        if (m_internalFlags.IsFlagsSet(interalFlags.refectBullets_E) && incomingDirection == Vector2Int.left)
+        { return true; }
+
+        if (m_internalFlags.IsFlagsSet(interalFlags.refectBullets_N) && incomingDirection == Vector2Int.down)
+        { return true; }
+
+        Vector2Int vec = new Vector2Int();
+
+        vec.x = 1; vec.y = 1;
+        if (m_internalFlags.IsFlagsSet(interalFlags.refectBullets_SW) && incomingDirection == vec)
+        { return true; }
+
+        vec.x = -1; vec.y = 1;
+        if (m_internalFlags.IsFlagsSet(interalFlags.refectBullets_SE) && incomingDirection == vec)
+        { return true; }
+
+        vec.x = 1; vec.y = -1;
+        if (m_internalFlags.IsFlagsSet(interalFlags.refectBullets_NW) && incomingDirection == vec)
+        { return true; }
+
+        vec.x = -1; vec.y = -1;
+        if (m_internalFlags.IsFlagsSet(interalFlags.refectBullets_NE) && incomingDirection == vec)
+        { return true; }
+
+        return false;
+    }
+
+    protected virtual void OnDrawGizmos()
     {
         Gizmos.color = Color.white;
 

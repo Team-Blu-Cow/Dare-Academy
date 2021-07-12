@@ -8,6 +8,8 @@ public class BulletEntity : GridEntity
     public Vector2Int m_bulletDirection = Vector2Int.zero;
     public int m_damage = 1;
 
+    private bool m_passthrough = false;
+
     protected override void Start()
     {
         base.Start();
@@ -16,22 +18,32 @@ public class BulletEntity : GridEntity
         m_animationController = GetComponent<GridEntityAnimationController>();
     }
 
+    public override bool CheckForConflict()
+    {
+        if (m_passthrough)
+            return true;
+
+        return base.CheckForConflict();
+    }
+
     public override void ResolvePassThroughStep()
     {
         if (CheckForPassThrough())
         {
             if (m_currentNode != null && m_previousNode != null)
             {
-                m_currentNode.RemoveEntity(this);
-                m_previousNode = m_currentNode;
-                m_currentNode.AddEntity(this);
+                m_passthrough = true;
+                RemoveFromCurrentNode();
+                m_currentNode = m_previousNode;
+                AddToCurrentNode();
+
+                TryReflectBullet();
             }
         }
     }
 
     public override void ResolveMoveStep()
     {
-        return;
     }
 
     public override void AnalyseStep()
@@ -48,6 +60,8 @@ public class BulletEntity : GridEntity
 
     public override void DamageStep()
     {
+        TryReflectBullet();
+
         List<GridEntity> entities =  GetEntitiesOnNode(m_currentNode);
         foreach (GridEntity entity in entities)
         {
@@ -56,8 +70,44 @@ public class BulletEntity : GridEntity
         }
     }
 
+    public override void EndStep()
+    {
+        m_passthrough = false;
+        base.EndStep();
+    }
+
     public override void RoomChange()
     {
         CleanUp();
+    }
+
+    protected void TryReflectBullet()
+    {
+        List<GridEntity> entities = GetEntitiesOnNode(m_currentNode);
+        if (entities.Count == 1) // if not wait until next loop
+        {
+            if (entities[0].ShouldReflectBullet(m_bulletDirection))
+            {
+                m_bulletDirection = -m_bulletDirection;
+                GridNode node = m_currentNode.GetNeighbour(m_bulletDirection);
+
+                RemoveFromCurrentNode();
+                m_currentNode = node;
+                AddToCurrentNode();
+                m_previousNode = null;
+
+                // animation for successful bullet reflection
+                AddAnimationAction(ActionTypes.MOVE, "");
+            }
+            m_passthrough = false;
+        }
+    }
+
+    protected override void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+
+        // Vector2 rayVec = new Vector2(m_bulletDirection.x, m_bulletDirection.y);
+        Gizmos.DrawWireSphere(transform.position, 1);
     }
 }

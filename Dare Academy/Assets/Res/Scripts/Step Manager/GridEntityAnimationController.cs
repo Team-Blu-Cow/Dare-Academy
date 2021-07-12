@@ -8,16 +8,15 @@ using JUtil;
 [RequireComponent(typeof(Animator))]
 public class GridEntityAnimationController : MonoBehaviour
 {
-    [SerializeField] protected Animator m_animator;
-    [SerializeField] protected GameObject m_sprite;
-    [SerializeField] protected GameObject m_spriteHead;
-    [SerializeField] protected SpriteRenderer m_spriteRendererHead;
+    [SerializeField, HideInInspector] protected Animator m_animator;
+    [SerializeField, HideInInspector] protected GameObject m_sprite;
+    [SerializeField, HideInInspector] protected GameObject m_spriteHead;
     [SerializeField] protected bool m_hasHead = false;
-    [SerializeField] protected List<Sprite> m_headSprites;
+
+    protected List<Animator> m_animators;
 
     float m_xScale = 1;
-
-    public float animatorSpeed;
+    float animatorSpeed;
 
     protected virtual void OnValidate()
     {
@@ -41,7 +40,7 @@ public class GridEntityAnimationController : MonoBehaviour
             m_sprite.AddComponent<SpriteRenderer>();
 
             m_sprite.transform.parent = this.transform;
-            m_sprite.transform.position = Vector3.zero;
+            m_sprite.transform.localPosition = Vector3.zero;
         }
 
         if(m_hasHead)
@@ -65,9 +64,7 @@ public class GridEntityAnimationController : MonoBehaviour
                 m_spriteHead.AddComponent<SpriteRenderer>();
 
                 m_spriteHead.transform.parent = this.transform;
-                m_spriteHead.transform.position = Vector3.zero;
-
-                m_spriteRendererHead = m_spriteHead.GetComponent<SpriteRenderer>();
+                m_spriteHead.transform.localPosition = Vector3.zero;
             }
         }
     }
@@ -78,16 +75,16 @@ public class GridEntityAnimationController : MonoBehaviour
         m_animator.speed = animatorSpeed;
     }
 
-    public virtual void PlayAnimation(string animationName, float time)
+    public virtual void PlayAnimation(string animationName, float time, int layer = -1)
     {
         if (m_animator.runtimeAnimatorController == null)
             return;
 
-        if (!m_animator.HasState(0, Animator.StringToHash(animationName)))
+        if (!m_animator.HasState((layer == -1)?0:layer, Animator.StringToHash(animationName)))
             return;
         m_animator.speed = 1f/time;
 
-        m_animator.Play(animationName, -1, 0f);
+        m_animator.Play(animationName, layer, 0f);
     }
 
     public virtual void SetDirection(Vector2Int dir) => SetDirection(dir.x, dir.y);
@@ -99,14 +96,11 @@ public class GridEntityAnimationController : MonoBehaviour
 
     public virtual void SetHeadDirection(float x, float y)
     {
-        if (m_hasHead == false || m_spriteHead == null || m_spriteRendererHead == null || m_headSprites == null || m_headSprites.Count < 3)
+        if (m_hasHead == false || m_animator == null || m_animator.runtimeAnimatorController == null)
             return;
 
-        Vector2 dir = new Vector2(x,y);
-
-        int angle = dir.RotationToIndex(90);
-
-        m_spriteRendererHead.sprite = m_headSprites[angle];
+        m_animator.SetFloat("HeadDirX", x);
+        m_animator.SetFloat("HeadDirY", y);
     }
 
     protected virtual void Update()

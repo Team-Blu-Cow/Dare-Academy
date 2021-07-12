@@ -4,6 +4,7 @@ using UnityEngine;
 using blu;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 using flags = GridEntityFlags.Flags;
 using interalFlags = GridEntityInternalFlags.Flags;
@@ -40,9 +41,7 @@ public class PlayerEntity : GridEntity
 
     private int m_dashEnergyCost = 3;
     private int m_shootEnergyCost = 3;
-#pragma warning disable  CS0414// variable assigned but never used
     private int m_blockEnergyCost = 3;
-#pragma warning restore  CS0414
 
     // OTHER
 
@@ -53,8 +52,21 @@ public class PlayerEntity : GridEntity
     private Vector2Int m_moveDirection = Vector2Int.zero;
     private Vector2Int m_abilityDirection = Vector2Int.zero;
     private Vector2Int m_inputDirection = Vector2Int.zero;
+    private bool m_wasdPressed = false;
 
-    protected void OnValidate()
+    private enum ActiveInputs
+    {
+        _None,
+        North,
+        East,
+        South,
+        West
+    }
+
+    // stack of what order keys were pressed in
+    private Stack<ActiveInputs> m_activeInputStack = new Stack<ActiveInputs>();
+
+    protected override void OnValidate()
     {
         base.OnValidate();
         m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet");
@@ -108,6 +120,92 @@ public class PlayerEntity : GridEntity
 
     protected void Update()
     {
+        // fill stack with which keys are pressed
+        if (m_wasdPressed)
+        {
+            Vector2 vec2 = input.Move.Direction.ReadValue<Vector2>();
+            Vector2Int vec2I = new Vector2Int(Mathf.RoundToInt(vec2.x), Mathf.RoundToInt(vec2.y));
+
+            if (vec2I.x == 1)
+            {
+                if (!m_activeInputStack.Contains(ActiveInputs.East))
+                {
+                    m_activeInputStack.Push(ActiveInputs.East);
+                }
+            }
+
+            if (vec2I.x == -1)
+            {
+                if (!m_activeInputStack.Contains(ActiveInputs.West))
+                {
+                    m_activeInputStack.Push(ActiveInputs.West);
+                }
+            }
+
+            if (vec2I.y == 1)
+            {
+                if (!m_activeInputStack.Contains(ActiveInputs.North))
+                {
+                    m_activeInputStack.Push(ActiveInputs.North);
+                }
+            }
+
+            if (vec2I.y == -1)
+            {
+                if (!m_activeInputStack.Contains(ActiveInputs.South))
+                {
+                    m_activeInputStack.Push(ActiveInputs.South);
+                }
+            }
+
+            while (m_activeInputStack.Count > 0)
+            {
+                if (vec2I.x != 1 && m_activeInputStack.Peek() == ActiveInputs.East)
+                { m_activeInputStack.Pop(); continue; }
+                if (vec2I.x != -1 && m_activeInputStack.Peek() == ActiveInputs.West)
+                { m_activeInputStack.Pop(); continue; }
+                if (vec2I.y != 1 && m_activeInputStack.Peek() == ActiveInputs.North)
+                { m_activeInputStack.Pop(); continue; }
+                if (vec2I.y != -1 && m_activeInputStack.Peek() == ActiveInputs.South)
+                { m_activeInputStack.Pop(); continue; }
+
+                break;
+            }
+        }
+        else
+        {
+            m_activeInputStack.Clear();
+        }
+
+        // set m_inputDirection
+        if (m_activeInputStack.Count > 0)
+        {
+            if (m_activeInputStack.Peek() == ActiveInputs.North)
+            { m_inputDirection = Vector2Int.up; }
+            if (m_activeInputStack.Peek() == ActiveInputs.East)
+            { m_inputDirection = Vector2Int.right; }
+            if (m_activeInputStack.Peek() == ActiveInputs.South)
+            { m_inputDirection = Vector2Int.down; }
+            if (m_activeInputStack.Peek() == ActiveInputs.West)
+            { m_inputDirection = Vector2Int.left; }
+        }
+        else
+        {
+            m_inputDirection = Vector2Int.zero;
+        }
+
+        if (m_abilityMode)
+        {
+            float headX = 0;
+            float headY = 0;
+            if (Mathf.Abs(m_inputDirection.x) > Mathf.Abs(m_inputDirection.y))
+                headX = m_inputDirection.x;
+            else
+                headY = m_inputDirection.y;
+
+            m_animationController.SetHeadDirection(headX, headY);
+        }
+
         if (m_abilityMode)
         {
             m_moveDirection = Vector2Int.zero;
@@ -142,6 +240,23 @@ public class PlayerEntity : GridEntity
             }
         }
 
+        if (Abilities.GetActiveAbility() == AbilityEnum.Block && !m_abilityMode && m_abilityDirection != Vector2Int.zero)
+        {
+            if (Block())
+            {
+                SetMovementDirection(Vector2Int.zero, 0);
+                m_abilityDirection = Vector2Int.zero;
+                m_moveDirection = Vector2Int.zero;
+                App.GetModule<LevelModule>().StepController.ExecuteStep();
+            }
+            else
+            {
+                // failed to dash, no enough energy
+                // TODO @matthew/@adam - sound effect here
+                m_abilityDirection = Vector2Int.zero;
+            }
+        }
+
         if (m_moveDirection != Vector2Int.zero)
         {
             SetMovementDirection(m_moveDirection, 1);
@@ -159,27 +274,12 @@ public class PlayerEntity : GridEntity
 
     protected void WASDPressed(InputAction.CallbackContext context)
     {
-        Vector2 vec2 = context.ReadValue<Vector2>();
-        m_inputDirection = new Vector2Int(Mathf.RoundToInt(vec2.x), Mathf.RoundToInt(vec2.y));
-
-        if (m_abilityMode)
-        {
-            float headX = 0;
-            float headY = 0;
-            if (Mathf.Abs(m_inputDirection.x) > Mathf.Abs(m_inputDirection.y))
-                headX = m_inputDirection.x;
-            else
-                headY = m_inputDirection.y;
-
-            m_animationController.SetHeadDirection(headX, headY);
-        }
+        m_wasdPressed = true;
     }
 
     protected void WASDReleased(InputAction.CallbackContext context)
     {
-        m_inputDirection = Vector2Int.zero;
-        m_moveDirection = Vector2Int.zero;
-        SetMovementDirection(Vector2Int.zero);
+        m_wasdPressed = false;
     }
 
     protected void ToggleAbilityMode(InputAction.CallbackContext context) => m_abilityMode = !m_abilityMode;
@@ -237,10 +337,9 @@ public class PlayerEntity : GridEntity
                 {
                     App.GetModule<LevelModule>().persistantSceneData._switching = true;
 
-                    App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-
                     if (App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter == 0 && LastDirection == Vector2Int.down)
                     {
+                        App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
                         Destroy(App.GetModule<LevelModule>().persistantSceneData._soundEmitter);
                         App.GetModule<LevelModule>().persistantSceneData = new PersistantSceneData();
 
@@ -250,8 +349,24 @@ public class PlayerEntity : GridEntity
                             m_currentNode.lvlTransitionInfo.loadType
                             );
                     }
+                    else if (App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter >= 3)
+                    {
+                        m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(0, 3);
+                        m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
+                        m_currentNode.lvlTransitionInfo.targetRoomIndex = 3;
+                        App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+                        Destroy(App.GetModule<LevelModule>().persistantSceneData._soundEmitter);
+                        App.GetModule<LevelModule>().persistantSceneData = new PersistantSceneData();
+
+                        App.GetModule<SceneModule>().SwitchScene(
+                        m_currentNode.lvlTransitionInfo.targetSceneName,
+                        m_currentNode.lvlTransitionInfo.transitionType,
+                        m_currentNode.lvlTransitionInfo.loadType
+                        );
+                    }
                     else
                     {
+                        App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
                         if (LastDirection == App.GetModule<LevelModule>().persistantSceneData._direction)
                         {
                             App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter++;
@@ -316,7 +431,7 @@ public class PlayerEntity : GridEntity
         App.GetModule<SceneModule>().SwitchScene(SceneManager.GetActiveScene().name, TransitionType.LRSweep);
     }
 
-    private void OnDrawGizmos()
+    protected override void OnDrawGizmos()
     {
         if (m_abilityDirection != Vector2.zero)
         {
@@ -371,6 +486,60 @@ public class PlayerEntity : GridEntity
                 return true;
             }
         }
+        return false;
+    }
+
+    private bool Block()
+    {
+        if (Energy >= m_blockEnergyCost)
+        {
+            if (m_abilityDirection != Vector2.zero)
+            {
+                Energy -= m_blockEnergyCost;
+
+                System.Func<Vector2Int, interalFlags, bool> BlockCheckDirectionAndSetFlag = (vec, flag) =>
+                {
+                    if(vec == m_abilityDirection)
+                    {
+                        m_internalFlags.SetFlags(flag, true);
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                };
+
+                if (BlockCheckDirectionAndSetFlag(Vector2Int.up, interalFlags.refectBullets_N))
+                { return true; }
+
+                if (BlockCheckDirectionAndSetFlag(Vector2Int.right, interalFlags.refectBullets_E))
+                { return true; }
+
+                if (BlockCheckDirectionAndSetFlag(Vector2Int.down, interalFlags.refectBullets_S))
+                { return true; }
+
+                if (BlockCheckDirectionAndSetFlag(Vector2Int.left, interalFlags.refectBullets_W))
+                { return true; }
+
+                Vector2Int vecDir = new Vector2Int(1,1);
+                if (BlockCheckDirectionAndSetFlag(vecDir, interalFlags.refectBullets_NE))
+                { return true; }
+
+                vecDir = new Vector2Int(-1, 1);
+                if (BlockCheckDirectionAndSetFlag(vecDir, interalFlags.refectBullets_NW))
+                { return true; }
+
+                vecDir = new Vector2Int(1, -1);
+                if (BlockCheckDirectionAndSetFlag(vecDir, interalFlags.refectBullets_SE))
+                { return true; }
+
+                vecDir = new Vector2Int(-1, -1);
+                if (BlockCheckDirectionAndSetFlag(vecDir, interalFlags.refectBullets_SW))
+                { return true; }
+            }
+        }
+
         return false;
     }
 }

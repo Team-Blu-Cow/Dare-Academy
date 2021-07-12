@@ -7,121 +7,104 @@ using JUtil;
 public class EightDirectionalEntity : GridEntity
 {
     [Header("Attack attributes")]
-    [SerializeField] private int m_attackSpeed = 3;
 
-    [SerializeField] private bool isFiringHorizontal = true;
-    [SerializeField] private int agroRange = 5;
-    private int m_attackCounter = 0;
-    private bool isAttacking = false;
-    private Vector2[] telegraphPos = { new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0) };
+    [SerializeField] private int m_attackSpeed = 3; // How often the entity fires bullets
+    [SerializeField] private bool isFiringHorizontal = true; // Boolean for if the entity is firing horizontally or diagonally
+    [SerializeField] private int agroRange = 5; // Variable which controls when the entity starts firing
+    private int m_attackCounter = 0; // Cooldown timer for after firing bullets
+    private bool isAttacking = false; // Boolean for whether the entity is firing or not
+    private Vector2[] telegraphPos = { new Vector2(0,0), new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0)}; // Positions for telegraphing where the entity is going to spawn bullets in the next step
+
 
     [Header("Resources needed")]
-    [SerializeField] private GameObject m_bulletPrefab = null;
-
-    [SerializeField] private GridEntity player;
+    [SerializeField] private GameObject m_bulletPrefab = null; // Bullet prefab for spawning
+    [SerializeField] private GridEntity player; // Player to figure out how close they are to the entity (for agro range check)
 
     protected override void Start()
     {
-        base.Start();
-        m_health = 5;
-        m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true);
-        m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true);
+        base.Start(); // Run base start
+        m_health = 5; // Set health to 5
+        m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true); // Set flag for killable to true
+        m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true); // Set flag for if solid to true
     }
 
     public void OnValidate()
     {
-        m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet");
-        player = GameObject.Find("Green").GetComponent<PlayerEntity>();
+        m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet"); // Find the bullet prefab
+        player = GameObject.Find("Green").GetComponent<PlayerEntity>(); // Find the player // WILL NEED TO CHANGE TO PROPER NAME 
     }
 
     public override void AnalyseStep()
     {
-        base.AnalyseStep();
+        base.AnalyseStep(); // Run base function
 
-        Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, player.transform.position);
+        Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, player.transform.position); // Find path to player
 
-        if (path != null)
-        {
-            if (path.Length < agroRange)
+
+        if (path.Length < agroRange) // If the player is within agro range
+        {                
+            if (m_attackCounter >= m_attackSpeed) //  If the cooldown has expired
             {
-                if (m_attackCounter >= m_attackSpeed)
-                {
-                    isAttacking = true;
-                    TelegraphAttack();
-                }
+                isAttacking = true; // Set attacking to true
+                TelegraphAttack(); // Telegraph the attacking position
             }
         }
     }
 
     public override void AttackStep()
     {
-        m_attackCounter++;
-        if (isAttacking == true)
+        m_attackCounter++; // Increment cooldown
+        if (isAttacking == true) // If the entity is meant to be attacking
         {
-            if (m_attackCounter >= m_attackSpeed)
+            if (m_attackCounter >= m_attackSpeed) // IF the cooldown has expired
             {
-                TelegraphAttack();
-                SpawnBullets();
-                m_attackCounter = 0;
+                TelegraphAttack(); // Telegraph the attacking positions
+                SpawnBullets(); // Spawn the bullets
+                m_attackCounter = 0; // Reset cooldown
             }
-            isAttacking = false;
+            isAttacking = false; // Set attacking to false
         }
     }
 
     private void TelegraphAttack()
     {
-        Vector2Int[] m_attackDirections;
-        if (isFiringHorizontal)
-        {
-            m_attackDirections = new Vector2Int[] { new Vector2Int(-1, 0), new Vector2Int(0, -1), new Vector2Int(1, 0), new Vector2Int(0, 1) };
-        }
-        else
-        {
-            m_attackDirections = new Vector2Int[] { new Vector2Int(-1, 1), new Vector2Int(1, -1), new Vector2Int(1, 1), new Vector2Int(-1, -1) };
-        }
+        Vector2Int[] m_attackDirections = GetAttackDirections(); // Find the attack directions by calling a function
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++) // Loop four times (each direction)
         {
-            if (m_currentNode.GetNeighbour(m_attackDirections[i]) != null)
+            if (m_currentNode.GetNeighbour(m_attackDirections[i]) != null) // If the grid neighbour is not a wall then it is fine to spawn a bullet
             {
-                telegraphPos[i] = m_currentNode.GetNeighbour(m_attackDirections[i]).position.world;
+                telegraphPos[i] = m_currentNode.GetNeighbour(m_attackDirections[i]).position.world; // Set the telegraph position to whatever the position of that node is
             }
         }
     }
 
     protected bool SpawnBullets()
     {
-        if (m_bulletPrefab)
+        if (m_bulletPrefab) // If the bullet prefab exists in the right location in resources
         {
-            Vector2Int[] m_attackDirections;
-            if (isFiringHorizontal)
-            {
-                m_attackDirections = new Vector2Int[] { new Vector2Int(-1, 0), new Vector2Int(0, -1), new Vector2Int(1, 0), new Vector2Int(0, 1) };
-            }
-            else
-            {
-                m_attackDirections = new Vector2Int[] { new Vector2Int(-1, 1), new Vector2Int(1, -1), new Vector2Int(1, 1), new Vector2Int(-1, -1) };
-            }
+            Vector2Int[] m_attackDirections = GetAttackDirections(); // Get the attacking directions
 
-            for (int j = 0; j < 4; j++)
+            for (int j = 0; j < 4; j++) // Loop for each direction 
             {
-                Vector3 spawnPosition;
-                if (m_currentNode.GetNeighbour(m_attackDirections[j]) != null)
+                Vector3 spawnPosition; // Declare spawn position variable
+                if (m_currentNode.GetNeighbour(m_attackDirections[j]) != null) // If the node where the bullet is meant to spawn is not a wall 
                 {
-                    spawnPosition = m_currentNode.GetNeighbour(m_attackDirections[j]).position.world;
-                    GameObject obj = GameObject.Instantiate(m_bulletPrefab, spawnPosition, Quaternion.identity);
 
-                    if (obj)
+                    spawnPosition = m_currentNode.GetNeighbour(m_attackDirections[j]).position.world; // Set the bullet's spawn position to the current attacking directions's grid node
+                    GameObject obj = GameObject.Instantiate(m_bulletPrefab, spawnPosition, Quaternion.identity); // Spawn the bullet
+
+                    if (obj) // If the bullet exists
                     {
-                        BulletEntity bullet = obj.GetComponent<BulletEntity>();
-                        if (bullet)
+                        BulletEntity bullet = obj.GetComponent<BulletEntity>(); // Get the bullet entity script from the game object
+                        if (bullet) // If the script exists within the bullet game object
                         {
-                            bullet.m_bulletDirection = m_attackDirections[j];
+                            bullet.m_bulletDirection = m_attackDirections[j]; // Set the bullet's direction to the corresponding attack direction
 
-                            if (j == 3)
+                            if (j == 3) // If this is the last bullet to be spawned
                             {
-                                isFiringHorizontal = !isFiringHorizontal;
-                                return true;
+                                isFiringHorizontal = !isFiringHorizontal; // Change the firing direction
+                                return true; // Return true (Don't think this is needed anymore)
                             }
                         }
                     }
@@ -132,22 +115,38 @@ public class EightDirectionalEntity : GridEntity
         return false;
     }
 
+    private Vector2Int[] GetAttackDirections()
+    {
+        Vector2Int[] m_attackDirections; // Declare array for attack directions
+        if (isFiringHorizontal) // If the entity is meant to firing horizontally
+        {
+            m_attackDirections = new Vector2Int[] { new Vector2Int(-1, 0), new Vector2Int(0, -1), new Vector2Int(1, 0), new Vector2Int(0, 1) }; // Set the attacking directions to the corresponding 2D vectors
+            return m_attackDirections; // Return the newly made array
+        }
+        else // If firing diagonally
+        {
+            m_attackDirections = new Vector2Int[] { new Vector2Int(-1, 1), new Vector2Int(1, -1), new Vector2Int(1, 1), new Vector2Int(-1, -1) }; // Set the attacking directions to the corresponding 2D vectors
+            return m_attackDirections; // Return the newly made array
+        }
+    }
+
     private void OnDrawGizmos()
     {
-        for (int i = 0; i < 4; i++)
+        for(int i = 0; i < 4; i++) // Loop for all four firing directions
         {
-            if (telegraphPos[i] != new Vector2(0, 0))
+            if(telegraphPos[i] != new Vector2(0,0)) // If the telegraph position is essentially not null
             {
-                if (!isAttacking)
+                if(!isAttacking) // If the entity is not attacking
                 {
-                    Gizmos.color = new Color(0, 0, 0, 0);
+                    Gizmos.color = new Color(0, 0, 0, 0); // Do not set a visible color
                 }
-                else
+                else // If the entity is attacking
                 {
-                    Gizmos.color = new Color(Color.yellow.r, Color.yellow.g, Color.yellow.b, 0.25f);
+                    Gizmos.color = new Color(Color.yellow.r, Color.yellow.g, Color.yellow.b, 0.25f); // Set the drawing color to be a transparent yellow
                 }
+                
+                Gizmos.DrawCube(telegraphPos[i], new Vector3(1, 1, 1)); // Draw square at the correct coordinates using the telegraph positions vector array
 
-                Gizmos.DrawCube(telegraphPos[i], new Vector3(1, 1, 1));
             }
         }
     }

@@ -5475,7 +5475,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: adb6316043d28fe47a45f79b20858995, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  soundEmitter: {fileID: 0}
 --- !u!4 &1273448739
 Transform:
   m_ObjectHideFlags: 0
@@ -5649,7 +5648,7 @@ MonoBehaviour:
         myNodeIndex: {x: 17, y: 5}
         targetSceneName: Misplaced Forest
         targetRoomIndex: 0
-        targetNodeIndex: {x: 0, y: 8}
+        targetNodeIndex: {x: 1, y: 8}
         offsetVector: {x: 0, y: 0}
         offsetIndex: 0
         m_travelDirection: 2
@@ -5661,7 +5660,7 @@ MonoBehaviour:
         myNodeIndex: {x: 0, y: 8}
         targetSceneName: Misplaced Forest
         targetRoomIndex: 0
-        targetNodeIndex: {x: 17, y: 5}
+        targetNodeIndex: {x: 16, y: 5}
         offsetVector: {x: 0, y: 0}
         offsetIndex: 0
         m_travelDirection: 6
@@ -5673,7 +5672,7 @@ MonoBehaviour:
         myNodeIndex: {x: 7, y: 13}
         targetSceneName: Misplaced Forest
         targetRoomIndex: 0
-        targetNodeIndex: {x: 10, y: 0}
+        targetNodeIndex: {x: 10, y: 1}
         offsetVector: {x: 0, y: 0}
         offsetIndex: 0
         m_travelDirection: 0
@@ -5685,7 +5684,7 @@ MonoBehaviour:
         myNodeIndex: {x: 10, y: 0}
         targetSceneName: Misplaced Forest
         targetRoomIndex: 0
-        targetNodeIndex: {x: 7, y: 13}
+        targetNodeIndex: {x: 7, y: 12}
         offsetVector: {x: 0, y: 0}
         offsetIndex: 0
         m_travelDirection: 4

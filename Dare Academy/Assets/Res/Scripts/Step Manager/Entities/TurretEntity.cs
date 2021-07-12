@@ -33,7 +33,7 @@ public class TurretEntity : GridEntity
         {
             if (m_attackDirection != Vector2.zero)
             {
-                SpawnBullet(m_bulletPrefab, m_currentNode, m_attackDirection);
+               SpawnBullet(m_bulletPrefab, m_currentNode, m_attackDirection);
             }
 
             m_attackCounter = 0;
