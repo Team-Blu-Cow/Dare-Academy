@@ -510,8 +510,6 @@ namespace JUtil.Grids
             dropdown.width = 60;
             EditorGUI.IntField(dropdown, i);
 
-            
-
             gridDropdowns[i] = fold;
 
             if (fold)
