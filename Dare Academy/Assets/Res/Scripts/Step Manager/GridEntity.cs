@@ -882,7 +882,7 @@ public abstract class GridEntity : MonoBehaviour
 
         float currentTime = 0;
 
-        m_animationController.PlayAnimation(action.animationName, animTime);
+        m_animationController.PlayAnimation(action.animationName, animTime, action.animationLayer);
 
         while (currentTime < animTime)
         {
@@ -917,16 +917,17 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
-    public void AddAnimationAction(GridNode node, ActionTypes type, string animationName) => AddAnimationAction(node.position, type, animationName);
+    public void AddAnimationAction(GridNode node, ActionTypes type, string animationName, int layer = -1) => AddAnimationAction(node.position, type, animationName, layer);
 
-    public void AddAnimationAction(ActionTypes type, string animationName) => AddAnimationAction(m_currentNode.position, type, animationName);
+    public void AddAnimationAction(ActionTypes type, string animationName, int layer = -1) => AddAnimationAction(m_currentNode.position, type, animationName, layer);
 
-    public void AddAnimationAction(GridNodePosition position, ActionTypes type, string animationName)
+    public void AddAnimationAction(GridNodePosition position, ActionTypes type, string animationName, int layer = -1)
     {
         GridEnityAction action = new GridEnityAction();
         action.position = position;
         action.type = type;
         action.animationName = animationName;
+        action.animationLayer = layer;
         m_actionList.Add(action);
     }
 

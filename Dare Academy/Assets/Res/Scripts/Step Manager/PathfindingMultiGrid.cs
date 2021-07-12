@@ -356,6 +356,14 @@ public class PathfindingMultiGrid
 
                 for (int i = 0; i < link.width; i++)
                 {
+                    if(
+                        !gridInfo[link.grid1.index].NodeExistsAt(gridInfo[link.grid1.index].ToWorld(link.grid1.position) + (grid1Offset * i))
+                        || !gridInfo[link.grid2.index].NodeExistsAt(gridInfo[link.grid2.index].ToWorld(link.grid2.position) + (grid2Offset * i))
+                        )
+                    {
+                        Gizmos.color = Color.red;
+                    }
+
                     Gizmos.DrawSphere(
                         gridInfo[link.grid1.index].ToWorld(link.grid1.position) + (grid1Offset*i),
                         gridInfo[link.grid1.index].cellSize / 8
@@ -385,16 +393,9 @@ public class PathfindingMultiGrid
             }
         }
 
-        int count = 0;
         foreach (var link in nodeOverrides.sceneLinks)
         {
             Gizmos.color = Color.magenta;
-
-            if (gridInfo.Length < link.myRoomIndex)
-            {
-                count++;
-                continue;
-            }
 
             Vector2 gridOffset_2 = link.travelDirection.IndexToRotation().Rotate(90);
 
@@ -414,20 +415,8 @@ public class PathfindingMultiGrid
                         gizmoDirections[link.travelDirection] * 0.25f
                         );
                 }
-
-                /*for (int i = 0; i < nodeOverrides.sceneTransitionNodes.Count; i++)
-                {
-                    if (Application.isPlaying)
-                    {
-                        Gizmos.DrawSphere(
-                            nodeOverrides.sceneTransitionNodes[i].position.world + (gridOffset * i),
-                            gridInfo[link.myRoomIndex].cellSize / 8
-                            );
-                    }
-                }*/
             }
 
-            count++;
         }
 #endif
     }
@@ -602,10 +591,24 @@ public class GridInfo
     {
         Vector3 pos = originPosition;
 
-        if (x >= 0 && y >= 0 && x < width && y < height)
+        //if (x >= 0 && y >= 0 && x < width && y < height)
             pos = new Vector3(originPosition.x + x * cellSize, originPosition.y + y * cellSize, originPosition.z);
 
+        if (x < 0 || y < 0 || x >= width || y >= height)
+            UnityEngine.Debug.LogWarning("node outside of grid");
+
         return new Vector3(pos.x + (cellSize / 2), pos.y + (cellSize / 2), pos.z);
+    }
+
+    virtual public bool NodeExistsAt(Vector3 pos)
+    {
+        if (
+            pos.x < originPosition.x || pos.x >= width + originPosition.x ||    // x alignment
+            pos.y < originPosition.y || pos.y >= height + originPosition.y ||   // y alignment
+            Mathf.RoundToInt(pos.z) != originPosition.z                         // z alignment
+            )
+            return false;
+        return true;
     }
 
     public void DrawGizmos(Color drawGridColour, Color drawGridOutlineColour)

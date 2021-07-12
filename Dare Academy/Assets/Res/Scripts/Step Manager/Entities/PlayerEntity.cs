@@ -78,7 +78,7 @@ public class PlayerEntity : GridEntity
         Energy = MaxEnergy;
         Health = MaxHealth;
         m_abilities.Initialise();
-        base.OnValidate();
+        m_animationController = GetComponent<GridEntityAnimationController>();
     }
 
     private void OnEnable()
@@ -266,10 +266,35 @@ public class PlayerEntity : GridEntity
         }
     }
 
+    protected void SetAbilityAnimationFlag()
+    {
+        int animationFlag;
+
+        switch (m_abilities.GetActiveAbility())
+        {
+            case AbilityEnum.None:  animationFlag = 0; break;
+            case AbilityEnum.Shoot: animationFlag = 1; break;
+            case AbilityEnum.Dash:  animationFlag = 2; break;
+            case AbilityEnum.Block: animationFlag = 3; break;
+            default:                animationFlag = 0; break;
+        }
+
+
+        m_animationController.animator.SetInteger("AbilityState", animationFlag);
+    }
+
+    protected void SetAbilityAnimationFlag(int animationFlag)
+    {
+        m_animationController.animator.SetInteger("AbilityState", animationFlag);
+    }
+
     public override void AnalyseStep()
     {
         if (m_moveDirection != Vector2.zero)
             m_animationController.SetDirection(m_moveDirection.x, 1);
+
+        if (m_animationController != null)
+            SetAbilityAnimationFlag(0);
     }
 
     protected void WASDPressed(InputAction.CallbackContext context)
@@ -282,9 +307,18 @@ public class PlayerEntity : GridEntity
         m_wasdPressed = false;
     }
 
-    protected void ToggleAbilityMode(InputAction.CallbackContext context) => m_abilityMode = !m_abilityMode;
+    protected void ToggleAbilityMode(InputAction.CallbackContext context) 
+    {
+        m_abilityMode = !m_abilityMode;
 
-    protected void EnterAbilityMode(InputAction.CallbackContext context) => m_abilityMode = true;
+        SetAbilityAnimationFlag();
+    }
+
+    protected void EnterAbilityMode(InputAction.CallbackContext context) 
+    {
+        m_abilityMode = true;
+        SetAbilityAnimationFlag();
+    }
 
     protected void ExitAbilityMode(InputAction.CallbackContext context) => m_abilityMode = false;
 
@@ -296,11 +330,14 @@ public class PlayerEntity : GridEntity
     protected void CycleAbilityR(InputAction.CallbackContext context)
     {
         m_abilities.SetActiveAbility(m_abilities.RightAbility());
+
+        SetAbilityAnimationFlag();
     }
 
     protected void CycleAbilityL(InputAction.CallbackContext context)
     {
         m_abilities.SetActiveAbility(m_abilities.LeftAbility());
+        SetAbilityAnimationFlag();
     }
 
     public override void EndStep()
@@ -466,6 +503,10 @@ public class PlayerEntity : GridEntity
                     node = m_currentNode;
                 }
 
+                AddAnimationAction(ActionTypes.STATIC_ACTION, "Head Gun Fire", 1);
+                SetAbilityAnimationFlag(0);
+
+
                 if (SpawnBullet(m_bulletPrefab, node, m_abilityDirection))
                 {
                     Energy -= m_shootEnergyCost;
@@ -496,6 +537,9 @@ public class PlayerEntity : GridEntity
             if (m_abilityDirection != Vector2.zero)
             {
                 Energy -= m_blockEnergyCost;
+
+                AddAnimationAction(ActionTypes.STATIC_ACTION, "Head Shield Fire", 1);
+                SetAbilityAnimationFlag(0);
 
                 System.Func<Vector2Int, interalFlags, bool> BlockCheckDirectionAndSetFlag = (vec, flag) =>
                 {

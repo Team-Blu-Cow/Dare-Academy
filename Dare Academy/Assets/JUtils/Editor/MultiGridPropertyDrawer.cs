@@ -502,8 +502,15 @@ namespace JUtil.Grids
             //SerializedProperty gridNameProp = rootProperty.FindPropertyRelative("gridNames").GetArrayElementAtIndex(i);
             dropdown = GetSingleLineRect();
             dropdown.x += 10;
-            dropdown.width -= 10;
+            dropdown.width -= 42;
             EditorGUI.PropertyField(dropdown, namesProp, GUIContent.none);
+
+            dropdown = GetSingleLineRect();
+            dropdown.x += m_position.size.x - 60;
+            dropdown.width = 60;
+            EditorGUI.IntField(dropdown, i);
+
+            
 
             gridDropdowns[i] = fold;
 
