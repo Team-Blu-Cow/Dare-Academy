@@ -11,13 +11,20 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
 {
     private GridInfo[] m_gridInfo;
     private NodeOverrides<GridNode> m_links;
+
     private List<GameObject> m_squares = new List<GameObject>();
     private Vector2 m_movePos;
-    private RectTransform transform;
+    [SerializeField] private GameObject m_toolTip;
+
     private bool open = false;
+#pragma warning disable CS0108 // Member hides inherited member; missing new keyword
+    private RectTransform transform;
+#pragma warning restore CS0108 // Member hides inherited member; missing new keyword
 
     private void Start()
     {
+        App.GetModule<QuestModule>().AddQuest(Resources.Load<Quest>("Quests/TestQuest"));
+
         transform = GetComponent<RectTransform>();
     }
 
@@ -97,6 +104,8 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
 
             // The angle at witch the link shall sit
             float angle = Mathf.Atan2(linkEnd.y - linkStart.y, linkEnd.x - linkStart.x);
+            if (angle < 3 && angle > -3)
+                angle = 0;
 
             // Spawning the square
             GameObject tempLink = new GameObject("Link");
@@ -152,6 +161,39 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
             }
 
             m_squares.Add(tempLink);
+        }
+
+        foreach (Quest quest in App.GetModule<QuestModule>().ActiveQuests)
+        {
+            if (quest.showMarker)
+            {
+                GameObject Go = new GameObject(quest.name);
+                Image image = Go.AddComponent<Image>();
+                image.color = Color.green;
+
+                Go.transform.SetParent(transform);
+
+                RectTransform rect = (RectTransform)Go.transform;
+                rect.sizeDelta = Vector2.one;
+                rect.localScale = Vector3.one;
+
+                if (quest.markerLocations != null)
+                {
+                    GridInfo grid = m_gridInfo[quest.markerLocations[0]];
+                    rect.anchoredPosition = grid.originPosition + (new Vector3(grid.width, grid.height, 0) / 2) - currentRoom.OriginPosition;
+                }
+                else
+                {
+                    Debug.LogWarning("Attemping to show quest marker without location set");
+                }
+
+                ToolTip tooltip = Go.AddComponent<ToolTip>();
+                tooltip.m_toolTip = m_toolTip;
+                tooltip.m_questName = quest.name;
+                tooltip.m_questContent = quest.activeDescription;
+
+                m_squares.Add(Go);
+            }
         }
     }
 
