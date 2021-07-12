@@ -4,6 +4,7 @@ using UnityEngine;
 using blu;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using System.Collections.Generic;
 
 using flags = GridEntityFlags.Flags;
 using interalFlags = GridEntityInternalFlags.Flags;
@@ -51,6 +52,19 @@ public class PlayerEntity : GridEntity
     private Vector2Int m_moveDirection = Vector2Int.zero;
     private Vector2Int m_abilityDirection = Vector2Int.zero;
     private Vector2Int m_inputDirection = Vector2Int.zero;
+    private bool m_wasdPressed = false;
+
+    private enum ActiveInputs
+    {
+        _None,
+        North,
+        East,
+        South,
+        West
+    }
+
+    // stack of what order keys were pressed in
+    private Stack<ActiveInputs> m_activeInputStack = new Stack<ActiveInputs>();
 
     protected override void OnValidate()
     {
@@ -106,6 +120,92 @@ public class PlayerEntity : GridEntity
 
     protected void Update()
     {
+        // fill stack with which keys are pressed
+        if (m_wasdPressed)
+        {
+            Vector2 vec2 = input.Move.Direction.ReadValue<Vector2>();
+            Vector2Int vec2I = new Vector2Int(Mathf.RoundToInt(vec2.x), Mathf.RoundToInt(vec2.y));
+
+            if (vec2I.x == 1)
+            {
+                if (!m_activeInputStack.Contains(ActiveInputs.East))
+                {
+                    m_activeInputStack.Push(ActiveInputs.East);
+                }
+            }
+
+            if (vec2I.x == -1)
+            {
+                if (!m_activeInputStack.Contains(ActiveInputs.West))
+                {
+                    m_activeInputStack.Push(ActiveInputs.West);
+                }
+            }
+
+            if (vec2I.y == 1)
+            {
+                if (!m_activeInputStack.Contains(ActiveInputs.North))
+                {
+                    m_activeInputStack.Push(ActiveInputs.North);
+                }
+            }
+
+            if (vec2I.y == -1)
+            {
+                if (!m_activeInputStack.Contains(ActiveInputs.South))
+                {
+                    m_activeInputStack.Push(ActiveInputs.South);
+                }
+            }
+
+            while (m_activeInputStack.Count > 0)
+            {
+                if (vec2I.x != 1 && m_activeInputStack.Peek() == ActiveInputs.East)
+                { m_activeInputStack.Pop(); continue; }
+                if (vec2I.x != -1 && m_activeInputStack.Peek() == ActiveInputs.West)
+                { m_activeInputStack.Pop(); continue; }
+                if (vec2I.y != 1 && m_activeInputStack.Peek() == ActiveInputs.North)
+                { m_activeInputStack.Pop(); continue; }
+                if (vec2I.y != -1 && m_activeInputStack.Peek() == ActiveInputs.South)
+                { m_activeInputStack.Pop(); continue; }
+
+                break;
+            }
+        }
+        else
+        {
+            m_activeInputStack.Clear();
+        }
+
+        // set m_inputDirection
+        if (m_activeInputStack.Count > 0)
+        {
+            if (m_activeInputStack.Peek() == ActiveInputs.North)
+            { m_inputDirection = Vector2Int.up; }
+            if (m_activeInputStack.Peek() == ActiveInputs.East)
+            { m_inputDirection = Vector2Int.right; }
+            if (m_activeInputStack.Peek() == ActiveInputs.South)
+            { m_inputDirection = Vector2Int.down; }
+            if (m_activeInputStack.Peek() == ActiveInputs.West)
+            { m_inputDirection = Vector2Int.left; }
+        }
+        else
+        {
+            m_inputDirection = Vector2Int.zero;
+        }
+
+        if (m_abilityMode)
+        {
+            float headX = 0;
+            float headY = 0;
+            if (Mathf.Abs(m_inputDirection.x) > Mathf.Abs(m_inputDirection.y))
+                headX = m_inputDirection.x;
+            else
+                headY = m_inputDirection.y;
+
+            m_animationController.SetHeadDirection(headX, headY);
+        }
+
         if (m_abilityMode)
         {
             m_moveDirection = Vector2Int.zero;
@@ -174,27 +274,12 @@ public class PlayerEntity : GridEntity
 
     protected void WASDPressed(InputAction.CallbackContext context)
     {
-        Vector2 vec2 = context.ReadValue<Vector2>();
-        m_inputDirection = new Vector2Int(Mathf.RoundToInt(vec2.x), Mathf.RoundToInt(vec2.y));
-
-        if (m_abilityMode)
-        {
-            float headX = 0;
-            float headY = 0;
-            if (Mathf.Abs(m_inputDirection.x) > Mathf.Abs(m_inputDirection.y))
-                headX = m_inputDirection.x;
-            else
-                headY = m_inputDirection.y;
-
-            m_animationController.SetHeadDirection(headX, headY);
-        }
+        m_wasdPressed = true;
     }
 
     protected void WASDReleased(InputAction.CallbackContext context)
     {
-        m_inputDirection = Vector2Int.zero;
-        m_moveDirection = Vector2Int.zero;
-        SetMovementDirection(Vector2Int.zero);
+        m_wasdPressed = false;
     }
 
     protected void ToggleAbilityMode(InputAction.CallbackContext context) => m_abilityMode = !m_abilityMode;
