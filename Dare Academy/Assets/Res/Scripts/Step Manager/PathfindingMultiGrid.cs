@@ -409,19 +409,22 @@ public class PathfindingMultiGrid
                         gridInfo[link.myRoomIndex].cellSize / 8
                         );
 
-                    if (Application.isPlaying)
-                    {
-                        Gizmos.DrawSphere(
-                            nodeOverrides.sceneTransitionNodes[count].position.world + (gridOffset * i),
-                            gridInfo[link.myRoomIndex].cellSize / 8
-                            );
-                    }
-
                     Gizmos.DrawRay(
                         gridInfo[link.myRoomIndex].ToWorld(link.myNodeIndex) + (gridOffset * i),
                         gizmoDirections[link.travelDirection] * 0.25f
                         );
                 }
+
+                /*for (int i = 0; i < nodeOverrides.sceneTransitionNodes.Count; i++)
+                {
+                    if (Application.isPlaying)
+                    {
+                        Gizmos.DrawSphere(
+                            nodeOverrides.sceneTransitionNodes[i].position.world + (gridOffset * i),
+                            gridInfo[link.myRoomIndex].cellSize / 8
+                            );
+                    }
+                }*/
             }
 
             count++;
@@ -446,7 +449,7 @@ public class PathfindingMultiGrid
 
         if (grid.NodeExists(x, y))
         {
-            Gizmos.color = (grid[x, y].overridden) ? Color.yellow : (grid[x, y].walkable) ? Color.blue : Color.red;
+            Gizmos.color = (grid[x, y].overridden) ? Color.clear : (grid[x, y].walkable) ? Color.blue : Color.red;
         }
 
         Gizmos.DrawSphere(grid.ToWorld(x, y), 1 * (grid.CellSize / 8));
