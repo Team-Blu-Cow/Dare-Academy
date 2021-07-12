@@ -53,7 +53,6 @@ public class PlayerEntity : GridEntity
 
     private Vector2Int m_moveDirection = Vector2Int.zero;
     private Vector2Int m_abilityDirection = Vector2Int.zero;
-    private Vector2Int m_inputDirection = Vector2Int.zero;
 
     protected override void OnValidate()
     {
@@ -113,36 +112,30 @@ public class PlayerEntity : GridEntity
 
     protected void Update()
     {
-        m_inputDirection = m_playerInput.Direction();
-
         if (m_abilityMode)
         {
+            Vector2Int direction = m_playerInput.TrueDirection();
+
             float headX = 0;
             float headY = 0;
-            if (Mathf.Abs(m_inputDirection.x) > Mathf.Abs(m_inputDirection.y))
-                headX = m_inputDirection.x;
+            if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+                headX = direction.x;
             else
-                headY = m_inputDirection.y;
+                headY = direction.y;
 
             m_animationController.SetHeadDirection(headX, headY);
         }
 
+        m_moveDirection = Vector2Int.zero;
+        m_abilityDirection = Vector2Int.zero;
+
         if (m_abilityMode)
         {
-            m_moveDirection = Vector2Int.zero;
-
-            if (m_inputDirection != Vector2Int.zero)
-            {
-                m_abilityDirection = m_inputDirection;
-                m_inputDirection = Vector2Int.zero;
-            }
+            m_abilityDirection = m_playerInput.TrueDirection();
         }
         else
         {
-            if (m_inputDirection != Vector2Int.zero)
-            {
-                m_moveDirection = m_inputDirection;
-            }
+            m_moveDirection = m_playerInput.Direction();
         }
 
         if (Abilities.GetActiveAbility() == AbilityEnum.Dash && !m_abilityMode && m_abilityDirection != Vector2Int.zero)

@@ -48,6 +48,21 @@ public class PlayerInput
                 return Vector2Int.zero;
         }
     }
+
+    public Vector2Int TrueDirection()
+    {
+        switch (m_currentMode)
+        {
+            case ControlMode.Keyboard:
+                return m_keyboardInput.TrueDirection();
+
+            case ControlMode.Gamepad:
+                return Vector2Int.zero;
+
+            default:
+                return Vector2Int.zero;
+        }
+    }
 }
 
 internal abstract class AbstractInput
@@ -64,6 +79,8 @@ internal abstract class AbstractInput
     public abstract void Cleanup();
 
     public abstract Vector2Int Direction();
+
+    public abstract Vector2Int TrueDirection();
 }
 
 internal class KeyboardInput : AbstractInput
@@ -134,6 +151,34 @@ internal class KeyboardInput : AbstractInput
             default:
                 return Vector2Int.zero;
         }
+    }
+
+    public override Vector2Int TrueDirection()
+    {
+        Vector2Int vec2i = Vector2Int.zero;
+
+        for (int i = 0; i < m_keyboardStack.Count; i++)
+        {
+            switch (m_keyboardStack[i])
+            {
+                case ActiveInputs.North:
+                    vec2i += Vector2Int.up;
+                    continue;
+                case ActiveInputs.East:
+                    vec2i += Vector2Int.right;
+                    continue;
+                case ActiveInputs.South:
+                    vec2i += Vector2Int.down;
+                    continue;
+                case ActiveInputs.West:
+                    vec2i += Vector2Int.left;
+                    continue;
+                default:
+                    continue;
+            }
+        }
+
+        return vec2i;
     }
 
     private void KeyboardNorthPress(InputAction.CallbackContext context) => m_keyboardStack.Add(ActiveInputs.North);
