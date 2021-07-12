@@ -376,12 +376,16 @@ public class PlayerEntity : GridEntity
 
                     if (App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter == 0 && LastDirection == Vector2Int.down)
                     {
+                        m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(2, 4);
+                        m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
+                        m_currentNode.lvlTransitionInfo.targetRoomIndex = 8;
+
                         App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
                         Destroy(App.GetModule<LevelModule>().persistantSceneData._soundEmitter);
                         App.GetModule<LevelModule>().persistantSceneData = new PersistantSceneData();
 
                         App.GetModule<SceneModule>().SwitchScene(
-                            "Crashsite Top",
+                            m_currentNode.lvlTransitionInfo.targetSceneName,
                             m_currentNode.lvlTransitionInfo.transitionType,
                             m_currentNode.lvlTransitionInfo.loadType
                             );
@@ -543,7 +547,7 @@ public class PlayerEntity : GridEntity
 
                 System.Func<Vector2Int, interalFlags, bool> BlockCheckDirectionAndSetFlag = (vec, flag) =>
                 {
-                    if(vec == m_abilityDirection)
+                    if (vec == m_abilityDirection)
                     {
                         m_internalFlags.SetFlags(flag, true);
                         return true;
@@ -566,7 +570,7 @@ public class PlayerEntity : GridEntity
                 if (BlockCheckDirectionAndSetFlag(Vector2Int.left, interalFlags.refectBullets_W))
                 { return true; }
 
-                Vector2Int vecDir = new Vector2Int(1,1);
+                Vector2Int vecDir = new Vector2Int(1, 1);
                 if (BlockCheckDirectionAndSetFlag(vecDir, interalFlags.refectBullets_NE))
                 { return true; }
 

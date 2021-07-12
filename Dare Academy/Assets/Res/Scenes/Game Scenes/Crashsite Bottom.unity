@@ -11746,6 +11746,18 @@ MonoBehaviour:
         transitionType: 1
         loadType: 1
         overrideType: 2
+      - width: 5
+        myRoomIndex: 7
+        myNodeIndex: {x: 6, y: 14}
+        targetSceneName: Mushroom Forest Start
+        targetRoomIndex: 0
+        targetNodeIndex: {x: 4, y: 0}
+        offsetVector: {x: 0, y: 0}
+        offsetIndex: 0
+        m_travelDirection: 0
+        transitionType: 1
+        loadType: 1
+        overrideType: 2
       sceneTransitionNodes: []
     tileData:
       tileData:
