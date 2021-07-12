@@ -28,8 +28,8 @@ namespace blu
             }
         }
 
-        public void NewMusicEvent(string name) // use "object/event"
-        {                                      // e.g. "player/footstep"
+        public void NewMusicEvent(string name)
+        {
             if (name != null)
             {
                 _musicEvents.Add(name, new AudioEvent(name));
