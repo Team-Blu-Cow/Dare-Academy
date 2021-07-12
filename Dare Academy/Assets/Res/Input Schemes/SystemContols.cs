@@ -87,6 +87,14 @@ public class @SystemContols : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Open"",
+                    ""type"": ""Button"",
+                    ""id"": ""7d983491-082a-464d-8d05-946313b759b3"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -452,6 +460,28 @@ public class @SystemContols : IInputActionCollection, IDisposable
                     ""action"": ""ZoomOut"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""76079328-cc9f-4ee9-b64c-49566dad38c8"",
+                    ""path"": ""<Keyboard>/m"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Open"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8539ca76-a5ad-44f6-ab07-4bc2b374f6c8"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Open"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -467,6 +497,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
         m_MapControlls_Mouse = m_MapControlls.FindAction("Mouse", throwIfNotFound: true);
         m_MapControlls_ZoomIn = m_MapControlls.FindAction("ZoomIn", throwIfNotFound: true);
         m_MapControlls_ZoomOut = m_MapControlls.FindAction("ZoomOut", throwIfNotFound: true);
+        m_MapControlls_Open = m_MapControlls.FindAction("Open", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -553,6 +584,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
     private readonly InputAction m_MapControlls_Mouse;
     private readonly InputAction m_MapControlls_ZoomIn;
     private readonly InputAction m_MapControlls_ZoomOut;
+    private readonly InputAction m_MapControlls_Open;
     public struct MapControllsActions
     {
         private @SystemContols m_Wrapper;
@@ -561,6 +593,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
         public InputAction @Mouse => m_Wrapper.m_MapControlls_Mouse;
         public InputAction @ZoomIn => m_Wrapper.m_MapControlls_ZoomIn;
         public InputAction @ZoomOut => m_Wrapper.m_MapControlls_ZoomOut;
+        public InputAction @Open => m_Wrapper.m_MapControlls_Open;
         public InputActionMap Get() { return m_Wrapper.m_MapControlls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -582,6 +615,9 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 @ZoomOut.started -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnZoomOut;
                 @ZoomOut.performed -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnZoomOut;
                 @ZoomOut.canceled -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnZoomOut;
+                @Open.started -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnOpen;
+                @Open.performed -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnOpen;
+                @Open.canceled -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnOpen;
             }
             m_Wrapper.m_MapControllsActionsCallbackInterface = instance;
             if (instance != null)
@@ -598,6 +634,9 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 @ZoomOut.started += instance.OnZoomOut;
                 @ZoomOut.performed += instance.OnZoomOut;
                 @ZoomOut.canceled += instance.OnZoomOut;
+                @Open.started += instance.OnOpen;
+                @Open.performed += instance.OnOpen;
+                @Open.canceled += instance.OnOpen;
             }
         }
     }
@@ -612,5 +651,6 @@ public class @SystemContols : IInputActionCollection, IDisposable
         void OnMouse(InputAction.CallbackContext context);
         void OnZoomIn(InputAction.CallbackContext context);
         void OnZoomOut(InputAction.CallbackContext context);
+        void OnOpen(InputAction.CallbackContext context);
     }
 }

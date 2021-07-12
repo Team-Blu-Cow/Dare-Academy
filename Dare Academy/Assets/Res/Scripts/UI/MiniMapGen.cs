@@ -14,6 +14,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
     private List<GameObject> m_squares = new List<GameObject>();
     private Vector2 m_movePos;
     private RectTransform transform;
+    private bool open = false;
 
     private void Start()
     {
@@ -26,6 +27,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
         App.GetModule<InputModule>().SystemController.MapControlls.Move.canceled += ctx => MoveEnd();
         App.GetModule<InputModule>().SystemController.MapControlls.ZoomIn.started += _ => Zoom(true);
         App.GetModule<InputModule>().SystemController.MapControlls.ZoomOut.started += _ => Zoom(false);
+        App.GetModule<InputModule>().SystemController.MapControlls.Open.performed += _ => ToggleMap();
     }
 
     private void OnDisable()
@@ -34,6 +36,23 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
         App.GetModule<InputModule>().SystemController.MapControlls.Move.canceled -= ctx => MoveEnd();
         App.GetModule<InputModule>().SystemController.MapControlls.ZoomIn.started -= _ => Zoom(true);
         App.GetModule<InputModule>().SystemController.MapControlls.ZoomOut.started -= _ => Zoom(false);
+        App.GetModule<InputModule>().SystemController.MapControlls.Open.performed -= _ => ToggleMap();
+    }
+
+    private void ToggleMap()
+    {
+        if (open)
+        {
+            CloseMap();
+            App.GetModule<InputModule>().PlayerController.Enable();
+            open = false;
+        }
+        else
+        {
+            DrawMap();
+            App.GetModule<InputModule>().PlayerController.Disable();
+            open = true;
+        }
     }
 
     public void DrawMap()
@@ -41,27 +60,30 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
         m_gridInfo = App.GetModule<LevelModule>().MetaGrid.gridInfo;
         m_links = App.GetModule<LevelModule>().MetaGrid.nodeOverrides;
         JUtil.Grids.Grid<GridNode> currentRoom = App.GetModule<LevelModule>().CurrentRoom;
+        int currentRoomIndex = App.GetModule<LevelModule>().LevelManager.StepController.m_currentRoomIndex;
 
         transform.anchoredPosition = Vector3.zero;
+        CloseMap();
 
-        foreach (GameObject go in m_squares)
-        {
-            Destroy(go);
-        }
-        m_squares.Clear();
-
+        int i = 0;
         foreach (GridInfo grid in m_gridInfo)
         {
             // Draw and place the room box
             GameObject tempRoom = new GameObject("Room");
-            tempRoom.AddComponent<Image>();
+            Image image = tempRoom.AddComponent<Image>();
             RectTransform rect = tempRoom.GetComponent<RectTransform>();
             tempRoom.transform.SetParent(transform.GetChild(0));
             rect.localScale = Vector3.one;
             rect.sizeDelta = new Vector2(grid.width, grid.height);
             rect.localPosition = grid.originPosition + (new Vector3(grid.width, grid.height, 0) / 2) - currentRoom.OriginPosition;
 
+            if (i == currentRoomIndex)
+            {
+                image.color = Color.red;
+            }
+
             m_squares.Add(tempRoom);
+            i++;
         }
 
         //Draw room connections
@@ -131,6 +153,15 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
 
             m_squares.Add(tempLink);
         }
+    }
+
+    public void CloseMap()
+    {
+        foreach (GameObject go in m_squares)
+        {
+            Destroy(go);
+        }
+        m_squares.Clear();
     }
 
     public void OnScroll(PointerEventData eventData)
