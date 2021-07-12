@@ -8,8 +8,8 @@ public class PlayerUI : MonoBehaviour
     GameObject m_player; // Game object for getting player info
 
     PlayerEntity m_playerInfo; // Infor of the player, such as health and energy
-    [SerializeField] private int m_energy = 5; // Energy the player has
-    [SerializeField] private int m_health = 5; // Health the player has
+    private int m_energy; // Energy the player has
+    private int m_health; // Health the player has
     [SerializeField] List<GameObject> energyIcons; // Images for the amount of energy the player has
     [SerializeField] List<GameObject> healthIcons; // Images for the amount of health the player has
 
@@ -21,9 +21,22 @@ public class PlayerUI : MonoBehaviour
 
     private void Start()
     {
+        m_energy = m_playerInfo.MaxEnergy;
+        m_health = m_playerInfo.MaxHealth;
+
+        for (int i = 0; i < m_playerInfo.MaxHealth - 1; i++)
+        {
+            AddHealth();
+        }
+        
+        for(int i = 0; i < m_playerInfo.MaxEnergy - 1; i++)
+        {
+            AddEnergy();
+        }
+
         // Update the UI on start
-        UpdateEnergyUI(); 
-        UpdateHealthUI(); 
+        //UpdateEnergyUI();
+        //UpdateHealthUI();
     }
 
     // Update is called once per frame
@@ -34,7 +47,7 @@ public class PlayerUI : MonoBehaviour
             UpdateEnergyUI(); // Update the energy UI
             m_energy = m_playerInfo.Energy; // Update the energy variable 
         }
-
+        
         if(m_health != m_playerInfo.Health) // If the player's health has changed
         {
             UpdateHealthUI(); // Update the health UI
@@ -64,7 +77,10 @@ public class PlayerUI : MonoBehaviour
         
         for (int i = 0; i < m_energy; i++) // For the ones showing how much energy the player has
         {
-            energyIcons[i].SetActive(true); // Set active to true
+            if (i < energyIcons.Count)
+            {
+                energyIcons[i].SetActive(true); // Set active to true
+            }
         }
     }
 
