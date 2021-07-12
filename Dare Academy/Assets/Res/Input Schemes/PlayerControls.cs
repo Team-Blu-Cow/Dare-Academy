@@ -15,17 +15,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     ""name"": ""PlayerControls"",
     ""maps"": [
         {
-            ""name"": ""Move"",
+            ""name"": ""MoveKeyboard"",
             ""id"": ""cea43b66-3806-4625-91fe-3e770bcc9539"",
             ""actions"": [
-                {
-                    ""name"": ""Direction"",
-                    ""type"": ""Button"",
-                    ""id"": ""a800f43b-f2c9-46b7-9104-eae6bc27e55b"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
                 {
                     ""name"": ""Step"",
                     ""type"": ""Button"",
@@ -41,174 +33,41 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""MoveNorth"",
+                    ""type"": ""Button"",
+                    ""id"": ""e4a083d8-191b-4f2c-b043-20862368a693"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""MoveEast"",
+                    ""type"": ""Button"",
+                    ""id"": ""f4f9ff0d-bd6c-4048-8fa0-bbb84696ea1b"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""MoveSouth"",
+                    ""type"": ""Button"",
+                    ""id"": ""6a230f9b-1d52-403c-a027-37e93a523879"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""MoveWest"",
+                    ""type"": ""Button"",
+                    ""id"": ""ee535085-e52b-4419-b842-1d3d15abb7ce"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": ""Keyboard WASD"",
-                    ""id"": ""007e638e-b312-408b-9428-9448999df98a"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""063127de-b3ed-47d6-915d-342054dafc05"",
-                    ""path"": ""<Keyboard>/w"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""KB&Mouse"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""435b69b6-5a3f-4d99-ae49-6f7c60988139"",
-                    ""path"": ""<Keyboard>/s"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""KB&Mouse"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""1b4d1a42-2d8e-4180-8ed4-d9782db30a9f"",
-                    ""path"": ""<Keyboard>/a"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""KB&Mouse"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""503df545-4074-483d-8efb-1651c8586025"",
-                    ""path"": ""<Keyboard>/d"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""KB&Mouse"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""Gamepad D-Pad"",
-                    ""id"": ""01963605-a191-45bd-81d7-0309ddbc88f9"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""102707af-b04f-4d9f-9fc8-31dc434fd103"",
-                    ""path"": ""<Gamepad>/dpad/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""c830b48c-e9ba-4893-a5d0-6126b417dfdc"",
-                    ""path"": ""<Gamepad>/dpad/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""d74bfb00-f7bc-4122-a037-b5ad8c1a311c"",
-                    ""path"": ""<Gamepad>/dpad/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""0327109c-29a5-4718-856e-08d901324e2b"",
-                    ""path"": ""<Gamepad>/dpad/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""Gamepad Left Stick"",
-                    ""id"": ""dc2216e5-5a16-4d48-8a2c-3bdf3d17f686"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": ""Press"",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""e8acffae-afbc-44f1-8f2a-0bb6ccf71eb2"",
-                    ""path"": ""<Gamepad>/leftStick/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""2454ce30-2a53-4252-8962-a7cd84db6353"",
-                    ""path"": ""<Gamepad>/leftStick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""79c7c842-8854-4367-a71b-19630c7b91b2"",
-                    ""path"": ""<Gamepad>/leftStick/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""b6c2c65e-5b08-4d97-a7fe-a22c9383d2ce"",
-                    ""path"": ""<Gamepad>/leftStick/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
                 {
                     ""name"": """",
                     ""id"": ""d5fbfa61-d695-447f-9936-150613164d6d"",
@@ -228,6 +87,77 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""14a8b2e5-6672-4901-8ecf-37ff7004e381"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveNorth"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bac0180a-8948-4ca1-80ec-7c7823a43e40"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveEast"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a07e6f7c-d651-4c2b-b709-cf0a646cf8a0"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveSouth"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9abf1bfa-8963-42c8-aa90-8eae3622a053"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveWest"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""MoveGamepad"",
+            ""id"": ""a0f42282-78ed-4814-b18e-ab80b99c5b9a"",
+            ""actions"": [
+                {
+                    ""name"": ""New action"",
+                    ""type"": ""Button"",
+                    ""id"": ""15ab76bc-5241-40cd-924b-5076736e00de"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""68c2c214-b857-492f-aec6-b09544449c73"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""New action"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -348,11 +278,17 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         }
     ]
 }");
-        // Move
-        m_Move = asset.FindActionMap("Move", throwIfNotFound: true);
-        m_Move_Direction = m_Move.FindAction("Direction", throwIfNotFound: true);
-        m_Move_Step = m_Move.FindAction("Step", throwIfNotFound: true);
-        m_Move_Interact = m_Move.FindAction("Interact", throwIfNotFound: true);
+        // MoveKeyboard
+        m_MoveKeyboard = asset.FindActionMap("MoveKeyboard", throwIfNotFound: true);
+        m_MoveKeyboard_Step = m_MoveKeyboard.FindAction("Step", throwIfNotFound: true);
+        m_MoveKeyboard_Interact = m_MoveKeyboard.FindAction("Interact", throwIfNotFound: true);
+        m_MoveKeyboard_MoveNorth = m_MoveKeyboard.FindAction("MoveNorth", throwIfNotFound: true);
+        m_MoveKeyboard_MoveEast = m_MoveKeyboard.FindAction("MoveEast", throwIfNotFound: true);
+        m_MoveKeyboard_MoveSouth = m_MoveKeyboard.FindAction("MoveSouth", throwIfNotFound: true);
+        m_MoveKeyboard_MoveWest = m_MoveKeyboard.FindAction("MoveWest", throwIfNotFound: true);
+        // MoveGamepad
+        m_MoveGamepad = asset.FindActionMap("MoveGamepad", throwIfNotFound: true);
+        m_MoveGamepad_Newaction = m_MoveGamepad.FindAction("New action", throwIfNotFound: true);
         // Ability
         m_Ability = asset.FindActionMap("Ability", throwIfNotFound: true);
         m_Ability_AbilityMode = m_Ability.FindAction("AbilityMode", throwIfNotFound: true);
@@ -405,54 +341,111 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         asset.Disable();
     }
 
-    // Move
-    private readonly InputActionMap m_Move;
-    private IMoveActions m_MoveActionsCallbackInterface;
-    private readonly InputAction m_Move_Direction;
-    private readonly InputAction m_Move_Step;
-    private readonly InputAction m_Move_Interact;
-    public struct MoveActions
+    // MoveKeyboard
+    private readonly InputActionMap m_MoveKeyboard;
+    private IMoveKeyboardActions m_MoveKeyboardActionsCallbackInterface;
+    private readonly InputAction m_MoveKeyboard_Step;
+    private readonly InputAction m_MoveKeyboard_Interact;
+    private readonly InputAction m_MoveKeyboard_MoveNorth;
+    private readonly InputAction m_MoveKeyboard_MoveEast;
+    private readonly InputAction m_MoveKeyboard_MoveSouth;
+    private readonly InputAction m_MoveKeyboard_MoveWest;
+    public struct MoveKeyboardActions
     {
         private @PlayerControls m_Wrapper;
-        public MoveActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Direction => m_Wrapper.m_Move_Direction;
-        public InputAction @Step => m_Wrapper.m_Move_Step;
-        public InputAction @Interact => m_Wrapper.m_Move_Interact;
-        public InputActionMap Get() { return m_Wrapper.m_Move; }
+        public MoveKeyboardActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Step => m_Wrapper.m_MoveKeyboard_Step;
+        public InputAction @Interact => m_Wrapper.m_MoveKeyboard_Interact;
+        public InputAction @MoveNorth => m_Wrapper.m_MoveKeyboard_MoveNorth;
+        public InputAction @MoveEast => m_Wrapper.m_MoveKeyboard_MoveEast;
+        public InputAction @MoveSouth => m_Wrapper.m_MoveKeyboard_MoveSouth;
+        public InputAction @MoveWest => m_Wrapper.m_MoveKeyboard_MoveWest;
+        public InputActionMap Get() { return m_Wrapper.m_MoveKeyboard; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(MoveActions set) { return set.Get(); }
-        public void SetCallbacks(IMoveActions instance)
+        public static implicit operator InputActionMap(MoveKeyboardActions set) { return set.Get(); }
+        public void SetCallbacks(IMoveKeyboardActions instance)
         {
-            if (m_Wrapper.m_MoveActionsCallbackInterface != null)
+            if (m_Wrapper.m_MoveKeyboardActionsCallbackInterface != null)
             {
-                @Direction.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnDirection;
-                @Direction.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnDirection;
-                @Direction.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnDirection;
-                @Step.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnStep;
-                @Step.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnStep;
-                @Step.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnStep;
-                @Interact.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnInteract;
-                @Interact.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnInteract;
-                @Interact.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnInteract;
+                @Step.started -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnStep;
+                @Step.performed -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnStep;
+                @Step.canceled -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnStep;
+                @Interact.started -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnInteract;
+                @Interact.performed -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnInteract;
+                @Interact.canceled -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnInteract;
+                @MoveNorth.started -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnMoveNorth;
+                @MoveNorth.performed -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnMoveNorth;
+                @MoveNorth.canceled -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnMoveNorth;
+                @MoveEast.started -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnMoveEast;
+                @MoveEast.performed -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnMoveEast;
+                @MoveEast.canceled -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnMoveEast;
+                @MoveSouth.started -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnMoveSouth;
+                @MoveSouth.performed -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnMoveSouth;
+                @MoveSouth.canceled -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnMoveSouth;
+                @MoveWest.started -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnMoveWest;
+                @MoveWest.performed -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnMoveWest;
+                @MoveWest.canceled -= m_Wrapper.m_MoveKeyboardActionsCallbackInterface.OnMoveWest;
             }
-            m_Wrapper.m_MoveActionsCallbackInterface = instance;
+            m_Wrapper.m_MoveKeyboardActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @Direction.started += instance.OnDirection;
-                @Direction.performed += instance.OnDirection;
-                @Direction.canceled += instance.OnDirection;
                 @Step.started += instance.OnStep;
                 @Step.performed += instance.OnStep;
                 @Step.canceled += instance.OnStep;
                 @Interact.started += instance.OnInteract;
                 @Interact.performed += instance.OnInteract;
                 @Interact.canceled += instance.OnInteract;
+                @MoveNorth.started += instance.OnMoveNorth;
+                @MoveNorth.performed += instance.OnMoveNorth;
+                @MoveNorth.canceled += instance.OnMoveNorth;
+                @MoveEast.started += instance.OnMoveEast;
+                @MoveEast.performed += instance.OnMoveEast;
+                @MoveEast.canceled += instance.OnMoveEast;
+                @MoveSouth.started += instance.OnMoveSouth;
+                @MoveSouth.performed += instance.OnMoveSouth;
+                @MoveSouth.canceled += instance.OnMoveSouth;
+                @MoveWest.started += instance.OnMoveWest;
+                @MoveWest.performed += instance.OnMoveWest;
+                @MoveWest.canceled += instance.OnMoveWest;
             }
         }
     }
-    public MoveActions @Move => new MoveActions(this);
+    public MoveKeyboardActions @MoveKeyboard => new MoveKeyboardActions(this);
+
+    // MoveGamepad
+    private readonly InputActionMap m_MoveGamepad;
+    private IMoveGamepadActions m_MoveGamepadActionsCallbackInterface;
+    private readonly InputAction m_MoveGamepad_Newaction;
+    public struct MoveGamepadActions
+    {
+        private @PlayerControls m_Wrapper;
+        public MoveGamepadActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @Newaction => m_Wrapper.m_MoveGamepad_Newaction;
+        public InputActionMap Get() { return m_Wrapper.m_MoveGamepad; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(MoveGamepadActions set) { return set.Get(); }
+        public void SetCallbacks(IMoveGamepadActions instance)
+        {
+            if (m_Wrapper.m_MoveGamepadActionsCallbackInterface != null)
+            {
+                @Newaction.started -= m_Wrapper.m_MoveGamepadActionsCallbackInterface.OnNewaction;
+                @Newaction.performed -= m_Wrapper.m_MoveGamepadActionsCallbackInterface.OnNewaction;
+                @Newaction.canceled -= m_Wrapper.m_MoveGamepadActionsCallbackInterface.OnNewaction;
+            }
+            m_Wrapper.m_MoveGamepadActionsCallbackInterface = instance;
+            if (instance != null)
+            {
+                @Newaction.started += instance.OnNewaction;
+                @Newaction.performed += instance.OnNewaction;
+                @Newaction.canceled += instance.OnNewaction;
+            }
+        }
+    }
+    public MoveGamepadActions @MoveGamepad => new MoveGamepadActions(this);
 
     // Ability
     private readonly InputActionMap m_Ability;
@@ -528,11 +521,18 @@ public class @PlayerControls : IInputActionCollection, IDisposable
             return asset.controlSchemes[m_gamepadSchemeIndex];
         }
     }
-    public interface IMoveActions
+    public interface IMoveKeyboardActions
     {
-        void OnDirection(InputAction.CallbackContext context);
         void OnStep(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
+        void OnMoveNorth(InputAction.CallbackContext context);
+        void OnMoveEast(InputAction.CallbackContext context);
+        void OnMoveSouth(InputAction.CallbackContext context);
+        void OnMoveWest(InputAction.CallbackContext context);
+    }
+    public interface IMoveGamepadActions
+    {
+        void OnNewaction(InputAction.CallbackContext context);
     }
     public interface IAbilityActions
     {

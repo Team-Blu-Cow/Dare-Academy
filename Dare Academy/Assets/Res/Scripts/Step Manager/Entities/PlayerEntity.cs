@@ -45,31 +45,24 @@ public class PlayerEntity : GridEntity
 
     // OTHER
 
-    private PlayerControls input;
+    private PlayerControls m_input;
     private GameObject m_bulletPrefab = null;
     private int m_dashDistance = 2;
+
+    private PlayerInput m_playerInput = new PlayerInput();
 
     private Vector2Int m_moveDirection = Vector2Int.zero;
     private Vector2Int m_abilityDirection = Vector2Int.zero;
     private Vector2Int m_inputDirection = Vector2Int.zero;
-    private bool m_wasdPressed = false;
-
-    private enum ActiveInputs
-    {
-        _None,
-        North,
-        East,
-        South,
-        West
-    }
-
-    // stack of what order keys were pressed in
-    private Stack<ActiveInputs> m_activeInputStack = new Stack<ActiveInputs>();
 
     protected override void OnValidate()
     {
         base.OnValidate();
         m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet");
+    }
+
+    protected void Awake()
+    {
     }
 
     protected override void Start()
@@ -79,120 +72,48 @@ public class PlayerEntity : GridEntity
         Health = MaxHealth;
         m_abilities.Initialise();
         m_animationController = GetComponent<GridEntityAnimationController>();
+        m_playerInput.SetControlMode(PlayerInput.ControlMode.Keyboard);
     }
 
     private void OnEnable()
     {
-        input = App.GetModule<InputModule>().PlayerController;
-        input.Move.Direction.started += WASDPressed;
-        input.Move.Direction.canceled += WASDReleased;
+        m_input = App.GetModule<InputModule>().PlayerController;
+
+        m_playerInput.Init();
 
 #if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
-        input.Ability.AbilityMode.started += EnterAbilityMode;
-        input.Ability.AbilityMode.canceled += ExitAbilityMode;
+        m_input.Ability.AbilityMode.started += EnterAbilityMode;
+        m_input.Ability.AbilityMode.canceled += ExitAbilityMode;
 #else
         input.Ability.AbilityMode.started += ToggleAbilityMode;
 #endif
 
-        input.Ability.CancelAbility.performed += CancelAbility;
+        m_input.Ability.CancelAbility.performed += CancelAbility;
 
-        input.Ability.SwapAbilityL.performed += CycleAbilityL;
-        input.Ability.SwapAbilityR.performed += CycleAbilityR;
+        m_input.Ability.SwapAbilityL.performed += CycleAbilityL;
+        m_input.Ability.SwapAbilityR.performed += CycleAbilityR;
     }
 
     private void OnDisable()
     {
-        input.Move.Direction.started -= WASDPressed;
-        input.Move.Direction.canceled -= WASDReleased;
+        m_playerInput.Cleanup();
 
 #if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
-        input.Ability.AbilityMode.started -= EnterAbilityMode;
-        input.Ability.AbilityMode.canceled -= ExitAbilityMode;
+        m_input.Ability.AbilityMode.started -= EnterAbilityMode;
+        m_input.Ability.AbilityMode.canceled -= ExitAbilityMode;
 #else
         input.Ability.AbilityMode.started -= ToggleAbilityMode;
 #endif
 
-        input.Ability.CancelAbility.performed -= CancelAbility;
+        m_input.Ability.CancelAbility.performed -= CancelAbility;
 
-        input.Ability.SwapAbilityL.performed -= CycleAbilityL;
-        input.Ability.SwapAbilityR.performed -= CycleAbilityR;
+        m_input.Ability.SwapAbilityL.performed -= CycleAbilityL;
+        m_input.Ability.SwapAbilityR.performed -= CycleAbilityR;
     }
 
     protected void Update()
     {
-        // fill stack with which keys are pressed
-        if (m_wasdPressed)
-        {
-            Vector2 vec2 = input.Move.Direction.ReadValue<Vector2>();
-            Vector2Int vec2I = new Vector2Int(Mathf.RoundToInt(vec2.x), Mathf.RoundToInt(vec2.y));
-
-            if (vec2I.x == 1)
-            {
-                if (!m_activeInputStack.Contains(ActiveInputs.East))
-                {
-                    m_activeInputStack.Push(ActiveInputs.East);
-                }
-            }
-
-            if (vec2I.x == -1)
-            {
-                if (!m_activeInputStack.Contains(ActiveInputs.West))
-                {
-                    m_activeInputStack.Push(ActiveInputs.West);
-                }
-            }
-
-            if (vec2I.y == 1)
-            {
-                if (!m_activeInputStack.Contains(ActiveInputs.North))
-                {
-                    m_activeInputStack.Push(ActiveInputs.North);
-                }
-            }
-
-            if (vec2I.y == -1)
-            {
-                if (!m_activeInputStack.Contains(ActiveInputs.South))
-                {
-                    m_activeInputStack.Push(ActiveInputs.South);
-                }
-            }
-
-            while (m_activeInputStack.Count > 0)
-            {
-                if (vec2I.x != 1 && m_activeInputStack.Peek() == ActiveInputs.East)
-                { m_activeInputStack.Pop(); continue; }
-                if (vec2I.x != -1 && m_activeInputStack.Peek() == ActiveInputs.West)
-                { m_activeInputStack.Pop(); continue; }
-                if (vec2I.y != 1 && m_activeInputStack.Peek() == ActiveInputs.North)
-                { m_activeInputStack.Pop(); continue; }
-                if (vec2I.y != -1 && m_activeInputStack.Peek() == ActiveInputs.South)
-                { m_activeInputStack.Pop(); continue; }
-
-                break;
-            }
-        }
-        else
-        {
-            m_activeInputStack.Clear();
-        }
-
-        // set m_inputDirection
-        if (m_activeInputStack.Count > 0)
-        {
-            if (m_activeInputStack.Peek() == ActiveInputs.North)
-            { m_inputDirection = Vector2Int.up; }
-            if (m_activeInputStack.Peek() == ActiveInputs.East)
-            { m_inputDirection = Vector2Int.right; }
-            if (m_activeInputStack.Peek() == ActiveInputs.South)
-            { m_inputDirection = Vector2Int.down; }
-            if (m_activeInputStack.Peek() == ActiveInputs.West)
-            { m_inputDirection = Vector2Int.left; }
-        }
-        else
-        {
-            m_inputDirection = Vector2Int.zero;
-        }
+        m_inputDirection = m_playerInput.Direction();
 
         if (m_abilityMode)
         {
@@ -272,13 +193,12 @@ public class PlayerEntity : GridEntity
 
         switch (m_abilities.GetActiveAbility())
         {
-            case AbilityEnum.None:  animationFlag = 0; break;
+            case AbilityEnum.None: animationFlag = 0; break;
             case AbilityEnum.Shoot: animationFlag = 1; break;
-            case AbilityEnum.Dash:  animationFlag = 2; break;
+            case AbilityEnum.Dash: animationFlag = 2; break;
             case AbilityEnum.Block: animationFlag = 3; break;
-            default:                animationFlag = 0; break;
+            default: animationFlag = 0; break;
         }
-
 
         m_animationController.animator.SetInteger("AbilityState", animationFlag);
     }
@@ -297,24 +217,14 @@ public class PlayerEntity : GridEntity
             SetAbilityAnimationFlag(0);
     }
 
-    protected void WASDPressed(InputAction.CallbackContext context)
-    {
-        m_wasdPressed = true;
-    }
-
-    protected void WASDReleased(InputAction.CallbackContext context)
-    {
-        m_wasdPressed = false;
-    }
-
-    protected void ToggleAbilityMode(InputAction.CallbackContext context) 
+    protected void ToggleAbilityMode(InputAction.CallbackContext context)
     {
         m_abilityMode = !m_abilityMode;
 
         SetAbilityAnimationFlag();
     }
 
-    protected void EnterAbilityMode(InputAction.CallbackContext context) 
+    protected void EnterAbilityMode(InputAction.CallbackContext context)
     {
         m_abilityMode = true;
         SetAbilityAnimationFlag();
@@ -509,7 +419,6 @@ public class PlayerEntity : GridEntity
 
                 AddAnimationAction(ActionTypes.STATIC_ACTION, "Head Gun Fire", 1);
                 SetAbilityAnimationFlag(0);
-
 
                 if (SpawnBullet(m_bulletPrefab, node, m_abilityDirection))
                 {
