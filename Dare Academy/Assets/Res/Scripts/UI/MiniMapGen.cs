@@ -22,6 +22,8 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
         DrawMap();
         App.GetModule<InputModule>().SystemController.MapControlls.Move.performed += ctx => MoveStart(ctx);
         App.GetModule<InputModule>().SystemController.MapControlls.Move.canceled += ctx => MoveEnd();
+        App.GetModule<InputModule>().SystemController.MapControlls.ZoomIn.started += _ => { transform.localScale += Vector3.one * 3; };
+        App.GetModule<InputModule>().SystemController.MapControlls.ZoomOut.started += _ => { transform.localScale -= Vector3.one * 3; };
     }
 
     public void DrawMap()
@@ -77,9 +79,6 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
     {
         Vector3 scale = (Vector3.one / 2) * eventData.scrollDelta.y;
 
-        RectTransform rect = GetComponent<RectTransform>();
-
-        //rect.anchoredPosition *= scale.x;
         transform.localScale += scale;
     }
 
