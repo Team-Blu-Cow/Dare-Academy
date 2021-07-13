@@ -141,10 +141,10 @@ public class @PlayerControls : IInputActionCollection, IDisposable
             ""id"": ""a0f42282-78ed-4814-b18e-ab80b99c5b9a"",
             ""actions"": [
                 {
-                    ""name"": ""New action"",
-                    ""type"": ""Button"",
+                    ""name"": ""Direction"",
+                    ""type"": ""Value"",
                     ""id"": ""15ab76bc-5241-40cd-924b-5076736e00de"",
-                    ""expectedControlType"": ""Button"",
+                    ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """"
                 }
@@ -153,11 +153,11 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""68c2c214-b857-492f-aec6-b09544449c73"",
-                    ""path"": """",
+                    ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""New action"",
+                    ""action"": ""Direction"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -288,7 +288,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         m_MoveKeyboard_MoveWest = m_MoveKeyboard.FindAction("MoveWest", throwIfNotFound: true);
         // MoveGamepad
         m_MoveGamepad = asset.FindActionMap("MoveGamepad", throwIfNotFound: true);
-        m_MoveGamepad_Newaction = m_MoveGamepad.FindAction("New action", throwIfNotFound: true);
+        m_MoveGamepad_Direction = m_MoveGamepad.FindAction("Direction", throwIfNotFound: true);
         // Ability
         m_Ability = asset.FindActionMap("Ability", throwIfNotFound: true);
         m_Ability_AbilityMode = m_Ability.FindAction("AbilityMode", throwIfNotFound: true);
@@ -417,12 +417,12 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     // MoveGamepad
     private readonly InputActionMap m_MoveGamepad;
     private IMoveGamepadActions m_MoveGamepadActionsCallbackInterface;
-    private readonly InputAction m_MoveGamepad_Newaction;
+    private readonly InputAction m_MoveGamepad_Direction;
     public struct MoveGamepadActions
     {
         private @PlayerControls m_Wrapper;
         public MoveGamepadActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Newaction => m_Wrapper.m_MoveGamepad_Newaction;
+        public InputAction @Direction => m_Wrapper.m_MoveGamepad_Direction;
         public InputActionMap Get() { return m_Wrapper.m_MoveGamepad; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -432,16 +432,16 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         {
             if (m_Wrapper.m_MoveGamepadActionsCallbackInterface != null)
             {
-                @Newaction.started -= m_Wrapper.m_MoveGamepadActionsCallbackInterface.OnNewaction;
-                @Newaction.performed -= m_Wrapper.m_MoveGamepadActionsCallbackInterface.OnNewaction;
-                @Newaction.canceled -= m_Wrapper.m_MoveGamepadActionsCallbackInterface.OnNewaction;
+                @Direction.started -= m_Wrapper.m_MoveGamepadActionsCallbackInterface.OnDirection;
+                @Direction.performed -= m_Wrapper.m_MoveGamepadActionsCallbackInterface.OnDirection;
+                @Direction.canceled -= m_Wrapper.m_MoveGamepadActionsCallbackInterface.OnDirection;
             }
             m_Wrapper.m_MoveGamepadActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @Newaction.started += instance.OnNewaction;
-                @Newaction.performed += instance.OnNewaction;
-                @Newaction.canceled += instance.OnNewaction;
+                @Direction.started += instance.OnDirection;
+                @Direction.performed += instance.OnDirection;
+                @Direction.canceled += instance.OnDirection;
             }
         }
     }
@@ -532,7 +532,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     }
     public interface IMoveGamepadActions
     {
-        void OnNewaction(InputAction.CallbackContext context);
+        void OnDirection(InputAction.CallbackContext context);
     }
     public interface IAbilityActions
     {

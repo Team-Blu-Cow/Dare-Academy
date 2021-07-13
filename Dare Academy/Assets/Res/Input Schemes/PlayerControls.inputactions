@@ -128,10 +128,10 @@
             "id": "a0f42282-78ed-4814-b18e-ab80b99c5b9a",
             "actions": [
                 {
-                    "name": "New action",
-                    "type": "Button",
+                    "name": "Direction",
+                    "type": "Value",
                     "id": "15ab76bc-5241-40cd-924b-5076736e00de",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "Vector2",
                     "processors": "",
                     "interactions": ""
                 }
@@ -140,11 +140,11 @@
                 {
                     "name": "",
                     "id": "68c2c214-b857-492f-aec6-b09544449c73",
-                    "path": "",
+                    "path": "<Gamepad>/leftStick",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "New action",
+                    "action": "Direction",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

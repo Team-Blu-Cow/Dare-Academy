@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-
 using blu;
 
 public class PlayerInput
@@ -16,17 +15,22 @@ public class PlayerInput
     private ControlMode m_currentMode = ControlMode.None;
     private PlayerControls m_input;
     private KeyboardInput m_keyboardInput;
+    private GamepadInput m_gamepadInput;
 
     public void Init()
     {
         m_input = App.GetModule<InputModule>().PlayerController;
         m_keyboardInput = new KeyboardInput(m_input);
         m_keyboardInput.Init();
+
+        m_gamepadInput = new GamepadInput(m_input);
+        m_gamepadInput.Init();
     }
 
     public void Cleanup()
     {
         m_keyboardInput.Cleanup();
+        m_gamepadInput.Cleanup();
     }
 
     public void SetControlMode(ControlMode mode)
@@ -42,7 +46,7 @@ public class PlayerInput
                 return m_keyboardInput.Direction();
 
             case ControlMode.Gamepad:
-                return Vector2Int.zero;
+                return m_gamepadInput.Direction();
 
             default:
                 return Vector2Int.zero;
@@ -57,7 +61,7 @@ public class PlayerInput
                 return m_keyboardInput.TrueDirection();
 
             case ControlMode.Gamepad:
-                return Vector2Int.zero;
+                return m_gamepadInput.TrueDirection();
 
             default:
                 return Vector2Int.zero;
@@ -196,4 +200,115 @@ internal class KeyboardInput : AbstractInput
     private void KeyboardWestRelease(InputAction.CallbackContext context) => m_keyboardStack.Remove(ActiveInputs.West);
 
     private void KeyboardSouthRelease(InputAction.CallbackContext context) => m_keyboardStack.Remove(ActiveInputs.South);
+}
+
+internal class GamepadInput : AbstractInput
+{
+    private Vector2Int m_direction = Vector2Int.zero;
+    private Vector2Int m_trueDirection = Vector2Int.zero;
+
+    private const float m_kthreshold = 0.15f;
+
+    public GamepadInput(PlayerControls input) : base(input)
+    {
+    }
+
+    public override void Init()
+    {
+        m_input.MoveGamepad.Direction.performed += GamepadPerformed;
+        m_input.MoveGamepad.Direction.canceled += GamepadCanceled;
+    }
+
+    public override void Cleanup()
+    {
+        m_input.MoveGamepad.Direction.performed -= GamepadPerformed;
+        m_input.MoveGamepad.Direction.canceled += GamepadCanceled;
+    }
+
+    public override Vector2Int Direction()
+    {
+        return m_direction;
+    }
+
+    public override Vector2Int TrueDirection()
+    {
+        return m_trueDirection;
+    }
+
+    private void GamepadPerformed(InputAction.CallbackContext context)
+    {
+        Vector2 vec2 = context.ReadValue<Vector2>();
+
+        m_direction = Vector2Int.zero;
+        m_trueDirection = Vector2Int.zero;
+
+        if (vec2.magnitude < m_kthreshold)
+        {
+            return;
+        }
+
+        vec2 = vec2.normalized;
+
+        // set m_direction
+        if (Mathf.Abs(vec2.x) > Mathf.Abs(vec2.y))
+        {
+            if (vec2.x > 0)
+            {
+                m_direction = Vector2Int.right;
+            }
+            else
+            {
+                m_direction = Vector2Int.left;
+            }
+        }
+        else
+        {
+            if (vec2.y > 0)
+            {
+                m_direction = Vector2Int.up;
+            }
+            else
+            {
+                m_direction = Vector2Int.down;
+            }
+        }
+
+        // tan(22.5[deg]) = 0.2929
+
+        if (Mathf.Abs(vec2.x) < 0.2929f)
+        { vec2.x = 0f; }
+
+        if (Mathf.Abs(vec2.y) < 0.2929f)
+        { vec2.y = 0f; }
+
+        if (vec2.x > 0)
+        {
+            m_trueDirection += Vector2Int.right;
+        }
+        else if (vec2.x < 0)
+        {
+            m_trueDirection += Vector2Int.left;
+        }
+        else
+        {
+        }
+
+        if (vec2.y > 0)
+        {
+            m_trueDirection += Vector2Int.up;
+        }
+        else if (vec2.y < 0)
+        {
+            m_trueDirection += Vector2Int.down;
+        }
+        else
+        {
+        }
+    }
+
+    private void GamepadCanceled(InputAction.CallbackContext context)
+    {
+        m_direction = Vector2Int.zero;
+        m_trueDirection = Vector2Int.zero;
+    }
 }
