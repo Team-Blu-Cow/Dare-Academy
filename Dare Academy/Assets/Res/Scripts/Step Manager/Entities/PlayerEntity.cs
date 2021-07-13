@@ -114,7 +114,7 @@ public class PlayerEntity : GridEntity
     {
         if (m_abilityMode)
         {
-            Vector2Int direction = m_playerInput.TrueDirection();
+            Vector2Int direction = m_playerInput.DirectionEight();
 
             float headX = 0;
             float headY = 0;
@@ -131,11 +131,11 @@ public class PlayerEntity : GridEntity
 
         if (m_abilityMode)
         {
-            m_abilityDirection = m_playerInput.TrueDirection();
+            m_abilityDirection = m_playerInput.DirectionEight();
         }
         else
         {
-            m_moveDirection = m_playerInput.Direction();
+            m_moveDirection = m_playerInput.DirectionFour();
         }
 
         if (Abilities.GetActiveAbility() == AbilityEnum.Dash && !m_abilityMode && m_abilityDirection != Vector2Int.zero)

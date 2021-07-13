@@ -38,30 +38,30 @@ public class PlayerInput
         m_currentMode = mode;
     }
 
-    public Vector2Int Direction()
+    public Vector2Int DirectionFour()
     {
         switch (m_currentMode)
         {
             case ControlMode.Keyboard:
-                return m_keyboardInput.Direction();
+                return m_keyboardInput.DirectionFour();
 
             case ControlMode.Gamepad:
-                return m_gamepadInput.Direction();
+                return m_gamepadInput.DirectionFour();
 
             default:
                 return Vector2Int.zero;
         }
     }
 
-    public Vector2Int TrueDirection()
+    public Vector2Int DirectionEight()
     {
         switch (m_currentMode)
         {
             case ControlMode.Keyboard:
-                return m_keyboardInput.TrueDirection();
+                return m_keyboardInput.DirectionEight();
 
             case ControlMode.Gamepad:
-                return m_gamepadInput.TrueDirection();
+                return m_gamepadInput.DirectionEight();
 
             default:
                 return Vector2Int.zero;
@@ -82,9 +82,9 @@ internal abstract class AbstractInput
 
     public abstract void Cleanup();
 
-    public abstract Vector2Int Direction();
+    public abstract Vector2Int DirectionFour();
 
-    public abstract Vector2Int TrueDirection();
+    public abstract Vector2Int DirectionEight();
 }
 
 internal class KeyboardInput : AbstractInput
@@ -133,7 +133,7 @@ internal class KeyboardInput : AbstractInput
         m_input.MoveKeyboard.MoveWest.canceled -= KeyboardWestRelease;
     }
 
-    public override Vector2Int Direction()
+    public override Vector2Int DirectionFour()
     {
         if (m_keyboardStack.Count == 0)
         { return Vector2Int.zero; }
@@ -157,7 +157,7 @@ internal class KeyboardInput : AbstractInput
         }
     }
 
-    public override Vector2Int TrueDirection()
+    public override Vector2Int DirectionEight()
     {
         Vector2Int vec2i = Vector2Int.zero;
 
@@ -225,12 +225,12 @@ internal class GamepadInput : AbstractInput
         m_input.MoveGamepad.Direction.canceled += GamepadCanceled;
     }
 
-    public override Vector2Int Direction()
+    public override Vector2Int DirectionFour()
     {
         return m_direction;
     }
 
-    public override Vector2Int TrueDirection()
+    public override Vector2Int DirectionEight()
     {
         return m_trueDirection;
     }
