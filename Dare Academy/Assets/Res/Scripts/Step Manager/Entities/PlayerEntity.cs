@@ -71,7 +71,6 @@ public class PlayerEntity : GridEntity
         Health = MaxHealth;
         m_abilities.Initialise();
         m_animationController = GetComponent<GridEntityAnimationController>();
-        m_playerInput.SetControlMode(PlayerInput.ControlMode.MultiGamepadPriority);
     }
 
     private void OnEnable()
@@ -81,16 +80,16 @@ public class PlayerEntity : GridEntity
         m_playerInput.Init();
 
 #if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
-        m_input.Ability.AbilityMode.started += EnterAbilityMode;
-        m_input.Ability.AbilityMode.canceled += ExitAbilityMode;
+        m_input.Player.AbilityMode.started += EnterAbilityMode;
+        m_input.Player.AbilityMode.canceled += ExitAbilityMode;
 #else
         input.Ability.AbilityMode.started += ToggleAbilityMode;
 #endif
 
-        m_input.Ability.CancelAbility.performed += CancelAbility;
+        m_input.Player.CancelAbility.performed += CancelAbility;
 
-        m_input.Ability.SwapAbilityL.performed += CycleAbilityL;
-        m_input.Ability.SwapAbilityR.performed += CycleAbilityR;
+        m_input.Player.SwapAbilityL.performed += CycleAbilityL;
+        m_input.Player.SwapAbilityR.performed += CycleAbilityR;
     }
 
     private void OnDisable()
@@ -98,16 +97,16 @@ public class PlayerEntity : GridEntity
         m_playerInput.Cleanup();
 
 #if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
-        m_input.Ability.AbilityMode.started -= EnterAbilityMode;
-        m_input.Ability.AbilityMode.canceled -= ExitAbilityMode;
+        m_input.Player.AbilityMode.started -= EnterAbilityMode;
+        m_input.Player.AbilityMode.canceled -= ExitAbilityMode;
 #else
         input.Ability.AbilityMode.started -= ToggleAbilityMode;
 #endif
 
-        m_input.Ability.CancelAbility.performed -= CancelAbility;
+        m_input.Player.CancelAbility.performed -= CancelAbility;
 
-        m_input.Ability.SwapAbilityL.performed -= CycleAbilityL;
-        m_input.Ability.SwapAbilityR.performed -= CycleAbilityR;
+        m_input.Player.SwapAbilityL.performed -= CycleAbilityL;
+        m_input.Player.SwapAbilityR.performed -= CycleAbilityR;
     }
 
     protected void Update()
