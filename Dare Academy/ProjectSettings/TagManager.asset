@@ -11,7 +11,7 @@ TagManager:
   - 
   - Water
   - UI
-  - 
+  - Fog
   - 
   - Colorblind
   - 
@@ -40,4 +40,16 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Background
+    uniqueID: 1615150011
+    locked: 0
+  - name: Ground
+    uniqueID: 1200423719
+    locked: 0
+  - name: Midground
+    uniqueID: 1532050139
+    locked: 0
+  - name: Foreground
+    uniqueID: 3184804887
     locked: 0

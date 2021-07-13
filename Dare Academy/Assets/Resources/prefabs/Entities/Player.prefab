@@ -69,9 +69,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingLayerID: 1532050139
+  m_SortingLayer: 3
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 7eb4bedb4f271f14f9f3d96cd61fd198, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -95,6 +95,7 @@ GameObject:
   - component: {fileID: 8411778651980417415}
   - component: {fileID: 8411778651980417412}
   - component: {fileID: 8411778651980417419}
+  - component: {fileID: 8082888017905408955}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -136,6 +137,8 @@ MonoBehaviour:
     m_activeAbility: 0
   m_abilityMode: 0
   m_currentEnergy: 0
+  m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
+  m_abilityDirection: {x: 0, y: 0}
 --- !u!114 &8411778651980417412
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -171,6 +174,17 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorControllerStateOnDisable: 0
+--- !u!210 &8082888017905408955
+SortingGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8411778651980417408}
+  m_Enabled: 1
+  m_SortingLayerID: 1532050139
+  m_SortingLayer: 3
+  m_SortingOrder: 0
 --- !u!1 &8411778651999712004
 GameObject:
   m_ObjectHideFlags: 0
@@ -239,9 +253,9 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
-  m_SortingOrder: 1
+  m_SortingLayerID: 1532050139
+  m_SortingLayer: 3
+  m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 111f2fe0e94fd31438b5dd86d13fc1d3, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
