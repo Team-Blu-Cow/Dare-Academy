@@ -9,6 +9,7 @@ public class PlayerInput
     private Vector2Int m_directionFour = Vector2Int.zero;
     private Vector2Int m_directionEight = Vector2Int.zero;
     private const float m_kthreshold = 0.15f;
+    private bool m_ignoreUntilInputZero = false;
 
     public void Init()
     {
@@ -24,14 +25,22 @@ public class PlayerInput
         m_input.Player.Direction.canceled -= DirectionCanceled;
     }
 
-    public Vector2Int DirectionFour()
+    public void IgnoreInputUntilZero() => m_ignoreUntilInputZero = true;
+
+    public Vector2Int DirectionFour(bool forceResult = false)
     {
-        return m_directionFour;
+        if (m_ignoreUntilInputZero && !forceResult)
+            return Vector2Int.zero;
+        else
+            return m_directionFour;
     }
 
-    public Vector2Int DirectionEight()
+    public Vector2Int DirectionEight(bool forceResult = false)
     {
-        return m_directionEight;
+        if (m_ignoreUntilInputZero && !forceResult)
+            return Vector2Int.zero;
+        else
+            return m_directionEight;
     }
 
     private void DirectionPerformed(InputAction.CallbackContext context)
@@ -42,9 +51,7 @@ public class PlayerInput
         m_directionEight = Vector2Int.zero;
 
         if (vec2.magnitude < m_kthreshold)
-        {
             return;
-        }
 
         vec2 = vec2.normalized;
 
@@ -109,5 +116,6 @@ public class PlayerInput
     {
         m_directionFour = Vector2Int.zero;
         m_directionEight = Vector2Int.zero;
+        m_ignoreUntilInputZero = false;
     }
 }

@@ -46,13 +46,13 @@ public class PlayerEntity : GridEntity
     // OTHER
 
     private PlayerControls m_input;
-    private GameObject m_bulletPrefab = null;
+    [SerializeField] private GameObject m_bulletPrefab = null;
     private int m_dashDistance = 2;
 
     private PlayerInput m_playerInput = new PlayerInput();
 
     private Vector2Int m_moveDirection = Vector2Int.zero;
-    private Vector2Int m_abilityDirection = Vector2Int.zero;
+    [SerializeField] private Vector2Int m_abilityDirection = Vector2Int.zero;
 
     protected override void OnValidate()
     {
@@ -111,26 +111,27 @@ public class PlayerEntity : GridEntity
 
     protected void Update()
     {
-        if (m_abilityMode)
-        {
-            Vector2Int direction = m_playerInput.DirectionEight();
-
-            float headX = 0;
-            float headY = 0;
-            if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
-                headX = direction.x;
-            else
-                headY = direction.y;
-
-            m_animationController.SetHeadDirection(headX, headY);
-        }
-
         m_moveDirection = Vector2Int.zero;
-        m_abilityDirection = Vector2Int.zero;
+        // m_abilityDirection = Vector2Int.zero;
 
         if (m_abilityMode)
         {
-            m_abilityDirection = m_playerInput.DirectionEight();
+            Vector2Int direction = m_playerInput.DirectionEight(true);
+
+            if (direction != Vector2Int.zero)
+            {
+                float headX = 0;
+                float headY = 0;
+                if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+                    headX = direction.x;
+                else
+                    headY = direction.y;
+
+                m_animationController.SetHeadDirection(headX, headY);
+
+                m_abilityDirection = direction;
+                m_playerInput.IgnoreInputUntilZero();
+            }
         }
         else
         {
