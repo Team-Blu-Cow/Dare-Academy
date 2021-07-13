@@ -28,7 +28,7 @@ public class PlayerEntity : GridEntity
 
     // HEALTH
 
-    private int m_maxHealth = 1;
+    private int m_maxHealth = 10;
     public int MaxHealth { get { return m_maxHealth; } set { m_maxHealth = value; } }
 
     // ENERGY
