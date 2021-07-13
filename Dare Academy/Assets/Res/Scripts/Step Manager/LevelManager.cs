@@ -27,6 +27,18 @@ public class LevelManager : MonoBehaviour
         m_stepController = new StepController(m_stepTime);
     }
 
+    private void OnEnable()
+    {
+        PlayerControls input = blu.App.GetModule<blu.InputModule>().PlayerController;
+        input.Player.ExecuteStep.performed += Step;
+    }
+
+    private void OnDisable()
+    {
+        PlayerControls input = blu.App.GetModule<blu.InputModule>().PlayerController;
+        input.Player.ExecuteStep.performed -= Step;
+    }
+
     private IEnumerator LateStart()
     {
         yield return new WaitForEndOfFrame();
@@ -51,10 +63,10 @@ public class LevelManager : MonoBehaviour
     private void Update()
     {
         StepController.timer += Time.deltaTime;
+    }
 
-        if (Keyboard.current.qKey.isPressed)
-        {
-            m_stepController.ExecuteStep();
-        }
+    private void Step(InputAction.CallbackContext context)
+    {
+        m_stepController.ExecuteStep();
     }
 }
