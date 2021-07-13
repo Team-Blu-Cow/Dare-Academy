@@ -6,7 +6,7 @@
             "id": "cea43b66-3806-4625-91fe-3e770bcc9539",
             "actions": [
                 {
-                    "name": "Step",
+                    "name": "ExecuteStep",
                     "type": "Button",
                     "id": "5cd42ae5-fbb7-4695-abac-917154a20c35",
                     "expectedControlType": "Button",
@@ -70,7 +70,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard",
-                    "action": "Step",
+                    "action": "ExecuteStep",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -81,7 +81,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "Gamepad",
-                    "action": "Step",
+                    "action": "ExecuteStep",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },

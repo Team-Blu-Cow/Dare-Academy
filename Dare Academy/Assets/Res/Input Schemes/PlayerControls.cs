@@ -19,7 +19,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
             ""id"": ""cea43b66-3806-4625-91fe-3e770bcc9539"",
             ""actions"": [
                 {
-                    ""name"": ""Step"",
+                    ""name"": ""ExecuteStep"",
                     ""type"": ""Button"",
                     ""id"": ""5cd42ae5-fbb7-4695-abac-917154a20c35"",
                     ""expectedControlType"": ""Button"",
@@ -83,7 +83,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Keyboard"",
-                    ""action"": ""Step"",
+                    ""action"": ""ExecuteStep"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -94,7 +94,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""Gamepad"",
-                    ""action"": ""Step"",
+                    ""action"": ""ExecuteStep"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -342,7 +342,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
 }");
         // Player
         m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
-        m_Player_Step = m_Player.FindAction("Step", throwIfNotFound: true);
+        m_Player_ExecuteStep = m_Player.FindAction("ExecuteStep", throwIfNotFound: true);
         m_Player_AbilityMode = m_Player.FindAction("AbilityMode", throwIfNotFound: true);
         m_Player_SwapAbilityR = m_Player.FindAction("SwapAbilityR", throwIfNotFound: true);
         m_Player_SwapAbilityL = m_Player.FindAction("SwapAbilityL", throwIfNotFound: true);
@@ -398,7 +398,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     // Player
     private readonly InputActionMap m_Player;
     private IPlayerActions m_PlayerActionsCallbackInterface;
-    private readonly InputAction m_Player_Step;
+    private readonly InputAction m_Player_ExecuteStep;
     private readonly InputAction m_Player_AbilityMode;
     private readonly InputAction m_Player_SwapAbilityR;
     private readonly InputAction m_Player_SwapAbilityL;
@@ -409,7 +409,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     {
         private @PlayerControls m_Wrapper;
         public PlayerActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Step => m_Wrapper.m_Player_Step;
+        public InputAction @ExecuteStep => m_Wrapper.m_Player_ExecuteStep;
         public InputAction @AbilityMode => m_Wrapper.m_Player_AbilityMode;
         public InputAction @SwapAbilityR => m_Wrapper.m_Player_SwapAbilityR;
         public InputAction @SwapAbilityL => m_Wrapper.m_Player_SwapAbilityL;
@@ -425,9 +425,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         {
             if (m_Wrapper.m_PlayerActionsCallbackInterface != null)
             {
-                @Step.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnStep;
-                @Step.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnStep;
-                @Step.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnStep;
+                @ExecuteStep.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnExecuteStep;
+                @ExecuteStep.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnExecuteStep;
+                @ExecuteStep.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnExecuteStep;
                 @AbilityMode.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAbilityMode;
                 @AbilityMode.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAbilityMode;
                 @AbilityMode.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAbilityMode;
@@ -450,9 +450,9 @@ public class @PlayerControls : IInputActionCollection, IDisposable
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @Step.started += instance.OnStep;
-                @Step.performed += instance.OnStep;
-                @Step.canceled += instance.OnStep;
+                @ExecuteStep.started += instance.OnExecuteStep;
+                @ExecuteStep.performed += instance.OnExecuteStep;
+                @ExecuteStep.canceled += instance.OnExecuteStep;
                 @AbilityMode.started += instance.OnAbilityMode;
                 @AbilityMode.performed += instance.OnAbilityMode;
                 @AbilityMode.canceled += instance.OnAbilityMode;
@@ -495,7 +495,7 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     }
     public interface IPlayerActions
     {
-        void OnStep(InputAction.CallbackContext context);
+        void OnExecuteStep(InputAction.CallbackContext context);
         void OnAbilityMode(InputAction.CallbackContext context);
         void OnSwapAbilityR(InputAction.CallbackContext context);
         void OnSwapAbilityL(InputAction.CallbackContext context);
