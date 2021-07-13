@@ -71,7 +71,7 @@ public class PlayerEntity : GridEntity
         Health = MaxHealth;
         m_abilities.Initialise();
         m_animationController = GetComponent<GridEntityAnimationController>();
-        m_playerInput.SetControlMode(PlayerInput.ControlMode.Keyboard);
+        m_playerInput.SetControlMode(PlayerInput.ControlMode.MultiGamepadPriority);
     }
 
     private void OnEnable()

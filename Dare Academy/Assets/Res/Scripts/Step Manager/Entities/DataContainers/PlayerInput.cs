@@ -9,7 +9,9 @@ public class PlayerInput
     {
         None,
         Gamepad,
-        Keyboard
+        Keyboard,
+        MultiKeyboardPriority,
+        MultiGamepadPriority
     }
 
     private ControlMode m_currentMode = ControlMode.None;
@@ -40,6 +42,8 @@ public class PlayerInput
 
     public Vector2Int DirectionFour()
     {
+        Vector2Int vec2i = Vector2Int.zero;
+
         switch (m_currentMode)
         {
             case ControlMode.Keyboard:
@@ -48,6 +52,18 @@ public class PlayerInput
             case ControlMode.Gamepad:
                 return m_gamepadInput.DirectionFour();
 
+            case ControlMode.MultiKeyboardPriority:
+                vec2i = m_keyboardInput.DirectionFour();
+                if (vec2i == Vector2Int.zero)
+                    vec2i = m_gamepadInput.DirectionFour();
+                return vec2i;
+
+            case ControlMode.MultiGamepadPriority:
+                vec2i = m_gamepadInput.DirectionFour();
+                if (vec2i == Vector2Int.zero)
+                    vec2i = m_keyboardInput.DirectionFour();
+                return vec2i;
+
             default:
                 return Vector2Int.zero;
         }
@@ -55,6 +71,8 @@ public class PlayerInput
 
     public Vector2Int DirectionEight()
     {
+        Vector2Int vec2i = Vector2Int.zero;
+
         switch (m_currentMode)
         {
             case ControlMode.Keyboard:
@@ -62,6 +80,18 @@ public class PlayerInput
 
             case ControlMode.Gamepad:
                 return m_gamepadInput.DirectionEight();
+
+            case ControlMode.MultiKeyboardPriority:
+                vec2i = m_keyboardInput.DirectionEight();
+                if (vec2i == Vector2Int.zero)
+                    vec2i = m_gamepadInput.DirectionEight();
+                return vec2i;
+
+            case ControlMode.MultiGamepadPriority:
+                vec2i = m_gamepadInput.DirectionEight();
+                if (vec2i == Vector2Int.zero)
+                    vec2i = m_keyboardInput.DirectionEight();
+                return vec2i;
 
             default:
                 return Vector2Int.zero;
