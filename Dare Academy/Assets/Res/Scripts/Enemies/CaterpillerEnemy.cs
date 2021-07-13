@@ -16,8 +16,9 @@ public class CaterpillerEnemy : GridEntity
     public bool isTelegraphBurrow = false;
     public Vector3 newPos = Vector3.zero;
 
-    private void OnValidate()
+    protected override void OnValidate()
     {
+        base.OnValidate();
         if (m_followEntity && m_followEntity.TryGetComponent(out CaterpillerEnemy caterpiller)) // If the following entity has the caterpillar script
         {
             head = false; // Then it is not at the front
@@ -44,7 +45,7 @@ public class CaterpillerEnemy : GridEntity
 
         if (!head) // If this compartment is not the front
         {
-            // MIGHT WANT TO CHANGE THIS FOR BURROWING MECHANIC            
+            // MIGHT WANT TO CHANGE THIS FOR BURROWING MECHANIC
             Vector2 followingNode = new Vector2(Position.world.x, Position.world.y);
 
             if (m_followEntity != null) // If the entity exists on the grid
@@ -73,7 +74,7 @@ public class CaterpillerEnemy : GridEntity
                 {
                     if (m_currentNode.GetNeighbour(new Vector2Int((int)dir.x, (int)dir.y)).position.world != m_followEntity.transform.position) // If it is not the player
                     {
-                        dir = CheckDirectionsOfMovement(dir); // Figure out a new direction of movement                   
+                        dir = CheckDirectionsOfMovement(dir); // Figure out a new direction of movement
                     }
                 }
 
@@ -84,9 +85,7 @@ public class CaterpillerEnemy : GridEntity
             }
             else
             {
-                
-
-                if(isBurrowing && isTelegraphBurrow)
+                if (isBurrowing && isTelegraphBurrow)
                 {
                     BurrowMove();
                 }
@@ -96,11 +95,11 @@ public class CaterpillerEnemy : GridEntity
                     TelegraphBurrow();
                 }
             }
-            
+
             GetComponentInParent<BurrowManager>().UpdateBurrow();
         }
 
-        m_dir = new Vector2Int((int)dir.x, (int)dir.y); // Convert direction to integer       
+        m_dir = new Vector2Int((int)dir.x, (int)dir.y); // Convert direction to integer
         SetMovementDirection(m_dir, m_moveSpeed); // Set movement
     }
 
@@ -111,7 +110,6 @@ public class CaterpillerEnemy : GridEntity
 
     private Vector2 CheckDirectionsOfMovement(Vector2 direction)
     {
-
         if (GetEntitiesOnNode(m_currentNode.GetNeighbour(new Vector2Int(1, 0))).Count > 0) // If the caterpillar can't move right
         {
             if (m_currentNode.GetNeighbour(new Vector2Int(0, 1)) != null)
@@ -235,7 +233,6 @@ public class CaterpillerEnemy : GridEntity
             }
         }
 
-
         isTelegraphBurrow = true;
     }
 
@@ -243,12 +240,12 @@ public class CaterpillerEnemy : GridEntity
     {
         Vector3 distanceVector = transform.GetChild(0).gameObject.transform.position - newPos;
 
-        if(distanceVector.x > 0)
+        if (distanceVector.x > 0)
         {
             transform.GetChild(0).gameObject.transform.position += new Vector3(-1, 0, 0);
             return;
         }
-        else if(distanceVector.x < 0)
+        else if (distanceVector.x < 0)
         {
             transform.GetChild(0).gameObject.transform.position += new Vector3(1, 0, 0);
             return;
@@ -264,11 +261,11 @@ public class CaterpillerEnemy : GridEntity
             return;
         }
 
-        if(transform.GetChild(0).gameObject.transform.position == newPos)
+        if (transform.GetChild(0).gameObject.transform.position == newPos)
         {
             m_currentNode.RemoveEntity(this);
             m_currentNode = blu.App.GetModule<blu.LevelModule>().Grid(RoomIndex).WorldToNode(newPos);
-            
+
             transform.position = newPos;
 
             isTelegraphBurrow = false;
@@ -276,7 +273,7 @@ public class CaterpillerEnemy : GridEntity
         }
     }
 
-    private void OnDrawGizmos()
+    protected override void OnDrawGizmos()
     {
         if (!isTelegraphBurrow || !isBurrowing) // If the entity is not burrowing
         {
@@ -290,7 +287,5 @@ public class CaterpillerEnemy : GridEntity
                 Gizmos.DrawLine(transform.position, newPos);
             }
         }
-
-
     }
 }

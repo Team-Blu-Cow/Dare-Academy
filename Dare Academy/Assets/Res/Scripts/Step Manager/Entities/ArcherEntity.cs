@@ -6,20 +6,22 @@ using JUtil;
 
 public class ArcherEntity : GridEntity
 {
-
     [Header("Attack attributes")]
     [SerializeField] private int m_attackCooldown = 5; // Cooldown after firing a bullet
+
     [SerializeField] private int agroRange = 5; // Range for how far away the entity is allowed to start attacking the player
     [SerializeField] private int m_cooldownCounter = 0; // Cooldown counter (monitors how long it has been since the last buller has been fired)
     private bool isAttacking = false; // Boolean for if the entity is attacking or not
     private bool isWaiting = false; // Boolean for if the entity is waiting after firing a bullet
 
-    [Header("Move attributes")] 
+    [Header("Move attributes")]
     [SerializeField] private int moveSpeed = 1; // Set move speed to 1. Travels 1 square each step
+
     private Vector2 m_dir = new Vector2(); // Set direction of movement
 
     [Header("Resources needed")]
     [SerializeField] private GameObject m_bulletPrefab = null; // Bullet prefab for spawning bullets
+
     [SerializeField] private GridEntity player; // Player for finding path // WILl NEED TO BE CHANGED TO NAME OF PLAYER
 
     protected override void Start()
@@ -30,8 +32,10 @@ public class ArcherEntity : GridEntity
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true); // Set flag for if solid to true
     }
 
-    public void OnValidate()
+    protected override void OnValidate()
     {
+        base.OnValidate();
+
         m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet"); // Find bullet prefab
         player = GameObject.Find("Green").GetComponent<PlayerEntity>(); // Find player game object
     }
@@ -64,7 +68,7 @@ public class ArcherEntity : GridEntity
             {
                 if (path.Length > 1) // If the path array has more than 1 value stored
                 {
-                    m_dir = path[1] - path[0]; // Find the direction the entity is meant to move in 
+                    m_dir = path[1] - path[0]; // Find the direction the entity is meant to move in
                 }
 
                 m_dir = new Vector2Int((int)m_dir.x, (int)m_dir.y); // Set direction to int values
@@ -73,15 +77,14 @@ public class ArcherEntity : GridEntity
         }
         else // If the player is attacking
         {
-           isWaiting = false; // Set waiting to be false
-           SetMovementDirection(Vector2.zero, moveSpeed); // Don't make the entity move this step         
+            isWaiting = false; // Set waiting to be false
+            SetMovementDirection(Vector2.zero, moveSpeed); // Don't make the entity move this step
         }
 
         if (m_cooldownCounter > 0) // If the cooldown hasn't expired yet
         {
             m_cooldownCounter--; // Decrement cooldown counter
         }
-
     }
 
     public override void AttackStep()
@@ -117,11 +120,11 @@ public class ArcherEntity : GridEntity
         }
     }
 
-    private void OnDrawGizmos()
+    protected override void OnDrawGizmos()
     {
         if (!isAttacking) // If the entity is not attacking
         {
-            Gizmos.color = new Color(0, 0, 0, 0); // Set boxes to be transparent color 
+            Gizmos.color = new Color(0, 0, 0, 0); // Set boxes to be transparent color
         }
         else // If the entity is attacking
         {
@@ -137,5 +140,4 @@ public class ArcherEntity : GridEntity
             }
         }
     }
-
 }

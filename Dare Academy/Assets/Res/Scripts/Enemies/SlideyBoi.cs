@@ -86,7 +86,7 @@ public class SlideyBoi : GridEntity
         return move;
     }
 
-    private void OnDrawGizmos()
+    protected override void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
 

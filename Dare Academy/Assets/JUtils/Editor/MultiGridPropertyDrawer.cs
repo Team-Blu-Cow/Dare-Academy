@@ -12,7 +12,7 @@ namespace JUtil.Grids
 
         private bool gridsFoldout = false;
         private bool gridLinksOverridesFoldout = false;
-        private bool sceneLinksOverridesFoldout = false;
+        // private bool sceneLinksOverridesFoldout = false;
 
         private GUIContent
             addButtonContent = new GUIContent("+", "add group"),
@@ -580,8 +580,6 @@ namespace JUtil.Grids
                             array.GetArrayElementAtIndex(list.arraySize - 1).stringValue = "unnamed grid";
                     }
                 }
-
-                
 
                 boolList.Add(true);
             }

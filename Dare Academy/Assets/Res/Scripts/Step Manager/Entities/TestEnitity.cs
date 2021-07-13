@@ -14,7 +14,7 @@ public class TestEnitity : GridEntity
         m_animationController.SetDirection(testDirection.x, 1);
     }
 
-    protected void OnDrawGizmos()
+    protected override void OnDrawGizmos()
     {
         if (!Application.isPlaying)
         {

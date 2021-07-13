@@ -7,17 +7,17 @@ using JUtil;
 public class EightDirectionalEntity : GridEntity
 {
     [Header("Attack attributes")]
-
     [SerializeField] private int m_attackSpeed = 3; // How often the entity fires bullets
+
     [SerializeField] private bool isFiringHorizontal = true; // Boolean for if the entity is firing horizontally or diagonally
     [SerializeField] private int agroRange = 5; // Variable which controls when the entity starts firing
     private int m_attackCounter = 0; // Cooldown timer for after firing bullets
     private bool isAttacking = false; // Boolean for whether the entity is firing or not
     private Vector2[] telegraphPos = { new Vector2(0,0), new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0)}; // Positions for telegraphing where the entity is going to spawn bullets in the next step
 
-
     [Header("Resources needed")]
     [SerializeField] private GameObject m_bulletPrefab = null; // Bullet prefab for spawning
+
     [SerializeField] private GridEntity player; // Player to figure out how close they are to the entity (for agro range check)
 
     protected override void Start()
@@ -28,10 +28,11 @@ public class EightDirectionalEntity : GridEntity
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true); // Set flag for if solid to true
     }
 
-    public void OnValidate()
+    protected override void OnValidate()
     {
+        base.OnValidate();
         m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet"); // Find the bullet prefab
-        player = GameObject.Find("Green").GetComponent<PlayerEntity>(); // Find the player // WILL NEED TO CHANGE TO PROPER NAME 
+        player = GameObject.Find("Green").GetComponent<PlayerEntity>(); // Find the player // WILL NEED TO CHANGE TO PROPER NAME
     }
 
     public override void AnalyseStep()
@@ -40,9 +41,8 @@ public class EightDirectionalEntity : GridEntity
 
         Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, player.transform.position); // Find path to player
 
-
         if (path.Length < agroRange) // If the player is within agro range
-        {                
+        {
             if (m_attackCounter >= m_attackSpeed) //  If the cooldown has expired
             {
                 isAttacking = true; // Set attacking to true
@@ -85,12 +85,11 @@ public class EightDirectionalEntity : GridEntity
         {
             Vector2Int[] m_attackDirections = GetAttackDirections(); // Get the attacking directions
 
-            for (int j = 0; j < 4; j++) // Loop for each direction 
+            for (int j = 0; j < 4; j++) // Loop for each direction
             {
                 Vector3 spawnPosition; // Declare spawn position variable
-                if (m_currentNode.GetNeighbour(m_attackDirections[j]) != null) // If the node where the bullet is meant to spawn is not a wall 
+                if (m_currentNode.GetNeighbour(m_attackDirections[j]) != null) // If the node where the bullet is meant to spawn is not a wall
                 {
-
                     spawnPosition = m_currentNode.GetNeighbour(m_attackDirections[j]).position.world; // Set the bullet's spawn position to the current attacking directions's grid node
                     GameObject obj = GameObject.Instantiate(m_bulletPrefab, spawnPosition, Quaternion.identity); // Spawn the bullet
 
@@ -130,13 +129,13 @@ public class EightDirectionalEntity : GridEntity
         }
     }
 
-    private void OnDrawGizmos()
+    protected override void OnDrawGizmos()
     {
-        for(int i = 0; i < 4; i++) // Loop for all four firing directions
+        for (int i = 0; i < 4; i++) // Loop for all four firing directions
         {
-            if(telegraphPos[i] != new Vector2(0,0)) // If the telegraph position is essentially not null
+            if (telegraphPos[i] != new Vector2(0, 0)) // If the telegraph position is essentially not null
             {
-                if(!isAttacking) // If the entity is not attacking
+                if (!isAttacking) // If the entity is not attacking
                 {
                     Gizmos.color = new Color(0, 0, 0, 0); // Do not set a visible color
                 }
@@ -144,9 +143,8 @@ public class EightDirectionalEntity : GridEntity
                 {
                     Gizmos.color = new Color(Color.yellow.r, Color.yellow.g, Color.yellow.b, 0.25f); // Set the drawing color to be a transparent yellow
                 }
-                
-                Gizmos.DrawCube(telegraphPos[i], new Vector3(1, 1, 1)); // Draw square at the correct coordinates using the telegraph positions vector array
 
+                Gizmos.DrawCube(telegraphPos[i], new Vector3(1, 1, 1)); // Draw square at the correct coordinates using the telegraph positions vector array
             }
         }
     }
