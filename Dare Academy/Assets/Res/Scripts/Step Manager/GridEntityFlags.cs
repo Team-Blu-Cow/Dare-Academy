@@ -14,6 +14,7 @@ public class GridEntityFlags : BitFlags_32
         destroyOnReset      = 0b00000000000000000000000001000000,
         killOnRoomSwitch    = 0b00000000000000000000000010000000,
         refectAllBullets    = 0b00000000000000000000000100000000,
+        allowedOffGrid      = 0b00000000000000000000001000000000
     }
 
     public void SetFlags(Flags flags, bool value)
@@ -35,17 +36,5 @@ public class GridEntityFlags : BitFlags_32
             return true;
 
         return false;
-    }
-}
-
-public class BitFlag<T> where T : System.Enum 
-{
-    T flags;
-
-    T m_flagData;
-
-    public void editBits()
-    {
-
     }
 }

@@ -50,7 +50,7 @@ public abstract class GridEntity : MonoBehaviour
         {
             return
                 (m_health <= 0 && m_flags.IsFlagsSet(flags.isKillable))
-                || m_currentNode == null
+                || m_currentNode == null && !m_flags.IsFlagsSet(flags.allowedOffGrid)
                 || m_internalFlags.IsFlagsSet(interalFlags.isDead)
                 ; // fuck you Adam, its staying in :] - Love Matthew & Jay
         }
@@ -155,7 +155,7 @@ public abstract class GridEntity : MonoBehaviour
         m_previousNode = null;
 
         // if not on node kill entity, this will prevent next steps from being run
-        if (m_currentNode == null)
+        if (m_currentNode == null && !m_flags.IsFlagsSet(flags.allowedOffGrid))
             Kill();
     }
 
@@ -343,7 +343,7 @@ public abstract class GridEntity : MonoBehaviour
 
     public void PostMoveStep()
     {
-        if (m_currentNode != null)
+        if (m_currentNode != null && !m_flags.IsFlagsSet(flags.allowedOffGrid))
         {
             List<GridEntity> entities = m_currentNode.GetGridEntities();
             if (!entities.Contains(this))
