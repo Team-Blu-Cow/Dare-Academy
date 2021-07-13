@@ -177,6 +177,8 @@ public class PlayerEntity : GridEntity
             m_moveDirection = Vector2Int.zero;
             if (!m_sceneHasSwitched)
                 App.GetModule<LevelModule>().StepController.ExecuteStep();
+
+            SetMovementDirection(Vector2Int.zero, 0);
         }
     }
 
