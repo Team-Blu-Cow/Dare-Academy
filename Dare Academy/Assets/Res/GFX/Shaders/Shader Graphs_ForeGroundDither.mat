@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Shader Graphs_Starry Sky
-  m_Shader: {fileID: -6465566751694194690, guid: c150eb18d8b828c42a30cb88aacf5e29, type: 3}
+  m_Name: Shader Graphs_ForeGroundDither
+  m_Shader: {fileID: -6465566751694194690, guid: 6786bb89cd2624349bba39b43d30c382, type: 3}
   m_ShaderKeywords: ETC1_EXTERNAL_ALPHA
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -19,6 +19,10 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _MainTex:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - unity_Lightmaps:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -32,6 +36,6 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Vector1_a6cf0f9267014f81907d6e38aa99e6cc: 1
+    - Vector1_70dcfdbe330a46b0942bdd2aae6b337e: -1.12
     m_Colors: []
   m_BuildTextureStacks: []
