@@ -399,7 +399,7 @@ public class PlayerEntity : GridEntity
                 {
                     node = m_previousNode;
 
-                    if (Direction == m_abilityDirection)
+                    if (LastDirection == m_abilityDirection)
                     {
                         node = m_currentNode;
                     }
