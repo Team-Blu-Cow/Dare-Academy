@@ -211,7 +211,76 @@ public class PlayerUI : MonoBehaviour
 
     private void MoveIconPositions()
     {
-        LeanTween.move(dashIcon, blockIcon.GetComponent<RectTransform>().position, 2);
+        Vector3 blockPosition = blockIcon.GetComponent<RectTransform>().position;
+        Vector3 dashPosition = dashIcon.GetComponent<RectTransform>().position;
+        Vector3 gunPosition = gunIcon.GetComponent<RectTransform>().position;
+
+        Vector3 blockScale = blockIcon.GetComponent<RectTransform>().localScale;
+        Vector3 dashScale = dashIcon.GetComponent<RectTransform>().localScale;
+        Vector3 gunScale = gunIcon.GetComponent<RectTransform>().localScale;
+
+        float transitionSpeed = 0.5f;
+
+        if (numOfAbilitiesUnlocked == 2)
+        {
+            if (m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Dash)
+            {
+                if(blockIcon.activeSelf == false)
+                {
+                    Debug.Log("Dash & gun moving");
+                    LeanTween.move(dashIcon, gunPosition, transitionSpeed);
+                    LeanTween.move(gunIcon, dashPosition, transitionSpeed);
+                    LeanTween.scale(dashIcon, gunScale, transitionSpeed);
+                    LeanTween.scale(gunIcon, dashScale, transitionSpeed);
+                }
+                else
+                {
+                    Debug.Log("Dash & block moving");
+                    LeanTween.move(dashIcon, blockPosition, transitionSpeed);
+                    LeanTween.move(blockIcon, dashPosition, transitionSpeed);
+                    LeanTween.scale(dashIcon, blockScale, transitionSpeed);
+                    LeanTween.scale(blockIcon, dashScale, transitionSpeed);
+                }
+            }
+            
+            if (m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Shoot)
+            {
+                if (blockIcon.activeSelf == false)
+                {
+                    LeanTween.move(dashIcon, gunPosition, transitionSpeed);
+                    LeanTween.move(gunIcon, dashPosition, transitionSpeed);
+                    LeanTween.scale(dashIcon, gunScale, transitionSpeed);
+                    LeanTween.scale(gunIcon, dashScale, transitionSpeed);
+                }
+                else
+                {
+                    LeanTween.move(dashIcon, blockPosition, transitionSpeed);
+                    LeanTween.move(blockIcon, dashPosition, transitionSpeed);
+                    LeanTween.scale(dashIcon, blockScale, transitionSpeed);
+                    LeanTween.scale(blockIcon, dashScale, transitionSpeed);
+                }
+            }
+            
+            if (m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Block)
+            {
+                if (dashIcon.activeSelf == false)
+                {
+                    LeanTween.move(blockIcon, gunPosition, transitionSpeed);
+                    LeanTween.move(gunIcon, blockPosition, transitionSpeed);
+                    LeanTween.scale(blockIcon, gunScale, transitionSpeed);
+                    LeanTween.scale(gunIcon, blockScale, transitionSpeed);
+                }
+                else
+                {
+                    LeanTween.move(dashIcon, blockPosition, transitionSpeed);
+                    LeanTween.move(blockIcon, dashPosition, transitionSpeed);
+                    LeanTween.scale(dashIcon, blockScale, transitionSpeed);
+                    LeanTween.scale(blockIcon, dashScale, transitionSpeed);
+                }
+            }
+        }
+
+        isIconsMoving = false;
     }
 
     public void UpdateHealthUI()
