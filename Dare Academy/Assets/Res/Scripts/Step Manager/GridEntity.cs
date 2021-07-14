@@ -213,6 +213,12 @@ public abstract class GridEntity : MonoBehaviour
         List<GridEntity> losingEntities = new List<GridEntity>();
         winningEntities.Add(this);
 
+        ResolveFlagsConflict(ref winningEntities, ref losingEntities);
+        if (winningEntities.Count == 1)
+        {
+            RemovePassThrough(winningEntities, losingEntities);
+        }
+
         int highestMass = int.MinValue;
         int highestSpeed = int.MinValue;
 
@@ -282,6 +288,12 @@ public abstract class GridEntity : MonoBehaviour
         // check for conflict on current node
         if (!CheckForConflict())
             return;
+
+        if (winning_objects.Count > 1)
+        {
+            // check for any flags that force entities to always win
+            ResolveFlagsConflict(ref winning_objects, ref losing_objects);
+        }
 
         if (winning_objects.Count > 1)
         {
@@ -720,6 +732,31 @@ public abstract class GridEntity : MonoBehaviour
 
             losing_objects.Add(winning_objects[i]);
             winning_objects.RemoveAt(i);
+        }
+    }
+
+    virtual protected void ResolveFlagsConflict(ref List<GridEntity> winning_objects, ref List<GridEntity> losing_objects)
+    {
+        bool alwaysWin = false;
+        foreach (GridEntity entity in winning_objects)
+        {
+            if (entity.Flags.IsFlagsSet(flags.alwaysWinConflict))
+            {
+                alwaysWin = true;
+                break;
+            }
+        }
+
+        if (alwaysWin)
+        {
+            for (int i = winning_objects.Count - 1; i >= 0; i--)
+            {
+                if (!winning_objects[i].Flags.IsFlagsSet(flags.alwaysWinConflict))
+                {
+                    losing_objects.Add(winning_objects[i]);
+                    winning_objects.RemoveAt(i);
+                }
+            }
         }
     }
 
