@@ -16,7 +16,7 @@ namespace blu
         private GameObject _dialogueCanvas;
         private Animator _canvasAnimation;
         private NPCConversation _currentConversation;
-        private GameObject _EventSystem;
+        public GameObject _EventSystem;
         private GameObject _ContinueButton;
 
         //private Image _continueButton;
@@ -62,7 +62,7 @@ namespace blu
                 }
                 else
                 {
-                   _ContinueButton.SetActive(false);
+                    _ContinueButton.SetActive(false);
                 }
                 yield return null;
             }

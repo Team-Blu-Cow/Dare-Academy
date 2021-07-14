@@ -83,7 +83,7 @@ public class MortarEnemy : GridEntity
         return Vector3.Distance(transform.position, m_player.transform.position) <= m_attackRadius + 0.25f;
     }
 
-    private void OnDrawGizmos()
+    protected override void OnDrawGizmos()
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, m_attackRadius);

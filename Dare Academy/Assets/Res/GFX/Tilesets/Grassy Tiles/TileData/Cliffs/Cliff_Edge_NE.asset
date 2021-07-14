@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 689940897d07d824bb3d61e74d63d0ed, type: 3}
+  m_Name: Cliff_Edge_NE
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: 40c73d51065adff478d6a37ec54ac38f, type: 2}
+  - {fileID: 11400000, guid: bcb60e93267b3ac49ad0094fd32f345b, type: 2}
+  - {fileID: 11400000, guid: a47bb3210a54f144bbf029f87be977fa, type: 2}
+  data:
+    boolData:
+    - name: walkable
+      data: 1
+    intData:
+    - name: 
+      data: 0
+    floatData:
+    - name: 
+      data: 0
+  neighbours:
+    neighbors: 0000000000000000000000000000000001000000010000000100000000000000

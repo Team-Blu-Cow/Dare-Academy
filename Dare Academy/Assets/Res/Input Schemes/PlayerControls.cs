@@ -15,21 +15,45 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     ""name"": ""PlayerControls"",
     ""maps"": [
         {
-            ""name"": ""Move"",
+            ""name"": ""Player"",
             ""id"": ""cea43b66-3806-4625-91fe-3e770bcc9539"",
             ""actions"": [
                 {
-                    ""name"": ""Direction"",
+                    ""name"": ""ExecuteStep"",
                     ""type"": ""Button"",
-                    ""id"": ""a800f43b-f2c9-46b7-9104-eae6bc27e55b"",
+                    ""id"": ""5cd42ae5-fbb7-4695-abac-917154a20c35"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""Step"",
+                    ""name"": ""AbilityMode"",
                     ""type"": ""Button"",
-                    ""id"": ""5cd42ae5-fbb7-4695-abac-917154a20c35"",
+                    ""id"": ""5dab3b85-635d-4574-883c-1e1de15c3ed5"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""SwapAbilityR"",
+                    ""type"": ""Button"",
+                    ""id"": ""3766b5d7-4160-4d02-b7d0-f1f15bdd0bca"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""SwapAbilityL"",
+                    ""type"": ""Button"",
+                    ""id"": ""a46941af-80c4-4150-85c5-106cbbe91a83"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
+                },
+                {
+                    ""name"": ""CancelAbility"",
+                    ""type"": ""Button"",
+                    ""id"": ""14452790-1c30-4091-be38-c4764af37671"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -41,182 +65,36 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Direction"",
+                    ""type"": ""Value"",
+                    ""id"": ""6f4599d6-bec4-4457-b962-de2c297adc9d"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
-                {
-                    ""name"": ""Keyboard WASD"",
-                    ""id"": ""007e638e-b312-408b-9428-9448999df98a"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""063127de-b3ed-47d6-915d-342054dafc05"",
-                    ""path"": ""<Keyboard>/w"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""KB&Mouse"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""435b69b6-5a3f-4d99-ae49-6f7c60988139"",
-                    ""path"": ""<Keyboard>/s"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""KB&Mouse"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""1b4d1a42-2d8e-4180-8ed4-d9782db30a9f"",
-                    ""path"": ""<Keyboard>/a"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""KB&Mouse"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""503df545-4074-483d-8efb-1651c8586025"",
-                    ""path"": ""<Keyboard>/d"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""KB&Mouse"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""Gamepad D-Pad"",
-                    ""id"": ""01963605-a191-45bd-81d7-0309ddbc88f9"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""102707af-b04f-4d9f-9fc8-31dc434fd103"",
-                    ""path"": ""<Gamepad>/dpad/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""c830b48c-e9ba-4893-a5d0-6126b417dfdc"",
-                    ""path"": ""<Gamepad>/dpad/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""d74bfb00-f7bc-4122-a037-b5ad8c1a311c"",
-                    ""path"": ""<Gamepad>/dpad/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""0327109c-29a5-4718-856e-08d901324e2b"",
-                    ""path"": ""<Gamepad>/dpad/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""Gamepad Left Stick"",
-                    ""id"": ""dc2216e5-5a16-4d48-8a2c-3bdf3d17f686"",
-                    ""path"": ""2DVector"",
-                    ""interactions"": ""Press"",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": true,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": ""up"",
-                    ""id"": ""e8acffae-afbc-44f1-8f2a-0bb6ccf71eb2"",
-                    ""path"": ""<Gamepad>/leftStick/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""2454ce30-2a53-4252-8962-a7cd84db6353"",
-                    ""path"": ""<Gamepad>/leftStick/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""79c7c842-8854-4367-a71b-19630c7b91b2"",
-                    ""path"": ""<Gamepad>/leftStick/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""b6c2c65e-5b08-4d97-a7fe-a22c9383d2ce"",
-                    ""path"": ""<Gamepad>/leftStick/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Direction"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
                 {
                     ""name"": """",
                     ""id"": ""d5fbfa61-d695-447f-9936-150613164d6d"",
                     ""path"": ""<Keyboard>/q"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Step"",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""ExecuteStep"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ce0fbc98-3e8c-47c5-b40a-a7bcba1ff158"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""ExecuteStep"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -226,92 +104,217 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
+                    ""groups"": ""Keyboard"",
                     ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
-                }
-            ]
-        },
-        {
-            ""name"": ""Ability"",
-            ""id"": ""31809891-72d2-4334-bddc-d87af4db1231"",
-            ""actions"": [
-                {
-                    ""name"": ""AbilityMode"",
-                    ""type"": ""Button"",
-                    ""id"": ""5314b8c6-3e77-4b1b-9a9c-7f87eafb7a68"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
                 },
-                {
-                    ""name"": ""SwapAbilityR"",
-                    ""type"": ""Button"",
-                    ""id"": ""6016c215-0a11-43f1-975b-23d3c177c549"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
-                    ""name"": ""SwapAbilityL"",
-                    ""type"": ""Button"",
-                    ""id"": ""84fdb7d5-0c13-4a3e-9778-08969f504a55"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
-                    ""name"": ""CancelAbility"",
-                    ""type"": ""Button"",
-                    ""id"": ""a234393d-6b6e-42c0-b05e-20a777f96004"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                }
-            ],
-            ""bindings"": [
                 {
                     ""name"": """",
-                    ""id"": ""caf03df1-e514-4573-b13c-457478f73762"",
-                    ""path"": ""<Keyboard>/space"",
+                    ""id"": ""0abba543-e73b-474b-b5b2-8fb79873f89c"",
+                    ""path"": ""<Gamepad>/buttonWest"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""KB&Mouse"",
-                    ""action"": ""AbilityMode"",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""a9ac528b-a196-4d9e-a478-ce3e9b8d8a85"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Direction"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""7e7de46b-e5d6-4008-982c-3cfb9d4aba45"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Direction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""47370f12-271c-4853-8772-1f8c218959d9"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Direction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""45bfdd2e-345c-4df0-8c05-ebabfa8db8d6"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Direction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""61a751ad-219a-4358-bd09-decf0de8168d"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""Direction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""2D Vector"",
+                    ""id"": ""a02dd8fc-36b0-4ab2-b750-f51ade05b57a"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Direction"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""5ec9ea34-8837-49e0-bad9-2697acbe4ea6"",
+                    ""path"": ""<Gamepad>/leftStick/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Direction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""5b3892fb-2bb1-4511-bb4b-c618a5138043"",
+                    ""path"": ""<Gamepad>/leftStick/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Direction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""fef0d3ea-6f15-4a67-b582-4180456f995d"",
+                    ""path"": ""<Gamepad>/leftStick/left"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Direction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""7dcb537c-0684-4afb-88f5-3aa146bdcbd4"",
+                    ""path"": ""<Gamepad>/leftStick/right"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""Direction"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6e71d388-db53-4313-b1a6-1af262fabda8"",
+                    ""path"": ""<Keyboard>/backspace"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""CancelAbility"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""815c7b70-8379-492f-92e3-84b243d1dcc3"",
-                    ""path"": ""<Keyboard>/3"",
+                    ""id"": ""a5635d99-d30e-487a-b7f7-0679c0116eb3"",
+                    ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""KB&Mouse"",
-                    ""action"": ""SwapAbilityR"",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""CancelAbility"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""0e82c512-2e7e-4045-b1fc-c6a5b981e411"",
+                    ""id"": ""993a1a1c-db85-4663-9c7b-053de0dc72c4"",
                     ""path"": ""<Keyboard>/1"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": ""KB&Mouse"",
+                    ""groups"": ""Keyboard"",
                     ""action"": ""SwapAbilityL"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""f10b2e7a-2dd9-4760-b527-d723c165fa07"",
-                    ""path"": ""<Keyboard>/backspace"",
+                    ""id"": ""8d5a470a-243c-470b-992b-b9fa7f9691d7"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""CancelAbility"",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""SwapAbilityL"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e2aa528a-ea6b-4383-ba24-39f24c01e35d"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""SwapAbilityR"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bd488955-37c1-4861-b89b-92588f728d02"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""SwapAbilityR"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8477489f-d56d-49cf-be88-76756f190465"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard"",
+                    ""action"": ""AbilityMode"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5d3582da-a4f2-4868-8dba-ea9c51b266d5"",
+                    ""path"": ""<Gamepad>/leftStickPress"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Gamepad"",
+                    ""action"": ""AbilityMode"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -320,45 +323,32 @@ public class @PlayerControls : IInputActionCollection, IDisposable
     ],
     ""controlSchemes"": [
         {
-            ""name"": ""KB&Mouse"",
-            ""bindingGroup"": ""KB&Mouse"",
+            ""name"": ""Keyboard"",
+            ""bindingGroup"": ""Keyboard"",
             ""devices"": [
                 {
                     ""devicePath"": ""<Keyboard>"",
-                    ""isOptional"": false,
-                    ""isOR"": false
-                },
-                {
-                    ""devicePath"": ""<Mouse>"",
                     ""isOptional"": false,
                     ""isOR"": false
                 }
             ]
         },
         {
-            ""name"": ""gamepad"",
-            ""bindingGroup"": ""gamepad"",
-            ""devices"": [
-                {
-                    ""devicePath"": ""<Gamepad>"",
-                    ""isOptional"": false,
-                    ""isOR"": false
-                }
-            ]
+            ""name"": ""Gamepad"",
+            ""bindingGroup"": ""Gamepad"",
+            ""devices"": []
         }
     ]
 }");
-        // Move
-        m_Move = asset.FindActionMap("Move", throwIfNotFound: true);
-        m_Move_Direction = m_Move.FindAction("Direction", throwIfNotFound: true);
-        m_Move_Step = m_Move.FindAction("Step", throwIfNotFound: true);
-        m_Move_Interact = m_Move.FindAction("Interact", throwIfNotFound: true);
-        // Ability
-        m_Ability = asset.FindActionMap("Ability", throwIfNotFound: true);
-        m_Ability_AbilityMode = m_Ability.FindAction("AbilityMode", throwIfNotFound: true);
-        m_Ability_SwapAbilityR = m_Ability.FindAction("SwapAbilityR", throwIfNotFound: true);
-        m_Ability_SwapAbilityL = m_Ability.FindAction("SwapAbilityL", throwIfNotFound: true);
-        m_Ability_CancelAbility = m_Ability.FindAction("CancelAbility", throwIfNotFound: true);
+        // Player
+        m_Player = asset.FindActionMap("Player", throwIfNotFound: true);
+        m_Player_ExecuteStep = m_Player.FindAction("ExecuteStep", throwIfNotFound: true);
+        m_Player_AbilityMode = m_Player.FindAction("AbilityMode", throwIfNotFound: true);
+        m_Player_SwapAbilityR = m_Player.FindAction("SwapAbilityR", throwIfNotFound: true);
+        m_Player_SwapAbilityL = m_Player.FindAction("SwapAbilityL", throwIfNotFound: true);
+        m_Player_CancelAbility = m_Player.FindAction("CancelAbility", throwIfNotFound: true);
+        m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+        m_Player_Direction = m_Player.FindAction("Direction", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -405,95 +395,64 @@ public class @PlayerControls : IInputActionCollection, IDisposable
         asset.Disable();
     }
 
-    // Move
-    private readonly InputActionMap m_Move;
-    private IMoveActions m_MoveActionsCallbackInterface;
-    private readonly InputAction m_Move_Direction;
-    private readonly InputAction m_Move_Step;
-    private readonly InputAction m_Move_Interact;
-    public struct MoveActions
+    // Player
+    private readonly InputActionMap m_Player;
+    private IPlayerActions m_PlayerActionsCallbackInterface;
+    private readonly InputAction m_Player_ExecuteStep;
+    private readonly InputAction m_Player_AbilityMode;
+    private readonly InputAction m_Player_SwapAbilityR;
+    private readonly InputAction m_Player_SwapAbilityL;
+    private readonly InputAction m_Player_CancelAbility;
+    private readonly InputAction m_Player_Interact;
+    private readonly InputAction m_Player_Direction;
+    public struct PlayerActions
     {
         private @PlayerControls m_Wrapper;
-        public MoveActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @Direction => m_Wrapper.m_Move_Direction;
-        public InputAction @Step => m_Wrapper.m_Move_Step;
-        public InputAction @Interact => m_Wrapper.m_Move_Interact;
-        public InputActionMap Get() { return m_Wrapper.m_Move; }
+        public PlayerActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
+        public InputAction @ExecuteStep => m_Wrapper.m_Player_ExecuteStep;
+        public InputAction @AbilityMode => m_Wrapper.m_Player_AbilityMode;
+        public InputAction @SwapAbilityR => m_Wrapper.m_Player_SwapAbilityR;
+        public InputAction @SwapAbilityL => m_Wrapper.m_Player_SwapAbilityL;
+        public InputAction @CancelAbility => m_Wrapper.m_Player_CancelAbility;
+        public InputAction @Interact => m_Wrapper.m_Player_Interact;
+        public InputAction @Direction => m_Wrapper.m_Player_Direction;
+        public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
         public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(MoveActions set) { return set.Get(); }
-        public void SetCallbacks(IMoveActions instance)
+        public static implicit operator InputActionMap(PlayerActions set) { return set.Get(); }
+        public void SetCallbacks(IPlayerActions instance)
         {
-            if (m_Wrapper.m_MoveActionsCallbackInterface != null)
+            if (m_Wrapper.m_PlayerActionsCallbackInterface != null)
             {
-                @Direction.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnDirection;
-                @Direction.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnDirection;
-                @Direction.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnDirection;
-                @Step.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnStep;
-                @Step.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnStep;
-                @Step.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnStep;
-                @Interact.started -= m_Wrapper.m_MoveActionsCallbackInterface.OnInteract;
-                @Interact.performed -= m_Wrapper.m_MoveActionsCallbackInterface.OnInteract;
-                @Interact.canceled -= m_Wrapper.m_MoveActionsCallbackInterface.OnInteract;
+                @ExecuteStep.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnExecuteStep;
+                @ExecuteStep.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnExecuteStep;
+                @ExecuteStep.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnExecuteStep;
+                @AbilityMode.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAbilityMode;
+                @AbilityMode.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAbilityMode;
+                @AbilityMode.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnAbilityMode;
+                @SwapAbilityR.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwapAbilityR;
+                @SwapAbilityR.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwapAbilityR;
+                @SwapAbilityR.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwapAbilityR;
+                @SwapAbilityL.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwapAbilityL;
+                @SwapAbilityL.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwapAbilityL;
+                @SwapAbilityL.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnSwapAbilityL;
+                @CancelAbility.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCancelAbility;
+                @CancelAbility.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCancelAbility;
+                @CancelAbility.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCancelAbility;
+                @Interact.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
+                @Interact.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
+                @Interact.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnInteract;
+                @Direction.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDirection;
+                @Direction.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDirection;
+                @Direction.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnDirection;
             }
-            m_Wrapper.m_MoveActionsCallbackInterface = instance;
+            m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
             {
-                @Direction.started += instance.OnDirection;
-                @Direction.performed += instance.OnDirection;
-                @Direction.canceled += instance.OnDirection;
-                @Step.started += instance.OnStep;
-                @Step.performed += instance.OnStep;
-                @Step.canceled += instance.OnStep;
-                @Interact.started += instance.OnInteract;
-                @Interact.performed += instance.OnInteract;
-                @Interact.canceled += instance.OnInteract;
-            }
-        }
-    }
-    public MoveActions @Move => new MoveActions(this);
-
-    // Ability
-    private readonly InputActionMap m_Ability;
-    private IAbilityActions m_AbilityActionsCallbackInterface;
-    private readonly InputAction m_Ability_AbilityMode;
-    private readonly InputAction m_Ability_SwapAbilityR;
-    private readonly InputAction m_Ability_SwapAbilityL;
-    private readonly InputAction m_Ability_CancelAbility;
-    public struct AbilityActions
-    {
-        private @PlayerControls m_Wrapper;
-        public AbilityActions(@PlayerControls wrapper) { m_Wrapper = wrapper; }
-        public InputAction @AbilityMode => m_Wrapper.m_Ability_AbilityMode;
-        public InputAction @SwapAbilityR => m_Wrapper.m_Ability_SwapAbilityR;
-        public InputAction @SwapAbilityL => m_Wrapper.m_Ability_SwapAbilityL;
-        public InputAction @CancelAbility => m_Wrapper.m_Ability_CancelAbility;
-        public InputActionMap Get() { return m_Wrapper.m_Ability; }
-        public void Enable() { Get().Enable(); }
-        public void Disable() { Get().Disable(); }
-        public bool enabled => Get().enabled;
-        public static implicit operator InputActionMap(AbilityActions set) { return set.Get(); }
-        public void SetCallbacks(IAbilityActions instance)
-        {
-            if (m_Wrapper.m_AbilityActionsCallbackInterface != null)
-            {
-                @AbilityMode.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnAbilityMode;
-                @AbilityMode.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnAbilityMode;
-                @AbilityMode.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnAbilityMode;
-                @SwapAbilityR.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnSwapAbilityR;
-                @SwapAbilityR.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnSwapAbilityR;
-                @SwapAbilityR.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnSwapAbilityR;
-                @SwapAbilityL.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnSwapAbilityL;
-                @SwapAbilityL.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnSwapAbilityL;
-                @SwapAbilityL.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnSwapAbilityL;
-                @CancelAbility.started -= m_Wrapper.m_AbilityActionsCallbackInterface.OnCancelAbility;
-                @CancelAbility.performed -= m_Wrapper.m_AbilityActionsCallbackInterface.OnCancelAbility;
-                @CancelAbility.canceled -= m_Wrapper.m_AbilityActionsCallbackInterface.OnCancelAbility;
-            }
-            m_Wrapper.m_AbilityActionsCallbackInterface = instance;
-            if (instance != null)
-            {
+                @ExecuteStep.started += instance.OnExecuteStep;
+                @ExecuteStep.performed += instance.OnExecuteStep;
+                @ExecuteStep.canceled += instance.OnExecuteStep;
                 @AbilityMode.started += instance.OnAbilityMode;
                 @AbilityMode.performed += instance.OnAbilityMode;
                 @AbilityMode.canceled += instance.OnAbilityMode;
@@ -506,39 +465,42 @@ public class @PlayerControls : IInputActionCollection, IDisposable
                 @CancelAbility.started += instance.OnCancelAbility;
                 @CancelAbility.performed += instance.OnCancelAbility;
                 @CancelAbility.canceled += instance.OnCancelAbility;
+                @Interact.started += instance.OnInteract;
+                @Interact.performed += instance.OnInteract;
+                @Interact.canceled += instance.OnInteract;
+                @Direction.started += instance.OnDirection;
+                @Direction.performed += instance.OnDirection;
+                @Direction.canceled += instance.OnDirection;
             }
         }
     }
-    public AbilityActions @Ability => new AbilityActions(this);
-    private int m_KBMouseSchemeIndex = -1;
-    public InputControlScheme KBMouseScheme
+    public PlayerActions @Player => new PlayerActions(this);
+    private int m_KeyboardSchemeIndex = -1;
+    public InputControlScheme KeyboardScheme
     {
         get
         {
-            if (m_KBMouseSchemeIndex == -1) m_KBMouseSchemeIndex = asset.FindControlSchemeIndex("KB&Mouse");
-            return asset.controlSchemes[m_KBMouseSchemeIndex];
+            if (m_KeyboardSchemeIndex == -1) m_KeyboardSchemeIndex = asset.FindControlSchemeIndex("Keyboard");
+            return asset.controlSchemes[m_KeyboardSchemeIndex];
         }
     }
-    private int m_gamepadSchemeIndex = -1;
-    public InputControlScheme gamepadScheme
+    private int m_GamepadSchemeIndex = -1;
+    public InputControlScheme GamepadScheme
     {
         get
         {
-            if (m_gamepadSchemeIndex == -1) m_gamepadSchemeIndex = asset.FindControlSchemeIndex("gamepad");
-            return asset.controlSchemes[m_gamepadSchemeIndex];
+            if (m_GamepadSchemeIndex == -1) m_GamepadSchemeIndex = asset.FindControlSchemeIndex("Gamepad");
+            return asset.controlSchemes[m_GamepadSchemeIndex];
         }
     }
-    public interface IMoveActions
+    public interface IPlayerActions
     {
-        void OnDirection(InputAction.CallbackContext context);
-        void OnStep(InputAction.CallbackContext context);
-        void OnInteract(InputAction.CallbackContext context);
-    }
-    public interface IAbilityActions
-    {
+        void OnExecuteStep(InputAction.CallbackContext context);
         void OnAbilityMode(InputAction.CallbackContext context);
         void OnSwapAbilityR(InputAction.CallbackContext context);
         void OnSwapAbilityL(InputAction.CallbackContext context);
         void OnCancelAbility(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
+        void OnDirection(InputAction.CallbackContext context);
     }
 }

@@ -28,7 +28,7 @@ public class PlayerEntity : GridEntity
 
     // HEALTH
 
-    private int m_maxHealth = 1;
+    private int m_maxHealth = 10;
     public int MaxHealth { get { return m_maxHealth; } set { m_maxHealth = value; } }
 
     // ENERGY
@@ -45,31 +45,23 @@ public class PlayerEntity : GridEntity
 
     // OTHER
 
-    private PlayerControls input;
-    private GameObject m_bulletPrefab = null;
+    private PlayerControls m_input;
+    [SerializeField] private GameObject m_bulletPrefab = null;
     private int m_dashDistance = 2;
 
+    private PlayerInput m_playerInput = new PlayerInput();
+
     private Vector2Int m_moveDirection = Vector2Int.zero;
-    private Vector2Int m_abilityDirection = Vector2Int.zero;
-    private Vector2Int m_inputDirection = Vector2Int.zero;
-    private bool m_wasdPressed = false;
-
-    private enum ActiveInputs
-    {
-        _None,
-        North,
-        East,
-        South,
-        West
-    }
-
-    // stack of what order keys were pressed in
-    private Stack<ActiveInputs> m_activeInputStack = new Stack<ActiveInputs>();
+    [SerializeField] private Vector2Int m_abilityDirection = Vector2Int.zero;
 
     protected override void OnValidate()
     {
         base.OnValidate();
         m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet");
+    }
+
+    protected void Awake()
+    {
     }
 
     protected override void Start()
@@ -78,150 +70,72 @@ public class PlayerEntity : GridEntity
         Energy = MaxEnergy;
         Health = MaxHealth;
         m_abilities.Initialise();
-        base.OnValidate();
+        m_animationController = GetComponent<GridEntityAnimationController>();
     }
 
     private void OnEnable()
     {
-        input = App.GetModule<InputModule>().PlayerController;
-        input.Move.Direction.started += WASDPressed;
-        input.Move.Direction.canceled += WASDReleased;
+        m_input = App.GetModule<InputModule>().PlayerController;
+
+        m_playerInput.Init();
 
 #if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
-        input.Ability.AbilityMode.started += EnterAbilityMode;
-        input.Ability.AbilityMode.canceled += ExitAbilityMode;
+        m_input.Player.AbilityMode.started += EnterAbilityMode;
+        m_input.Player.AbilityMode.canceled += ExitAbilityMode;
 #else
         input.Ability.AbilityMode.started += ToggleAbilityMode;
 #endif
 
-        input.Ability.CancelAbility.performed += CancelAbility;
+        m_input.Player.CancelAbility.performed += CancelAbility;
 
-        input.Ability.SwapAbilityL.performed += CycleAbilityL;
-        input.Ability.SwapAbilityR.performed += CycleAbilityR;
+        m_input.Player.SwapAbilityL.performed += CycleAbilityL;
+        m_input.Player.SwapAbilityR.performed += CycleAbilityR;
     }
 
     private void OnDisable()
     {
-        input.Move.Direction.started -= WASDPressed;
-        input.Move.Direction.canceled -= WASDReleased;
+        m_playerInput.Cleanup();
 
 #if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
-        input.Ability.AbilityMode.started -= EnterAbilityMode;
-        input.Ability.AbilityMode.canceled -= ExitAbilityMode;
+        m_input.Player.AbilityMode.started -= EnterAbilityMode;
+        m_input.Player.AbilityMode.canceled -= ExitAbilityMode;
 #else
         input.Ability.AbilityMode.started -= ToggleAbilityMode;
 #endif
 
-        input.Ability.CancelAbility.performed -= CancelAbility;
+        m_input.Player.CancelAbility.performed -= CancelAbility;
 
-        input.Ability.SwapAbilityL.performed -= CycleAbilityL;
-        input.Ability.SwapAbilityR.performed -= CycleAbilityR;
+        m_input.Player.SwapAbilityL.performed -= CycleAbilityL;
+        m_input.Player.SwapAbilityR.performed -= CycleAbilityR;
     }
 
     protected void Update()
     {
-        // fill stack with which keys are pressed
-        if (m_wasdPressed)
-        {
-            Vector2 vec2 = input.Move.Direction.ReadValue<Vector2>();
-            Vector2Int vec2I = new Vector2Int(Mathf.RoundToInt(vec2.x), Mathf.RoundToInt(vec2.y));
-
-            if (vec2I.x == 1)
-            {
-                if (!m_activeInputStack.Contains(ActiveInputs.East))
-                {
-                    m_activeInputStack.Push(ActiveInputs.East);
-                }
-            }
-
-            if (vec2I.x == -1)
-            {
-                if (!m_activeInputStack.Contains(ActiveInputs.West))
-                {
-                    m_activeInputStack.Push(ActiveInputs.West);
-                }
-            }
-
-            if (vec2I.y == 1)
-            {
-                if (!m_activeInputStack.Contains(ActiveInputs.North))
-                {
-                    m_activeInputStack.Push(ActiveInputs.North);
-                }
-            }
-
-            if (vec2I.y == -1)
-            {
-                if (!m_activeInputStack.Contains(ActiveInputs.South))
-                {
-                    m_activeInputStack.Push(ActiveInputs.South);
-                }
-            }
-
-            while (m_activeInputStack.Count > 0)
-            {
-                if (vec2I.x != 1 && m_activeInputStack.Peek() == ActiveInputs.East)
-                { m_activeInputStack.Pop(); continue; }
-                if (vec2I.x != -1 && m_activeInputStack.Peek() == ActiveInputs.West)
-                { m_activeInputStack.Pop(); continue; }
-                if (vec2I.y != 1 && m_activeInputStack.Peek() == ActiveInputs.North)
-                { m_activeInputStack.Pop(); continue; }
-                if (vec2I.y != -1 && m_activeInputStack.Peek() == ActiveInputs.South)
-                { m_activeInputStack.Pop(); continue; }
-
-                break;
-            }
-        }
-        else
-        {
-            m_activeInputStack.Clear();
-        }
-
-        // set m_inputDirection
-        if (m_activeInputStack.Count > 0)
-        {
-            if (m_activeInputStack.Peek() == ActiveInputs.North)
-            { m_inputDirection = Vector2Int.up; }
-            if (m_activeInputStack.Peek() == ActiveInputs.East)
-            { m_inputDirection = Vector2Int.right; }
-            if (m_activeInputStack.Peek() == ActiveInputs.South)
-            { m_inputDirection = Vector2Int.down; }
-            if (m_activeInputStack.Peek() == ActiveInputs.West)
-            { m_inputDirection = Vector2Int.left; }
-        }
-        else
-        {
-            m_inputDirection = Vector2Int.zero;
-        }
+        m_moveDirection = Vector2Int.zero;
+        // m_abilityDirection = Vector2Int.zero;
 
         if (m_abilityMode)
         {
-            float headX = 0;
-            float headY = 0;
-            if (Mathf.Abs(m_inputDirection.x) > Mathf.Abs(m_inputDirection.y))
-                headX = m_inputDirection.x;
-            else
-                headY = m_inputDirection.y;
+            Vector2Int direction = m_playerInput.DirectionEight(true);
 
-            m_animationController.SetHeadDirection(headX, headY);
-        }
-
-        if (m_abilityMode)
-        {
-            m_moveDirection = Vector2Int.zero;
-
-            if (m_inputDirection != Vector2Int.zero)
+            if (direction != Vector2Int.zero)
             {
-                m_abilityDirection = m_inputDirection;
-                m_inputDirection = Vector2Int.zero;
+                float headX = 0;
+                float headY = 0;
+                if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
+                    headX = direction.x;
+                else
+                    headY = direction.y;
+
+                m_animationController.SetHeadDirection(headX, headY);
+
+                m_abilityDirection = direction;
+                m_playerInput.IgnoreInputUntilZero();
             }
         }
         else
         {
-            if (m_inputDirection != Vector2Int.zero)
-            {
-                m_moveDirection = m_inputDirection;
-            }
+            m_moveDirection = m_playerInput.DirectionFour();
         }
 
         if (Abilities.GetActiveAbility() == AbilityEnum.Dash && !m_abilityMode && m_abilityDirection != Vector2Int.zero)
@@ -263,28 +177,53 @@ public class PlayerEntity : GridEntity
             m_moveDirection = Vector2Int.zero;
             if (!m_sceneHasSwitched)
                 App.GetModule<LevelModule>().StepController.ExecuteStep();
+
+            SetMovementDirection(Vector2Int.zero, 0);
         }
+    }
+
+    protected void SetAbilityAnimationFlag()
+    {
+        int animationFlag;
+
+        switch (m_abilities.GetActiveAbility())
+        {
+            case AbilityEnum.None: animationFlag = 0; break;
+            case AbilityEnum.Shoot: animationFlag = 1; break;
+            case AbilityEnum.Dash: animationFlag = 2; break;
+            case AbilityEnum.Block: animationFlag = 3; break;
+            default: animationFlag = 0; break;
+        }
+
+        m_animationController.animator.SetInteger("AbilityState", animationFlag);
+    }
+
+    protected void SetAbilityAnimationFlag(int animationFlag)
+    {
+        m_animationController.animator.SetInteger("AbilityState", animationFlag);
     }
 
     public override void AnalyseStep()
     {
         if (m_moveDirection != Vector2.zero)
             m_animationController.SetDirection(m_moveDirection.x, 1);
+
+        if (m_animationController != null)
+            SetAbilityAnimationFlag(0);
     }
 
-    protected void WASDPressed(InputAction.CallbackContext context)
+    protected void ToggleAbilityMode(InputAction.CallbackContext context)
     {
-        m_wasdPressed = true;
+        m_abilityMode = !m_abilityMode;
+
+        SetAbilityAnimationFlag();
     }
 
-    protected void WASDReleased(InputAction.CallbackContext context)
+    protected void EnterAbilityMode(InputAction.CallbackContext context)
     {
-        m_wasdPressed = false;
+        m_abilityMode = true;
+        SetAbilityAnimationFlag();
     }
-
-    protected void ToggleAbilityMode(InputAction.CallbackContext context) => m_abilityMode = !m_abilityMode;
-
-    protected void EnterAbilityMode(InputAction.CallbackContext context) => m_abilityMode = true;
 
     protected void ExitAbilityMode(InputAction.CallbackContext context) => m_abilityMode = false;
 
@@ -296,11 +235,14 @@ public class PlayerEntity : GridEntity
     protected void CycleAbilityR(InputAction.CallbackContext context)
     {
         m_abilities.SetActiveAbility(m_abilities.RightAbility());
+
+        SetAbilityAnimationFlag();
     }
 
     protected void CycleAbilityL(InputAction.CallbackContext context)
     {
         m_abilities.SetActiveAbility(m_abilities.LeftAbility());
+        SetAbilityAnimationFlag();
     }
 
     public override void EndStep()
@@ -339,12 +281,16 @@ public class PlayerEntity : GridEntity
 
                     if (App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter == 0 && LastDirection == Vector2Int.down)
                     {
+                        m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(2, 4);
+                        m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
+                        m_currentNode.lvlTransitionInfo.targetRoomIndex = 8;
+
                         App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
                         Destroy(App.GetModule<LevelModule>().persistantSceneData._soundEmitter);
                         App.GetModule<LevelModule>().persistantSceneData = new PersistantSceneData();
 
                         App.GetModule<SceneModule>().SwitchScene(
-                            "Crashsite Top",
+                            m_currentNode.lvlTransitionInfo.targetSceneName,
                             m_currentNode.lvlTransitionInfo.transitionType,
                             m_currentNode.lvlTransitionInfo.loadType
                             );
@@ -455,7 +401,7 @@ public class PlayerEntity : GridEntity
                 {
                     node = m_previousNode;
 
-                    if (Direction == m_abilityDirection)
+                    if (LastDirection == m_abilityDirection)
                     {
                         node = m_currentNode;
                     }
@@ -465,6 +411,9 @@ public class PlayerEntity : GridEntity
                     // player didn't move
                     node = m_currentNode;
                 }
+
+                AddAnimationAction(ActionTypes.STATIC_ACTION, "Head Gun Fire", 1);
+                SetAbilityAnimationFlag(0);
 
                 if (SpawnBullet(m_bulletPrefab, node, m_abilityDirection))
                 {
@@ -497,9 +446,12 @@ public class PlayerEntity : GridEntity
             {
                 Energy -= m_blockEnergyCost;
 
+                AddAnimationAction(ActionTypes.STATIC_ACTION, "Head Shield Fire", 1);
+                SetAbilityAnimationFlag(0);
+
                 System.Func<Vector2Int, interalFlags, bool> BlockCheckDirectionAndSetFlag = (vec, flag) =>
                 {
-                    if(vec == m_abilityDirection)
+                    if (vec == m_abilityDirection)
                     {
                         m_internalFlags.SetFlags(flag, true);
                         return true;
@@ -522,7 +474,7 @@ public class PlayerEntity : GridEntity
                 if (BlockCheckDirectionAndSetFlag(Vector2Int.left, interalFlags.refectBullets_W))
                 { return true; }
 
-                Vector2Int vecDir = new Vector2Int(1,1);
+                Vector2Int vecDir = new Vector2Int(1, 1);
                 if (BlockCheckDirectionAndSetFlag(vecDir, interalFlags.refectBullets_NE))
                 { return true; }
 

@@ -6,7 +6,8 @@ public enum ActionTypes
 {
     MOVE,
     PASSTHROUGH,
-    PUSHBACK
+    PUSHBACK,
+    STATIC_ACTION
 }
 
 public class GridEnityAction
@@ -15,13 +16,16 @@ public class GridEnityAction
     public ActionTypes type;
     public JUtil.Grids.GridNodePosition position;
     public Vector3 targetPosition { get { return position.world; } }
+    public int animationLayer;
 
     public GridEnityAction()
     {}
 
     public GridEnityAction(GridEnityAction action)
     {
-        type = action.type;
-        position = action.position;
+        type            = action.type;
+        position        = action.position;
+        animationName   = action.animationName;
+        animationLayer = action.animationLayer;
     }
 }

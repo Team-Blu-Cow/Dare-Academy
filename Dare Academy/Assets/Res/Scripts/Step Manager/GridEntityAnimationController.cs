@@ -13,7 +13,8 @@ public class GridEntityAnimationController : MonoBehaviour
     [SerializeField, HideInInspector] protected GameObject m_spriteHead;
     [SerializeField] protected bool m_hasHead = false;
 
-    protected List<Animator> m_animators;
+    public Animator animator
+    { get { return m_animator; } }
 
     float m_xScale = 1;
     float animatorSpeed;
@@ -80,8 +81,6 @@ public class GridEntityAnimationController : MonoBehaviour
         if (m_animator.runtimeAnimatorController == null)
             return;
 
-        if (!m_animator.HasState((layer == -1)?0:layer, Animator.StringToHash(animationName)))
-            return;
         m_animator.speed = 1f/time;
 
         m_animator.Play(animationName, layer, 0f);
