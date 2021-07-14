@@ -27,6 +27,7 @@ namespace blu
         public bool shootUnlocked = false;
         public bool dashUnlocked = true;
         public bool blockUnlocked = true;
+        public List<Quest.StringListIntPair> m_roomsTraveled = new List<Quest.StringListIntPair>();
     }
 
     public class IOModule : Module

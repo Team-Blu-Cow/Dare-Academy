@@ -7,6 +7,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using JUtil.Grids;
+using JUtil;
 
 public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDragHandler
 {
@@ -120,6 +121,9 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
 
             // The angle at witch the link shall sit
             float angle = Mathf.Atan2(linkEnd.y - linkStart.y, linkEnd.x - linkStart.x);
+            Vector2 linkDir = new Vector2(linkEnd.x - linkStart.x, linkEnd.y - linkStart.y);
+            angle = linkDir.GetRotation();
+
             if (angle < 5 && angle > -5)
                 angle = 0;
 
@@ -172,6 +176,10 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
 
                 case 315:
                     rect.localPosition += new Vector3(-width, width, 0);
+                    break;
+
+                case 360:
+                    rect.localPosition -= new Vector3(0, width, 0);
                     break;
 
                 default:

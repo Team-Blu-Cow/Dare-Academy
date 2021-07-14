@@ -81,15 +81,15 @@ public class PlayerAbilities
 
         await levelModule.AwaitSaveLoad();
 
-        if (levelModule.ActiveSaveSata.shootUnlocked)
+        if (levelModule.ActiveSaveData.shootUnlocked)
         {
             Unlock(AbilityEnum.Shoot, false);
         }
-        if (levelModule.ActiveSaveSata.dashUnlocked)
+        if (levelModule.ActiveSaveData.dashUnlocked)
         {
             Unlock(AbilityEnum.Dash, false);
         }
-        if (levelModule.ActiveSaveSata.blockUnlocked)
+        if (levelModule.ActiveSaveData.blockUnlocked)
         {
             Unlock(AbilityEnum.Block, false);
         }
@@ -154,7 +154,7 @@ public class PlayerAbilities
 
     private void WriteToSaveData(AbilityEnum ability, bool unlocked)
     {
-        blu.SaveData savedata =  blu.App.GetModule<blu.LevelModule>().ActiveSaveSata;
+        blu.SaveData savedata =  blu.App.GetModule<blu.LevelModule>().ActiveSaveData;
 
         switch (ability)
         {

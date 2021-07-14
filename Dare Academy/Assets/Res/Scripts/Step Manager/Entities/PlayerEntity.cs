@@ -54,6 +54,8 @@ public class PlayerEntity : GridEntity
     private Vector2Int m_moveDirection = Vector2Int.zero;
     [SerializeField] private Vector2Int m_abilityDirection = Vector2Int.zero;
 
+    public Dictionary<string, List<int>> m_dictRoomsTraveled = new Dictionary<string, List<int>>();
+
     protected override void OnValidate()
     {
         base.OnValidate();
@@ -64,13 +66,23 @@ public class PlayerEntity : GridEntity
     {
     }
 
-    protected override void Start()
+    protected override async void Start()
     {
         base.Start();
         Energy = MaxEnergy;
         Health = MaxHealth;
         m_abilities.Initialise();
         m_animationController = GetComponent<GridEntityAnimationController>();
+
+        await App.GetModule<LevelModule>().AwaitSaveLoad();
+        foreach (Quest.StringListIntPair pair in App.GetModule<LevelModule>().ActiveSaveData.m_roomsTraveled)
+            m_dictRoomsTraveled.Add(pair.key, pair.value);
+    }
+
+    private void OnDestroy()
+    {
+        foreach (var pair in m_dictRoomsTraveled)
+            App.GetModule<LevelModule>().ActiveSaveData.m_roomsTraveled.Add(new Quest.StringListIntPair(pair.Key, pair.Value));
     }
 
     private void OnEnable()
@@ -287,7 +299,7 @@ public class PlayerEntity : GridEntity
 
                         App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
                         Destroy(App.GetModule<LevelModule>().persistantSceneData._soundEmitter);
-                        App.GetModule<LevelModule>().persistantSceneData = new PersistantSceneData();
+                        App.GetModule<LevelModule>().persistantSceneData = new MisplacedForestPersistantSceneData();
 
                         App.GetModule<SceneModule>().SwitchScene(
                             m_currentNode.lvlTransitionInfo.targetSceneName,
@@ -302,7 +314,7 @@ public class PlayerEntity : GridEntity
                         m_currentNode.lvlTransitionInfo.targetRoomIndex = 3;
                         App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
                         Destroy(App.GetModule<LevelModule>().persistantSceneData._soundEmitter);
-                        App.GetModule<LevelModule>().persistantSceneData = new PersistantSceneData();
+                        App.GetModule<LevelModule>().persistantSceneData = new MisplacedForestPersistantSceneData();
 
                         App.GetModule<SceneModule>().SwitchScene(
                         m_currentNode.lvlTransitionInfo.targetSceneName,
@@ -341,6 +353,14 @@ public class PlayerEntity : GridEntity
                 m_roomIndex = m_currentNode.roomIndex;
                 m_stepController.m_targetRoomIndex = m_roomIndex;
                 Debug.Log("we have changed room");
+                if (m_dictRoomsTraveled.ContainsKey(SceneManager.GetActiveScene().name))
+                {
+                    if (!m_dictRoomsTraveled[SceneManager.GetActiveScene().name].Contains(m_roomIndex))
+                        m_dictRoomsTraveled[SceneManager.GetActiveScene().name].Add(m_roomIndex);
+                }
+                else
+                    m_dictRoomsTraveled.Add(SceneManager.GetActiveScene().name, new List<int> { m_roomIndex });
+
                 // we have changed room
             }
         }
