@@ -30,14 +30,14 @@ public class ArcherEntity : GridEntity
         m_health = 5; // Set health
         m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true); // Set flag for killable to true
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true); // Set flag for if solid to true
+
+        m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet"); // Find bullet prefab
+        player = FindObjectOfType<PlayerEntity>();
     }
 
     protected override void OnValidate()
     {
         base.OnValidate();
-
-        m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet"); // Find bullet prefab
-        player = GameObject.Find("Green").GetComponent<PlayerEntity>(); // Find player game object
     }
 
     public override void AnalyseStep()
