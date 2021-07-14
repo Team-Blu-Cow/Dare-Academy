@@ -109,6 +109,12 @@ public abstract class GridEntity : MonoBehaviour
 
         m_speed = m_baseSpeed;
 
+        if (m_animationController == null)
+        {
+            m_animationController = GetComponent<GridEntityAnimationController>();
+            // TODO @matthew - log warning if failed
+        }
+
         AnalyseStep();
     }
 

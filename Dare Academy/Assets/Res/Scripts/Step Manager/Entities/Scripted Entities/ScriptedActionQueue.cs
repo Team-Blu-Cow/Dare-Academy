@@ -5,6 +5,12 @@ using UnityEngine;
 [System.Serializable]
 public class ScriptedActionQueue : ScriptableObject
 {
+    // TODO @matthew
+    // pathfinding
+    // branch statements
+    // goto
+    // variables (int / bool) - maybe return values from convo?
+
     [System.Serializable]
     public enum ActionType
     {
@@ -13,6 +19,7 @@ public class ScriptedActionQueue : ScriptableObject
         Move, // MoveData
         WaitPlayerIsDistance, // int
         Dialogue, // string
+        Kill,
     }
 
     [System.Serializable]
