@@ -1,0 +1,24 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 689940897d07d824bb3d61e74d63d0ed, type: 3}
+  m_Name: OmniDirectional
+  m_EditorClassIdentifier: 
+  tiles:
+  - {fileID: 11400000, guid: 32b37db925b229645b5b3cfb45a93dd2, type: 2}
+  data:
+    boolData:
+    - name: walkable
+      data: 1
+    intData: []
+    floatData: []
+  neighbours:
+    neighbors: 0100000001000000010000000100000001000000010000000100000001000000
