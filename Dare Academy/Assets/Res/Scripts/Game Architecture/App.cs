@@ -72,6 +72,7 @@ namespace blu
             _moduleManager.AddModule<blu.SceneModule>();
             _moduleManager.AddModule<blu.InputModule>();
             _moduleManager.AddModule<blu.DialogueModule>();
+            _moduleManager.AddModule<blu.QuestModule>();
             //_moduleManager.AddModule<blu.AudioModule>(); // not nessessary, included for readablility
         }
 

@@ -10,11 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5e114c5400f12b248a550cd667c457cb, type: 3}
-  m_Name: New Quest
+  m_Name: TestQuest
   m_EditorClassIdentifier: 
-  name: 
+  name: Test
   Prerequisites: []
   Requierments: []
-  activeDescription: 
-  completeDescription: 
+  activeDescription: This is the test
+  completeDescription: You are now done
   complete: 0
+  showMarker: 1
+  markerLocations: 01000000
+  markerScene: Crashsite Top

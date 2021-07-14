@@ -20,6 +20,8 @@ namespace CanvasTool
         // Stack of open canvases
         private Stack<CanvasContainer> openCanvases = new Stack<CanvasContainer>();
 
+        public CanvasContainer topCanvas => openCanvases.Peek();
+
         public Vector2 refrenenceResolution = new Vector2(1600, 900);
 
         private void OnValidate()
@@ -80,56 +82,73 @@ namespace CanvasTool
         {
             foreach (CanvasContainer container in containers)
             {
-                // If the canvas is already open
-                if (openCanvases.Contains(container))
+                if (container != null)
                 {
-                    // Close untill at desired canvas
-                    while (openCanvases.Peek() != container)
+                    // If the canvas is already open
+                    if (openCanvases.Contains(container))
                     {
-                        // Close canvases
-                        CanvasContainer top = openCanvases.Pop();
-                        top.CloseCanvas();
-                    }
-                    overlay.canvas.sortingOrder = openCanvases.Count + sortingBoost;
-                    break;
-                }
-
-                if (stack)
-                {
-                    //close on same layer
-                    if (container.layer != 0)
-                    {
-                        foreach (CanvasContainer canvas in canvases)
+                        // Close untill at desired canvas
+                        while (openCanvases.Peek() != container)
                         {
-                            if (container.layer == canvas.layer)
+                            // Close canvases
+                            CanvasContainer top = openCanvases.Pop();
+                            top.CloseCanvas();
+                        }
+                        overlay.canvas.sortingOrder = openCanvases.Count + sortingBoost;
+                        break;
+                    }
+
+                    if (stack)
+                    {
+                        //close on same layer
+                        if (container.layer != 0)
+                        {
+                            foreach (CanvasContainer canvas in canvases)
                             {
-                                canvas.CloseCanvas();
+                                if (container.layer == canvas.layer)
+                                {
+                                    canvas.CloseCanvas();
+                                }
                             }
                         }
-                    }
 
-                    openCanvases.Push(container);
-                }
-                else
-                {
-                    // Close canvases
-                    foreach (CanvasContainer canvas in canvases)
-                    {
-                        canvas.CloseCanvas();
+                        openCanvases.Push(container);
                     }
-                    openCanvases.Clear();
+                    else
+                    {
+                        // Close canvases
+                        foreach (CanvasContainer canvas in canvases)
+                        {
+                            canvas.CloseCanvas();
+                        }
+                        openCanvases.Clear();
+                    }
                 }
             }
+
             foreach (CanvasContainer container in containers)
             {
-                container.OpenCanvas();
+                if (container != null)
+                {
+                    container.OpenCanvas();
+                }
             }
             overlay.canvas.sortingOrder = openCanvases.Count + sortingBoost;
+        }
+
+        public void OpenCanvas(string container, bool stack = false)
+        {
+            OpenCanvas(GetCanvasContainer(container), stack);
         }
 
         public void OpenCanvas(CanvasContainer container, bool stack = false)
         {
             //overlay.canvas.enabled = true;
+            if (container == null)
+            {
+                Debug.LogWarning("Tring to open a non-exiting container");
+                return;
+            }
 
             // If the canvas is already open
             if (openCanvases.Contains(container))
