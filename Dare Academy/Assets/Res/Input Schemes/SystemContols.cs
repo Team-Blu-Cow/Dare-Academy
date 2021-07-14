@@ -95,6 +95,14 @@ public class @SystemContols : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""ScrollQuests"",
+                    ""type"": ""Button"",
+                    ""id"": ""05faf24e-fd7b-45e4-b759-9ca87b9e6d75"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -288,7 +296,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 {
                     ""name"": ""up"",
                     ""id"": ""810a3689-5dfe-41d9-8267-f9658e188e58"",
-                    ""path"": ""<Keyboard>/upArrow"",
+                    ""path"": ""<Keyboard>/w"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&Mouse"",
@@ -299,7 +307,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 {
                     ""name"": ""down"",
                     ""id"": ""46df4acd-ac61-4520-b14e-7db109db8491"",
-                    ""path"": ""<Keyboard>/downArrow"",
+                    ""path"": ""<Keyboard>/s"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&Mouse"",
@@ -310,7 +318,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 {
                     ""name"": ""left"",
                     ""id"": ""55334bec-a54a-4d96-82a1-5c5b8027a6c4"",
-                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""path"": ""<Keyboard>/a"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&Mouse"",
@@ -321,7 +329,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 {
                     ""name"": ""right"",
                     ""id"": ""dc3cd7c2-b3e9-4bbf-b012-907592853c49"",
-                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""path"": ""<Keyboard>/d"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""KB&Mouse"",
@@ -482,6 +490,39 @@ public class @SystemContols : IInputActionCollection, IDisposable
                     ""action"": ""Open"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""7b686b19-eb14-4dd4-b78c-2c9d6248d2e8"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ScrollQuests"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""15992704-c573-4e9a-ab5a-17542389f145"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ScrollQuests"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""7cb6b6e0-0680-4463-aa17-59e7c708b2eb"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ScrollQuests"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -498,6 +539,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
         m_MapControlls_ZoomIn = m_MapControlls.FindAction("ZoomIn", throwIfNotFound: true);
         m_MapControlls_ZoomOut = m_MapControlls.FindAction("ZoomOut", throwIfNotFound: true);
         m_MapControlls_Open = m_MapControlls.FindAction("Open", throwIfNotFound: true);
+        m_MapControlls_ScrollQuests = m_MapControlls.FindAction("ScrollQuests", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -585,6 +627,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
     private readonly InputAction m_MapControlls_ZoomIn;
     private readonly InputAction m_MapControlls_ZoomOut;
     private readonly InputAction m_MapControlls_Open;
+    private readonly InputAction m_MapControlls_ScrollQuests;
     public struct MapControllsActions
     {
         private @SystemContols m_Wrapper;
@@ -594,6 +637,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
         public InputAction @ZoomIn => m_Wrapper.m_MapControlls_ZoomIn;
         public InputAction @ZoomOut => m_Wrapper.m_MapControlls_ZoomOut;
         public InputAction @Open => m_Wrapper.m_MapControlls_Open;
+        public InputAction @ScrollQuests => m_Wrapper.m_MapControlls_ScrollQuests;
         public InputActionMap Get() { return m_Wrapper.m_MapControlls; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -618,6 +662,9 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 @Open.started -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnOpen;
                 @Open.performed -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnOpen;
                 @Open.canceled -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnOpen;
+                @ScrollQuests.started -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnScrollQuests;
+                @ScrollQuests.performed -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnScrollQuests;
+                @ScrollQuests.canceled -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnScrollQuests;
             }
             m_Wrapper.m_MapControllsActionsCallbackInterface = instance;
             if (instance != null)
@@ -637,6 +684,9 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 @Open.started += instance.OnOpen;
                 @Open.performed += instance.OnOpen;
                 @Open.canceled += instance.OnOpen;
+                @ScrollQuests.started += instance.OnScrollQuests;
+                @ScrollQuests.performed += instance.OnScrollQuests;
+                @ScrollQuests.canceled += instance.OnScrollQuests;
             }
         }
     }
@@ -652,5 +702,6 @@ public class @SystemContols : IInputActionCollection, IDisposable
         void OnZoomIn(InputAction.CallbackContext context);
         void OnZoomOut(InputAction.CallbackContext context);
         void OnOpen(InputAction.CallbackContext context);
+        void OnScrollQuests(InputAction.CallbackContext context);
     }
 }

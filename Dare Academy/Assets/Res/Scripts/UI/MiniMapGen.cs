@@ -5,7 +5,8 @@ using blu;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
-using JUtil;
+using UnityEngine.SceneManagement;
+using JUtil.Grids;
 
 public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDragHandler
 {
@@ -13,6 +14,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
     private NodeOverrides<GridNode> m_links;
 
     private List<GameObject> m_squares = new List<GameObject>();
+    private List<GameObject> m_quests = new List<GameObject>();
     private Vector2 m_movePos;
     [SerializeField] private GameObject m_toolTip;
 
@@ -23,6 +25,8 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
 
     private void Start()
     {
+        App.GetModule<QuestModule>().AddQuest(Resources.Load<Quest>("Quests/TestQuest"));
+        App.GetModule<QuestModule>().AddQuest(Resources.Load<Quest>("Quests/TestQuest"));
         App.GetModule<QuestModule>().AddQuest(Resources.Load<Quest>("Quests/TestQuest"));
 
         transform = GetComponent<RectTransform>();
@@ -66,12 +70,21 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
     {
         m_gridInfo = App.GetModule<LevelModule>().MetaGrid.gridInfo;
         m_links = App.GetModule<LevelModule>().MetaGrid.nodeOverrides;
-        JUtil.Grids.Grid<GridNode> currentRoom = App.GetModule<LevelModule>().CurrentRoom;
+        Grid<GridNode> currentRoom = App.GetModule<LevelModule>().CurrentRoom;
         int currentRoomIndex = App.GetModule<LevelModule>().LevelManager.StepController.m_currentRoomIndex;
 
         transform.anchoredPosition = Vector3.zero;
         CloseMap();
 
+        DrawRooms(currentRoom, currentRoomIndex);
+
+        DrawLinks(currentRoom);
+
+        DrawQuestMarker(currentRoom);
+    }
+
+    private void DrawRooms(Grid<GridNode> currentRoom, int currentRoomIndex)
+    {
         int i = 0;
         foreach (GridInfo grid in m_gridInfo)
         {
@@ -92,7 +105,10 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
             m_squares.Add(tempRoom);
             i++;
         }
+    }
 
+    private void DrawLinks(Grid<GridNode> currentRoom)
+    {
         //Draw room connections
         foreach (GridLink link in m_links.gridLinks)
         {
@@ -104,7 +120,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
 
             // The angle at witch the link shall sit
             float angle = Mathf.Atan2(linkEnd.y - linkStart.y, linkEnd.x - linkStart.x);
-            if (angle < 3 && angle > -3)
+            if (angle < 5 && angle > -5)
                 angle = 0;
 
             // Spawning the square
@@ -121,39 +137,41 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
 
             // offset link to be in the centre
             angle = (link.grid1.direction + 2) * 45;
+            float width = link.width / 2.0f;
+            width -= 0.5f;
 
             switch (angle)
             {
                 case 0:
-                    rect.localPosition -= new Vector3(0, link.width / 2, 0);
+                    rect.localPosition -= new Vector3(0, width, 0);
                     break;
 
                 case 45:
-                    rect.localPosition += new Vector3(link.width / 2, -link.width / 2, 0);
+                    rect.localPosition += new Vector3(width, -width, 0);
                     break;
 
                 case 90:
-                    rect.localPosition += new Vector3(link.width / 2, 0, 0);
+                    rect.localPosition += new Vector3(width, 0, 0);
                     break;
 
                 case 135:
-                    rect.localPosition += new Vector3(link.width / 2, link.width / 2, 0);
+                    rect.localPosition += new Vector3(width, width, 0);
                     break;
 
                 case 180:
-                    rect.localPosition += new Vector3(0, link.width / 2, 0);
+                    rect.localPosition += new Vector3(0, width, 0);
                     break;
 
                 case 225:
-                    rect.localPosition += new Vector3(-link.width / 2, link.width / 2, 0);
+                    rect.localPosition += new Vector3(-width, width, 0);
                     break;
 
                 case 270:
-                    rect.localPosition -= new Vector3(link.width / 2, 0, 0);
+                    rect.localPosition -= new Vector3(width, 0, 0);
                     break;
 
                 case 315:
-                    rect.localPosition += new Vector3(-link.width / 2, link.width / 2, 0);
+                    rect.localPosition += new Vector3(-width, width, 0);
                     break;
 
                 default:
@@ -162,39 +180,107 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
 
             m_squares.Add(tempLink);
         }
+    }
+
+    public void DrawQuestMarker(Grid<GridNode> currentRoom)
+    {
+        foreach (GameObject go in m_quests)
+        {
+            Destroy(go);
+        }
+        m_quests.Clear();
 
         foreach (Quest quest in App.GetModule<QuestModule>().ActiveQuests)
         {
-            if (quest.showMarker)
+            if (quest.showMarker && quest.markerScene == SceneManager.GetActiveScene().name)
             {
-                GameObject Go = new GameObject(quest.name);
-                Image image = Go.AddComponent<Image>();
-                image.color = Color.green;
-
-                Go.transform.SetParent(transform);
-
-                RectTransform rect = (RectTransform)Go.transform;
-                rect.sizeDelta = Vector2.one;
-                rect.localScale = Vector3.one;
-
-                if (quest.markerLocations != null)
+                GridInfo grid = m_gridInfo[quest.markerLocations[0]];
+                Vector2 pos = grid.originPosition + (new Vector3(grid.width, grid.height, 0) / 2) - currentRoom.OriginPosition;
+                CreateQuestMarker(currentRoom, quest, pos);
+            }
+            else if (quest.showMarker)
+            {
+                foreach (LevelTransitionInformation sceneLink in m_links.sceneLinks)
                 {
-                    GridInfo grid = m_gridInfo[quest.markerLocations[0]];
-                    rect.anchoredPosition = grid.originPosition + (new Vector3(grid.width, grid.height, 0) / 2) - currentRoom.OriginPosition;
-                }
-                else
-                {
-                    Debug.LogWarning("Attemping to show quest marker without location set");
-                }
+                    if (sceneLink.targetSceneName == quest.markerScene)
+                    {
+                        Vector2 pos = m_gridInfo[sceneLink.myRoomIndex].ToWorld(sceneLink.myNodeIndex);
 
-                ToolTip tooltip = Go.AddComponent<ToolTip>();
-                tooltip.m_toolTip = m_toolTip;
-                tooltip.m_questName = quest.name;
-                tooltip.m_questContent = quest.activeDescription;
+                        var angle = (sceneLink.travelDirection + 2) * 45;
+                        float width = sceneLink.width / 2.0f;
+                        width -= 0.5f;
 
-                m_squares.Add(Go);
+                        switch (angle)
+                        {
+                            case 0:
+                                pos -= new Vector2(0, width);
+                                break;
+
+                            case 45:
+                                pos += new Vector2(width, -width);
+                                break;
+
+                            case 90:
+                                pos += new Vector2(width, 0);
+                                break;
+
+                            case 135:
+                                pos += new Vector2(width, width);
+                                break;
+
+                            case 180:
+                                pos += new Vector2(0, width);
+                                break;
+
+                            case 225:
+                                pos += new Vector2(-width, width);
+                                break;
+
+                            case 270:
+                                pos -= new Vector2(width, 0);
+                                break;
+
+                            case 315:
+                                pos += new Vector2(-width, width);
+                                break;
+
+                            default:
+                                break;
+                        }
+                        CreateQuestMarker(currentRoom, quest, pos);
+                    }
+                }
             }
         }
+    }
+
+    private void CreateQuestMarker(Grid<GridNode> currentRoom, Quest quest, Vector2 position)
+    {
+        GameObject Go = new GameObject(quest.name);
+        Image image = Go.AddComponent<Image>();
+        image.color = Color.green;
+
+        Go.transform.SetParent(transform.GetChild(2));
+
+        RectTransform rect = (RectTransform)Go.transform;
+        rect.sizeDelta = Vector2.one * 3;
+        rect.localScale = Vector3.one;
+
+        if (quest.markerLocations != null)
+        {
+            rect.anchoredPosition = position;
+        }
+        else
+        {
+            Debug.LogWarning("Attemping to show quest marker without location set");
+        }
+
+        ToolTip tooltip = Go.AddComponent<ToolTip>();
+        tooltip.m_toolTip = m_toolTip;
+        tooltip.m_questName = quest.name;
+        tooltip.m_questContent = quest.activeDescription;
+
+        m_quests.Add(Go);
     }
 
     public void CloseMap()
@@ -204,6 +290,12 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
             Destroy(go);
         }
         m_squares.Clear();
+
+        foreach (GameObject go in m_quests)
+        {
+            Destroy(go);
+        }
+        m_quests.Clear();
     }
 
     public void OnScroll(PointerEventData eventData)

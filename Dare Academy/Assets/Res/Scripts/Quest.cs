@@ -27,6 +27,7 @@ public class Quest : ScriptableObject
     public bool complete = false;
     public bool showMarker;
     public List<int> markerLocations;
+    public string markerScene;
 
     private Quest()
     {

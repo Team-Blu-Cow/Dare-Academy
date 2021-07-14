@@ -82,6 +82,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "ScrollQuests",
+                    "type": "Button",
+                    "id": "05faf24e-fd7b-45e4-b759-9ca87b9e6d75",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -275,7 +283,7 @@
                 {
                     "name": "up",
                     "id": "810a3689-5dfe-41d9-8267-f9658e188e58",
-                    "path": "<Keyboard>/upArrow",
+                    "path": "<Keyboard>/w",
                     "interactions": "",
                     "processors": "",
                     "groups": "KB&Mouse",
@@ -286,7 +294,7 @@
                 {
                     "name": "down",
                     "id": "46df4acd-ac61-4520-b14e-7db109db8491",
-                    "path": "<Keyboard>/downArrow",
+                    "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
                     "groups": "KB&Mouse",
@@ -297,7 +305,7 @@
                 {
                     "name": "left",
                     "id": "55334bec-a54a-4d96-82a1-5c5b8027a6c4",
-                    "path": "<Keyboard>/leftArrow",
+                    "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
                     "groups": "KB&Mouse",
@@ -308,7 +316,7 @@
                 {
                     "name": "right",
                     "id": "dc3cd7c2-b3e9-4bbf-b012-907592853c49",
-                    "path": "<Keyboard>/rightArrow",
+                    "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
                     "groups": "KB&Mouse",
@@ -469,6 +477,39 @@
                     "action": "Open",
                     "isComposite": false,
                     "isPartOfComposite": false
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "7b686b19-eb14-4dd4-b78c-2c9d6248d2e8",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollQuests",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "positive",
+                    "id": "15992704-c573-4e9a-ab5a-17542389f145",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollQuests",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "negative",
+                    "id": "7cb6b6e0-0680-4463-aa17-59e7c708b2eb",
+                    "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollQuests",
+                    "isComposite": false,
+                    "isPartOfComposite": true
                 }
             ]
         }
