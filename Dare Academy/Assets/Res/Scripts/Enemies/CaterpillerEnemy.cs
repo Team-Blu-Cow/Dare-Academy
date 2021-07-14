@@ -94,13 +94,35 @@ public class CaterpillerEnemy : GridEntity
                 {
                     TelegraphBurrow();
                 }
-            }
-
-            GetComponentInParent<BurrowManager>().UpdateBurrow();
+            }            
         }
 
         m_dir = new Vector2Int((int)dir.x, (int)dir.y); // Convert direction to integer
         SetMovementDirection(m_dir, m_moveSpeed); // Set movement
+    }
+
+    public override void MoveStep()
+    {
+        if (!isBurrowing && !transform.parent.GetChild(0).GetComponent<CaterpillerEnemy>().isBurrowing)
+            base.MoveStep();
+    }
+
+    public override void ResolveMoveStep()
+    {
+        if (!isBurrowing && !transform.parent.GetChild(0).GetComponent<CaterpillerEnemy>().isBurrowing)
+            base.ResolveMoveStep();
+    }
+
+    public override void ResolvePassThroughStep()
+    {
+        if (!isBurrowing && !transform.parent.GetChild(0).GetComponent<CaterpillerEnemy>().isBurrowing)
+            base.ResolvePassThroughStep();
+    }
+
+    public override void AddToCurrentNode()
+    {
+        if (!isBurrowing && !transform.parent.GetChild(0).GetComponent<CaterpillerEnemy>().isBurrowing)
+            base.AddToCurrentNode();
     }
 
     public override void AttackStep()
@@ -242,32 +264,31 @@ public class CaterpillerEnemy : GridEntity
 
         if (distanceVector.x > 0)
         {
-            transform.GetChild(0).gameObject.transform.position += new Vector3(-1, 0, 0);
+            m_currentNode = m_currentNode.GetNeighbour(new Vector2Int(-1, 0));
+            //transform.GetChild(0).gameObject.transform.position += new Vector3(-1, 0, 0);
             return;
         }
         else if (distanceVector.x < 0)
         {
-            transform.GetChild(0).gameObject.transform.position += new Vector3(1, 0, 0);
+            m_currentNode = m_currentNode.GetNeighbour(new Vector2Int(1, 0));
+            //transform.GetChild(0).gameObject.transform.position += new Vector3(1, 0, 0);
             return;
         }
         else if (distanceVector.y > 0)
         {
-            transform.GetChild(0).gameObject.transform.position += new Vector3(0, -1, 0);
+            m_currentNode = m_currentNode.GetNeighbour(new Vector2Int(0, -1));
+            //transform.GetChild(0).gameObject.transform.position += new Vector3(0, -1, 0);
             return;
         }
         else if (distanceVector.y < 0)
         {
-            transform.GetChild(0).gameObject.transform.position += new Vector3(0, 1, 0);
+            m_currentNode = m_currentNode.GetNeighbour(new Vector2Int(0, 1));
+            //transform.GetChild(0).gameObject.transform.position += new Vector3(0, 1, 0);
             return;
         }
 
-        if (transform.GetChild(0).gameObject.transform.position == newPos)
-        {
-            m_currentNode.RemoveEntity(this);
-            m_currentNode = blu.App.GetModule<blu.LevelModule>().Grid(RoomIndex).WorldToNode(newPos);
-
-            transform.position = newPos;
-
+        if (m_currentNode.position.world == newPos)
+        {           
             isTelegraphBurrow = false;
             isBurrowing = false;
         }

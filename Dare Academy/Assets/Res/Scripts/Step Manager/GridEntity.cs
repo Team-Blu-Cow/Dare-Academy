@@ -159,7 +159,7 @@ public abstract class GridEntity : MonoBehaviour
             Kill();
     }
 
-    public void MoveStep()
+    virtual public void MoveStep()
     {
         if (m_movementDirection != Vector2Int.zero)
         {
@@ -919,7 +919,10 @@ public abstract class GridEntity : MonoBehaviour
 
         float currentTime = 0;
 
-        m_animationController.PlayAnimation(action.animationName, animTime, action.animationLayer);
+        if (m_animationController != null)
+        {
+            m_animationController.PlayAnimation(action.animationName, animTime, action.animationLayer);
+        }
 
         while (currentTime < animTime)
         {
