@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
@@ -54,12 +54,12 @@ public class ScriptableEntityEditor : Editor
 
         int len = EditorGUILayout.IntField(queue.m_actionList.Count);
 
-        if (GUILayout.Button("+", GUILayout.Width(20f)))
+        if (GUILayout.Button("+", GUILayout.Width(24f)))
         {
             len++;
         }
 
-        if (GUILayout.Button("-", GUILayout.Width(20f)))
+        if (GUILayout.Button("-", GUILayout.Width(24f)))
         {
             len--;
         }
@@ -123,6 +123,28 @@ public class ScriptableEntityEditor : Editor
 
                 default:
                     break;
+            }
+
+            GUILayout.FlexibleSpace();
+
+            if (GUILayout.Button("▲", GUILayout.Width(24f)))
+            {
+                if (i > 0)
+                {
+                    ScriptedActionQueue.ActionWrapper temp = queue.m_actionList[i];
+                    queue.m_actionList[i] = queue.m_actionList[i - 1];
+                    queue.m_actionList[i - 1] = temp;
+                }
+            }
+
+            if (GUILayout.Button("▼", GUILayout.Width(24f)))
+            {
+                if (i < queue.m_actionList.Count - 1)
+                {
+                    ScriptedActionQueue.ActionWrapper temp = queue.m_actionList[i];
+                    queue.m_actionList[i] = queue.m_actionList[i + 1];
+                    queue.m_actionList[i + 1] = temp;
+                }
             }
 
             EditorGUILayout.EndHorizontal();
