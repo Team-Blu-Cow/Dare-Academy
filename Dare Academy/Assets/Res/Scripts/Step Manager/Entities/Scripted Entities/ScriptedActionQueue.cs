@@ -7,9 +7,8 @@ public class ScriptedActionQueue : ScriptableObject
 {
     // TODO @matthew
     // pathfinding
-    // branch statements
-    // goto
-    // variables (int / bool) - maybe return values from convo?
+    // wait player in range
+    // wait player out of range
 
     [System.Serializable]
     public enum ActionType
@@ -18,7 +17,7 @@ public class ScriptedActionQueue : ScriptableObject
         WaitTurns, // int
         Move, // MoveData
         WaitPlayerIsDistance, // int
-        Dialogue, // string
+        Dialogue, // prefab
         Kill,
     }
 
@@ -50,6 +49,7 @@ public class ScriptedActionQueue : ScriptableObject
         [SerializeField] public int intData = 0;
         [SerializeField] public MoveData moveData = new MoveData();
         [SerializeField] public string textData = "";
+        [SerializeField] public GameObject gameObject;
     }
 
     [SerializeField] public List<ActionWrapper> m_actionList = new List<ActionWrapper>();

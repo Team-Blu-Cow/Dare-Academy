@@ -10,12 +10,6 @@ public class ScriptableEntityEditor : Editor
 
     private bool foldout = false;
 
-    //     private void OnEnable()
-    //     {
-    //         prefabProperty = serializedObject.FindProperty("m_prefab");
-    //         scriptedActionListProperty = serializedObject.FindProperty("m_scriptedActionList");
-    //     }
-
     private void OnValidate()
     {
     }
@@ -43,6 +37,8 @@ public class ScriptableEntityEditor : Editor
             DisplayActionQueue(ref actionQueue);
             actionQueueProperty.objectReferenceValue = actionQueue;
         }
+
+        EditorUtility.SetDirty(serializedObject.targetObject);
 
         serializedObject.ApplyModifiedProperties();
     }
@@ -101,6 +97,7 @@ public class ScriptableEntityEditor : Editor
                 queue.m_actionList[i].intData = 0;
                 queue.m_actionList[i].textData = "";
                 queue.m_actionList[i].moveData = new ScriptedActionQueue.MoveData();
+                queue.m_actionList[i].gameObject = null;
             }
 
             switch (queue.m_actionList[i].type)
@@ -121,7 +118,8 @@ public class ScriptableEntityEditor : Editor
                     break;
 
                 case ScriptedActionQueue.ActionType.Dialogue:
-                    queue.m_actionList[i].textData = StringField((string)queue.m_actionList[i].textData);
+
+                    queue.m_actionList[i].gameObject = EditorGUILayout.ObjectField(queue.m_actionList[i].gameObject, typeof(GameObject), true) as GameObject;
                     break;
 
                 default:

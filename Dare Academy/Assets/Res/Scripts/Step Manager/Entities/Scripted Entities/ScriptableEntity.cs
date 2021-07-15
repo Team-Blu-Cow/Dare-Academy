@@ -12,12 +12,16 @@ public class ScriptableEntity : GridEntity
 
     private SpriteRenderer sr;
 
+    private Animator anim;
+
+    private GameObject m_queuedDialoudeAction = null;
+
     protected override void OnValidate()
     {
         base.OnValidate();
 
         sr = GetComponentInChildren<SpriteRenderer>();
-        // TODO @matthew - get animator here
+        anim = GetComponent<Animator>();
     }
 
     protected override void Start()
@@ -38,7 +42,7 @@ public class ScriptableEntity : GridEntity
                 sr.sprite = otherSr.sprite;
             }
 
-            Animator anim = GetComponent<Animator>();
+            anim = GetComponent<Animator>();
             Animator otherAnim = m_prefab.GetComponent<Animator>();
 
             // TODO @matthew - log this failing
@@ -52,8 +56,21 @@ public class ScriptableEntity : GridEntity
             ReplaceWithPrefab(); // TODO @matthew - log warning
     }
 
+    public override void ResetAnimations()
+    {
+        base.ResetAnimations();
+
+        if (m_queuedDialoudeAction != null)
+        {
+            blu.App.GetModule<blu.DialogueModule>().StartDialogue(m_queuedDialoudeAction);
+            m_queuedDialoudeAction = null;
+        }
+    }
+
     public override void AnalyseStep()
     {
+        bool stepQueue = true;
+
         if (m_actionQueue.m_actionList.Count == 0)
         {
             // TODO @matthew - log warning
@@ -82,12 +99,20 @@ public class ScriptableEntity : GridEntity
                 MoveAction(currentAction.moveData);
                 break;
 
+            case ScriptedActionQueue.ActionType.WaitTurns:
+                stepQueue = WaitAction(currentAction);
+                break;
+
+            case ScriptedActionQueue.ActionType.Dialogue:
+                m_queuedDialoudeAction = currentAction.gameObject;
+                break;
+
             default:
                 Debug.LogWarning($"ScriptedEntity [{gameObject.name}] could not resolve action [type = {currentAction.type.ToString()}]");
                 break;
         }
-
-        m_queuePos++;
+        if (stepQueue)
+            m_queuePos++;
     }
 
     protected void ReplaceWithPrefab()
@@ -108,6 +133,7 @@ public class ScriptableEntity : GridEntity
         RemoveFromCurrentNode();
         m_currentNode = null;
 
+        GetComponentInChildren<SpriteRenderer>().enabled = false;
         Kill();
         return;
     }
@@ -159,5 +185,22 @@ public class ScriptableEntity : GridEntity
         {
             // TODO @matthew - log warning
         }
+    }
+
+    protected bool WaitAction(ScriptedActionQueue.ActionWrapper data)
+    {
+        if (data == null)
+            return true;
+
+        data.intData--;
+
+        if (data.intData > 0)
+            return false;
+
+        return true;
+    }
+
+    protected void DialogueAction(ScriptedActionQueue.ActionWrapper data)
+    {
     }
 }

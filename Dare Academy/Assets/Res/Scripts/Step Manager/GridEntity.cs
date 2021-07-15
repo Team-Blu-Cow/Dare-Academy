@@ -145,7 +145,7 @@ public abstract class GridEntity : MonoBehaviour
      *
      */
 
-    public void ResetAnimations()
+    public virtual void ResetAnimations()
     {
         if (m_animationCoroutine != null)
             StopCoroutine(m_animationCoroutine);
