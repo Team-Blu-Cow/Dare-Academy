@@ -16,8 +16,8 @@ public class ScriptedActionQueue : ScriptableObject
         None,
         WaitTurns, // int
         Move, // MoveData
-        WaitPlayerIsDistance, // int
         Dialogue, // prefab
+        WaitPlayerEnterTrigger,// gameObject
         Kill,
     }
 

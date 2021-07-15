@@ -5,16 +5,14 @@ using System;
 
 public class ScriptableEntity : GridEntity
 {
-    [SerializeField] private GameObject m_prefab;
-    [SerializeField] private ScriptedActionQueue m_actionQueue;
+    [SerializeField] private GameObject m_prefab = null;
+    [SerializeField] private ScriptedActionQueue m_actionQueue = null;
 
     public int m_queuePos = 0;
 
     private SpriteRenderer sr;
 
     private Animator anim;
-
-    private GameObject m_queuedDialoudeAction = null;
 
     protected override void OnValidate()
     {
@@ -59,17 +57,12 @@ public class ScriptableEntity : GridEntity
     public override void ResetAnimations()
     {
         base.ResetAnimations();
-
-        if (m_queuedDialoudeAction != null)
-        {
-            blu.App.GetModule<blu.DialogueModule>().StartDialogue(m_queuedDialoudeAction);
-            m_queuedDialoudeAction = null;
-        }
     }
 
     public override void AnalyseStep()
     {
         bool stepQueue = true;
+        bool runAgain = false;
 
         if (m_actionQueue.m_actionList.Count == 0)
         {
@@ -77,6 +70,8 @@ public class ScriptableEntity : GridEntity
             ReplaceWithPrefab();
             return;
         }
+
+    RunAgainLabel:
 
         if (m_queuePos == m_actionQueue.m_actionList.Count)
         {
@@ -103,8 +98,19 @@ public class ScriptableEntity : GridEntity
                 stepQueue = WaitAction(currentAction);
                 break;
 
+            case ScriptedActionQueue.ActionType.WaitPlayerEnterTrigger:
+                bool b =  currentAction.gameObject.GetComponent<ScriptableEntityTrigger>().HasPlayer;
+                stepQueue = b;
+                runAgain = b;
+
+                break;
+
             case ScriptedActionQueue.ActionType.Dialogue:
-                m_queuedDialoudeAction = currentAction.gameObject;
+                if (currentAction.gameObject != null)
+                {
+                    blu.App.GetModule<blu.DialogueModule>().StartDialogue(currentAction.gameObject);
+                }
+                runAgain = true;
                 break;
 
             default:
@@ -112,7 +118,14 @@ public class ScriptableEntity : GridEntity
                 break;
         }
         if (stepQueue)
+        {
             m_queuePos++;
+        }
+        if (runAgain)
+        {
+            runAgain = false;
+            goto RunAgainLabel;
+        }
     }
 
     protected void ReplaceWithPrefab()

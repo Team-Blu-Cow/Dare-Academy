@@ -109,16 +109,15 @@ public class ScriptableEntityEditor : Editor
                     queue.m_actionList[i].intData = IntField((int?)(queue.m_actionList[i].intData));
                     break;
 
-                case ScriptedActionQueue.ActionType.WaitPlayerIsDistance:
-                    queue.m_actionList[i].intData = IntField((int?)(queue.m_actionList[i].intData));
-                    break;
-
                 case ScriptedActionQueue.ActionType.Move:
                     queue.m_actionList[i].moveData = MoveDataField(queue.m_actionList[i].moveData);
                     break;
 
                 case ScriptedActionQueue.ActionType.Dialogue:
+                    queue.m_actionList[i].gameObject = EditorGUILayout.ObjectField(queue.m_actionList[i].gameObject, typeof(GameObject), true) as GameObject;
+                    break;
 
+                case ScriptedActionQueue.ActionType.WaitPlayerEnterTrigger:
                     queue.m_actionList[i].gameObject = EditorGUILayout.ObjectField(queue.m_actionList[i].gameObject, typeof(GameObject), true) as GameObject;
                     break;
 
