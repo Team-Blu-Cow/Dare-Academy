@@ -77,6 +77,16 @@ namespace JUtil
             return Vector2.up.Rotate(angle);
         }
 
+        public static Vector2 Abs(this Vector2 v)
+        {
+            return new Vector2(Mathf.Abs(v.x), Mathf.Abs(v.y));
+        }
+
+        public static Vector2Int Abs(this Vector2Int v)
+        {
+            return new Vector2Int(Mathf.Abs(v.x), Mathf.Abs(v.y));
+        }
+
         // BETTER SIGN MENTHODS *******************************************************************
         // Returns -1, 0 or 1 depending on the numbers sign or if it is zero 
 
@@ -104,6 +114,28 @@ namespace JUtil
             double milliseconds = (ticks / Stopwatch.Frequency) * 1000;
             double nanoseconds = (ticks / Stopwatch.Frequency) * 1000000000;
             UnityEngine.Debug.Log(message + "\n " + milliseconds + "ms" + " [" + nanoseconds + "ns]");
+        }
+
+        // GIZMO DRAWING HELPER METHODS ***********************************************************
+        public static void DrawPath(Vector3[] path, Vector3 startPos)
+        {
+            if (path != null && path.Length > 1)
+            {
+                Gizmos.color = Color.black;
+
+                //Vector3 pos = gridTest.Grid(0).ToWorld(gridTest.Grid(0).WorldToGrid(positions[0].position));
+                Vector3 pos =  startPos;
+                Gizmos.DrawCube(pos, Vector3.one * 0.125f);
+                Gizmos.DrawLine(pos, path[0]);
+
+                Gizmos.DrawCube(path[0], Vector3.one * 0.125f);
+
+                for (int i = 1; i < path.Length; i++)
+                {
+                    Gizmos.DrawCube(path[i], Vector3.one * 0.125f);
+                    Gizmos.DrawLine(path[i - 1], path[i]);
+                }
+            }
         }
     }
 }

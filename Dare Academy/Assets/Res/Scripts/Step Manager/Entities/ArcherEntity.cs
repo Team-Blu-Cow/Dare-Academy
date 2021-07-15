@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using blu;
 using JUtil;
+using JUtil.Grids;
 
 public class ArcherEntity : GridEntity
 {
@@ -24,6 +25,25 @@ public class ArcherEntity : GridEntity
 
     [SerializeField] private GridEntity player; // Player for finding path // WILl NEED TO BE CHANGED TO NAME OF PLAYER
 
+    private Vector3[] path;
+
+    [Header("Jays rework stuff")]
+    [SerializeField] Vector2Int positionDiff;
+    [SerializeField] Vector2 offsetVector;
+    [SerializeField] GridNodePosition targetPosition;
+    [SerializeField] int distance;
+    [SerializeField] int dist;
+    [SerializeField] int fearRange = 3;
+    bool pathBlocked = false;
+
+    public enum State
+    {
+        MOVING,
+        SHOOTING,
+        FLEEING
+    }
+
+
     protected override void Start()
     {
         base.Start(); // Run base start function
@@ -38,7 +58,6 @@ public class ArcherEntity : GridEntity
         base.OnValidate();
 
         m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet"); // Find bullet prefab
-        //player = GameObject.Find("Green").GetComponent<PlayerEntity>(); // Find player game object
     }
 
     public override void AnalyseStep()
@@ -48,23 +67,75 @@ public class ArcherEntity : GridEntity
 
         base.AnalyseStep(); // Run base function
 
-        Vector2 distanceVector = player.transform.position - transform.position; // Find distance between player and entity
-        if ((distanceVector.x <= 0.5f && distanceVector.x >= -0.5f) || (distanceVector.y <= 0.5f && distanceVector.y >= -0.5f)) // If player and entity are aligned on grid
+        MoveState();
+    }
+
+    public void MoveState()
+    {
+        positionDiff = player.Position.grid - this.Position.grid;
+
+        if (positionDiff.x == 0 || positionDiff.y == 0) // If player and entity are aligned on grid
         {
-            if ((distanceVector.x <= 4.0f && distanceVector.x >= -4.0f) && (distanceVector.y <= 4.0f && distanceVector.y >= -4.0f)) // If entity is within range of player
+            //if ((distanceVector.x <= 4.0f && distanceVector.x >= -4.0f) && (distanceVector.y <= 4.0f && distanceVector.y >= -4.0f)) // If entity is within range of player
+            //{
+            if (m_currentNode.IsPathClear(player.currentNode)) // If player is not behind a wall
             {
-                if (!CheckPlayerIsBehindWall(m_dir)) // If player is not behind a wall
+                if (m_cooldownCounter <= 0) // If the cooldown has expired
                 {
-                    if (m_cooldownCounter <= 0) // If the cooldown has expired
-                    {
-                        m_cooldownCounter = m_attackCooldown; // Reset cooldown
-                        isAttacking = true; // Set is attacking to true
-                    }
+                    m_cooldownCounter = m_attackCooldown; // Reset cooldown
+                    isAttacking = true; // Set is attacking to true
                 }
             }
+            //}
         }
 
-        Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, player.transform.position); // Find path to player
+        offsetVector = new Vector2(
+            (Mathf.Abs(positionDiff.x) > Mathf.Abs(positionDiff.y)) ? positionDiff.x : 0,
+            (Mathf.Abs(positionDiff.y) >= Mathf.Abs(positionDiff.x)) ? positionDiff.y : 0
+            );
+
+        GridNode targetNode;
+
+        targetNode = player.currentNode.GetNeighbourDist(Vector2Int.RoundToInt(-offsetVector), Mathf.RoundToInt(offsetVector.magnitude));
+
+        if (targetNode != null)
+            targetPosition = targetNode.position;
+
+        dist = player.currentNode.GetDistanceInDirection(Vector2Int.RoundToInt(-offsetVector));
+
+        distance = Mathf.RoundToInt(offsetVector.magnitude);
+
+        pathBlocked = false;
+
+        if (dist < distance)
+            if (dist <= fearRange)
+                pathBlocked = true;
+
+        if (pathBlocked)
+        {
+            if (Mathf.Abs(offsetVector.x) > Mathf.Abs(offsetVector.y))
+                offsetVector = new Vector2(0, (positionDiff.y == 0) ? 3 : positionDiff.y);
+            else
+                offsetVector = new Vector2((positionDiff.x == 0) ? 3 : positionDiff.x, 0);
+
+            dist = player.currentNode.GetDistanceInDirection(Vector2Int.RoundToInt(-offsetVector));
+
+            if (dist < fearRange)
+            {
+                offsetVector = -offsetVector;
+
+                // do checks here
+            }
+
+            targetNode = player.currentNode.GetNeighbourDist(Vector2Int.RoundToInt(-offsetVector), fearRange);
+
+            if (targetNode != null)
+                targetPosition = targetNode.position;
+
+        }
+
+        path = new Vector3[0];
+        path = App.GetModule<LevelModule>().MetaGrid.GetPathWithFear(Position.world, targetPosition.world, player.Position.world, fearRange);
 
         if (!isAttacking && !isWaiting) // If the entity is not attacking and not waiting
         {
@@ -88,7 +159,7 @@ public class ArcherEntity : GridEntity
         if (m_cooldownCounter > 0) // If the cooldown hasn't expired yet
         {
             m_cooldownCounter--; // Decrement cooldown counter
-        }
+        }//*/
     }
 
     public override void AttackStep()
@@ -143,5 +214,21 @@ public class ArcherEntity : GridEntity
                 Gizmos.DrawCube(m_currentNode.GetNeighbour(direction).position.world, new Vector3(1, 1, 1)); // Draw a yellow square to show where the bullet is spawning.
             }
         }
+
+        Gizmos.color = Color.cyan;
+
+        if (m_currentNode != null)
+            Gizmos.DrawRay(m_currentNode.position.world, (Vector2)positionDiff);
+
+        Gizmos.color = (pathBlocked) ? Color.red : Color.cyan ;
+
+        if (targetPosition != null && player != null)
+            Gizmos.DrawRay(player.Position.world, -offsetVector);
+
+        if (targetPosition != null)
+            Gizmos.DrawSphere(targetPosition.world, 0.2f);
+
+        if (Application.isPlaying)
+            JUtils.DrawPath(path, App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(m_currentNode.position.world).position.world);
     }
 }

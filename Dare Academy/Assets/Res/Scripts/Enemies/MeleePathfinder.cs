@@ -28,7 +28,7 @@ public class MeleePathfinder : GridEntity
     {
         if (!m_attack && m_player.Position != null)
         {
-            Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.grid, m_player.Position.grid);
+            Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, m_player.Position.world);
 
             Vector3 dir = new Vector3();
 
