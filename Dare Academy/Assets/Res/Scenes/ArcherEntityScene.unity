@@ -5111,6 +5111,11 @@ GameObject:
   m_CorrespondingSourceObject: {fileID: 5013678160788763114, guid: cc8630b56563e28448029b0847ecb065, type: 3}
   m_PrefabInstance: {fileID: 5013678160325016198}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &588126093 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8300906929210982949, guid: cc8630b56563e28448029b0847ecb065, type: 3}
+  m_PrefabInstance: {fileID: 5013678160325016198}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &641879428
 GameObject:
   m_ObjectHideFlags: 0
@@ -32277,9 +32282,19 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2015387460 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1567007156050476638, guid: cc8630b56563e28448029b0847ecb065, type: 3}
+  m_PrefabInstance: {fileID: 5013678160325016198}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2096163106 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5013678161204777892, guid: cc8630b56563e28448029b0847ecb065, type: 3}
+  m_PrefabInstance: {fileID: 5013678160325016198}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &2099126052 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8433700927186744321, guid: cc8630b56563e28448029b0847ecb065, type: 3}
   m_PrefabInstance: {fileID: 5013678160325016198}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &3756185786858962650
@@ -32513,15 +32528,15 @@ PrefabInstance:
     - target: {fileID: 5013678160130806872, guid: cc8630b56563e28448029b0847ecb065, type: 3}
       propertyPath: gunIcon
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 588126093}
     - target: {fileID: 5013678160130806872, guid: cc8630b56563e28448029b0847ecb065, type: 3}
       propertyPath: dashIcon
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2015387460}
     - target: {fileID: 5013678160130806872, guid: cc8630b56563e28448029b0847ecb065, type: 3}
       propertyPath: blockIcon
       value: 
-      objectReference: {fileID: 0}
+      objectReference: {fileID: 2099126052}
     - target: {fileID: 5013678160130806872, guid: cc8630b56563e28448029b0847ecb065, type: 3}
       propertyPath: energyIcons.Array.size
       value: 1

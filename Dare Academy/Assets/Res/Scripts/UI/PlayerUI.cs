@@ -16,8 +16,9 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] GameObject gunIcon;
     [SerializeField] GameObject dashIcon;
     [SerializeField] GameObject blockIcon;
-    Vector3[] iconPositions = { new Vector3(75, -100, 0), new Vector3(75, -100, 0), new Vector3(200, -100, 0), new Vector3(75, -100, 0), new Vector3(175, -100, 0), new Vector3(275, -100, 0) };
+    Vector2[] iconPositions = { new Vector2(75, -100), new Vector2(75, -100), new Vector2(200, -100), new Vector2(75, -100), new Vector2(175, -100), new Vector2(275, -100) };
     PlayerAbilities.AbilityEnum m_ability = PlayerAbilities.AbilityEnum.None;
+    PlayerAbilities.AbilityEnum m_prevAbility = PlayerAbilities.AbilityEnum.None;
     [SerializeField] int numOfAbilitiesUnlocked = 0;
     bool isIconsMoving = false;
     float m_timer;
@@ -112,6 +113,12 @@ public class PlayerUI : MonoBehaviour
             }
         }
 
+        if(m_ability != m_playerInfo.Abilities.GetActiveAbility())
+        {
+            m_prevAbility = m_ability;
+            m_ability = m_playerInfo.Abilities.GetActiveAbility();
+        }
+
         if(isIconsMoving)
         {
             MoveIconPositions();
@@ -122,11 +129,9 @@ public class PlayerUI : MonoBehaviour
             CheckAbilitiesUnlocked();
             SetIconPositions();
         }
-
-        m_ability = m_playerInfo.Abilities.GetActiveAbility();
     }
 
-    public void CheckAbilitiesUnlocked()
+    private void CheckAbilitiesUnlocked()
     {
         numOfAbilitiesUnlocked = 0;
         if (m_playerInfo.Abilities.IsUnlocked(PlayerAbilities.AbilityEnum.Dash))
@@ -200,8 +205,8 @@ public class PlayerUI : MonoBehaviour
                 if (m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Dash)
                 {
                     gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
-                    dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
-                    blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
+                    dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[4];
+                    blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[5];
                 }
             }
             else if (gunIcon.activeSelf == true)
@@ -209,8 +214,8 @@ public class PlayerUI : MonoBehaviour
                 if (m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Shoot)
                 {
                     blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
-                    gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
-                    dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
+                    gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[4];
+                    dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[5];
                 }
             }
             else if (blockIcon.activeSelf == true)
@@ -218,8 +223,8 @@ public class PlayerUI : MonoBehaviour
                 if (m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Block)
                 {
                     dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
-                    blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
-                    gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
+                    blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[4];
+                    gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[5];
                 }
             }
         }
@@ -230,7 +235,7 @@ public class PlayerUI : MonoBehaviour
     {
         float transitionSpeed = 0.5f;
 
-        CheckIconsInPosition(transitionSpeed);
+        CheckAnimationReady(transitionSpeed); // If we are still animating the icons moving then don't get new positions for the icons to  move to
 
         if (!isIconsMoving)
         {
@@ -292,20 +297,62 @@ public class PlayerUI : MonoBehaviour
             }
             else if (numOfAbilitiesUnlocked == 3)
             {
-                LeanTween.move(dashIcon, gunPosition, transitionSpeed);
-                LeanTween.move(gunIcon, blockPosition, transitionSpeed);
-                LeanTween.move(blockIcon, dashPosition, transitionSpeed);
-                LeanTween.scale(dashIcon, gunScale, transitionSpeed);
-                LeanTween.scale(gunIcon, blockScale, transitionSpeed);
-                LeanTween.scale(blockIcon, dashScale, transitionSpeed);
+                // Moving Left
+                if(m_ability == PlayerAbilities.AbilityEnum.Dash && (m_prevAbility == PlayerAbilities.AbilityEnum.Block || m_prevAbility == PlayerAbilities.AbilityEnum.None))
+                {
+                    MoveIconsLeft(transitionSpeed);
+                }
+                else if (m_ability == PlayerAbilities.AbilityEnum.Block && (m_prevAbility == PlayerAbilities.AbilityEnum.Shoot || m_prevAbility == PlayerAbilities.AbilityEnum.None))
+                {
+                    MoveIconsLeft(transitionSpeed);
+                }
+                else if (m_ability == PlayerAbilities.AbilityEnum.Shoot && (m_prevAbility == PlayerAbilities.AbilityEnum.Dash || m_prevAbility == PlayerAbilities.AbilityEnum.None))
+                {
+                    MoveIconsLeft(transitionSpeed);
+                }
+
+                // Moving Right
+                if (m_ability == PlayerAbilities.AbilityEnum.Dash && (m_prevAbility == PlayerAbilities.AbilityEnum.Shoot || m_prevAbility == PlayerAbilities.AbilityEnum.None))
+                {
+                    MoveIconsRight(transitionSpeed);
+                }
+                else if (m_ability == PlayerAbilities.AbilityEnum.Shoot && (m_prevAbility == PlayerAbilities.AbilityEnum.Block || m_prevAbility == PlayerAbilities.AbilityEnum.None))
+                {
+                    MoveIconsRight(transitionSpeed);
+                }
+                else if (m_ability == PlayerAbilities.AbilityEnum.Block && (m_prevAbility == PlayerAbilities.AbilityEnum.Dash || m_prevAbility == PlayerAbilities.AbilityEnum.None))
+                {
+                    MoveIconsRight(transitionSpeed);
+                }
             }
         }
     }
 
-    private void CheckIconsInPosition(float transitionSpeed)
+    private void MoveIconsLeft(float transitionSpeed)
+    {
+        LeanTween.move(dashIcon, blockPosition, transitionSpeed);
+        LeanTween.move(blockIcon, gunPosition, transitionSpeed);
+        LeanTween.move(gunIcon, dashPosition, transitionSpeed);
+        LeanTween.scale(dashIcon, blockScale, transitionSpeed);
+        LeanTween.scale(blockIcon, gunScale, transitionSpeed);
+        LeanTween.scale(gunIcon, dashScale, transitionSpeed);
+    }
+
+    private void MoveIconsRight(float transitionSpeed)
+    {
+        LeanTween.move(dashIcon, gunPosition, transitionSpeed);
+        LeanTween.move(gunIcon, blockPosition, transitionSpeed);
+        LeanTween.move(blockIcon, dashPosition, transitionSpeed);
+        LeanTween.scale(dashIcon, gunScale, transitionSpeed);
+        LeanTween.scale(gunIcon, blockScale, transitionSpeed);
+        LeanTween.scale(blockIcon, dashScale, transitionSpeed);
+    }
+
+    private void CheckAnimationReady(float transitionSpeed)
     {
         if (m_timer > transitionSpeed)
         {
+            CheckIconsInPosition();
             isIconsMoving = false;
             blockPosition = blockIcon.GetComponent<RectTransform>().position;
             dashPosition = dashIcon.GetComponent<RectTransform>().position;
@@ -318,7 +365,32 @@ public class PlayerUI : MonoBehaviour
         }
     }
 
-    public void UpdateHealthUI()
+    private void CheckIconsInPosition()
+    {
+        if(numOfAbilitiesUnlocked == 3)
+        {
+            //if(m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Dash && dashIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[4])
+            //{
+            //    blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
+            //    dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[4];
+            //    gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[5];
+            //}
+            //else if (m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Block && blockIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[4])
+            //{
+            //    gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
+            //    blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[4];
+            //    dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[5];
+            //}
+            //else if (m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Shoot && gunIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[4])
+            //{
+            //    dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
+            //    gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[4];
+            //    blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[5];
+            //}
+        }
+    }
+
+    private void UpdateHealthUI()
     {
         for(int i = 0; i < healthIcons.Count; i++) // For all the health images
         {
