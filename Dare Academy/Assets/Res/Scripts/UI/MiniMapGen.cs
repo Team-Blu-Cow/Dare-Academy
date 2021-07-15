@@ -87,106 +87,115 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
     private void DrawRooms(Grid<GridNode> currentRoom, int currentRoomIndex)
     {
         int i = 0;
+        PlayerEntity player = FindObjectOfType<PlayerEntity>();
         foreach (GridInfo grid in m_gridInfo)
         {
-            // Draw and place the room box
-            GameObject tempRoom = new GameObject("Room");
-            Image image = tempRoom.AddComponent<Image>();
-            RectTransform rect = tempRoom.GetComponent<RectTransform>();
-            tempRoom.transform.SetParent(transform.GetChild(0));
-            rect.localScale = Vector3.one;
-            rect.sizeDelta = new Vector2(grid.width, grid.height);
-            rect.localPosition = grid.originPosition + (new Vector3(grid.width, grid.height, 0) / 2) - currentRoom.OriginPosition;
-
-            if (i == currentRoomIndex)
+            if (player.m_dictRoomsTraveled[SceneManager.GetActiveScene().name].Contains(i))
             {
-                image.color = Color.red;
-            }
+                // Draw and place the room box
+                GameObject tempRoom = new GameObject("Room");
+                Image image = tempRoom.AddComponent<Image>();
+                RectTransform rect = tempRoom.GetComponent<RectTransform>();
+                tempRoom.transform.SetParent(transform.GetChild(0));
+                rect.localScale = Vector3.one;
+                rect.sizeDelta = new Vector2(grid.width, grid.height);
+                rect.localPosition = grid.originPosition + (new Vector3(grid.width, grid.height, 0) / 2) - currentRoom.OriginPosition;
 
-            m_squares.Add(tempRoom);
-            i++;
+                if (i == currentRoomIndex)
+                {
+                    image.color = Color.red;
+                }
+
+                m_squares.Add(tempRoom);
+                i++;
+            }
         }
     }
 
     private void DrawLinks(Grid<GridNode> currentRoom)
     {
         //Draw room connections
+        PlayerEntity player = FindObjectOfType<PlayerEntity>();
+
         foreach (GridLink link in m_links.gridLinks)
         {
-            Vector3 linkStart = m_gridInfo[link.grid1.index].ToWorld(link.grid1.position);
-            Vector3 linkEnd = m_gridInfo[link.grid2.index].ToWorld(link.grid2.position);
-
-            // Length the link should be
-            float length = Vector3.Distance(linkStart, linkEnd);
-
-            // The angle at witch the link shall sit
-            float angle = Mathf.Atan2(linkEnd.y - linkStart.y, linkEnd.x - linkStart.x);
-            Vector2 linkDir = new Vector2(linkEnd.x - linkStart.x, linkEnd.y - linkStart.y);
-            angle = linkDir.GetRotation();
-
-            if (angle < 5 && angle > -5)
-                angle = 0;
-
-            // Spawning the square
-            GameObject tempLink = new GameObject("Link");
-            tempLink.AddComponent<Image>();
-            RectTransform rect = tempLink.GetComponent<RectTransform>();
-            tempLink.transform.SetParent(transform.GetChild(1));
-
-            // Seting the size and position
-            rect.sizeDelta = new Vector2(link.width, length);
-            rect.localScale = Vector3.one;
-            rect.localPosition = ((linkStart + linkEnd) / 2) - currentRoom.OriginPosition;
-            rect.rotation = Quaternion.Euler(0, 0, angle);
-
-            // offset link to be in the centre
-            angle = (link.grid1.direction + 2) * 45;
-            float width = link.width / 2.0f;
-            width -= 0.5f;
-
-            switch (angle)
+            if (player.m_dictRoomsTraveled[SceneManager.GetActiveScene().name].Contains(link.grid1.index) && player.m_dictRoomsTraveled[SceneManager.GetActiveScene().name].Contains(link.grid2.index))
             {
-                case 0:
-                    rect.localPosition -= new Vector3(0, width, 0);
-                    break;
+                Vector3 linkStart = m_gridInfo[link.grid1.index].ToWorld(link.grid1.position);
+                Vector3 linkEnd = m_gridInfo[link.grid2.index].ToWorld(link.grid2.position);
 
-                case 45:
-                    rect.localPosition += new Vector3(width, -width, 0);
-                    break;
+                // Length the link should be
+                float length = Vector3.Distance(linkStart, linkEnd);
 
-                case 90:
-                    rect.localPosition += new Vector3(width, 0, 0);
-                    break;
+                // The angle at witch the link shall sit
+                float angle = Mathf.Atan2(linkEnd.y - linkStart.y, linkEnd.x - linkStart.x);
+                Vector2 linkDir = new Vector2(linkEnd.x - linkStart.x, linkEnd.y - linkStart.y);
+                angle = linkDir.GetRotation();
 
-                case 135:
-                    rect.localPosition += new Vector3(width, width, 0);
-                    break;
+                if (angle < 5 && angle > -5)
+                    angle = 0;
 
-                case 180:
-                    rect.localPosition += new Vector3(0, width, 0);
-                    break;
+                // Spawning the square
+                GameObject tempLink = new GameObject("Link");
+                tempLink.AddComponent<Image>();
+                RectTransform rect = tempLink.GetComponent<RectTransform>();
+                tempLink.transform.SetParent(transform.GetChild(1));
 
-                case 225:
-                    rect.localPosition += new Vector3(-width, width, 0);
-                    break;
+                // Seting the size and position
+                rect.sizeDelta = new Vector2(link.width, length);
+                rect.localScale = Vector3.one;
+                rect.localPosition = ((linkStart + linkEnd) / 2) - currentRoom.OriginPosition;
+                rect.rotation = Quaternion.Euler(0, 0, angle);
 
-                case 270:
-                    rect.localPosition -= new Vector3(width, 0, 0);
-                    break;
+                // offset link to be in the centre
+                angle = (link.grid1.direction + 2) * 45;
+                float width = link.width / 2.0f;
+                width -= 0.5f;
 
-                case 315:
-                    rect.localPosition += new Vector3(-width, width, 0);
-                    break;
+                switch (angle)
+                {
+                    case 0:
+                        rect.localPosition -= new Vector3(0, width, 0);
+                        break;
 
-                case 360:
-                    rect.localPosition -= new Vector3(0, width, 0);
-                    break;
+                    case 45:
+                        rect.localPosition += new Vector3(width, -width, 0);
+                        break;
 
-                default:
-                    break;
+                    case 90:
+                        rect.localPosition += new Vector3(width, 0, 0);
+                        break;
+
+                    case 135:
+                        rect.localPosition += new Vector3(width, width, 0);
+                        break;
+
+                    case 180:
+                        rect.localPosition += new Vector3(0, width, 0);
+                        break;
+
+                    case 225:
+                        rect.localPosition += new Vector3(-width, width, 0);
+                        break;
+
+                    case 270:
+                        rect.localPosition -= new Vector3(width, 0, 0);
+                        break;
+
+                    case 315:
+                        rect.localPosition += new Vector3(-width, width, 0);
+                        break;
+
+                    case 360:
+                        rect.localPosition -= new Vector3(0, width, 0);
+                        break;
+
+                    default:
+                        break;
+                }
+
+                m_squares.Add(tempLink);
             }
-
-            m_squares.Add(tempLink);
         }
     }
 
