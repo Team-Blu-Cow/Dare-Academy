@@ -64,15 +64,6 @@ public class StepController
         AnalyseStep();
     }
 
-    public void InitialAnalyse()
-    {
-        foreach (GridEntity entity in m_entities)
-        {
-            if (entity.RoomIndex == m_currentRoomIndex)
-                entity.AnalyseStep();
-        }
-    }
-
     // STEP STAGES ********************************************************************************
 
     public void ResetAnimations()

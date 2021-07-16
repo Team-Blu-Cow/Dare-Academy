@@ -42,6 +42,13 @@ namespace blu
             App.GetModule<InputModule>().PlayerController.Disable();                // stop all input other than dialogue
             App.GetModule<InputModule>().SystemController.Disable();                //
             App.GetModule<InputModule>().DialogueController.Enable();               //
+
+            if (App.CanvasManager == null)
+            {
+                Debug.LogWarning("[App/DialogueModule] could not find canvas manager");
+                return;
+            }
+
             App.CanvasManager.AddCanvas(_dialogueCanvas);
             App.CanvasManager.OpenCanvas(App.CanvasManager.GetCanvasContainer("Dialogue Canvas"), true);
             ConversationManager.Instance.StartConversation(_currentConversation);

@@ -39,17 +39,6 @@ public class LevelManager : MonoBehaviour
         input.Player.ExecuteStep.performed -= Step;
     }
 
-    private IEnumerator LateStart()
-    {
-        yield return new WaitForEndOfFrame();
-        m_stepController.InitialAnalyse();
-    }
-
-    private void Start()
-    {
-        StartCoroutine(LateStart());
-    }
-
     private void OnDrawGizmos()
     {
         m_grid.DrawGizmos();
