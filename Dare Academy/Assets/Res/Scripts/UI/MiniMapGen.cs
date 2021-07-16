@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using JUtil.Grids;
 using JUtil;
+using TMPro;
 
 public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDragHandler
 {
@@ -56,7 +57,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
     private void ToggleMap(InputAction.CallbackContext context)
     {
         if (open)
-        {            
+        {
             App.CanvasManager.GetCanvasContainer("Map").CloseCanvas();
             App.GetModule<InputModule>().PlayerController.Enable();
             App.GetModule<InputModule>().SystemController.MapControlls.Disable();
@@ -86,6 +87,8 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
         DrawLinks(currentRoom);
 
         DrawQuestMarker(currentRoom);
+
+        DrawSceneLinks(currentRoom);
 
         FindBounds(currentRoom);
     }
@@ -183,9 +186,9 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
 
                 // offset link to be in the centre
                 angle = (link.grid1.direction + 2) * 45;
-                float width = link.width / 2.0f;
-                width -= 0.5f;
+                float width = (link.width / 2.0f) - 0.5f;
 
+                //rect.localPosition = OffsetLink(rect.localPosition, angle, width);
                 switch (angle)
                 {
                     case 0:
@@ -260,52 +263,58 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
                             Vector2 pos = m_gridInfo[sceneLink.myRoomIndex].ToWorld(sceneLink.myNodeIndex);
 
                             var angle = (sceneLink.travelDirection + 2) * 45;
-                            float width = sceneLink.width / 2.0f;
-                            width -= 0.5f;
+                            float width = (sceneLink.width / 2.0f) - 0.5f;
+                            pos = OffsetLink(pos, angle, width);
 
-                            switch (angle)
-                            {
-                                case 0:
-                                    pos -= new Vector2(0, width);
-                                    break;
-
-                                case 45:
-                                    pos += new Vector2(width, -width);
-                                    break;
-
-                                case 90:
-                                    pos += new Vector2(width, 0);
-                                    break;
-
-                                case 135:
-                                    pos += new Vector2(width, width);
-                                    break;
-
-                                case 180:
-                                    pos += new Vector2(0, width);
-                                    break;
-
-                                case 225:
-                                    pos += new Vector2(-width, width);
-                                    break;
-
-                                case 270:
-                                    pos -= new Vector2(width, 0);
-                                    break;
-
-                                case 315:
-                                    pos += new Vector2(-width, width);
-                                    break;
-
-                                default:
-                                    break;
-                            }
                             CreateQuestMarker(currentRoom, quest, pos);
                         }
                     }
                 }
             }
         }
+    }
+
+    private static Vector2 OffsetLink(Vector2 pos, int angle, float width)
+    {
+        switch (angle)
+        {
+            case 0:
+                pos -= new Vector2(0, width);
+                break;
+
+            case 45:
+                pos += new Vector2(width, -width);
+                break;
+
+            case 90:
+                pos += new Vector2(width, 0);
+                break;
+
+            case 135:
+                pos += new Vector2(width, width);
+                break;
+
+            case 180:
+                pos += new Vector2(0, width);
+                break;
+
+            case 225:
+                pos += new Vector2(-width, width);
+                break;
+
+            case 270:
+                pos -= new Vector2(width, 0);
+                break;
+
+            case 315:
+                pos += new Vector2(-width, width);
+                break;
+
+            default:
+                break;
+        }
+
+        return pos;
     }
 
     private void CreateQuestMarker(Grid<GridNode> currentRoom, Quest quest, Vector2 position)
@@ -335,6 +344,45 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
         tooltip.m_questContent = quest.activeDescription;
 
         m_quests.Add(Go);
+    }
+
+    private void DrawSceneLinks(Grid<GridNode> currentRoom)
+    {
+        foreach (LevelTransitionInformation link in m_links.sceneLinks)
+        {
+            if (player.m_dictRoomsTraveled.ContainsKey(SceneManager.GetActiveScene().name) &&
+                player.m_dictRoomsTraveled[SceneManager.GetActiveScene().name].Contains(link.myRoomIndex))
+            {
+                Vector2 pos = m_gridInfo[link.myRoomIndex].ToWorld(link.myNodeIndex) - currentRoom.OriginPosition;
+
+                var angle = (link.travelDirection + 2) * 45;
+                float width = link.width / 2.0f;
+                width -= 0.5f;
+
+                pos = OffsetLink(pos, angle, width);
+
+                GameObject Go = new GameObject(link.targetSceneName);
+
+                Image image = Go.AddComponent<Image>();
+                image.color = Color.blue;
+
+                Go.transform.SetParent(transform.GetChild(1));
+
+                RectTransform rect = (RectTransform)Go.transform;
+                rect.sizeDelta = Vector2.one * 3;
+                rect.localScale = Vector3.one;
+                rect.anchoredPosition = pos;
+
+                GameObject text = new GameObject("Text");
+                text.transform.parent = Go.transform;
+                TextMeshProUGUI tmp = text.AddComponent<TextMeshProUGUI>();
+                tmp.text = link.targetSceneName;
+                tmp.fontSize = 16;
+                tmp.alignment = TextAlignmentOptions.Top;
+                RectTransform textRect = (RectTransform)text.transform;
+                textRect.anchoredPosition = new Vector2(0, -5);
+            }
+        }
     }
 
     public void CloseMap()
@@ -386,13 +434,12 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
 
         var pointerDelta = localCursor - m_PointerStartLocalCursor;
         Vector2 position = m_ContentStartPosition + pointerDelta * (5 * Mathf.Log10(transform.localScale.x));
-        
+
         float scale = transform.localScale.x;
 
         if (position.x < Screen.width / 2 - (bounds[0] * scale) && position.x > -Screen.width / 2 - (bounds[1] * scale)
             && position.y < Screen.height / 2 - (bounds[2] * scale) && position.y > -Screen.height / 2 - (bounds[3] * scale))
             transform.anchoredPosition = position;
-        
     }
 
     private void MoveStart(InputAction.CallbackContext ctx)
