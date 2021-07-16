@@ -24,7 +24,7 @@ namespace blu
         public System.Int64 gameEventFlags = 0;
         public int respawnRoomID = -1;
 
-        public bool shootUnlocked = true;
+        public bool shootUnlocked = false;
         public bool dashUnlocked = true;
         public bool blockUnlocked = true;
     }

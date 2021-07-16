@@ -241,20 +241,21 @@ public class PlayerUI : MonoBehaviour
         {
             if (numOfAbilitiesUnlocked == 2)
             {
+                Vector3 mainScale = new Vector3(1.5f, 1.5f, 1.5f);
                 if (m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Dash)
                 {
                     if (blockIcon.activeSelf == false)
                     {
                         LeanTween.move(dashIcon, gunPosition, transitionSpeed);
                         LeanTween.move(gunIcon, dashPosition, transitionSpeed);
-                        LeanTween.scale(dashIcon, gunScale, transitionSpeed);
+                        LeanTween.scale(dashIcon, mainScale, transitionSpeed);
                         LeanTween.scale(gunIcon, dashScale, transitionSpeed);
                     }
                     else
                     {
                         LeanTween.move(dashIcon, blockPosition, transitionSpeed);
                         LeanTween.move(blockIcon, dashPosition, transitionSpeed);
-                        LeanTween.scale(dashIcon, blockScale, transitionSpeed);
+                        LeanTween.scale(dashIcon, mainScale, transitionSpeed);
                         LeanTween.scale(blockIcon, dashScale, transitionSpeed);
                     }
                 }
@@ -266,14 +267,14 @@ public class PlayerUI : MonoBehaviour
                         LeanTween.move(dashIcon, gunPosition, transitionSpeed);
                         LeanTween.move(gunIcon, dashPosition, transitionSpeed);
                         LeanTween.scale(dashIcon, gunScale, transitionSpeed);
-                        LeanTween.scale(gunIcon, dashScale, transitionSpeed);
+                        LeanTween.scale(gunIcon, mainScale, transitionSpeed);
                     }
                     else
                     {
-                        LeanTween.move(dashIcon, blockPosition, transitionSpeed);
+                        LeanTween.move(gunIcon, blockPosition, transitionSpeed);
                         LeanTween.move(blockIcon, dashPosition, transitionSpeed);
-                        LeanTween.scale(dashIcon, blockScale, transitionSpeed);
-                        LeanTween.scale(blockIcon, dashScale, transitionSpeed);
+                        LeanTween.scale(gunIcon, mainScale, transitionSpeed);
+                        LeanTween.scale(blockIcon, gunScale, transitionSpeed);
                     }
                 }
 
@@ -283,7 +284,7 @@ public class PlayerUI : MonoBehaviour
                     {
                         LeanTween.move(blockIcon, gunPosition, transitionSpeed);
                         LeanTween.move(gunIcon, blockPosition, transitionSpeed);
-                        LeanTween.scale(blockIcon, gunScale, transitionSpeed);
+                        LeanTween.scale(blockIcon, mainScale, transitionSpeed);
                         LeanTween.scale(gunIcon, blockScale, transitionSpeed);
                     }
                     else
@@ -291,7 +292,7 @@ public class PlayerUI : MonoBehaviour
                         LeanTween.move(dashIcon, blockPosition, transitionSpeed);
                         LeanTween.move(blockIcon, dashPosition, transitionSpeed);
                         LeanTween.scale(dashIcon, blockScale, transitionSpeed);
-                        LeanTween.scale(blockIcon, dashScale, transitionSpeed);
+                        LeanTween.scale(blockIcon, mainScale, transitionSpeed);
                     }
                 }
             }
@@ -367,26 +368,92 @@ public class PlayerUI : MonoBehaviour
 
     private void CheckIconsInPosition()
     {
-        if(numOfAbilitiesUnlocked == 3)
+        if(numOfAbilitiesUnlocked == 2)
         {
-            //if(m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Dash && dashIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[4])
-            //{
-            //    blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
-            //    dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[4];
-            //    gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[5];
-            //}
-            //else if (m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Block && blockIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[4])
-            //{
-            //    gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
-            //    blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[4];
-            //    dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[5];
-            //}
-            //else if (m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Shoot && gunIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[4])
-            //{
-            //    dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
-            //    gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[4];
-            //    blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[5];
-            //}
+            if(m_prevAbility == PlayerAbilities.AbilityEnum.Dash && dashIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[2])
+            {
+                if(blockIcon.activeSelf == false)
+                {
+                    dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[2];
+                    gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[1];
+                    dashIcon.GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                    gunIcon.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+                }
+                else
+                {
+                    dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[2];
+                    blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[1];
+                    dashIcon.GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                    blockIcon.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+                }
+            }
+            else if (m_prevAbility == PlayerAbilities.AbilityEnum.Shoot && gunIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[2])
+            {
+                if(blockIcon.activeSelf == false)
+                {
+                    gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[2];
+                    dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[1];
+                    gunIcon.GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                    dashIcon.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+                }
+                else
+                {
+                    gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[2];
+                    blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[1];
+                    gunIcon.GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                    blockIcon.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+                }
+            }
+            else if (m_prevAbility == PlayerAbilities.AbilityEnum.Block && blockIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[2])
+            {
+                if(dashIcon.activeSelf == false)
+                {
+                    blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[2];
+                    gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[1];
+                    blockIcon.GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                    gunIcon.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+                }
+                else
+                {
+                    blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[2];
+                    dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[1];
+                    blockIcon.GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                    dashIcon.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+                }
+            }
+        }
+        else if(numOfAbilitiesUnlocked == 3)
+        {
+            if(m_prevAbility == PlayerAbilities.AbilityEnum.Dash && dashIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[4])
+            {
+                blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
+                dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[4];
+                gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[5];
+
+                blockIcon.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+                dashIcon.GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                gunIcon.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+            }
+            else if (m_prevAbility == PlayerAbilities.AbilityEnum.Block && blockIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[4])
+            {
+                gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
+                blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[4];
+                dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[5];
+
+                gunIcon.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+                blockIcon.GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                dashIcon.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+            }
+            else if (m_prevAbility == PlayerAbilities.AbilityEnum.Shoot && gunIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[4])
+            {
+                dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3];
+                gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[4];
+                blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[5];
+
+                blockIcon.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+                gunIcon.GetComponent<RectTransform>().localScale = new Vector3(1.5f, 1.5f, 1.5f);
+                blockIcon.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+            }
         }
     }
 
@@ -410,7 +477,7 @@ public class PlayerUI : MonoBehaviour
             energyIcons[i].SetActive(false); // Set active to false
         }
         
-        for (int i = 0; i < m_energy; i++) // For the ones showing how much energy the player has
+        for (int i = 0; i < m_energy + 1; i++) // For the ones showing how much energy the player has
         {
             if (i < energyIcons.Count)
             {
