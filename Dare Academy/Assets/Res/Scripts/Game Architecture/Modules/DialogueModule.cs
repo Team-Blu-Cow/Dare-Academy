@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using DialogueEditor;
+using System.Threading.Tasks;
 
 namespace blu
 {
@@ -32,16 +33,11 @@ namespace blu
                 _EventSystem.SetActive(false);
             }
 
-            _currentConversation = in_conversation.GetComponent<NPCConversation>();
-            _dialogueCanvas = Instantiate(Resources.Load<GameObject>("prefabs/DialogueCanvas"));
-            _dialogueCanvas.name = "Dialogue Canvas";
-            //_ContinueButton = GameObject.Find("CanvasManager").transform.Find("ContinueButton").gameObject;
-            _ContinueButton = ConversationManager.Instance.DialoguePanel.transform.Find("ContinueButton").gameObject;
-            _ContinueButton.SetActive(false);
-            _canvasAnimation = _dialogueCanvas.GetComponentInChildren<Animator>();
-            App.GetModule<InputModule>().PlayerController.Disable();                // stop all input other than dialogue
-            App.GetModule<InputModule>().SystemController.Disable();                //
-            App.GetModule<InputModule>().DialogueController.Enable();               //
+            InputModule input = App.GetModule<InputModule>();
+
+            input.PlayerController.Disable();                // stop all input other than dialogue
+            input.SystemController.Disable();                //
+            input.DialogueController.Enable();               //
 
             if (App.CanvasManager == null)
             {
@@ -49,11 +45,45 @@ namespace blu
                 return;
             }
 
+            if (in_conversation != null)
+            {
+                StartCoroutine(_StartDialogue(in_conversation));
+            }
+        }
+
+        private IEnumerator _StartDialogue(GameObject in_conversation)
+        {
+            ResourceRequest request = Resources.LoadAsync<GameObject>("prefabs/DialogueCanvas");
+
+            while (!request.isDone)
+                yield return null;
+
+            yield return null;
+            _dialogueCanvas = Instantiate(request.asset as GameObject);
+            _dialogueCanvas.name = "Dialogue Canvas";
+            yield return null;
+
+            _canvasAnimation = _dialogueCanvas.GetComponentInChildren<Animator>();
+
+            _ContinueButton = ConversationManager.Instance.DialoguePanel.transform.Find("ContinueButton").gameObject;
+            _ContinueButton.SetActive(false);
+
+            _currentConversation = in_conversation.GetComponent<NPCConversation>();
+            Task<bool> task = Task.Run(() => ConversationManager.Instance._DeserializeConversation(_currentConversation));
+
+            if (!task.IsCompleted)
+                yield return null;
+
+            yield return null;
+            ConversationManager.Instance._DeserializeConversation(_currentConversation);
+
             App.CanvasManager.AddCanvas(_dialogueCanvas);
             App.CanvasManager.OpenCanvas(App.CanvasManager.GetCanvasContainer("Dialogue Canvas"), true);
-            ConversationManager.Instance.StartConversation(_currentConversation);
 
+            ConversationManager.Instance._EnableUI();
             StartCoroutine(ProgressDialogue());
+
+            yield return null;
         }
 
         private IEnumerator ProgressDialogue()
@@ -93,9 +123,10 @@ namespace blu
             }
             _closable = false;
             StartCoroutine(FadeOutCanvas());
-            App.GetModule<InputModule>().DialogueController.Disable();
-            App.GetModule<InputModule>().PlayerController.Enable();
-            App.GetModule<InputModule>().SystemController.Enable();
+            InputModule input = App.GetModule<InputModule>();
+            input.DialogueController.Disable();
+            input.PlayerController.Enable();
+            input.SystemController.Enable();
         }
 
         private void StopDialogue(InputAction.CallbackContext context)

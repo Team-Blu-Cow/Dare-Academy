@@ -155,6 +155,23 @@ namespace DialogueEditor
         // Public functions
         //--------------------------------------
 
+        public bool _DeserializeConversation(NPCConversation conversation)
+        {
+            m_conversation = conversation.Deserialize();
+            if (OnConversationStarted != null)
+                OnConversationStarted.Invoke();
+
+            return true;
+        }
+
+        public bool _EnableUI()
+        {
+            TurnOnUI();
+            m_currentSpeech = m_conversation.Root;
+            SetState(eState.TransitioningDialogueBoxOn);
+            return true;
+        }
+
         public void StartConversation(NPCConversation conversation)
         {
             m_conversation = conversation.Deserialize();
