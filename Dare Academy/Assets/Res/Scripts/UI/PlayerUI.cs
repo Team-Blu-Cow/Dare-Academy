@@ -58,7 +58,7 @@ public class PlayerUI : MonoBehaviour
 
         m_timer += Time.deltaTime; // The timer is timing
 
-        if (m_energy != m_playerInfo.Energy) // If the player's energy has changed
+        if ((m_energy + 1) != m_playerInfo.Energy) // If the player's energy has changed
         {
             UpdateEnergyUI(); // Update the energy UI
             m_energy = m_playerInfo.Energy; // Update the energy variable 
@@ -479,7 +479,7 @@ public class PlayerUI : MonoBehaviour
             energyIcons[i].SetActive(false); // Set active to false
         }
         
-        for (int i = 0; i < m_energy + 1; i++) // For the ones showing how much energy the player has
+        for (int i = 0; i < m_energy; i++) // For the ones showing how much energy the player has
         {
             if (i < energyIcons.Count)
             {
