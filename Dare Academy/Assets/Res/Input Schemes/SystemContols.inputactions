@@ -12,6 +12,14 @@
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
+                },
+                {
+                    "name": "Map",
+                    "type": "Button",
+                    "id": "666fa245-e555-4f66-bff5-ef880cb5ad4d",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -34,6 +42,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "44b98b79-be7a-482f-8a90-42a51d38fabb",
+                    "path": "<Keyboard>/m",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Map",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "978a8d5c-3ffa-41b2-86c2-1eb40dd277f5",
+                    "path": "<Gamepad>/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Map",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -60,25 +90,9 @@
                     "interactions": ""
                 },
                 {
-                    "name": "ZoomIn",
+                    "name": "Zoom",
                     "type": "Button",
                     "id": "2d62562e-7127-4936-a4e3-c5e4e4335a29",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "ZoomOut",
-                    "type": "Button",
-                    "id": "329e84eb-df0a-48bf-a638-8453a3739d74",
-                    "expectedControlType": "Button",
-                    "processors": "",
-                    "interactions": ""
-                },
-                {
-                    "name": "Open",
-                    "type": "Button",
-                    "id": "7d983491-082a-464d-8d05-946313b759b3",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": ""
@@ -380,103 +394,37 @@
                     "isPartOfComposite": true
                 },
                 {
-                    "name": "Gamepad D-Pad",
-                    "id": "19272d86-ed6b-4714-a25b-8539a4f01d08",
-                    "path": "2DVector",
+                    "name": "1D Axis",
+                    "id": "a3780204-fc19-40e3-8121-f60fdda8102b",
+                    "path": "1DAxis",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Move",
+                    "action": "Zoom",
                     "isComposite": true,
                     "isPartOfComposite": false
                 },
                 {
-                    "name": "up",
-                    "id": "1b6aab40-6df7-4fbc-b888-19f4f409339f",
-                    "path": "<Gamepad>/dpad/up",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "gamepad",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "down",
-                    "id": "ad070b66-6868-4e01-99f3-899a22141690",
-                    "path": "<Gamepad>/dpad/down",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "gamepad",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "left",
-                    "id": "22bddfc9-6ef9-405e-8f1e-4e33b8c43d7c",
-                    "path": "<Gamepad>/dpad/left",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "gamepad",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "right",
-                    "id": "736065bd-eb89-4384-874a-c81e25f2b2ee",
-                    "path": "<Gamepad>/dpad/right",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "gamepad",
-                    "action": "Move",
-                    "isComposite": false,
-                    "isPartOfComposite": true
-                },
-                {
-                    "name": "",
-                    "id": "c26eed3d-f399-459d-a97e-fa62a556e2cb",
+                    "name": "negative",
+                    "id": "ab16e0d2-3eff-42a1-b446-25f61863dfcd",
                     "path": "<Gamepad>/leftTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ZoomIn",
+                    "action": "Zoom",
                     "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 },
                 {
-                    "name": "",
-                    "id": "f6710938-80d5-47cb-9f5c-3e6ed3d70f6b",
+                    "name": "positive",
+                    "id": "0a32417f-3311-49d2-9738-aca4aa8e22b0",
                     "path": "<Gamepad>/rightTrigger",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ZoomOut",
+                    "action": "Zoom",
                     "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "76079328-cc9f-4ee9-b64c-49566dad38c8",
-                    "path": "<Keyboard>/m",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Open",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "8539ca76-a5ad-44f6-ab07-4bc2b374f6c8",
-                    "path": "<Gamepad>/select",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Open",
-                    "isComposite": false,
-                    "isPartOfComposite": false
+                    "isPartOfComposite": true
                 },
                 {
                     "name": "1D Axis",
@@ -504,6 +452,39 @@
                     "name": "negative",
                     "id": "7cb6b6e0-0680-4463-aa17-59e7c708b2eb",
                     "path": "<Keyboard>/downArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollQuests",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "1D Axis",
+                    "id": "f590a397-60ff-49cf-bbe2-3f20e24cd804",
+                    "path": "1DAxis",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollQuests",
+                    "isComposite": true,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "negative",
+                    "id": "6a27325f-944b-4a49-b0cc-9c90e8298a45",
+                    "path": "<Gamepad>/dpad/down",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "ScrollQuests",
+                    "isComposite": false,
+                    "isPartOfComposite": true
+                },
+                {
+                    "name": "positive",
+                    "id": "29121494-5b8a-4f81-8e6b-90808a714164",
+                    "path": "<Gamepad>/dpad/up",
                     "interactions": "",
                     "processors": "",
                     "groups": "",

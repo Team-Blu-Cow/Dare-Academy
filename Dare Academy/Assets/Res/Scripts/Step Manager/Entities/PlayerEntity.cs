@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using flags = GridEntityFlags.Flags;
 using interalFlags = GridEntityInternalFlags.Flags;
 using AbilityEnum = PlayerAbilities.AbilityEnum;
+using System.Threading.Tasks;
 
 public class PlayerEntity : GridEntity
 {
@@ -69,6 +70,7 @@ public class PlayerEntity : GridEntity
     protected override async void Start()
     {
         base.Start();
+
         Energy = MaxEnergy;
         Health = MaxHealth;
         m_abilities.Initialise();
@@ -76,11 +78,17 @@ public class PlayerEntity : GridEntity
 
         await App.GetModule<LevelModule>().AwaitSaveLoad();
         foreach (Quest.StringListIntPair pair in App.GetModule<LevelModule>().ActiveSaveData.m_roomsTraveled)
-            m_dictRoomsTraveled.Add(pair.key, pair.value);
+        {
+            if (!m_dictRoomsTraveled.ContainsKey(pair.key))
+                m_dictRoomsTraveled.Add(pair.key, pair.value);
+        }
+
+        FindObjectOfType<MiniMapGen>().DrawMap();
     }
 
     private void OnDestroy()
     {
+        App.GetModule<LevelModule>().ActiveSaveData.m_roomsTraveled.Clear();
         foreach (var pair in m_dictRoomsTraveled)
             App.GetModule<LevelModule>().ActiveSaveData.m_roomsTraveled.Add(new Quest.StringListIntPair(pair.Key, pair.Value));
     }
