@@ -71,7 +71,6 @@ namespace CanvasTool
             if (startingCanvas.Count > 0)
             {
                 OpenCanvas(startingCanvas, true);
-                
             }
             else if (canvases.Count > 0)
             {
@@ -288,12 +287,26 @@ namespace CanvasTool
 
         #region RemoveCanvas
 
-        public bool RemoveCanvasContainer(string name)
+        public bool RemoveCanvasContainer(string name, bool destroyContainer = true)
         {
             CanvasContainer temp = GetCanvasContainer(name);
             if (temp != null)
             {
-                CleanUpContainer(temp);
+                if (destroyContainer)
+                {
+                    CleanUpContainer(temp);
+                }
+                else
+                {
+                    for (int i = canvases.Count - 1; i >= 0; i--)
+                    {
+                        if (canvases[i] == temp)
+                        {
+                            canvases.RemoveAt(i);
+                            break;
+                        }
+                    }
+                }
             }
             else
             {

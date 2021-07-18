@@ -19,6 +19,7 @@ namespace blu
         private NPCConversation _currentConversation;
         public GameObject _EventSystem;
         private GameObject _ContinueButton;
+        private InputModule _input;
 
         //private Image _continueButton;
         public GameObject EventSystem { set => _EventSystem = value; }
@@ -33,51 +34,35 @@ namespace blu
                 _EventSystem.SetActive(false);
             }
 
-            InputModule input = App.GetModule<InputModule>();
-
-            input.PlayerController.Disable();                // stop all input other than dialogue
-            input.SystemController.Disable();                //
-            input.DialogueController.Enable();               //
+            _input.PlayerController.Disable();                // stop all input other than dialogue
+            _input.SystemController.Disable();                //
+            _input.DialogueController.Enable();               //
 
             if (App.CanvasManager == null)
             {
                 Debug.LogWarning("[App/DialogueModule] could not find canvas manager");
+
+                _input.PlayerController.Enable();
+                _input.SystemController.Enable();
+                _input.DialogueController.Disable();
+
                 return;
             }
 
-            if (in_conversation != null)
-            {
-                StartCoroutine(_StartDialogue(in_conversation));
-            }
+            StartCoroutine(_StartDialogue(in_conversation));
         }
 
         private IEnumerator _StartDialogue(GameObject in_conversation)
         {
-            ResourceRequest request = Resources.LoadAsync<GameObject>("prefabs/DialogueCanvas");
-
-            while (!request.isDone)
-                yield return null;
-
-            yield return null;
-            _dialogueCanvas = Instantiate(request.asset as GameObject);
-            _dialogueCanvas.name = "Dialogue Canvas";
-            yield return null;
-
-            _canvasAnimation = _dialogueCanvas.GetComponentInChildren<Animator>();
-
-            _ContinueButton = ConversationManager.Instance.DialoguePanel.transform.Find("ContinueButton").gameObject;
+            _dialogueCanvas.SetActive(true);
             _ContinueButton.SetActive(false);
 
             _currentConversation = in_conversation.GetComponent<NPCConversation>();
             Task<bool> task = Task.Run(() => ConversationManager.Instance._DeserializeConversation(_currentConversation));
 
-            if (!task.IsCompleted)
+            while (!task.IsCompleted)
                 yield return null;
 
-            yield return null;
-            ConversationManager.Instance._DeserializeConversation(_currentConversation);
-
-            App.CanvasManager.AddCanvas(_dialogueCanvas);
             App.CanvasManager.OpenCanvas(App.CanvasManager.GetCanvasContainer("Dialogue Canvas"), true);
 
             ConversationManager.Instance._EnableUI();
@@ -111,7 +96,7 @@ namespace blu
         {
             _canvasAnimation.SetTrigger("FadeOut");
             yield return new WaitForSeconds(_fadeDelay);
-            App.CanvasManager.RemoveCanvasContainer("Dialogue Canvas");
+            App.CanvasManager.RemoveCanvasContainer("Dialogue Canvas", false);
             yield break;
         }
 
@@ -123,6 +108,8 @@ namespace blu
             }
             _closable = false;
             StartCoroutine(FadeOutCanvas());
+            _dialogueCanvas.SetActive(false);
+
             InputModule input = App.GetModule<InputModule>();
             input.DialogueController.Disable();
             input.PlayerController.Enable();
@@ -183,20 +170,33 @@ namespace blu
 
         private void Start()
         {
-            App.GetModule<InputModule>().DialogueController.Dialogue.Cancel.performed += StopDialogue;
-            App.GetModule<InputModule>().DialogueController.Dialogue.NextOption.performed += NextOption;
-            App.GetModule<InputModule>().DialogueController.Dialogue.PreviousOption.performed += PreviousOption;
-            App.GetModule<InputModule>().DialogueController.Dialogue.Select.performed += SelectOption;
-            App.GetModule<InputModule>().DialogueController.Dialogue.Skip.performed += SkipDialogue;
+            _input = App.GetModule<InputModule>();
+
+            _input.DialogueController.Dialogue.Cancel.performed += StopDialogue;
+            _input.DialogueController.Dialogue.NextOption.performed += NextOption;
+            _input.DialogueController.Dialogue.PreviousOption.performed += PreviousOption;
+            _input.DialogueController.Dialogue.Select.performed += SelectOption;
+            _input.DialogueController.Dialogue.Skip.performed += SkipDialogue;
+
+            GameObject dialogueCanvasPrefab = Resources.Load<GameObject>("prefabs/DialogueCanvas");
+            _dialogueCanvas = Instantiate(dialogueCanvasPrefab);
+            _dialogueCanvas.name = "Dialogue Canvas";
+            GameObject.DontDestroyOnLoad(_dialogueCanvas);
+            _dialogueCanvas.SetActive(false);
+            App.CanvasManager.AddCanvas(_dialogueCanvas);
+
+            _canvasAnimation = _dialogueCanvas.GetComponentInChildren<Animator>();
+            _ContinueButton = ConversationManager.Instance.DialoguePanel.transform.Find("ContinueButton").gameObject;
         }
 
         private void OnDestroy()
         {
-            App.GetModule<InputModule>().DialogueController.Dialogue.Cancel.performed -= StopDialogue;
-            App.GetModule<InputModule>().DialogueController.Dialogue.NextOption.performed -= NextOption;
-            App.GetModule<InputModule>().DialogueController.Dialogue.PreviousOption.performed -= PreviousOption;
-            App.GetModule<InputModule>().DialogueController.Dialogue.Select.performed -= SelectOption;
-            App.GetModule<InputModule>().DialogueController.Dialogue.Skip.performed -= SkipDialogue;
+            _input.DialogueController.Dialogue.Cancel.performed -= StopDialogue;
+            _input.DialogueController.Dialogue.NextOption.performed -= NextOption;
+            _input.DialogueController.Dialogue.PreviousOption.performed -= PreviousOption;
+            _input.DialogueController.Dialogue.Select.performed -= SelectOption;
+            _input.DialogueController.Dialogue.Skip.performed -= SkipDialogue;
+            GameObject.Destroy(_dialogueCanvas);
         }
 
         private void Update()
