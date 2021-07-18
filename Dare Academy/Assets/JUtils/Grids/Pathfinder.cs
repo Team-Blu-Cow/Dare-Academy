@@ -44,7 +44,6 @@ namespace JUtil.Grids
 
                 while (openSet.Count > 0)
                 {
-
                     T currentNode = openSet.RemoveFirst();
                     closedSet.Add(currentNode);
 
@@ -75,7 +74,7 @@ namespace JUtil.Grids
             return null;
         }
 
-        public Vector3[] FindPathWithFear(T startPos, T targetPos, T fearNode, int fearRange, bool eightDir = false, bool showtime = false)
+        public Vector3[] FindPathWithAvoidance(T startPos, T targetPos, T fearNode, int fearRange, bool eightDir = false, bool showtime = false)
         {
             
             Stopwatch sw = new Stopwatch();
@@ -112,9 +111,9 @@ namespace JUtil.Grids
                     }
 
                     if (eightDir)
-                        CheckNeighborsMooreWithFear(currentNode, fearNode, fearRange);
+                        CheckNeighborsMooreWithAvoidance(currentNode, fearNode, fearRange);
                     else
-                        CheckNeighborsVonNeumanWithFear(currentNode, fearNode, fearRange);
+                        CheckNeighborsVonNeumanWithAvoidance(currentNode, fearNode, fearRange);
                 }
             }
             if (pathSuccess)
@@ -197,7 +196,7 @@ namespace JUtil.Grids
             }
         }
 
-        void CheckNeighborsMooreWithFear(T currentNode, T fearNode, int fearRange)
+        void CheckNeighborsMooreWithAvoidance(T currentNode, T fearNode, int fearRange)
         {
             foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
             {
@@ -228,7 +227,7 @@ namespace JUtil.Grids
             }
         }
 
-        void CheckNeighborsVonNeumanWithFear(T currentNode, T fearNode, int fearRange)
+        void CheckNeighborsVonNeumanWithAvoidance(T currentNode, T fearNode, int fearRange)
         {
             int count = -1;
             foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
@@ -266,7 +265,6 @@ namespace JUtil.Grids
 
             }
         }
-
 
         Vector3[] RetracePath(T startNode, T endNode)
         {

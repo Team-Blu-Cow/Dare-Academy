@@ -491,7 +491,7 @@ public class PathfindingMultiGrid
         return pathfinder.FindPath(startNode, endNode, false, debugSettings.showPathfindTime);
     }
 
-    public Vector3[] GetPathWithFear(Vector3 start, Vector3 end, Vector3 fearPos, int fearRange)
+    public Vector3[] GetPathWithAvoidance(Vector3 start, Vector3 end, Vector3 fearPos, int fearRange)
     {
         GridNode startNode = GetNodeFromWorld(start);
         GridNode endNode = GetNodeFromWorld(end);
@@ -504,7 +504,7 @@ public class PathfindingMultiGrid
             return null;
         }
 
-        return pathfinder.FindPathWithFear(startNode, endNode, fearNode, fearRange, false, debugSettings.showPathfindTime);
+        return pathfinder.FindPathWithAvoidance(startNode, endNode, fearNode, fearRange, false, debugSettings.showPathfindTime);
     }
 
     // MISC METHODS *******************************************************************************

@@ -12,13 +12,12 @@ public class ArcherEntity : GridEntity
 
     [SerializeField] private int agroRange = 5; // Range for how far away the entity is allowed to start attacking the player
     [SerializeField] private int m_cooldownCounter = 0; // Cooldown counter (monitors how long it has been since the last buller has been fired)
+    [SerializeField] private int m_shootingWindupTime = 1;
     private bool isAttacking = false; // Boolean for if the entity is attacking or not
     private bool isWaiting = false; // Boolean for if the entity is waiting after firing a bullet
 
     [Header("Move attributes")]
     [SerializeField] private int moveSpeed = 1; // Set move speed to 1. Travels 1 square each step
-
-    private Vector2 m_dir = new Vector2(); // Set direction of movement
 
     [Header("Resources needed")]
     [SerializeField] private GameObject m_bulletPrefab = null; // Bullet prefab for spawning bullets
@@ -39,8 +38,7 @@ public class ArcherEntity : GridEntity
     public enum State
     {
         MOVING,
-        SHOOTING,
-        FLEEING
+        SHOOTING
     }
 
     [SerializeField] State m_state;
@@ -67,6 +65,9 @@ public class ArcherEntity : GridEntity
         if (player == null)
             return;
 
+        if (m_cooldownCounter > 0)
+            m_cooldownCounter--;
+
         DecideState();
 
         switch (m_state)
@@ -77,11 +78,55 @@ public class ArcherEntity : GridEntity
 
             case State.SHOOTING:
                 break;
-
-            case State.FLEEING:
-                break;
         }
     }
+
+    /* if (player == null)
+            return;
+
+        base.AnalyseStep(); // Run base function
+
+        Vector2 distanceVector = player.transform.position - transform.position; // Find distance between player and entity
+        if ((distanceVector.x <= 0.5f && distanceVector.x >= -0.5f) || (distanceVector.y <= 0.5f && distanceVector.y >= -0.5f)) // If player and entity are aligned on grid
+        {
+            if ((distanceVector.x <= 4.0f && distanceVector.x >= -4.0f) && (distanceVector.y <= 4.0f && distanceVector.y >= -4.0f)) // If entity is within range of player
+            {
+                if (!CheckPlayerIsBehindWall(m_dir)) // If player is not behind a wall
+                {
+                    if (m_cooldownCounter <= 0) // If the cooldown has expired
+                    {
+                        m_cooldownCounter = m_attackCooldown; // Reset cooldown
+                        isAttacking = true; // Set is attacking to true
+                    }
+                }
+            }
+        }
+
+        Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, player.transform.position); // Find path to player
+
+        if (!isAttacking && !isWaiting) // If the entity is not attacking and not waiting
+        {
+            if (path.Length <= agroRange) // If the player is within agro range of entity
+            {
+                if (path.Length > 1) // If the path array has more than 1 value stored
+                {
+                    m_dir = path[1] - path[0]; // Find the direction the entity is meant to move in
+                }
+
+                m_dir = new Vector2Int((int)m_dir.x, (int)m_dir.y); // Set direction to int values
+                SetMovementDirection(m_dir, moveSpeed); // Set movement speed and direction
+            }
+        }
+        else // If the player is attacking
+        {
+            isWaiting = false; // Set waiting to be false
+            SetMovementDirection(Vector2.zero, moveSpeed); // Don't make the entity move this step
+        }
+
+        if (m_cooldownCounter > 0) // If the cooldown hasn't expired yet
+        {
+            m_cooldownCounter--; // Decrement cooldown counter
+        }*/
 
     void DecideState()
     {
@@ -98,13 +143,14 @@ public class ArcherEntity : GridEntity
         if (Vector2Int.Distance(this.Position.grid, player.Position.grid) <= fearRange)
         {
             m_gizmoColour = Color.red;
-            m_state = State.FLEEING;
+            m_state = State.SHOOTING;
             return;
         }
 
         if ((positionDiff.x == 0 || positionDiff.y == 0)
             && m_currentNode.IsPathClear(player.currentNode)
-            && Vector2Int.Distance(this.Position.grid, player.Position.grid) > fearRange)
+            && Vector2Int.Distance(this.Position.grid, player.Position.grid) > fearRange
+            && m_cooldownCounter <= 0)
         {
             m_gizmoColour = Color.green;
             m_state = State.SHOOTING;
@@ -141,20 +187,24 @@ public class ArcherEntity : GridEntity
         }
 
         path = new Vector3[0];
-        path = App.GetModule<LevelModule>().MetaGrid.GetPathWithFear(Position.world, targetPosition.world, player.Position.world, fearRange);
+        path = App.GetModule<LevelModule>().MetaGrid.GetPathWithAvoidance(Position.world, targetPosition.world, player.Position.world, fearRange);
 
-        Vector3 direction = path[0] - Position.world;
+        Vector3 direction;
+
+        if (path == null || path.Length <= 0)
+            direction = Vector3.zero;
+        else
+            direction = path[0] - Position.world;
 
         SetMovementDirection(new Vector2(direction.x, direction.y));
     }
 
     public override void AttackStep()
     {
-        if (isAttacking == true) // If the entity is attacking
+        if (m_state == State.SHOOTING && m_cooldownCounter <= 0) // If the entity is attacking
         {
-            SpawnBullet(m_bulletPrefab, m_currentNode, m_dir); // Spawn bullet in the direction the entity was moving
-            isAttacking = false; // Set attacking to false
-            isWaiting = true; // Make the entity not move after this by setting is waiting to true
+            m_cooldownCounter = m_attackCooldown;
+            SpawnBullet(m_bulletPrefab, m_currentNode, offsetVector); // Spawn bullet in the direction the entity was moving
         }
     }
 
