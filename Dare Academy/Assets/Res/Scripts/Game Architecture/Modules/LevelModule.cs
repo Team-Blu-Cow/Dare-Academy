@@ -18,7 +18,7 @@ namespace blu
         private PathfindingMultiGrid m_grid = null;
         private GameEventFlags m_gameEventFlags = new GameEventFlags();
 
-        public SaveData ActiveSaveSata
+        public SaveData ActiveSaveData
         {
             get { return blu.App.GetModule<IOModule>().savedata; }
             set { blu.App.GetModule<IOModule>().savedata = value; }
@@ -26,7 +26,7 @@ namespace blu
 
         public bool IsSaveLoaded
         {
-            get => ActiveSaveSata != null;
+            get => ActiveSaveData != null;
         }
 
         public GameEventFlags EventFlags
@@ -56,9 +56,9 @@ namespace blu
         public LevelTransitionInformation lvlTransitionInfo
         { get { return m_lvlTransitionInfo; } set { m_lvlTransitionInfo = value; } }
 
-        private PersistantSceneData m_persistantSceneData = new PersistantSceneData();
+        private MisplacedForestPersistantSceneData m_persistantSceneData = new MisplacedForestPersistantSceneData();
 
-        public PersistantSceneData persistantSceneData
+        public MisplacedForestPersistantSceneData persistantSceneData
         {
             get { return m_persistantSceneData; }
 
@@ -70,6 +70,7 @@ namespace blu
         private void OnDestroy()
         {
             SceneManager.sceneLoaded -= LevelChanged;
+            SaveGame();
         }
 
         public async override void Initialize()
@@ -86,7 +87,7 @@ namespace blu
                 await ioModule.CreateNewSave("new save", true);
             }
 
-            m_gameEventFlags._FlagData = ActiveSaveSata.gameEventFlags;
+            m_gameEventFlags._FlagData = ActiveSaveData.gameEventFlags;
 
             if (m_playerPrefab == null)
                 m_playerPrefab = Resources.Load<GameObject>("prefabs/Entities/Player");
@@ -183,7 +184,7 @@ namespace blu
         }
     }
 
-    public class PersistantSceneData
+    public class MisplacedForestPersistantSceneData
     {
         public int _MisplacedForestCounter = 0;
         public Vector2Int _direction = Vector2Int.zero;

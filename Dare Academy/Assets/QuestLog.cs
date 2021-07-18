@@ -2,11 +2,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using blu;
 using TMPro;
 
-public class QuestLog : MonoBehaviour
+public class QuestLog : MonoBehaviour, IPointerDownHandler
 {
     private List<GameObject> m_instantiatedQuests = new List<GameObject>();
     private bool m_paused = false;
@@ -15,9 +16,17 @@ public class QuestLog : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        App.GetModule<InputModule>().SystemController.MapControlls.Open.performed += _ => ToggleQuests();
-        App.GetModule<InputModule>().SystemController.MapControlls.ScrollQuests.started += ctx => ScrollQuest(ctx);
+        App.GetModule<InputModule>().SystemController.UI.Map.performed += ToggleQuests;
+
+        App.GetModule<InputModule>().SystemController.MapControlls.ScrollQuests.started += ScrollQuest;
         gameObject.SetActive(false);
+    }
+
+    private void OnDestroy()
+    {
+        App.GetModule<InputModule>().SystemController.UI.Map.performed -= ToggleQuests;
+
+        App.GetModule<InputModule>().SystemController.MapControlls.ScrollQuests.started -= ScrollQuest;
     }
 
     // Update is called once per frame
@@ -43,13 +52,11 @@ public class QuestLog : MonoBehaviour
 
         SetContent(m_instantiatedQuests[m_selectedIndex], activeQuests[m_selectedIndex].activeDescription);
 
-        enabled = false;
         LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
-        enabled = true;
-        //UpdateQuests();
+     
     }
 
-    private void ToggleQuests()
+    private void ToggleQuests(InputAction.CallbackContext ctx)
     {
         if (m_paused)
         {
@@ -84,19 +91,28 @@ public class QuestLog : MonoBehaviour
         {
             GameObject questPrefab = Resources.Load<GameObject>("prefabs/Quest");
 
-            SetHeader(questPrefab, quest.name);
-            if (i == m_selectedIndex)
-                SetContent(questPrefab, quest.activeDescription);
-            else
-                ClearContent(questPrefab);
+            GameObject questGo = Instantiate(questPrefab, transform);
+            m_instantiatedQuests.Add(questGo);
 
-            m_instantiatedQuests.Add(Instantiate(questPrefab, transform));
+            Toggle toggle = m_instantiatedQuests[i].GetComponentInChildren<Toggle>();
+
+            SetHeader(questGo, quest.name);
+            if (i == m_selectedIndex)
+                SetContent(questGo, quest.activeDescription);
+            else
+                ClearContent(questGo);
+
+            toggle.isOn = quest.showMarker;
 
             int localInt = i;
-            m_instantiatedQuests[i].GetComponentInChildren<Toggle>().onValueChanged.AddListener(delegate { ToggleMarker(localInt); });
+
+            toggle.onValueChanged.AddListener(delegate { ToggleMarker(localInt); });
+
             i++;
         }
         gameObject.SetActive(true);
+
+        FindObjectOfType<EventSystem>().SetSelectedGameObject(m_instantiatedQuests[m_selectedIndex].GetComponentInChildren<Toggle>().gameObject);
     }
 
     public void ToggleMarker(int in_i)
@@ -120,5 +136,29 @@ public class QuestLog : MonoBehaviour
     {
         target.GetComponentsInChildren<TextMeshProUGUI>()[2].text = "";
         target.GetComponent<VerticalLayoutGroup>().spacing = 0;
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        RaycastResult ray = eventData.pointerCurrentRaycast;
+
+        if (ray.gameObject.name == "Quest(Clone)")
+        {
+            ClearContent(m_instantiatedQuests[m_selectedIndex]);
+
+            for (int i =0;i < ray.gameObject.transform.parent.childCount; i++)
+            {
+                if (ray.gameObject.transform.parent.GetChild(i) == ray.gameObject.transform)
+                {
+                    m_selectedIndex = i;
+                    break;
+                }                    
+            }
+
+            SetContent(m_instantiatedQuests[m_selectedIndex], App.GetModule<QuestModule>().ActiveQuests[m_selectedIndex].activeDescription);
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
+
+        }
+
     }
 }
