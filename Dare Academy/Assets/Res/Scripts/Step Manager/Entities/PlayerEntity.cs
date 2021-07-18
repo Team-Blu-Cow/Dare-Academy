@@ -136,6 +136,9 @@ public class PlayerEntity : GridEntity
         m_moveDirection = Vector2Int.zero;
         // m_abilityDirection = Vector2Int.zero;
 
+        if (isDead)
+            return;
+
         if (m_abilityMode)
         {
             Vector2Int direction = m_playerInput.DirectionEight(true);
