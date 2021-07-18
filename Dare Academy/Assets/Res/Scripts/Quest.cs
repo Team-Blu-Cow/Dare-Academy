@@ -12,6 +12,20 @@ public class Quest : ScriptableObject
         public bool value;
     }
 
+    [System.Serializable]
+    public struct StringListIntPair
+    {
+        public string key;
+
+        public List<int> value;
+
+        public StringListIntPair(string in_key, List<int> in_int)
+        {
+            key = in_key;
+            value = in_int;
+        }
+    }
+
     public new string name;
 
     [SerializeField]

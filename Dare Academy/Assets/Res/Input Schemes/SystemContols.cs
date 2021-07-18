@@ -25,6 +25,14 @@ public class @SystemContols : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""Map"",
+                    ""type"": ""Button"",
+                    ""id"": ""666fa245-e555-4f66-bff5-ef880cb5ad4d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -47,6 +55,28 @@ public class @SystemContols : IInputActionCollection, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""44b98b79-be7a-482f-8a90-42a51d38fabb"",
+                    ""path"": ""<Keyboard>/m"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Map"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""978a8d5c-3ffa-41b2-86c2-1eb40dd277f5"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Map"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -73,25 +103,9 @@ public class @SystemContols : IInputActionCollection, IDisposable
                     ""interactions"": """"
                 },
                 {
-                    ""name"": ""ZoomIn"",
+                    ""name"": ""Zoom"",
                     ""type"": ""Button"",
                     ""id"": ""2d62562e-7127-4936-a4e3-c5e4e4335a29"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
-                    ""name"": ""ZoomOut"",
-                    ""type"": ""Button"",
-                    ""id"": ""329e84eb-df0a-48bf-a638-8453a3739d74"",
-                    ""expectedControlType"": ""Button"",
-                    ""processors"": """",
-                    ""interactions"": """"
-                },
-                {
-                    ""name"": ""Open"",
-                    ""type"": ""Button"",
-                    ""id"": ""7d983491-082a-464d-8d05-946313b759b3"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """"
@@ -393,103 +407,37 @@ public class @SystemContols : IInputActionCollection, IDisposable
                     ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": ""Gamepad D-Pad"",
-                    ""id"": ""19272d86-ed6b-4714-a25b-8539a4f01d08"",
-                    ""path"": ""2DVector"",
+                    ""name"": ""1D Axis"",
+                    ""id"": ""a3780204-fc19-40e3-8121-f60fdda8102b"",
+                    ""path"": ""1DAxis"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Move"",
+                    ""action"": ""Zoom"",
                     ""isComposite"": true,
                     ""isPartOfComposite"": false
                 },
                 {
-                    ""name"": ""up"",
-                    ""id"": ""1b6aab40-6df7-4fbc-b888-19f4f409339f"",
-                    ""path"": ""<Gamepad>/dpad/up"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""down"",
-                    ""id"": ""ad070b66-6868-4e01-99f3-899a22141690"",
-                    ""path"": ""<Gamepad>/dpad/down"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""left"",
-                    ""id"": ""22bddfc9-6ef9-405e-8f1e-4e33b8c43d7c"",
-                    ""path"": ""<Gamepad>/dpad/left"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": ""right"",
-                    ""id"": ""736065bd-eb89-4384-874a-c81e25f2b2ee"",
-                    ""path"": ""<Gamepad>/dpad/right"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": ""gamepad"",
-                    ""action"": ""Move"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": true
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""c26eed3d-f399-459d-a97e-fa62a556e2cb"",
+                    ""name"": ""negative"",
+                    ""id"": ""ab16e0d2-3eff-42a1-b446-25f61863dfcd"",
                     ""path"": ""<Gamepad>/leftTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ZoomIn"",
+                    ""action"": ""Zoom"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
-                    ""name"": """",
-                    ""id"": ""f6710938-80d5-47cb-9f5c-3e6ed3d70f6b"",
+                    ""name"": ""positive"",
+                    ""id"": ""0a32417f-3311-49d2-9738-aca4aa8e22b0"",
                     ""path"": ""<Gamepad>/rightTrigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""ZoomOut"",
+                    ""action"": ""Zoom"",
                     ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""76079328-cc9f-4ee9-b64c-49566dad38c8"",
-                    ""path"": ""<Keyboard>/m"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Open"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""8539ca76-a5ad-44f6-ab07-4bc2b374f6c8"",
-                    ""path"": ""<Gamepad>/select"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Open"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
+                    ""isPartOfComposite"": true
                 },
                 {
                     ""name"": ""1D Axis"",
@@ -523,6 +471,39 @@ public class @SystemContols : IInputActionCollection, IDisposable
                     ""action"": ""ScrollQuests"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""1D Axis"",
+                    ""id"": ""f590a397-60ff-49cf-bbe2-3f20e24cd804"",
+                    ""path"": ""1DAxis"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ScrollQuests"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""negative"",
+                    ""id"": ""6a27325f-944b-4a49-b0cc-9c90e8298a45"",
+                    ""path"": ""<Gamepad>/dpad/down"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ScrollQuests"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""positive"",
+                    ""id"": ""29121494-5b8a-4f81-8e6b-90808a714164"",
+                    ""path"": ""<Gamepad>/dpad/up"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""ScrollQuests"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
                 }
             ]
         }
@@ -532,13 +513,12 @@ public class @SystemContols : IInputActionCollection, IDisposable
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Pause = m_UI.FindAction("Pause", throwIfNotFound: true);
+        m_UI_Map = m_UI.FindAction("Map", throwIfNotFound: true);
         // MapControlls
         m_MapControlls = asset.FindActionMap("MapControlls", throwIfNotFound: true);
         m_MapControlls_Move = m_MapControlls.FindAction("Move", throwIfNotFound: true);
         m_MapControlls_Mouse = m_MapControlls.FindAction("Mouse", throwIfNotFound: true);
-        m_MapControlls_ZoomIn = m_MapControlls.FindAction("ZoomIn", throwIfNotFound: true);
-        m_MapControlls_ZoomOut = m_MapControlls.FindAction("ZoomOut", throwIfNotFound: true);
-        m_MapControlls_Open = m_MapControlls.FindAction("Open", throwIfNotFound: true);
+        m_MapControlls_Zoom = m_MapControlls.FindAction("Zoom", throwIfNotFound: true);
         m_MapControlls_ScrollQuests = m_MapControlls.FindAction("ScrollQuests", throwIfNotFound: true);
     }
 
@@ -590,11 +570,13 @@ public class @SystemContols : IInputActionCollection, IDisposable
     private readonly InputActionMap m_UI;
     private IUIActions m_UIActionsCallbackInterface;
     private readonly InputAction m_UI_Pause;
+    private readonly InputAction m_UI_Map;
     public struct UIActions
     {
         private @SystemContols m_Wrapper;
         public UIActions(@SystemContols wrapper) { m_Wrapper = wrapper; }
         public InputAction @Pause => m_Wrapper.m_UI_Pause;
+        public InputAction @Map => m_Wrapper.m_UI_Map;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -607,6 +589,9 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 @Pause.started -= m_Wrapper.m_UIActionsCallbackInterface.OnPause;
                 @Pause.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnPause;
                 @Pause.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnPause;
+                @Map.started -= m_Wrapper.m_UIActionsCallbackInterface.OnMap;
+                @Map.performed -= m_Wrapper.m_UIActionsCallbackInterface.OnMap;
+                @Map.canceled -= m_Wrapper.m_UIActionsCallbackInterface.OnMap;
             }
             m_Wrapper.m_UIActionsCallbackInterface = instance;
             if (instance != null)
@@ -614,6 +599,9 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 @Pause.started += instance.OnPause;
                 @Pause.performed += instance.OnPause;
                 @Pause.canceled += instance.OnPause;
+                @Map.started += instance.OnMap;
+                @Map.performed += instance.OnMap;
+                @Map.canceled += instance.OnMap;
             }
         }
     }
@@ -624,9 +612,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
     private IMapControllsActions m_MapControllsActionsCallbackInterface;
     private readonly InputAction m_MapControlls_Move;
     private readonly InputAction m_MapControlls_Mouse;
-    private readonly InputAction m_MapControlls_ZoomIn;
-    private readonly InputAction m_MapControlls_ZoomOut;
-    private readonly InputAction m_MapControlls_Open;
+    private readonly InputAction m_MapControlls_Zoom;
     private readonly InputAction m_MapControlls_ScrollQuests;
     public struct MapControllsActions
     {
@@ -634,9 +620,7 @@ public class @SystemContols : IInputActionCollection, IDisposable
         public MapControllsActions(@SystemContols wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_MapControlls_Move;
         public InputAction @Mouse => m_Wrapper.m_MapControlls_Mouse;
-        public InputAction @ZoomIn => m_Wrapper.m_MapControlls_ZoomIn;
-        public InputAction @ZoomOut => m_Wrapper.m_MapControlls_ZoomOut;
-        public InputAction @Open => m_Wrapper.m_MapControlls_Open;
+        public InputAction @Zoom => m_Wrapper.m_MapControlls_Zoom;
         public InputAction @ScrollQuests => m_Wrapper.m_MapControlls_ScrollQuests;
         public InputActionMap Get() { return m_Wrapper.m_MapControlls; }
         public void Enable() { Get().Enable(); }
@@ -653,15 +637,9 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 @Mouse.started -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnMouse;
                 @Mouse.performed -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnMouse;
                 @Mouse.canceled -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnMouse;
-                @ZoomIn.started -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnZoomIn;
-                @ZoomIn.performed -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnZoomIn;
-                @ZoomIn.canceled -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnZoomIn;
-                @ZoomOut.started -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnZoomOut;
-                @ZoomOut.performed -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnZoomOut;
-                @ZoomOut.canceled -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnZoomOut;
-                @Open.started -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnOpen;
-                @Open.performed -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnOpen;
-                @Open.canceled -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnOpen;
+                @Zoom.started -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnZoom;
+                @Zoom.performed -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnZoom;
+                @Zoom.canceled -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnZoom;
                 @ScrollQuests.started -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnScrollQuests;
                 @ScrollQuests.performed -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnScrollQuests;
                 @ScrollQuests.canceled -= m_Wrapper.m_MapControllsActionsCallbackInterface.OnScrollQuests;
@@ -675,15 +653,9 @@ public class @SystemContols : IInputActionCollection, IDisposable
                 @Mouse.started += instance.OnMouse;
                 @Mouse.performed += instance.OnMouse;
                 @Mouse.canceled += instance.OnMouse;
-                @ZoomIn.started += instance.OnZoomIn;
-                @ZoomIn.performed += instance.OnZoomIn;
-                @ZoomIn.canceled += instance.OnZoomIn;
-                @ZoomOut.started += instance.OnZoomOut;
-                @ZoomOut.performed += instance.OnZoomOut;
-                @ZoomOut.canceled += instance.OnZoomOut;
-                @Open.started += instance.OnOpen;
-                @Open.performed += instance.OnOpen;
-                @Open.canceled += instance.OnOpen;
+                @Zoom.started += instance.OnZoom;
+                @Zoom.performed += instance.OnZoom;
+                @Zoom.canceled += instance.OnZoom;
                 @ScrollQuests.started += instance.OnScrollQuests;
                 @ScrollQuests.performed += instance.OnScrollQuests;
                 @ScrollQuests.canceled += instance.OnScrollQuests;
@@ -694,14 +666,13 @@ public class @SystemContols : IInputActionCollection, IDisposable
     public interface IUIActions
     {
         void OnPause(InputAction.CallbackContext context);
+        void OnMap(InputAction.CallbackContext context);
     }
     public interface IMapControllsActions
     {
         void OnMove(InputAction.CallbackContext context);
         void OnMouse(InputAction.CallbackContext context);
-        void OnZoomIn(InputAction.CallbackContext context);
-        void OnZoomOut(InputAction.CallbackContext context);
-        void OnOpen(InputAction.CallbackContext context);
+        void OnZoom(InputAction.CallbackContext context);
         void OnScrollQuests(InputAction.CallbackContext context);
     }
 }
