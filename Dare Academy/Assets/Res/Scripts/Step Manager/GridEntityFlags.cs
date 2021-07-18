@@ -16,6 +16,7 @@ public class GridEntityFlags : BitFlags_32
         refectAllBullets    = 0b00000000000000000000000100000000,
         allowedOffGrid      = 0b00000000000000000000001000000000,
         alwaysWinConflict   = 0b00000000000000000000010000000000,
+        keepAwake           = 0b00000000000000000000100000000000,
     }
 
     public void SetFlags(Flags flags, bool value)

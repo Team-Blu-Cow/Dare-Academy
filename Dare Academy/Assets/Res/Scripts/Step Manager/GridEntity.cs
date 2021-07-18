@@ -1009,7 +1009,7 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void RoomChange()
     {
-        if (m_roomIndex == m_stepController.m_currentRoomIndex)
+        if (m_roomIndex == m_stepController.m_currentRoomIndex || Flags.IsFlagsSet(flags.keepAwake))
         {
             m_stepController.AddEntity(this);
         }
