@@ -68,6 +68,10 @@ public abstract class GridEntity : MonoBehaviour
     protected GridNode m_startingNode = null;
     protected GridNode m_initialNode = null;
 
+    public GridNode currentNode
+    { get { return m_currentNode; } }
+
+
     public GridNodePosition Position
     { get { return m_currentNode.position; } }
 

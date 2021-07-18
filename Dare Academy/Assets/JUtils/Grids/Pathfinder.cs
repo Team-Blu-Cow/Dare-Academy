@@ -25,6 +25,58 @@ namespace JUtil.Grids
 
         public Vector3[] FindPath(T startPos, T targetPos, bool eightDir = false, bool showtime = false)
         {
+            Stopwatch sw  = new Stopwatch(); ;
+            if (showtime)
+                sw.Start();
+
+            Vector3[] wayPoints;
+            bool pathSuccess = false;
+
+            startNode = startPos;
+            targetNode = targetPos;
+
+            if (startNode.IsTraversable() && targetNode.IsTraversable())
+            {
+                openSet = new Heap<T>(area);
+                closedSet = new HashSet<T>();
+
+                openSet.Add(startNode);
+
+                while (openSet.Count > 0)
+                {
+                    T currentNode = openSet.RemoveFirst();
+                    closedSet.Add(currentNode);
+
+                    if (currentNode == targetNode)
+                    {
+                        if (showtime)
+                        {
+                            sw.Stop();
+                            JUtils.ShowTime(sw.ElapsedTicks, "Path found in:");
+                        }
+
+                        pathSuccess = true;
+                        break;
+                    }
+
+                    if (eightDir)
+                        CheckNeighborsMoore(currentNode);
+                    else
+                        CheckNeighborsVonNeuman(currentNode);
+                }
+            }
+            if (pathSuccess)
+            {
+                wayPoints = RetracePath(startNode, targetNode);
+                return wayPoints;
+            }
+            UnityEngine.Debug.Log("Path not found");
+            return null;
+        }
+
+        public Vector3[] FindPathWithAvoidance(T startPos, T targetPos, T fearNode, int fearRange, bool eightDir = false, bool showtime = false)
+        {
+            
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
@@ -51,7 +103,7 @@ namespace JUtil.Grids
                     {
                         sw.Stop();
 
-                        if(showtime)
+                        if (showtime)
                             JUtils.ShowTime(sw.ElapsedTicks, "Path found in:");
 
                         pathSuccess = true;
@@ -59,9 +111,9 @@ namespace JUtil.Grids
                     }
 
                     if (eightDir)
-                        CheckNeighborsMoore(currentNode);
+                        CheckNeighborsMooreWithAvoidance(currentNode, fearNode, fearRange);
                     else
-                        CheckNeighborsVonNeuman(currentNode);
+                        CheckNeighborsVonNeumanWithAvoidance(currentNode, fearNode, fearRange);
                 }
             }
             if (pathSuccess)
@@ -125,6 +177,76 @@ namespace JUtil.Grids
                     continue;
 
                 if (!neighbour.IsTraversable() || closedSet.Contains(neighbour))
+                    continue;
+
+                int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
+                if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                {
+                    neighbour.gCost = newMovementCostToNeighbour;
+                    neighbour.hCost = GetDistance(neighbour, targetNode);
+                    neighbour.parent = currentNode;
+
+                    if (!openSet.Contains(neighbour))
+                        openSet.Add(neighbour);
+                    else
+                        openSet.UpdateItem(neighbour);
+                }
+
+
+            }
+        }
+
+        void CheckNeighborsMooreWithAvoidance(T currentNode, T fearNode, int fearRange)
+        {
+            foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
+            {
+                T neighbour = GetNeighbor(currentNode, neighbourStruct);
+
+                if (!neighbourStruct.connected || neighbour == null)
+                    continue;
+
+                if (!neighbour.IsTraversable() || closedSet.Contains(neighbour))
+                    continue;
+
+                if (Vector3.Distance(neighbour.position.world, fearNode.position.world) <= fearRange-1)
+                    continue;
+
+                int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
+                if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                {
+                    neighbour.gCost = newMovementCostToNeighbour;
+                    neighbour.hCost = GetDistance(neighbour, targetNode);
+                    neighbour.parent = currentNode;
+
+                    if (!openSet.Contains(neighbour))
+                        openSet.Add(neighbour);
+                    else
+                        openSet.UpdateItem(neighbour);
+                }
+
+            }
+        }
+
+        void CheckNeighborsVonNeumanWithAvoidance(T currentNode, T fearNode, int fearRange)
+        {
+            int count = -1;
+            foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
+            {
+                count++;
+                if (count % 2 != 0)
+                {
+                    continue;
+                }
+
+                T neighbour = GetNeighbor(currentNode, neighbourStruct);
+
+                if (!neighbourStruct.connected || neighbour == null)
+                    continue;
+
+                if (!neighbour.IsTraversable() || closedSet.Contains(neighbour))
+                    continue;
+
+                if (Vector3.Distance(neighbour.position.world, fearNode.position.world) <= fearRange-1)
                     continue;
 
                 int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);

@@ -105,4 +105,53 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
     {
         return App.GetModule<blu.LevelModule>().Grid(roomIndex).GetNodeRelative(position.grid, offset);
     }
+
+    public int GetDistanceInDirection(Vector2Int direction)
+    {
+        int i = 0;
+        GridNode workingNode = this;
+        while (workingNode != null)
+        {
+            workingNode = workingNode.neighbors[direction].reference;
+            i++;
+        }
+
+        return i;
+    }
+
+    public GridNode GetNeighbourDist(Vector2Int direction, int distance)
+    {
+        Mathf.Clamp(distance, 1, int.MaxValue);
+
+        GridNode workingNode = this;
+        for (int i = 0; i < distance; i++)
+        {
+            GridNode node = workingNode.neighbors[direction].reference;
+            if (node == null)
+                return workingNode;
+            workingNode = node;
+        }
+
+        return workingNode;
+    }
+
+    public bool IsPathClear(GridNode target)
+    {
+        Vector2 direction = target.position.grid - position.grid;
+
+        int distance = Mathf.RoundToInt( direction.magnitude);
+
+        GridNode workingNode = this;
+        for (int i = 0; i < distance; i++)
+        {
+            workingNode = workingNode.neighbors[direction.normalized].reference;
+            if (workingNode == null)
+                return false;
+
+            if (workingNode == target)
+                return true;
+        }
+
+        return true;
+    }
 }

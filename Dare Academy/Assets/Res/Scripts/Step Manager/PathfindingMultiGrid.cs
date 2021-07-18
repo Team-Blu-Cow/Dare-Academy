@@ -467,9 +467,14 @@ public class PathfindingMultiGrid
     }
 
     // PATHFINDING METHODS ************************************************************************
-    public Vector3[] GetPath(int x, int y, int end_x, int end_y) => GetPath(grids[0].ToWorld(x, y), grids[0].ToWorld(end_x, end_y));
+    //public Vector3[] GetPath(int x, int y, int end_x, int end_y) => GetPath(grids[0].ToWorld(x, y), grids[0].ToWorld(end_x, end_y));
 
-    public Vector3[] GetPath(Vector2Int start, Vector2Int end) => GetPath(grids[0].ToWorld(start.x, start.y), grids[0].ToWorld(end.x, end.y));
+    //public Vector3[] GetPath(Vector2Int start, Vector2Int end) => GetPath(grids[0].ToWorld(start.x, start.y), grids[0].ToWorld(end.x, end.y));
+
+    public Vector3[] GetPath(GridNode start, GridNode end)
+    {
+        return pathfinder.FindPath(start, end, false, debugSettings.showPathfindTime);
+    }
 
     public Vector3[] GetPath(Vector3 start, Vector3 end)
     {
@@ -483,7 +488,23 @@ public class PathfindingMultiGrid
             return null;
         }
 
-        return pathfinder.FindPath(startNode, endNode, debugSettings.showPathfindTime);
+        return pathfinder.FindPath(startNode, endNode, false, debugSettings.showPathfindTime);
+    }
+
+    public Vector3[] GetPathWithAvoidance(Vector3 start, Vector3 end, Vector3 fearPos, int fearRange)
+    {
+        GridNode startNode = GetNodeFromWorld(start);
+        GridNode endNode = GetNodeFromWorld(end);
+        GridNode fearNode = GetNodeFromWorld(fearPos);
+
+        //if(!grids[0].NodeExistsAt(start) || !grids[0].NodeExistsAt(end))
+        if (startNode == null || endNode == null || fearNode == null)
+        {
+            UnityEngine.Debug.LogWarning("trying to pathfind to non existent nodes");
+            return null;
+        }
+
+        return pathfinder.FindPathWithAvoidance(startNode, endNode, fearNode, fearRange, false, debugSettings.showPathfindTime);
     }
 
     // MISC METHODS *******************************************************************************
