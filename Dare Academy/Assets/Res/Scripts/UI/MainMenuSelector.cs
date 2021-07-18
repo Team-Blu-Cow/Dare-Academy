@@ -14,8 +14,7 @@ public class MainMenuSelector : MonoBehaviour
     {
         ES = EventSystem.current;
         m_selected = ES.currentSelectedGameObject;
-        LeanTween.moveY(gameObject, ES.firstSelectedGameObject.transform.position.y, 0.1f);
-
+        LeanTween.moveY(gameObject, ES.firstSelectedGameObject.transform.position.y, 0.1f).setEase(LeanTweenType.easeInOutSine);
     }
 
     // Update is called once per frame
@@ -26,9 +25,11 @@ public class MainMenuSelector : MonoBehaviour
             if (ES.currentSelectedGameObject != null && m_selected != ES.currentSelectedGameObject && ES.currentSelectedGameObject.transform.position != Vector3.zero)
             {
                 m_selected = ES.currentSelectedGameObject;
-
                 LeanTween.cancel(gameObject);
-                LeanTween.moveY(gameObject, m_selected.transform.position.y, 0.5f);
+
+                float Xsize = m_selected.GetComponentInChildren<TMPro.TMP_Text>().text.Length * (m_selected.GetComponentInChildren<TMPro.TMP_Text>().fontSize / 100);
+                LeanTween.scaleX(gameObject, Xsize, 0.2f).setEase(LeanTweenType.easeInOutSine);
+                LeanTween.moveY(gameObject, m_selected.transform.position.y, 0.2f).setEase(LeanTweenType.easeInOutSine);
             }
         }
     }
@@ -36,13 +37,16 @@ public class MainMenuSelector : MonoBehaviour
     public void HoverEnter(GameObject hoveredGo)
     {
         LeanTween.cancel(gameObject);
-
-        LeanTween.moveY(gameObject, hoveredGo.transform.position.y, 0.5f);
+        float Xsize = hoveredGo.GetComponentInChildren<TMPro.TMP_Text>().text.Length * (hoveredGo.GetComponentInChildren<TMPro.TMP_Text>().fontSize / 100);
+        LeanTween.scaleX(gameObject, Xsize, 0.2f).setEase(LeanTweenType.easeInOutSine);
+        LeanTween.moveY(gameObject, hoveredGo.transform.position.y, 0.2f).setEase(LeanTweenType.easeInOutSine);
     }
 
     public void HoverExit()
     {
         LeanTween.cancel(gameObject);
-        LeanTween.moveY(gameObject, m_selected.transform.position.y, 0.5f);
+        float Xsize = m_selected.GetComponentInChildren<TMPro.TMP_Text>().text.Length * (m_selected.GetComponentInChildren<TMPro.TMP_Text>().fontSize / 100);
+        LeanTween.scaleX(gameObject, Xsize, 0.2f).setEase(LeanTweenType.easeInOutSine);
+        LeanTween.moveY(gameObject, m_selected.transform.position.y, 0.2f).setEase(LeanTweenType.easeInOutSine);
     }
 }
