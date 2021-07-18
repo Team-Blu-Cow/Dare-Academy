@@ -85,7 +85,14 @@ public class PlayerEntity : GridEntity
         }
 
         SetInteractPosition();
-        FindObjectOfType<MiniMapGen>().DrawMap();
+        try
+        {
+            FindObjectOfType<MiniMapGen>().DrawMap();
+        }
+        catch
+        {
+            Debug.LogWarning("[PlayerEntity.Start] failed to draw MiniMap");
+        }
     }
 
     private void OnDestroy()
