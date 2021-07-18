@@ -6,16 +6,22 @@ namespace blu
 {
     public class ModuleManager
     {
+        //         [Obsolete]
+        //         public T GetModule<T>() where T : blu.Module
+        //         {
+        //             foreach (Module module in App.LoadedModules)
+        //             {
+        //                 if (module.type == typeof(T))
+        //                 {
+        //                     return (T)module;
+        //                 }
+        //             }
+        //             return null;
+        //         }
+
         public T GetModule<T>() where T : blu.Module
         {
-            foreach (Module module in App.LoadedModules)
-            {
-                if (module.type == typeof(T))
-                {
-                    return (T)module;
-                }
-            }
-            return null;
+            return (T)App.LoadedModules.Find(x => typeof(T) == x.type);
         }
 
         public void AddModule<T>() where T : blu.Module
@@ -23,7 +29,6 @@ namespace blu
             //
             if (typeof(T) == typeof(Module))
             {
-
                 Debug.LogWarning("[App/ModuleManager]: Attempted instantiation of abstract module type: " + typeof(T).ToString());
                 return;
             }
