@@ -117,13 +117,13 @@ namespace JUtil
         }
 
         // GIZMO DRAWING HELPER METHODS ***********************************************************
-        public static void DrawPath(Vector3[] path, Vector3 startPos)
+        public static void DrawPath(Vector3[] path, Vector3 startPos) => DrawPath(path, startPos, Color.black);
+        public static void DrawPath(Vector3[] path, Vector3 startPos, Color colour)
         {
-            if (path != null && path.Length > 1)
+            if (path != null && path.Length > 0)
             {
-                Gizmos.color = Color.black;
+                Gizmos.color = colour;
 
-                //Vector3 pos = gridTest.Grid(0).ToWorld(gridTest.Grid(0).WorldToGrid(positions[0].position));
                 Vector3 pos =  startPos;
                 Gizmos.DrawCube(pos, Vector3.one * 0.125f);
                 Gizmos.DrawLine(pos, path[0]);

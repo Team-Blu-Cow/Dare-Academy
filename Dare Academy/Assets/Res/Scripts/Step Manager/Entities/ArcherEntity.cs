@@ -33,8 +33,8 @@ public class ArcherEntity : GridEntity
     [SerializeField] GridNodePosition targetPosition;
     [SerializeField] int distance;
     [SerializeField] int dist;
-    [SerializeField] int fearRange = 3;
-    bool pathBlocked = false;
+    [SerializeField] int fearRange = 2;
+    Color m_gizmoColour;
 
     public enum State
     {
@@ -43,6 +43,7 @@ public class ArcherEntity : GridEntity
         FLEEING
     }
 
+    [SerializeField] State m_state;
 
     protected override void Start()
     {
@@ -51,6 +52,7 @@ public class ArcherEntity : GridEntity
         m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true); // Set flag for killable to true
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true); // Set flag for if solid to true
         player = FindObjectOfType<PlayerEntity>();
+        m_state = State.MOVING;
     }
 
     protected override void OnValidate()
@@ -65,35 +67,52 @@ public class ArcherEntity : GridEntity
         if (player == null)
             return;
 
-        base.AnalyseStep(); // Run base function
+        DecideState();
 
-        MoveState();
+        switch (m_state)
+        {
+            case State.MOVING:
+                MoveState();
+                break;
+
+            case State.SHOOTING:
+                break;
+
+            case State.FLEEING:
+                break;
+        }
     }
 
-    public void MoveState()
+    void DecideState()
     {
-        positionDiff = player.Position.grid - this.Position.grid;
+        m_gizmoColour = Color.cyan;
+        m_state = State.MOVING;
 
-        if (positionDiff.x == 0 || positionDiff.y == 0) // If player and entity are aligned on grid
-        {
-            //if ((distanceVector.x <= 4.0f && distanceVector.x >= -4.0f) && (distanceVector.y <= 4.0f && distanceVector.y >= -4.0f)) // If entity is within range of player
-            //{
-            if (m_currentNode.IsPathClear(player.currentNode)) // If player is not behind a wall
-            {
-                if (m_cooldownCounter <= 0) // If the cooldown has expired
-                {
-                    m_cooldownCounter = m_attackCooldown; // Reset cooldown
-                    isAttacking = true; // Set is attacking to true
-                }
-            }
-            //}
-        }
+        positionDiff = player.Position.grid - this.Position.grid;
 
         offsetVector = new Vector2(
             (Mathf.Abs(positionDiff.x) > Mathf.Abs(positionDiff.y)) ? positionDiff.x : 0,
             (Mathf.Abs(positionDiff.y) >= Mathf.Abs(positionDiff.x)) ? positionDiff.y : 0
             );
 
+        if (Vector2Int.Distance(this.Position.grid, player.Position.grid) <= fearRange)
+        {
+            m_gizmoColour = Color.red;
+            m_state = State.FLEEING;
+            return;
+        }
+
+        if ((positionDiff.x == 0 || positionDiff.y == 0)
+            && m_currentNode.IsPathClear(player.currentNode)
+            && Vector2Int.Distance(this.Position.grid, player.Position.grid) > fearRange)
+        {
+            m_gizmoColour = Color.green;
+            m_state = State.SHOOTING;
+        }
+    }
+
+    public void MoveState()
+    {
         GridNode targetNode;
 
         targetNode = player.currentNode.GetNeighbourDist(Vector2Int.RoundToInt(-offsetVector), Mathf.RoundToInt(offsetVector.magnitude));
@@ -105,13 +124,7 @@ public class ArcherEntity : GridEntity
 
         distance = Mathf.RoundToInt(offsetVector.magnitude);
 
-        pathBlocked = false;
-
-        if (dist < distance)
-            if (dist <= fearRange)
-                pathBlocked = true;
-
-        if (pathBlocked)
+        if (dist < distance && dist <= fearRange)
         {
             if (Mathf.Abs(offsetVector.x) > Mathf.Abs(offsetVector.y))
                 offsetVector = new Vector2(0, (positionDiff.y == 0) ? 3 : positionDiff.y);
@@ -119,13 +132,6 @@ public class ArcherEntity : GridEntity
                 offsetVector = new Vector2((positionDiff.x == 0) ? 3 : positionDiff.x, 0);
 
             dist = player.currentNode.GetDistanceInDirection(Vector2Int.RoundToInt(-offsetVector));
-
-            if (dist < fearRange)
-            {
-                offsetVector = -offsetVector;
-
-                // do checks here
-            }
 
             targetNode = player.currentNode.GetNeighbourDist(Vector2Int.RoundToInt(-offsetVector), fearRange);
 
@@ -137,29 +143,9 @@ public class ArcherEntity : GridEntity
         path = new Vector3[0];
         path = App.GetModule<LevelModule>().MetaGrid.GetPathWithFear(Position.world, targetPosition.world, player.Position.world, fearRange);
 
-        if (!isAttacking && !isWaiting) // If the entity is not attacking and not waiting
-        {
-            if (path.Length <= agroRange) // If the player is within agro range of entity
-            {
-                if (path.Length > 1) // If the path array has more than 1 value stored
-                {
-                    m_dir = path[1] - path[0]; // Find the direction the entity is meant to move in
-                }
+        Vector3 direction = path[0] - Position.world;
 
-                m_dir = new Vector2Int((int)m_dir.x, (int)m_dir.y); // Set direction to int values
-                SetMovementDirection(m_dir, moveSpeed); // Set movement speed and direction
-            }
-        }
-        else // If the player is attacking
-        {
-            isWaiting = false; // Set waiting to be false
-            SetMovementDirection(Vector2.zero, moveSpeed); // Don't make the entity move this step
-        }
-
-        if (m_cooldownCounter > 0) // If the cooldown hasn't expired yet
-        {
-            m_cooldownCounter--; // Decrement cooldown counter
-        }//*/
+        SetMovementDirection(new Vector2(direction.x, direction.y));
     }
 
     public override void AttackStep()
@@ -172,6 +158,7 @@ public class ArcherEntity : GridEntity
         }
     }
 
+    /* this is dumb
     private bool CheckPlayerIsBehindWall(Vector2 direction) // Function check for if the player is behind a wall, important for checking whether the entity can fire at them or not
     {
         Vector2Int m_direction = new Vector2Int((int)direction.x, (int)direction.y); // Create vector int variable for the direction the entity is facing
@@ -193,39 +180,19 @@ public class ArcherEntity : GridEntity
         {
             return false; // Then the player isn't behind a wall
         }
-    }
+    }*/
 
     protected override void OnDrawGizmos()
     {
-        if (!isAttacking) // If the entity is not attacking
-        {
-            Gizmos.color = new Color(0, 0, 0, 0); // Set boxes to be transparent color
-        }
-        else // If the entity is attacking
-        {
-            Gizmos.color = new Color(Color.yellow.r, Color.yellow.g, Color.yellow.b, 0.25f); // Set color of boxes to be a transparent yellow
-        }
-
-        Vector2Int direction = new Vector2Int((int)m_dir.x, (int)m_dir.y); // Set direction values to int and set these values to a new vector int variable
-        if (m_currentNode != null) // If the entity is on a node
-        {
-            if (m_currentNode.GetNeighbour(direction) != null) // If the current node the entity is trying to fire into is not a wall
-            {
-                Gizmos.DrawCube(m_currentNode.GetNeighbour(direction).position.world, new Vector3(1, 1, 1)); // Draw a yellow square to show where the bullet is spawning.
-            }
-        }
-
-        Gizmos.color = Color.cyan;
+        Gizmos.color = m_gizmoColour;
 
         if (m_currentNode != null)
             Gizmos.DrawRay(m_currentNode.position.world, (Vector2)positionDiff);
 
-        Gizmos.color = (pathBlocked) ? Color.red : Color.cyan ;
-
         if (targetPosition != null && player != null)
             Gizmos.DrawRay(player.Position.world, -offsetVector);
 
-        if (targetPosition != null)
+        if (targetPosition != null && m_state == State.MOVING)
             Gizmos.DrawSphere(targetPosition.world, 0.2f);
 
         if (Application.isPlaying)

@@ -137,14 +137,14 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
 
     public bool IsPathClear(GridNode target)
     {
-        Vector2Int direction = position.grid - target.position.grid;
+        Vector2 direction = target.position.grid - position.grid;
 
         int distance = Mathf.RoundToInt( direction.magnitude);
 
         GridNode workingNode = this;
         for (int i = 0; i < distance; i++)
         {
-            workingNode = workingNode.neighbors[direction].reference;
+            workingNode = workingNode.neighbors[direction.normalized].reference;
             if (workingNode == null)
                 return false;
 
