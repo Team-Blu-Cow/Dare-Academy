@@ -30,7 +30,7 @@ public class PlayerEntity : GridEntity
 
     // HEALTH
 
-    private int m_maxHealth = 10;
+    private int m_maxHealth = 1;
     public int MaxHealth { get { return m_maxHealth; } set { m_maxHealth = value; } }
 
     // ENERGY
@@ -384,7 +384,7 @@ public class PlayerEntity : GridEntity
         }
     }
 
-    public override void OnDeath()
+    public bool MoveToRespawnLocation()
     {
         RespawnStationEntity respawnStation = RespawnStationEntity.CurrentRespawnStation;
         if (respawnStation != null)
@@ -399,12 +399,16 @@ public class PlayerEntity : GridEntity
                 Energy = MaxEnergy;
                 transform.position = m_currentNode.position.world;
                 AddToCurrentNode();
-                return;
+                return true;
             }
         }
+        return false;
+    }
 
-        Debug.LogWarning("Player failed to respawn, reloading scene");
-        App.GetModule<SceneModule>().SwitchScene(SceneManager.GetActiveScene().name, TransitionType.LRSweep);
+    public override void OnDeath()
+    {
+        GameObject temp = Resources.Load<GameObject>("prefabs/DeathScreenCanvas");
+        Instantiate(temp).transform.parent = Camera.main.transform;
     }
 
     protected override void OnDrawGizmos()
