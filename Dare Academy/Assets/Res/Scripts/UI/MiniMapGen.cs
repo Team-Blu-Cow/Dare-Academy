@@ -30,9 +30,6 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
 
     private void Start()
     {
-        App.GetModule<QuestModule>().AddQuest(Resources.Load<Quest>("Quests/TestQuest"));
-        App.GetModule<QuestModule>().AddQuest(Resources.Load<Quest>("Quests/TestQuest"));
-        App.GetModule<QuestModule>().AddQuest(Resources.Load<Quest>("Quests/TestQuest"));
         App.GetModule<LevelModule>().StepController.RoomChangeEvent += DrawMap;
         transform = GetComponent<RectTransform>();
         player = FindObjectOfType<PlayerEntity>();
@@ -381,6 +378,8 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
                 tmp.alignment = TextAlignmentOptions.Top;
                 RectTransform textRect = (RectTransform)text.transform;
                 textRect.anchoredPosition = new Vector2(0, -5);
+
+                m_squares.Add(Go);
             }
         }
     }

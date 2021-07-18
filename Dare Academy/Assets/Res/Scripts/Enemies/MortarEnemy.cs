@@ -78,9 +78,9 @@ public class MortarEnemy : GridEntity
         }
     }
 
-    public bool PlayerInFiringRange()
+    private bool PlayerInFiringRange()
     {
-        return Vector3.Distance(transform.position, m_player.transform.position) <= m_attackRadius + 0.25f;
+        return Vector3.Distance(transform.position, m_player.Position.world) <= m_attackRadius + 0.25f;
     }
 
     protected override void OnDrawGizmos()

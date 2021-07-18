@@ -17,6 +17,7 @@ public class PlayerEntity : GridEntity
 
     [SerializeField] private PlayerAbilities m_abilities = new PlayerAbilities();
     [SerializeField] private bool m_abilityMode = false;
+    public GameObject m_interactToolTip;
 
     // if the scene switch has been triggered but the entity has not been destroyed
     private bool m_sceneHasSwitched = false;
@@ -83,6 +84,7 @@ public class PlayerEntity : GridEntity
                 m_dictRoomsTraveled.Add(pair.key, pair.value);
         }
 
+        SetInteractPosition();
         FindObjectOfType<MiniMapGen>().DrawMap();
     }
 
@@ -521,5 +523,12 @@ public class PlayerEntity : GridEntity
         }
 
         return false;
+    }
+
+    private void SetInteractPosition()
+    {
+        Vector3 size = GetComponent<BoxCollider2D>().bounds.extents;
+        Vector3 offset = size + transform.GetChild(0).GetChild(0).position;
+        m_interactToolTip.transform.position = offset;
     }
 }
