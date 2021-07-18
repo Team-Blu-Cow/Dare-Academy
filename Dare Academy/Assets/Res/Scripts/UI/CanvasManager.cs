@@ -71,6 +71,7 @@ namespace CanvasTool
             if (startingCanvas.Count > 0)
             {
                 OpenCanvas(startingCanvas, true);
+                
             }
             else if (canvases.Count > 0)
             {
