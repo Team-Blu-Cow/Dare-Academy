@@ -151,12 +151,14 @@ public class PathfindingMultiGrid
     //private void InitGrid(Grid<GridNode> grid)
     private void InitGrid(GridInfo gridInfo, int index)
     {
+        //using (var timer = new Timer("grid[" + index.ToString() + "]"))
+        //{
         Grid<GridNode> grid = new Grid<GridNode>(
-                gridInfo.width,
-                gridInfo.height,
-                gridInfo.cellSize,
-                gridInfo.originPosition
-                );
+            gridInfo.width,
+            gridInfo.height,
+            gridInfo.cellSize,
+            gridInfo.originPosition
+            );
 
         grid.Init();
 
@@ -178,6 +180,7 @@ public class PathfindingMultiGrid
         }
 
         grids.Add(grid);
+        //}
     }
 
     // after building and populating the grid with nodes, calculate all neighbouring node links

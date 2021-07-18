@@ -25,7 +25,7 @@ namespace JUtil.Grids
 
         public Vector3[] FindPath(T startPos, T targetPos, bool eightDir = false, bool showtime = false)
         {
-            Stopwatch sw  = new Stopwatch(); ;
+            Stopwatch sw  = new Stopwatch();
             if (showtime)
                 sw.Start();
 

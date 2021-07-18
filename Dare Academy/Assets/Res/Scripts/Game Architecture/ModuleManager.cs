@@ -1,27 +1,32 @@
 using System;
 using System.Reflection;
 using UnityEngine;
+using System.Diagnostics;
 
 namespace blu
 {
     public class ModuleManager
     {
-        //         [Obsolete]
-        //         public T GetModule<T>() where T : blu.Module
-        //         {
-        //             foreach (Module module in App.LoadedModules)
-        //             {
-        //                 if (module.type == typeof(T))
-        //                 {
-        //                     return (T)module;
-        //                 }
-        //             }
-        //             return null;
-        //         }
+        //  [Obsolete]
+        //  public T GetModule<T>() where T : blu.Module
+        //  {
+        //      using (var timer = new Timer("GetModule"))
+        //      {
+        //          foreach (Module module in App.LoadedModules)
+        //          {
+        //              if (module.type == typeof(T))
+        //              {
+        //                  return (T)module;
+        //              }
+        //          }
+        //          return null;
+        //      }
+        //  }
 
         public T GetModule<T>() where T : blu.Module
         {
-            return (T)App.LoadedModules.Find(x => typeof(T) == x.type);
+            //using (var timer = new Timer("GetModule"))
+                return (T)App.LoadedModules.Find(x => typeof(T) == x.type);
         }
 
         public void AddModule<T>() where T : blu.Module
@@ -29,7 +34,7 @@ namespace blu
             //
             if (typeof(T) == typeof(Module))
             {
-                Debug.LogWarning("[App/ModuleManager]: Attempted instantiation of abstract module type: " + typeof(T).ToString());
+                UnityEngine.Debug.LogWarning("[App/ModuleManager]: Attempted instantiation of abstract module type: " + typeof(T).ToString());
                 return;
             }
 
@@ -40,16 +45,16 @@ namespace blu
                 {
                     if (module.type == typeof(T))
                     {
-                        Debug.Log("[App/ModuleManager]: Duplicate Module: " + typeof(T).ToString());
+                        UnityEngine.Debug.Log("[App/ModuleManager]: Duplicate Module: " + typeof(T).ToString());
                         return;
                     }
                 }
             }
             catch (System.Exception EXGenericBadType)
             {
-                Debug.LogWarning("[App/ModuleManager]: Exception thrown during duplicate check");
-                Debug.LogWarning("[App/ModuleManager]: Generic: " + typeof(T).ToString());
-                Debug.LogException(EXGenericBadType);
+                UnityEngine.Debug.LogWarning("[App/ModuleManager]: Exception thrown during duplicate check");
+                UnityEngine.Debug.LogWarning("[App/ModuleManager]: Generic: " + typeof(T).ToString());
+                UnityEngine.Debug.LogException(EXGenericBadType);
                 return;
             }
 
@@ -61,8 +66,8 @@ namespace blu
             }
             catch (System.Exception EXcantFindPrefab)
             {
-                Debug.LogWarning("[App/ModuleManager]: Could not load module prefab: \"" + typeof(T).ToString() + "\"");
-                Debug.LogException(EXcantFindPrefab);
+                UnityEngine.Debug.LogWarning("[App/ModuleManager]: Could not load module prefab: \"" + typeof(T).ToString() + "\"");
+                UnityEngine.Debug.LogException(EXcantFindPrefab);
                 return;
             }
 
@@ -80,16 +85,16 @@ namespace blu
                     }
                     catch (System.Exception EXInvalidDependancy)
                     {
-                        Debug.LogWarning("[App/ModuleManager]: Could not load module \"" + dependancy.ToString() + "\"");
-                        Debug.LogWarning("[App/ModuleManager]: AddModule<T>() failed to load dependancy");
-                        Debug.LogException(EXInvalidDependancy);
+                        UnityEngine.Debug.LogWarning("[App/ModuleManager]: Could not load module \"" + dependancy.ToString() + "\"");
+                        UnityEngine.Debug.LogWarning("[App/ModuleManager]: AddModule<T>() failed to load dependancy");
+                        UnityEngine.Debug.LogException(EXInvalidDependancy);
                     }
                 }
             }
             catch (System.Exception EXDependancyLoadFailure)
             {
-                Debug.LogWarning("[App]: Could not load dependancies ");
-                Debug.LogException(EXDependancyLoadFailure);
+                UnityEngine.Debug.LogWarning("[App]: Could not load dependancies ");
+                UnityEngine.Debug.LogException(EXDependancyLoadFailure);
                 return;
             }
 
@@ -100,9 +105,9 @@ namespace blu
             }
             catch (System.Exception EXFailedToInitModule)
             {
-                Debug.LogWarning("[App/ModuleManager]: Could not initialize module \"" + typeof(T).ToString() + "\"");
-                Debug.LogWarning("[App/ModuleManager]: GetModule<T>().Initialize failed");
-                Debug.LogException(EXFailedToInitModule);
+                UnityEngine.Debug.LogWarning("[App/ModuleManager]: Could not initialize module \"" + typeof(T).ToString() + "\"");
+                UnityEngine.Debug.LogWarning("[App/ModuleManager]: GetModule<T>().Initialize failed");
+                UnityEngine.Debug.LogException(EXFailedToInitModule);
                 return;
             }
         }
@@ -119,7 +124,7 @@ namespace blu
                 }
             }
 
-            Debug.Log("[App/ModuleManager]: Failed to find: " + typeof(T).ToString());
+            UnityEngine.Debug.Log("[App/ModuleManager]: Failed to find: " + typeof(T).ToString());
         }
     }
 }

@@ -70,63 +70,9 @@ public class ArcherEntity : GridEntity
 
         DecideState();
 
-        switch (m_state)
-        {
-            case State.MOVING:
+        if(m_state == State.MOVING)
                 MoveState();
-                break;
-
-            case State.SHOOTING:
-                break;
-        }
     }
-
-    /* if (player == null)
-            return;
-
-        base.AnalyseStep(); // Run base function
-
-        Vector2 distanceVector = player.transform.position - transform.position; // Find distance between player and entity
-        if ((distanceVector.x <= 0.5f && distanceVector.x >= -0.5f) || (distanceVector.y <= 0.5f && distanceVector.y >= -0.5f)) // If player and entity are aligned on grid
-        {
-            if ((distanceVector.x <= 4.0f && distanceVector.x >= -4.0f) && (distanceVector.y <= 4.0f && distanceVector.y >= -4.0f)) // If entity is within range of player
-            {
-                if (!CheckPlayerIsBehindWall(m_dir)) // If player is not behind a wall
-                {
-                    if (m_cooldownCounter <= 0) // If the cooldown has expired
-                    {
-                        m_cooldownCounter = m_attackCooldown; // Reset cooldown
-                        isAttacking = true; // Set is attacking to true
-                    }
-                }
-            }
-        }
-
-        Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, player.transform.position); // Find path to player
-
-        if (!isAttacking && !isWaiting) // If the entity is not attacking and not waiting
-        {
-            if (path.Length <= agroRange) // If the player is within agro range of entity
-            {
-                if (path.Length > 1) // If the path array has more than 1 value stored
-                {
-                    m_dir = path[1] - path[0]; // Find the direction the entity is meant to move in
-                }
-
-                m_dir = new Vector2Int((int)m_dir.x, (int)m_dir.y); // Set direction to int values
-                SetMovementDirection(m_dir, moveSpeed); // Set movement speed and direction
-            }
-        }
-        else // If the player is attacking
-        {
-            isWaiting = false; // Set waiting to be false
-            SetMovementDirection(Vector2.zero, moveSpeed); // Don't make the entity move this step
-        }
-
-        if (m_cooldownCounter > 0) // If the cooldown hasn't expired yet
-        {
-            m_cooldownCounter--; // Decrement cooldown counter
-        }*/
 
     void DecideState()
     {
