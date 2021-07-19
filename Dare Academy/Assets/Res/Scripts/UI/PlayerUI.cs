@@ -58,7 +58,7 @@ public class PlayerUI : MonoBehaviour
 
         m_timer += Time.deltaTime; // The timer is timing
 
-        if ((m_energy + 1) != m_playerInfo.Energy) // If the player's energy has changed
+        if ((m_energy + 1) != m_playerInfo.Energy || m_energy != m_playerInfo.Energy) // If the player's energy has changed
         {
             UpdateEnergyUI(); // Update the energy UI
             m_energy = m_playerInfo.Energy; // Update the energy variable 
