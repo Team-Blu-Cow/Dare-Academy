@@ -6,6 +6,12 @@ using UnityEditor;
 [CustomEditor(typeof(ScriptableEntity))]
 public class ScriptableEntityEditor : Editor
 {
+    private enum _boolEnum
+    {
+        False = 0,
+        True = 1,
+    }
+
     private SerializedProperty prefabProperty;
 
     private bool foldout = false;
@@ -35,21 +41,15 @@ public class ScriptableEntityEditor : Editor
         {
             ScriptedActionQueue actionQueue = actionQueueProperty.objectReferenceValue as ScriptedActionQueue;
             DisplayActionQueue(ref actionQueue);
+
             actionQueueProperty.objectReferenceValue = actionQueue;
         }
-
-        EditorUtility.SetDirty(serializedObject.targetObject);
 
         serializedObject.ApplyModifiedProperties();
     }
 
     private void DisplayActionQueue(ref ScriptedActionQueue queue)
     {
-        if (queue.m_actionList == null)
-        {
-            queue.m_actionList = new List<ScriptedActionQueue.ActionWrapper>();
-        }
-
         EditorGUILayout.BeginHorizontal();
 
         int len = EditorGUILayout.IntField(queue.m_actionList.Count);
@@ -98,6 +98,7 @@ public class ScriptableEntityEditor : Editor
                 queue.m_actionList[i].textData = "";
                 queue.m_actionList[i].moveData = new ScriptedActionQueue.MoveData();
                 queue.m_actionList[i].gameObject = null;
+                queue.m_actionList[i].boolData = false;
             }
 
             switch (queue.m_actionList[i].type)
@@ -119,6 +120,14 @@ public class ScriptableEntityEditor : Editor
 
                 case ScriptedActionQueue.ActionType.WaitPlayerEnterTrigger:
                     queue.m_actionList[i].gameObject = EditorGUILayout.ObjectField(queue.m_actionList[i].gameObject, typeof(GameObject), true) as GameObject;
+                    break;
+
+                case ScriptedActionQueue.ActionType.WaitPlayerExitTrigger:
+                    queue.m_actionList[i].gameObject = EditorGUILayout.ObjectField(queue.m_actionList[i].gameObject, typeof(GameObject), true) as GameObject;
+                    break;
+
+                case ScriptedActionQueue.ActionType.SetFlagValue:
+                    FlagField(ref queue.m_actionList[i].intData, ref queue.m_actionList[i].boolData);
                     break;
 
                 default:
@@ -184,5 +193,23 @@ public class ScriptableEntityEditor : Editor
         data.distance = IntField(data.distance);
 
         return (ScriptedActionQueue.MoveData)data;
+    }
+
+    private void FlagField(ref int i, ref bool b)
+    {
+        i = (int)(GridEntityFlags.Flags)EditorGUILayout.EnumFlagsField((GridEntityFlags.Flags)(i), GUILayout.Width(160f));
+
+        _boolEnum e;
+        if (b)
+            e = _boolEnum.True;
+        else
+            e = _boolEnum.False;
+
+        e = (_boolEnum)EditorGUILayout.EnumPopup(e, GUILayout.Width(100f));
+
+        if (e == _boolEnum.True)
+            b = true;
+        else
+            b = false;
     }
 }

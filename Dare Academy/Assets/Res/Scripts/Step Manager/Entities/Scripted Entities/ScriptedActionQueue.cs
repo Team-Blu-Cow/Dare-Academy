@@ -1,24 +1,21 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
 public class ScriptedActionQueue : ScriptableObject
 {
-    // TODO @matthew
-    // pathfinding
-    // wait player in range
-    // wait player out of range
-
+    // values are set to prevent scripts being damaged when features are added or removed
     [System.Serializable]
-    public enum ActionType
+    public enum ActionType // 7
     {
-        None,
-        WaitTurns, // int
-        Move, // MoveData
-        Dialogue, // prefab
-        WaitPlayerEnterTrigger,// gameObject
-        Kill,
+        None = 0,
+        WaitTurns = 1,              // int
+        Move = 2,                   // MoveData
+        Dialogue = 3,               // prefab
+        WaitPlayerEnterTrigger = 4, // gameObject
+        WaitPlayerExitTrigger = 6,  // gameObject
+        SetFlagValue =  7,          // int, bool
+        Kill = 5,
     }
 
     [System.Serializable]
@@ -50,6 +47,7 @@ public class ScriptedActionQueue : ScriptableObject
         [SerializeField] public MoveData moveData = new MoveData();
         [SerializeField] public string textData = "";
         [SerializeField] public GameObject gameObject;
+        [SerializeField] public bool boolData;
     }
 
     [SerializeField] public List<ActionWrapper> m_actionList = new List<ActionWrapper>();

@@ -81,9 +81,11 @@ public class ScriptableEntity : GridEntity
 
         ScriptedActionQueue.ActionWrapper currentAction = m_actionQueue.m_actionList[m_queuePos];
 
+        bool b;
         switch (currentAction.type)
         {
             case ScriptedActionQueue.ActionType.None:
+                runAgain = true;
                 break;
 
             case ScriptedActionQueue.ActionType.Kill:
@@ -99,10 +101,23 @@ public class ScriptableEntity : GridEntity
                 break;
 
             case ScriptedActionQueue.ActionType.WaitPlayerEnterTrigger:
-                bool b =  currentAction.gameObject.GetComponent<ScriptableEntityTrigger>().HasPlayer;
+                b = currentAction.gameObject.GetComponent<ScriptableEntityTrigger>().HasPlayer;
                 stepQueue = b;
                 runAgain = b;
 
+                break;
+
+            case ScriptedActionQueue.ActionType.WaitPlayerExitTrigger:
+                b = !currentAction.gameObject.GetComponent<ScriptableEntityTrigger>().HasPlayer;
+                stepQueue = b;
+                runAgain = b;
+
+                break;
+
+            case ScriptedActionQueue.ActionType.SetFlagValue:
+
+                m_flags.SetFlags(currentAction.intData, currentAction.boolData);
+                runAgain = true;
                 break;
 
             case ScriptedActionQueue.ActionType.Dialogue:
