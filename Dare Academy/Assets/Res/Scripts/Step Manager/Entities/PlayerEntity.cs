@@ -23,6 +23,13 @@ public class PlayerEntity : GridEntity
     // if the scene switch has been triggered but the entity has not been destroyed
     private bool m_sceneHasSwitched = false;
 
+    private static PlayerEntity _Instance;
+
+    public static PlayerEntity Instance
+    {
+        get => _Instance;
+    }
+
     public PlayerAbilities Abilities
     {
         get => m_abilities;
@@ -67,6 +74,12 @@ public class PlayerEntity : GridEntity
 
     protected void Awake()
     {
+        if (_Instance != null)
+        {
+            Debug.LogWarning("[PlayerEntity] Instance already exists");
+        }
+
+        _Instance = this;
     }
 
     protected override async void Start()
@@ -251,11 +264,11 @@ public class PlayerEntity : GridEntity
     {
         float angle = 0;
 
-        for(int i = 0; i < 4; i++)
+        for (int i = 0; i < 4; i++)
         {
             Vector2 v = Vector2.up.Rotate(angle);
             GridNode node = m_currentNode.Neighbors[v].reference;
-            if(node != null)
+            if (node != null)
             {
                 App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.MOVE);
             }
