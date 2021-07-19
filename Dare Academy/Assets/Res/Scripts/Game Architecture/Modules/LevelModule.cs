@@ -51,6 +51,9 @@ namespace blu
         public StepController StepController
         { get { return m_levelManager.StepController; } }
 
+        public TelegraphDrawer telegraphDrawer
+        { get { return m_levelManager.TelegraphDrawer; } }
+
         private LevelTransitionInformation m_lvlTransitionInfo;
 
         public LevelTransitionInformation lvlTransitionInfo

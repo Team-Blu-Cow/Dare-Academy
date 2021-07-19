@@ -5,6 +5,7 @@ using blu;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
+using JUtil;
 
 using flags = GridEntityFlags.Flags;
 using interalFlags = GridEntityInternalFlags.Flags;
@@ -242,6 +243,24 @@ public class PlayerEntity : GridEntity
 
         if (m_animationController != null)
             SetAbilityAnimationFlag(0);
+
+        DrawMoveOverlays();
+    }
+
+    public void DrawMoveOverlays()
+    {
+        float angle = 0;
+
+        for(int i = 0; i < 4; i++)
+        {
+            Vector2 v = Vector2.up.Rotate(angle);
+            GridNode node = m_currentNode.Neighbors[v].reference;
+            if(node != null)
+            {
+                App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.MOVE);
+            }
+            angle += 90;
+        }
     }
 
     protected void ToggleAbilityMode(InputAction.CallbackContext context)
