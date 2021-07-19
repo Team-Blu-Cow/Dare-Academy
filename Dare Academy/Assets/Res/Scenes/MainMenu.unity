@@ -302,6 +302,22 @@ MonoBehaviour:
             m_StringArgument: event:/SFX/UI/Pointer Enter
             m_BoolArgument: 0
           m_CallState: 2
+  - eventID: 9
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 190498006}
+          m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
+          m_MethodName: Play
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: event:/SFX/UI/Pointer Enter
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &81644741
 GameObject:
   m_ObjectHideFlags: 0
@@ -769,6 +785,22 @@ MonoBehaviour:
           m_TargetAssemblyTypeName: MainMenuSelector, Assembly-CSharp
           m_MethodName: HoverExit
           m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: event:/SFX/UI/Pointer Enter
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 9
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 190498006}
+          m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
+          m_MethodName: Play
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -3192,6 +3224,22 @@ MonoBehaviour:
             m_StringArgument: event:/SFX/UI/Pointer Enter
             m_BoolArgument: 0
           m_CallState: 2
+  - eventID: 9
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 190498006}
+          m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
+          m_MethodName: Play
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: event:/SFX/UI/Pointer Enter
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &722072657
 GameObject:
   m_ObjectHideFlags: 0
@@ -3608,6 +3656,22 @@ MonoBehaviour:
           m_TargetAssemblyTypeName: MainMenuSelector, Assembly-CSharp
           m_MethodName: HoverExit
           m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: event:/SFX/UI/Pointer Enter
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 9
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 190498006}
+          m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
+          m_MethodName: Play
+          m_Mode: 5
           m_Arguments:
             m_ObjectArgument: {fileID: 0}
             m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
