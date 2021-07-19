@@ -22,10 +22,9 @@ public class WrymBossEnity : GridEntity
     {
         if (m_player == null)
             return;
-
+        Phase1();
         if (Health > 5)
         {
-            Phase1();
         }
         else if (false) // TODO: add phase 2 timer
         {
@@ -33,6 +32,11 @@ public class WrymBossEnity : GridEntity
         else // Phase 3
         {
         }
+    }
+
+    public override void DamageStep()
+    {
+        base.DamageStep();
     }
 
     private void Phase1()
@@ -56,33 +60,98 @@ public class WrymBossEnity : GridEntity
         SetMovementDirection(dir, m_moveSpeed); // Set movement
     }
 
+    private void FireAttack()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+        }
+    }
+
     private void Burrow()
     {
         int direction;
         var currentRoom = App.GetModule<LevelModule>().CurrentRoom;
 
-        Mathf.Min(m_player.Position.grid.x, m_player.Position.grid.y);
+        int low1 = Mathf.Min(m_player.Position.grid.x, m_player.Position.grid.y);
+        int low2 = Mathf.Min(currentRoom.Width - m_player.Position.grid.x, currentRoom.Height - m_player.Position.grid.y);
 
-        Mathf.Min(currentRoom.Width - m_player.Position.grid.x, currentRoom.Height - m_player.Position.grid.y);
-
-        List<Vector2> exitPos = new List<Vector2>();
-
-        // Exit 1 /////////
-        int count = 0;
-
-        while (exitPos.Count == 0 && count < currentRoom.Height)
+        if (low1 < low2)
         {
-            for (int i = 0; i < grid.gridSize.x; i++)
-            {
-                if (grid.GetNode(new Vector3Int(i, count, 0)).IsTraversable())
-                {
-                    exitPos.Add(new Vector2(i, count));
-                }
-            }
-            count++;
+            if (low1 == m_player.Position.grid.x)
+                direction = 0;
+            else
+                direction = 1;
+        }
+        else
+        {
+            if (low2 == currentRoom.Width - m_player.Position.grid.x)
+                direction = 2;
+            else
+                direction = 3;
         }
 
-        var pos = exitPos[Random.Range(0, exitPos.Count)];
+        Vector2 pos;
+
+        switch (direction)
+        {
+            case 0:
+                // Burrow Right /////////
+                pos = FindBurrowHoz(currentRoom.Width - 1, currentRoom);
+
+                break;
+
+            case 1:
+                // Burrow Up /////////
+                pos = FindBurrowVert(0, currentRoom);
+                break;
+
+            case 2:
+                // Burrow Left /////////
+                pos = FindBurrowHoz(0, currentRoom);
+                break;
+
+            case 3:
+                // Burrow Down /////////
+                pos = FindBurrowVert(currentRoom.Height - 1, currentRoom);
+
+                break;
+
+            default:
+                pos = Vector2.zero;
+                break;
+        }
+
+        Debug.Log(pos);
+    }
+
+    private Vector2 FindBurrowHoz(int x, JUtil.Grids.Grid<GridNode> currentRoom)
+    {
+        List<Vector2> exitPos = new List<Vector2>();
+
+        for (int i = 0; i < currentRoom.Height; i++)
+        {
+            if (currentRoom.NodeExists(x, i))
+            {
+                exitPos.Add(new Vector2(x, i));
+            }
+        }
+
+        return exitPos[Random.Range(0, exitPos.Count)];
+    }
+
+    private Vector2 FindBurrowVert(int y, JUtil.Grids.Grid<GridNode> currentRoom)
+    {
+        List<Vector2> exitPos = new List<Vector2>();
+
+        for (int i = 0; i < currentRoom.Width; i++)
+        {
+            if (currentRoom.NodeExists(i, y))
+            {
+                exitPos.Add(new Vector2(i, y));
+            }
+        }
+
+        return exitPos[Random.Range(0, exitPos.Count)];
     }
 
     // Update is called once per frame
