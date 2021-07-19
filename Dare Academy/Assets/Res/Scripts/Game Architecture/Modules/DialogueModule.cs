@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using DialogueEditor;
 using System.Threading.Tasks;
+using UnityEngine.SceneManagement;
 
 namespace blu
 {
@@ -20,6 +21,7 @@ namespace blu
         public GameObject _EventSystem;
         private GameObject _ContinueButton;
         private InputModule _input;
+        private GameObject _dialogueCanvasPrefab;
 
         //private Image _continueButton;
         public GameObject EventSystem { set => _EventSystem = value; }
@@ -168,6 +170,26 @@ namespace blu
             }
         }
 
+        private void OnSceneSwitch(Scene scene, LoadSceneMode mode)
+        {
+            InitDialogueCanvas();
+        }
+
+        private void InitDialogueCanvas()
+        {
+            if (_dialogueCanvas == null)
+            {
+                _dialogueCanvas = Instantiate(_dialogueCanvasPrefab);
+                _dialogueCanvas.name = "Dialogue Canvas";
+                GameObject.DontDestroyOnLoad(_dialogueCanvas);
+                _dialogueCanvas.SetActive(false);
+                App.CanvasManager.AddCanvas(_dialogueCanvas);
+
+                _canvasAnimation = _dialogueCanvas.GetComponentInChildren<Animator>();
+                _ContinueButton = ConversationManager.Instance.DialoguePanel.transform.Find("ContinueButton").gameObject;
+            }
+        }
+
         private void Start()
         {
             _input = App.GetModule<InputModule>();
@@ -177,16 +199,10 @@ namespace blu
             _input.DialogueController.Dialogue.PreviousOption.performed += PreviousOption;
             _input.DialogueController.Dialogue.Select.performed += SelectOption;
             _input.DialogueController.Dialogue.Skip.performed += SkipDialogue;
+            SceneManager.sceneLoaded += OnSceneSwitch;
 
-            GameObject dialogueCanvasPrefab = Resources.Load<GameObject>("prefabs/DialogueCanvas");
-            _dialogueCanvas = Instantiate(dialogueCanvasPrefab);
-            _dialogueCanvas.name = "Dialogue Canvas";
-            GameObject.DontDestroyOnLoad(_dialogueCanvas);
-            _dialogueCanvas.SetActive(false);
-            App.CanvasManager.AddCanvas(_dialogueCanvas);
-
-            _canvasAnimation = _dialogueCanvas.GetComponentInChildren<Animator>();
-            _ContinueButton = ConversationManager.Instance.DialoguePanel.transform.Find("ContinueButton").gameObject;
+            _dialogueCanvasPrefab = Resources.Load<GameObject>("prefabs/DialogueCanvas");
+            InitDialogueCanvas();
         }
 
         private void OnDestroy()
@@ -196,6 +212,7 @@ namespace blu
             _input.DialogueController.Dialogue.PreviousOption.performed -= PreviousOption;
             _input.DialogueController.Dialogue.Select.performed -= SelectOption;
             _input.DialogueController.Dialogue.Skip.performed -= SkipDialogue;
+            SceneManager.sceneLoaded -= OnSceneSwitch;
             GameObject.Destroy(_dialogueCanvas);
         }
 
