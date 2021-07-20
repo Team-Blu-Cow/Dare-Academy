@@ -71,7 +71,6 @@ public abstract class GridEntity : MonoBehaviour
     public GridNode currentNode
     { get { return m_currentNode; } }
 
-
     public GridNodePosition Position
     { get { return m_currentNode.position; } }
 
@@ -1048,7 +1047,28 @@ public abstract class GridEntity : MonoBehaviour
 
     public void SetMovementDirection(Vector2Int direction, int speed = 1)
     {
-        // TODO @matthew/@jay - check this value is valid
+        if (direction == null)
+        {
+            Debug.LogWarning($"[GridEnitity.SetMovementDirection] [Name = {gameObject.name}], direction was null");
+            return;
+        }
+
+        if (speed < 0)
+        {
+            Debug.LogWarning($"[GridEnitity.SetMovementDirection] [Name = {gameObject.name}], speed was less than 0");
+            speed = 0;
+        }
+
+        if (direction.x > 0)
+            direction.x = 1;
+        else if (direction.x < 0)
+            direction.x = -1;
+
+        if (direction.y > 0)
+            direction.y = 1;
+        else if (direction.y < 0)
+            direction.y = -1;
+
         m_movementDirection = direction;
         m_speed = speed;
         m_baseSpeed = speed;

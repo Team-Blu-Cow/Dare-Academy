@@ -69,8 +69,16 @@ public class ArcherEntity : GridEntity
 
         DecideState();
 
-        if(m_state == State.MOVING)
+        switch(m_state)
+        {
+            case State.MOVING:
                 MoveState();
+                break;
+
+            case State.SHOOTING:
+                ShootingState();
+                break;
+        }
     }
 
     void DecideState()
@@ -142,6 +150,26 @@ public class ArcherEntity : GridEntity
             direction = path[0] - Position.world;
 
         SetMovementDirection(new Vector2(direction.x, direction.y));
+
+        if (direction != Vector3.zero)
+        {
+            targetNode = m_currentNode.Neighbors[new Vector2(direction.x, direction.y)].reference;
+
+            if (targetNode != null)
+            {
+                App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(targetNode, TelegraphDrawer.Type.MOVE);
+            }
+        }
+    }
+
+    public void ShootingState()
+    {
+        GridNode targetNode = m_currentNode.Neighbors[offsetVector].reference;
+
+        if (targetNode != null)
+        {
+            App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(targetNode, TelegraphDrawer.Type.ATTACK);
+        }
     }
 
     public override void AttackStep()

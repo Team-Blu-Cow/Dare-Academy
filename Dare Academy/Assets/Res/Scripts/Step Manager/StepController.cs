@@ -12,6 +12,7 @@ public class StepController
     [SerializeField] public int m_targetRoomIndex;
     private float m_stepTime = 0;
     private float m_timer = 0;
+    private TelegraphDrawer m_telegraphDrawer;
 
     public float stepTime { get { return m_stepTime; } set { m_stepTime = value; } }
     public float timer { get { return m_timer; } set { m_timer = value; } }
@@ -28,10 +29,11 @@ public class StepController
         m_entities = new List<GridEntity>();
     }
 
-    public StepController(float stepTime)
+    public StepController(float stepTime, TelegraphDrawer telegraphDrawer)
     {
         m_stepTime = stepTime;
         m_entities = new List<GridEntity>();
+        m_telegraphDrawer = telegraphDrawer;
     }
 
     // STEP METHODS *******************************************************************************
@@ -41,6 +43,9 @@ public class StepController
             return;
 
         m_timer = 0;
+
+        if (m_telegraphDrawer != null)
+            m_telegraphDrawer.OnStep();
 
         ResetAnimations();
 
