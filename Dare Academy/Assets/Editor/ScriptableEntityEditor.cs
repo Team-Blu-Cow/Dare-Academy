@@ -94,7 +94,7 @@ public class ScriptableEntityEditor : Editor
             if (currentType != newType)
             {
                 queue.m_actionList[i].type = newType;
-                queue.m_actionList[i].intData = 0;
+                queue.m_actionList[i].int32Data = 0;
                 queue.m_actionList[i].textData = "";
                 queue.m_actionList[i].moveData = new ScriptedActionQueue.MoveData();
                 queue.m_actionList[i].gameObject = null;
@@ -107,7 +107,7 @@ public class ScriptableEntityEditor : Editor
                     break;
 
                 case ScriptedActionQueue.ActionType.WaitTurns:
-                    queue.m_actionList[i].intData = IntField((int?)(queue.m_actionList[i].intData));
+                    queue.m_actionList[i].int32Data = IntField((int?)(queue.m_actionList[i].int32Data));
                     break;
 
                 case ScriptedActionQueue.ActionType.Move:
@@ -126,8 +126,12 @@ public class ScriptableEntityEditor : Editor
                     queue.m_actionList[i].gameObject = EditorGUILayout.ObjectField(queue.m_actionList[i].gameObject, typeof(GameObject), true) as GameObject;
                     break;
 
-                case ScriptedActionQueue.ActionType.SetFlagValue:
-                    FlagField(ref queue.m_actionList[i].intData, ref queue.m_actionList[i].boolData);
+                case ScriptedActionQueue.ActionType.SetFlagEntityValue:
+                    EntityFlagField(ref queue.m_actionList[i].int32Data, ref queue.m_actionList[i].boolData);
+                    break;
+
+                case ScriptedActionQueue.ActionType.SetEventFlagValue:
+                    EventFlagField(ref queue.m_actionList[i].int32Data, ref queue.m_actionList[i].boolData);
                     break;
 
                 default:
@@ -195,9 +199,27 @@ public class ScriptableEntityEditor : Editor
         return (ScriptedActionQueue.MoveData)data;
     }
 
-    private void FlagField(ref int i, ref bool b)
+    private void EntityFlagField(ref int i, ref bool b)
     {
         i = (int)(GridEntityFlags.Flags)EditorGUILayout.EnumFlagsField((GridEntityFlags.Flags)(i), GUILayout.Width(160f));
+
+        _boolEnum e;
+        if (b)
+            e = _boolEnum.True;
+        else
+            e = _boolEnum.False;
+
+        e = (_boolEnum)EditorGUILayout.EnumPopup(e, GUILayout.Width(100f));
+
+        if (e == _boolEnum.True)
+            b = true;
+        else
+            b = false;
+    }
+
+    private void EventFlagField(ref int i, ref bool b)
+    {
+        i = (int)(GameEventFlags.Flags)EditorGUILayout.EnumFlagsField((GameEventFlags.Flags)(i), GUILayout.Width(160f));
 
         _boolEnum e;
         if (b)

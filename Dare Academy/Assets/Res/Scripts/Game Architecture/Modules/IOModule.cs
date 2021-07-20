@@ -21,7 +21,7 @@ namespace blu
 
         public string displayName = null;
         public LevelID levelId = LevelID._default;
-        public System.Int64 gameEventFlags = 0;
+        public System.Int32 gameEventFlags = 0;
         public int respawnRoomID = -1;
 
         public bool shootUnlocked = false;

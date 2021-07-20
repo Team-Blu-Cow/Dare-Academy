@@ -98,7 +98,7 @@ namespace blu.EditorTools
                     switch (name)
                     {
                         case "gameEventFlags":
-                            obj = DisplayGameEventFlags((Int64)obj);
+                            obj = DisplayGameEventFlags((Int32)obj);
                             break;
 
                         default:
@@ -197,7 +197,7 @@ namespace blu.EditorTools
             return field;
         }
 
-        private Int64 DisplayGameEventFlags(Int64 gameEventFlags)
+        private Int32 DisplayGameEventFlags(Int32 gameEventFlags)
         {
             string[] flagNames = System.Enum.GetNames(typeof(GameEventFlags.Flags));
             System.Array flagValues = System.Enum.GetValues(typeof(GameEventFlags.Flags));
@@ -208,11 +208,11 @@ namespace blu.EditorTools
                 m_flagsScrollPos = EditorGUILayout.BeginScrollView(m_flagsScrollPos, GUILayout.Height(120));
                 for (int i = 0; i < flagNames.Length; i++)
                 {
-                    bool fieldBool = GameEventFlags.IsFlagSet((Int64)flagValues.GetValue(i), gameEventFlags);
+                    bool fieldBool = GameEventFlags.IsFlagSet((Int32)flagValues.GetValue(i), gameEventFlags);
 
                     fieldBool = GUILayout.Toggle(fieldBool, flagNames[i]);
                     GameEventFlags.Flags mask = (GameEventFlags.Flags)flagValues.GetValue(i);
-                    gameEventFlags = GameEventFlags.SetFlags((Int64)mask, gameEventFlags, fieldBool);
+                    gameEventFlags = GameEventFlags.SetFlags((Int32)mask, gameEventFlags, fieldBool);
                 }
                 EditorGUILayout.EndScrollView();
             }

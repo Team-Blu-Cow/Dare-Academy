@@ -6,7 +6,7 @@ public class ScriptedActionQueue : ScriptableObject
 {
     // values are set to prevent scripts being damaged when features are added or removed
     [System.Serializable]
-    public enum ActionType // 7
+    public enum ActionType // 8
     {
         None = 0,
         WaitTurns = 1,              // int
@@ -14,7 +14,8 @@ public class ScriptedActionQueue : ScriptableObject
         Dialogue = 3,               // prefab
         WaitPlayerEnterTrigger = 4, // gameObject
         WaitPlayerExitTrigger = 6,  // gameObject
-        SetFlagValue =  7,          // int, bool
+        SetFlagEntityValue =  7,    // int, bool
+        SetEventFlagValue = 8,      // int, bool
         Kill = 5,
     }
 
@@ -43,7 +44,7 @@ public class ScriptedActionQueue : ScriptableObject
     {
         [SerializeField] public ActionType type = ActionType.None;
 
-        [SerializeField] public int intData = 0;
+        [SerializeField] public int int32Data = 0;
         [SerializeField] public MoveData moveData = new MoveData();
         [SerializeField] public string textData = "";
         [SerializeField] public GameObject gameObject;

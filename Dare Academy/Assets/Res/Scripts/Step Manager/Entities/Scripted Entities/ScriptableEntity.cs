@@ -114,9 +114,15 @@ public class ScriptableEntity : GridEntity
 
                 break;
 
-            case ScriptedActionQueue.ActionType.SetFlagValue:
+            case ScriptedActionQueue.ActionType.SetFlagEntityValue:
 
-                m_flags.SetFlags(currentAction.intData, currentAction.boolData);
+                m_flags.SetFlags(currentAction.int32Data, currentAction.boolData);
+                runAgain = true;
+                break;
+
+            case ScriptedActionQueue.ActionType.SetEventFlagValue:
+
+                blu.App.GetModule<blu.LevelModule>().EventFlags.SetFlags(currentAction.int32Data, currentAction.boolData);
                 runAgain = true;
                 break;
 
@@ -220,9 +226,9 @@ public class ScriptableEntity : GridEntity
         if (data == null)
             return true;
 
-        data.intData--;
+        data.int32Data--;
 
-        if (data.intData > 0)
+        if (data.int32Data > 0)
             return false;
 
         return true;
