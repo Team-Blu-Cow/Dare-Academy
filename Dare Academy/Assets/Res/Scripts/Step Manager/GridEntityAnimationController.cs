@@ -70,7 +70,7 @@ public class GridEntityAnimationController : MonoBehaviour
         }
     }
 
-    protected void Start()
+    protected virtual void Start()
     {
         animatorSpeed =  1f/App.GetModule<LevelModule>().StepController.stepTime;
         m_animator.speed = animatorSpeed;
