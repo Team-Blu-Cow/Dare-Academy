@@ -16,8 +16,7 @@ public class WrymBossEnity : GridEntity
     private bool m_attack = false;
     private Vector2 m_fireDirection;
     private Vector2Int m_burrowPos;
-    List<Vector2Int> m_attackNodes = new List<Vector2Int>();
-
+    private List<Vector2Int> m_attackNodes = new List<Vector2Int>();
 
     [Header("Phase Two Variables")]
     [SerializeField] private int m_stepTimer = 0;
@@ -117,6 +116,21 @@ public class WrymBossEnity : GridEntity
         {
             dir = path[1] - path[0]; // Set direction to be distance vector of the two closest pathfinding nodes
             SetMovementDirection(dir, m_moveSpeed); // Set movement
+        }
+
+        int count = 0;
+        foreach (var neighbor in m_currentNode.Neighbors)
+        {
+            if (neighbor.reference.GetGridEntities().Count > 0)
+            {
+                count++;
+            }
+        }
+
+        if (count == 4)
+        {
+            Burrow();
+            SetMovementDirection(Vector2.zero, m_moveSpeed); // Set movement
         }
     }
 
@@ -225,7 +239,6 @@ public class WrymBossEnity : GridEntity
             if (node != null && App.GetModule<LevelModule>().CurrentRoom[node] != null)
             {
                 App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(App.GetModule<LevelModule>().CurrentRoom[node], TelegraphDrawer.Type.ATTACK);
-                
             }
         }
     }
