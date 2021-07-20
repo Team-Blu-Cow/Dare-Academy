@@ -15,6 +15,7 @@ public class WrymBossEnity : GridEntity
 
     [Header("Phase Two Variables")]
     [SerializeField] private int m_stepTimer = 0;
+
     [SerializeField] private bool m_firingPhaseTwo;
     [SerializeField] private GameObject m_bulletPrefab;
     [SerializeField] private int m_fireCooldown = 3;
@@ -25,11 +26,12 @@ public class WrymBossEnity : GridEntity
         base.Start();
         m_player = FindObjectOfType<PlayerEntity>();
 
-        if(m_followEntity == null)
+        if (m_followEntity == null)
         {
             m_head = true;
         }
     }
+
     protected override void OnValidate()
     {
         base.OnValidate();
@@ -73,6 +75,7 @@ public class WrymBossEnity : GridEntity
         {
             //attack
             Debug.Log("Wyrm attacking");
+            FireAttack(dir);
             Burrow();
         }
 
@@ -147,10 +150,28 @@ public class WrymBossEnity : GridEntity
         SetMovementDirection(dir, m_moveSpeed); // Set movement
     }
 
-    private void FireAttack()
+    private void FireAttack(Vector2 dir)
     {
-        for (int i = 0; i < 3; i++)
+        // Spawn one in direction
+
+        int sign = 1; // Goten from the direction
+
+        //facing right
+        for (int i = -1; i < 1; i++)
         {
+            for (int j = 2; j < 3; j++)
+            {
+                var spawnPos = Position.grid + new Vector2Int(j * sign, i);
+            }
+        }
+
+        //facing Up
+        for (int i = -1; i < 1; i++)
+        {
+            for (int j = 2; j < 3; j++)
+            {
+                var spawnPos = Position.grid + new Vector2Int(i, j * sign);
+            }
         }
     }
 
