@@ -35,7 +35,7 @@ public class ScriptableEntity : GridEntity
         {
             SpriteRenderer otherSr = m_prefab.GetComponentInChildren<SpriteRenderer>();
 
-            if (otherSr)// TODO @matthew - log warning if failed
+            if (otherSr)//#todo #matthew - log warning if failed
             {
                 sr.sprite = otherSr.sprite;
             }
@@ -43,7 +43,7 @@ public class ScriptableEntity : GridEntity
             anim = GetComponent<Animator>();
             Animator otherAnim = m_prefab.GetComponent<Animator>();
 
-            // TODO @matthew - log this failing
+            //#todo #matthew - log this failing
             if (anim != null && otherAnim != null)
             {
                 anim.runtimeAnimatorController = otherAnim.runtimeAnimatorController;
@@ -51,7 +51,7 @@ public class ScriptableEntity : GridEntity
         }
 
         if (m_actionQueue.m_actionList.Count == 0)
-            ReplaceWithPrefab(); // TODO @matthew - log warning
+            ReplaceWithPrefab(); //#todo #matthew - log warning
     }
 
     public override void ResetAnimations()
@@ -66,7 +66,7 @@ public class ScriptableEntity : GridEntity
 
         if (m_actionQueue.m_actionList.Count == 0)
         {
-            // TODO @matthew - log warning
+            //#todo #matthew - log warning
             ReplaceWithPrefab();
             return;
         }
@@ -211,13 +211,13 @@ public class ScriptableEntity : GridEntity
                     break;
 
                 default:
-                    // TODO @matthew - log warning
+                    //#todo #matthew - log warning
                     break;
             }
         }
         else
         {
-            // TODO @matthew - log warning
+            //#todo #matthew - log warning
         }
     }
 

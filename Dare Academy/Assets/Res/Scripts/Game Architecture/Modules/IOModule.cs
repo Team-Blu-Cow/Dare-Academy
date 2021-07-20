@@ -56,7 +56,7 @@ namespace blu
         private DebugSaveConfigFile m_debugConfig = null;
         private bool m_usingDebugFile = false;
         private bool m_allowDebugSaving = false;
-        // TODO @matthew add this to the debug options
+        //#todo #matthew add this to the debug options
         // private bool m_allowFileLoading = true;
 
         // things are happening in async that shouldn't be and i dont want to debug this
@@ -215,7 +215,7 @@ namespace blu
             m_activeSavedata = savedata;
 
             if (logToConsole)
-            { Debug.Log($"Save file loaded: [DisplayName = {savedata.displayName}] [File = {m_activeSavedataPath}]"); }  // TODO @Matthew: Use [App/IOModule]:
+            { Debug.Log($"Save file loaded: [DisplayName = {savedata.displayName}] [File = {m_activeSavedataPath}]"); }  //#todo #matthew: Use [App/IOModule]:
 
             return true;
         }
@@ -269,7 +269,7 @@ namespace blu
             return false;
         }
 
-        private DebugSaveConfigFile LoadDebugConfig() //TODO @Matthew: sorry for nit picking but can you please use
+        private DebugSaveConfigFile LoadDebugConfig() // #TODO #matthew: sorry for nit picking but can you please use
         {                                             // consistent braces? 209 is a oneliner and 212-215 just changes
             if (!Application.isEditor)                // for no dicernable reason
             { return null; }
@@ -303,13 +303,13 @@ namespace blu
                     {
                         m_activeSavedata = fileloader.ReadData();
                         m_activeSavedataPath = m_debugConfig.debugFileLocation;
-                        Debug.Log($"Save file loaded: [DisplayName = {savedata.displayName}] [File = {m_activeSavedataPath}]"); // TODO @Matthew: see 153:
+                        Debug.Log($"Save file loaded: [DisplayName = {savedata.displayName}] [File = {m_activeSavedataPath}]"); //#todo #matthew: see 153:
                     }
                 }
                 else
                 {
                     m_usingDebugFile = false;
-                    Debug.LogWarning("Could not find Debug Save File"); // TODO @Matthew: see 153:
+                    Debug.LogWarning("Could not find Debug Save File"); //#todo #matthew: see 153:
                 }
             }
         }

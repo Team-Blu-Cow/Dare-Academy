@@ -172,7 +172,7 @@ namespace CanvasTool
                                 currentCanvas.canvasScaler.referenceResolution = EditorGUILayout.Vector2Field("", currentCanvas.canvasScaler.referenceResolution);
                             }
 
-                            // TODO:: How to transition to a new canvas
+                            // #TODO:: How to transition to a new canvas
                             using (var HorizontalScope = new GUILayout.HorizontalScope())
                             {
                                 Indent();

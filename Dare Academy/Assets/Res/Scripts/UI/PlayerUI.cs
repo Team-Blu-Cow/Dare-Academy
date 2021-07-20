@@ -118,7 +118,7 @@ public class PlayerUI : MonoBehaviour
 
         if (numOfAbilitiesUnlocked == 0) // If the number of abilities has not been set yet
         {
-            /// TODO @Sandy call this function when player unlocks new ability !!!!!!!!!!!!!!!!!!
+            ///#todo #Sandy call this function when player unlocks new ability !!!!!!!!!!!!!!!!!!
             CheckAbilitiesUnlocked(); // Find the amount of abilities unlocked
             SetIconPositions(); // Set the icons to their right positions
         }
