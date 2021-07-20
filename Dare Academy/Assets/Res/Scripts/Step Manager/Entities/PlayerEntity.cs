@@ -107,13 +107,22 @@ public class PlayerEntity : GridEntity
         {
             Debug.LogWarning("[PlayerEntity.Start] failed to draw MiniMap");
         }
+
+        // add starting room to minimap list
+        if (m_dictRoomsTraveled.ContainsKey(SceneManager.GetActiveScene().name))
+        {
+            if (!m_dictRoomsTraveled[SceneManager.GetActiveScene().name].Contains(m_roomIndex))
+                m_dictRoomsTraveled[SceneManager.GetActiveScene().name].Add(m_roomIndex);
+        }
+        else
+            m_dictRoomsTraveled.Add(SceneManager.GetActiveScene().name, new List<int> { m_roomIndex });
+
+        UpdateSaveFile();
     }
 
     private void OnDestroy()
     {
-        App.GetModule<LevelModule>().ActiveSaveData.m_roomsTraveled.Clear();
-        foreach (var pair in m_dictRoomsTraveled)
-            App.GetModule<LevelModule>().ActiveSaveData.m_roomsTraveled.Add(new Quest.StringListIntPair(pair.Key, pair.Value));
+        UpdateSaveFile();
     }
 
     private void OnEnable()
@@ -226,6 +235,15 @@ public class PlayerEntity : GridEntity
 
             SetMovementDirection(Vector2Int.zero, 0);
         }
+    }
+
+    protected void UpdateSaveFile()
+    {
+        LevelModule levelModule = App.GetModule<LevelModule>();
+
+        levelModule.ActiveSaveData.m_roomsTraveled.Clear();
+        foreach (var pair in m_dictRoomsTraveled)
+            levelModule.ActiveSaveData.m_roomsTraveled.Add(new Quest.StringListIntPair(pair.Key, pair.Value));
     }
 
     protected void SetAbilityAnimationFlag()
@@ -413,6 +431,7 @@ public class PlayerEntity : GridEntity
                 else
                     m_dictRoomsTraveled.Add(SceneManager.GetActiveScene().name, new List<int> { m_roomIndex });
 
+                UpdateSaveFile();
                 // we have changed room
             }
         }
