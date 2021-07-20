@@ -164,6 +164,9 @@ public class ArcherEntity : GridEntity
 
     public void ShootingState()
     {
+        if (m_state != State.SHOOTING || m_cooldownCounter > 0)
+            return;
+
         GridNode targetNode = m_currentNode.Neighbors[offsetVector].reference;
 
         if (targetNode != null)
