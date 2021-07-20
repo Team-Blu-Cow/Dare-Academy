@@ -9,4 +9,11 @@ public class PlayerEnitiyAnimationController : GridEntityAnimationController
     {
         base.Start();
     }
+
+    protected override void OnValidate()
+    {
+        base.OnValidate();
+
+
+    }
 }
