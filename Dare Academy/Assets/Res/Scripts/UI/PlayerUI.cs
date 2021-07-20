@@ -5,53 +5,53 @@ using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour
 {
-    GameObject m_player; // Game object for getting player info
+    private GameObject m_player; // Game object for getting player info
 
-    PlayerEntity m_playerInfo; // Infor of the player, such as health and energy
+    private PlayerEntity m_playerInfo; // Infor of the player, such as health and energy
     private int m_energy; // Energy the player has
     private int m_health; // Health the player has
-    [SerializeField] List<GameObject> energyIcons; // Images for the amount of energy the player has
-    [SerializeField] List<GameObject> healthIcons; // Images for the amount of health the player has
+    [SerializeField] private List<GameObject> energyIcons; // Images for the amount of energy the player has
+    [SerializeField] private List<GameObject> healthIcons; // Images for the amount of health the player has
 
-    [SerializeField] GameObject gunIcon; // Image for showing the gun icon
-    [SerializeField] GameObject dashIcon; // Image for showing the dash icon
-    [SerializeField] GameObject blockIcon; // Image for showing the block icon
-    Vector2[] iconPositions = { new Vector2(75, -100), new Vector2(75, -100), new Vector2(200, -100), new Vector2(75, -100), new Vector2(175, -100), new Vector2(275, -100) }; // Positions for where the icons should be 
-    PlayerAbilities.AbilityEnum m_ability = PlayerAbilities.AbilityEnum.None; // Ability tracker for current ability
-    PlayerAbilities.AbilityEnum m_prevAbility = PlayerAbilities.AbilityEnum.None; // Tracker for previous ability
-    [SerializeField] int numOfAbilitiesUnlocked = 0; // Tracks the amount of abilities the player has unlocked
-    bool isIconsMoving = false; // Bool for if the icons are animating/moving 
-    float m_timer; // Timer for timing how long it takes for the icons to animate
+    [SerializeField] private GameObject gunIcon; // Image for showing the gun icon
+    [SerializeField] private GameObject dashIcon; // Image for showing the dash icon
+    [SerializeField] private GameObject blockIcon; // Image for showing the block icon
+    private Vector2[] iconPositions = { new Vector2(75, -100), new Vector2(75, -100), new Vector2(200, -100), new Vector2(75, -100), new Vector2(175, -100), new Vector2(275, -100) }; // Positions for where the icons should be
+    private PlayerAbilities.AbilityEnum m_ability = PlayerAbilities.AbilityEnum.None; // Ability tracker for current ability
+    private PlayerAbilities.AbilityEnum m_prevAbility = PlayerAbilities.AbilityEnum.None; // Tracker for previous ability
+    [SerializeField] private int numOfAbilitiesUnlocked = 0; // Tracks the amount of abilities the player has unlocked
+    private bool isIconsMoving = false; // Bool for if the icons are animating/moving
+    private float m_timer; // Timer for timing how long it takes for the icons to animate
 
-    Vector3 blockPosition; // Position of the block icon
-    Vector3 dashPosition; // Position of the dash icon
-    Vector3 gunPosition; // Position of the gun icon
+    private Vector3 blockPosition; // Position of the block icon
+    private Vector3 dashPosition; // Position of the dash icon
+    private Vector3 gunPosition; // Position of the gun icon
 
-    Vector3 blockScale; // Scale of the block icon
-    Vector3 dashScale; // Scale of the dash icon
-    Vector3 gunScale; // Scale of the gun icon
+    private Vector3 blockScale; // Scale of the block icon
+    private Vector3 dashScale; // Scale of the dash icon
+    private Vector3 gunScale; // Scale of the gun icon
 
     private void Start()
     {
-        m_player = FindObjectOfType<PlayerEntity>().gameObject;
+        m_player = PlayerEntity.Instance.gameObject;
         m_playerInfo = m_player.GetComponent<PlayerEntity>(); // Get the player's info
 
         m_energy = m_playerInfo.MaxEnergy; // Current energy is max on start
-        m_health = m_playerInfo.MaxHealth; // Current health is max on start 
+        m_health = m_playerInfo.MaxHealth; // Current health is max on start
 
         for (int i = 0; i < m_playerInfo.MaxHealth - 1; i++) // Loop for amount of health
         {
             AddHealth(); // Add an icon for the amount of health
         }
-        
-        for(int i = 0; i < m_playerInfo.MaxEnergy - 1; i++) // Do same for energy
+
+        for (int i = 0; i < m_playerInfo.MaxEnergy - 1; i++) // Do same for energy
         {
             AddEnergy();
         }
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         if (m_player == null) // If player doesn't exist
             return; // Don't update the player UI
@@ -61,22 +61,20 @@ public class PlayerUI : MonoBehaviour
         if ((m_energy + 1) != m_playerInfo.Energy || m_energy != m_playerInfo.Energy) // If the player's energy has changed
         {
             UpdateEnergyUI(); // Update the energy UI
-            m_energy = m_playerInfo.Energy; // Update the energy variable 
+            m_energy = m_playerInfo.Energy; // Update the energy variable
         }
-        
-        if(m_health != m_playerInfo.Health) // If the player's health has changed
+
+        if (m_health != m_playerInfo.Health) // If the player's health has changed
         {
             UpdateHealthUI(); // Update the health UI
             m_health = m_playerInfo.Health; // Update the health variable
         }
 
-
-
-        if(m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Dash) // If the active ability is dash
+        if (m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Dash) // If the active ability is dash
         {
             dashIcon.transform.GetChild(0).gameObject.SetActive(true); // Enable the dash icon
         }
-        else // If not 
+        else // If not
         {
             dashIcon.transform.GetChild(0).gameObject.SetActive(false); // Disable the dash icon
         }
@@ -99,9 +97,9 @@ public class PlayerUI : MonoBehaviour
             gunIcon.transform.GetChild(0).gameObject.SetActive(false); // Disable the shoot icon
         }
 
-        if(m_ability != PlayerAbilities.AbilityEnum.None) // If the ability has not been set yet
+        if (m_ability != PlayerAbilities.AbilityEnum.None) // If the ability has not been set yet
         {
-            if(m_ability != m_playerInfo.Abilities.GetActiveAbility()) // If the ability tracker of the UI is not the same as the ability of the players
+            if (m_ability != m_playerInfo.Abilities.GetActiveAbility()) // If the ability tracker of the UI is not the same as the ability of the players
             {
                 isIconsMoving = true; // Animate the icons to show the current ability being used
             }
@@ -113,14 +111,13 @@ public class PlayerUI : MonoBehaviour
             m_ability = m_playerInfo.Abilities.GetActiveAbility(); // Set the UI's ability to be the player's active ability
         }
 
-        if(isIconsMoving) // IF icons are being animated right now
+        if (isIconsMoving) // IF icons are being animated right now
         {
             MoveIconPositions(); // Animate the icons
         }
 
         if (numOfAbilitiesUnlocked == 0) // If the number of abilities has not been set yet
         {
-
             /// TODO @Sandy call this function when player unlocks new ability !!!!!!!!!!!!!!!!!!
             CheckAbilitiesUnlocked(); // Find the amount of abilities unlocked
             SetIconPositions(); // Set the icons to their right positions
@@ -139,7 +136,7 @@ public class PlayerUI : MonoBehaviour
 
         if (m_playerInfo.Abilities.IsUnlocked(PlayerAbilities.AbilityEnum.Block)) // If the player has block unlocked
         {
-            blockIcon.SetActive(true); // Set the block icon to be active 
+            blockIcon.SetActive(true); // Set the block icon to be active
             numOfAbilitiesUnlocked++; // Increment the amonut of abilities unlocked
         }
 
@@ -154,7 +151,7 @@ public class PlayerUI : MonoBehaviour
     {
         if (numOfAbilitiesUnlocked == 1) // If the player has one ability unlocked
         {
-            if(dashIcon.activeSelf == true) // If the dash icon is active
+            if (dashIcon.activeSelf == true) // If the dash icon is active
             {
                 dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[0]; // Set its position to the first element of the icon position array
             }
@@ -175,7 +172,7 @@ public class PlayerUI : MonoBehaviour
 
             if (dashIcon.activeSelf == true) // If the dash icon is active
             {
-                if(m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Dash) // If the player is using the dash ability
+                if (m_playerInfo.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Dash) // If the player is using the dash ability
                 {
                     dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[1]; // Set the icon position to the second element of the icon position array
                 }
@@ -225,7 +222,6 @@ public class PlayerUI : MonoBehaviour
                 }
             }
         }
-
     }
 
     private void MoveIconPositions()
@@ -297,7 +293,7 @@ public class PlayerUI : MonoBehaviour
             else if (numOfAbilitiesUnlocked == 3)
             {
                 // Moving Left
-                if(m_ability == PlayerAbilities.AbilityEnum.Dash && (m_prevAbility == PlayerAbilities.AbilityEnum.Block || m_prevAbility == PlayerAbilities.AbilityEnum.None)) // If the ability has changed from dash to block
+                if (m_ability == PlayerAbilities.AbilityEnum.Dash && (m_prevAbility == PlayerAbilities.AbilityEnum.Block || m_prevAbility == PlayerAbilities.AbilityEnum.None)) // If the ability has changed from dash to block
                 {
                     MoveIconsLeft(transitionSpeed); // Move the icons left
                 }
@@ -351,7 +347,7 @@ public class PlayerUI : MonoBehaviour
     {
         if (m_timer > transitionSpeed) // If the icon's have stopped animating
         {
-            CheckIconsInPosition(); // Check where the icons are 
+            CheckIconsInPosition(); // Check where the icons are
             isIconsMoving = false; // Set animating to false
 
             // Reset position references
@@ -370,11 +366,11 @@ public class PlayerUI : MonoBehaviour
 
     private void CheckIconsInPosition()
     {
-        if(numOfAbilitiesUnlocked == 2) // If the number of abilities unlocked is 2
+        if (numOfAbilitiesUnlocked == 2) // If the number of abilities unlocked is 2
         {
-            if(m_prevAbility == PlayerAbilities.AbilityEnum.Dash && dashIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[2]) // If the previous icon was dash and the dash icon is not in the right position
+            if (m_prevAbility == PlayerAbilities.AbilityEnum.Dash && dashIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[2]) // If the previous icon was dash and the dash icon is not in the right position
             {
-                if(blockIcon.activeSelf == false) // If the block icon is not active
+                if (blockIcon.activeSelf == false) // If the block icon is not active
                 {
                     dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[2]; // Set the dash icon to the proper position
                     gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[1]; // Set the gun icon to the proper position
@@ -391,7 +387,7 @@ public class PlayerUI : MonoBehaviour
             }
             else if (m_prevAbility == PlayerAbilities.AbilityEnum.Shoot && gunIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[2])
             {
-                if(blockIcon.activeSelf == false)
+                if (blockIcon.activeSelf == false)
                 {
                     gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[2]; // Set the gun icon to the proper position
                     dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[1]; // Set the dash icon to the proper position
@@ -408,7 +404,7 @@ public class PlayerUI : MonoBehaviour
             }
             else if (m_prevAbility == PlayerAbilities.AbilityEnum.Block && blockIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[2])
             {
-                if(dashIcon.activeSelf == false)
+                if (dashIcon.activeSelf == false)
                 {
                     blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[2]; // Set the block icon to the proper position
                     gunIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[1]; // Set the gun icon to the proper position
@@ -424,9 +420,9 @@ public class PlayerUI : MonoBehaviour
                 }
             }
         }
-        else if(numOfAbilitiesUnlocked == 3)
+        else if (numOfAbilitiesUnlocked == 3)
         {
-            if(m_prevAbility == PlayerAbilities.AbilityEnum.Dash && dashIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[4])
+            if (m_prevAbility == PlayerAbilities.AbilityEnum.Dash && dashIcon.GetComponent<RectTransform>().anchoredPosition != iconPositions[4])
             {
                 blockIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[3]; // Set the block icon to the proper position
                 dashIcon.GetComponent<RectTransform>().anchoredPosition = iconPositions[4]; // Set the dash icon to the proper position
@@ -461,12 +457,12 @@ public class PlayerUI : MonoBehaviour
 
     private void UpdateHealthUI()
     {
-        for(int i = 0; i < healthIcons.Count; i++) // For all the health images
+        for (int i = 0; i < healthIcons.Count; i++) // For all the health images
         {
             healthIcons[i].SetActive(false); // Set active to false
         }
-        
-        for(int i = 0; i < m_playerInfo.Health; i++) // For the ones showing how much health the player has
+
+        for (int i = 0; i < m_playerInfo.Health; i++) // For the ones showing how much health the player has
         {
             healthIcons[i].SetActive(true); // Set active to true
         }
@@ -478,7 +474,7 @@ public class PlayerUI : MonoBehaviour
         {
             energyIcons[i].SetActive(false); // Set active to false
         }
-        
+
         for (int i = 0; i < m_energy; i++) // For the ones showing how much energy the player has
         {
             if (i < energyIcons.Count)

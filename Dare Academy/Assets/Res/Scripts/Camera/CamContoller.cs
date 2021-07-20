@@ -18,7 +18,7 @@ namespace blu
 
         private void Start()
         {
-            _player = FindObjectOfType<PlayerEntity>();
+            _player = PlayerEntity.Instance;
             if (_player != null)
                 GetComponent<FMODUnity.StudioListener>().attenuationObject = _player.gameObject;
             else

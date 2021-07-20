@@ -40,7 +40,7 @@ public class GameOverScript : MonoBehaviour
             DontDestroyOnLoad(_prefab);
             _camRef = Camera.main;
             blu.App.GetModule<blu.InputModule>().PlayerController.Disable();
-            _playerRef = FindObjectOfType<PlayerEntity>();
+            _playerRef = PlayerEntity.Instance;
             _playerRef.GetComponent<SortingGroup>().sortingLayerName = "World Space UI";
             _prefab.transform.position = new Vector3(_camRef.transform.localPosition.x, _camRef.transform.localPosition.y, 0);
             int order = _playerRef.GetComponent<SortingGroup>().sortingOrder;

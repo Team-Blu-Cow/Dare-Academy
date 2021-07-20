@@ -27,7 +27,7 @@ public class AddQuest : MonoBehaviour, IInteractable
     private void Start()
     {
         App.GetModule<InputModule>().PlayerController.Player.Interact.started += OnInteract;
-        m_player = FindObjectOfType<PlayerEntity>();
+        m_player = PlayerEntity.Instance;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

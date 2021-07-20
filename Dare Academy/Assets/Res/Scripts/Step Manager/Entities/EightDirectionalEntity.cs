@@ -27,15 +27,13 @@ public class EightDirectionalEntity : GridEntity
         m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true); // Set flag for killable to true
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true); // Set flag for if solid to true
 
-        player = FindObjectOfType<PlayerEntity>(); // Find the player // WILL NEED TO CHANGE TO PROPER NAME
+        player = PlayerEntity.Instance; // Find the player
         m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet"); // Find the bullet prefab
-
     }
 
     protected override void OnValidate()
     {
         base.OnValidate();
-
     }
 
     public override void AnalyseStep()

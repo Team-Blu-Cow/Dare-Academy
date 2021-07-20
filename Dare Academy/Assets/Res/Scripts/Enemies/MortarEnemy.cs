@@ -13,23 +13,33 @@ public class MortarEnemy : GridEntity
     private Vector3 centreAttack = new Vector3();
     private bool m_attack = false;
     private int m_attackTimer = 0;
-    private int m_waitTimer = 2;
+
+    private int m_fireRate = 2;
+    private int m_cooldown = 0;
+
+    private GameObject m_damageEntityPrefab;
+
+    protected override void OnValidate()
+    {
+        base.OnValidate();
+        m_damageEntityPrefab = Resources.Load<GameObject>("prefabs/Entities/DamageEntity");
+    }
 
     protected override void Start()
     {
         m_health = 2;
-        m_player = FindObjectOfType<PlayerEntity>();
+        m_player = PlayerEntity.Instance;
         base.Start();
     }
 
     public override void AnalyseStep()
     {
-        if (PlayerInFiringRange() && !m_attack)
+        m_cooldown--;
+
+        if (PlayerInFiringRange() && m_cooldown < 0)
         {
-            mortarGraphic = Instantiate(Resources.Load<GameObject>("prefabs/Entities/MortarShots"));
-            mortarGraphic.transform.position = m_player.Position.world;
-            centreAttack = m_player.Position.world;
             m_attack = true;
+            m_cooldown = m_fireRate;
         }
         base.AnalyseStep();
     }
@@ -38,47 +48,32 @@ public class MortarEnemy : GridEntity
     {
         if (m_attack)
         {
-            if (m_waitTimer < 1)
+            m_attack = false;
+
+            List<GridNode> nodes = new List<GridNode>();
+            nodes.Add(m_player.currentNode);
+
+            for (int i = 0; i < 8; i += 2)
             {
-                m_waitTimer = 2;
-                m_attack = false;
-                return;
+                nodes.Add(m_player.currentNode.Neighbors[i].reference);
             }
 
-            m_attackTimer += 1;
-            if (m_attackTimer > 1)
+            foreach (var node in nodes)
             {
-                GridNode centreNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(centreAttack);
-                List<GridEntity> contents = centreNode.GetGridEntities();
-                foreach (GridEntity entity in contents)
+                if (node != null && node != currentNode)
                 {
-                    //entity.Health -= 1;
-                    Debug.Log("Hit");
+                    GameObject obj = GameObject.Instantiate(m_damageEntityPrefab, node.position.world, Quaternion.identity);
+                    obj.GetComponent<DamageEntity>().Countdown = 2;
                 }
-
-                for (int i = 0; i < 8; i += 2)
-                {
-                    GridNode node = centreNode.Neighbors[i].reference;
-                    if (node != null)
-                    {
-                        contents = node.GetGridEntities();
-                        foreach (GridEntity entity in contents)
-                        {
-                            //entity.Health -= 1;
-                            Debug.Log("Hit");
-                        }
-                    }
-                }
-
-                Destroy(mortarGraphic);
-                m_waitTimer -= 1;
-                m_attackTimer = 0;
             }
         }
     }
 
     private bool PlayerInFiringRange()
     {
+        if (m_player.currentNode == null)
+            return false;
+
         return Vector3.Distance(transform.position, m_player.Position.world) <= m_attackRadius + 0.25f;
     }
 
