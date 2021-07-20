@@ -28,7 +28,7 @@ public class MortarEnemy : GridEntity
     protected override void Start()
     {
         m_health = 2;
-        m_player = FindObjectOfType<PlayerEntity>();
+        m_player = PlayerEntity.Instance;
         base.Start();
     }
 

@@ -27,13 +27,14 @@ public class ArcherEntity : GridEntity
     private Vector3[] path;
 
     [Header("Jays rework stuff")]
-    [SerializeField] Vector2Int positionDiff;
-    [SerializeField] Vector2 offsetVector;
-    [SerializeField] GridNodePosition targetPosition;
-    [SerializeField] int distance;
-    [SerializeField] int dist;
-    [SerializeField] int fearRange = 2;
-    Color m_gizmoColour;
+    [SerializeField] private Vector2Int positionDiff;
+
+    [SerializeField] private Vector2 offsetVector;
+    [SerializeField] private GridNodePosition targetPosition;
+    [SerializeField] private int distance;
+    [SerializeField] private int dist;
+    [SerializeField] private int fearRange = 2;
+    private Color m_gizmoColour;
 
     public enum State
     {
@@ -41,7 +42,7 @@ public class ArcherEntity : GridEntity
         SHOOTING
     }
 
-    [SerializeField] State m_state;
+    [SerializeField] private State m_state;
 
     protected override void Start()
     {
@@ -49,7 +50,7 @@ public class ArcherEntity : GridEntity
         m_health = 5; // Set health
         m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true); // Set flag for killable to true
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true); // Set flag for if solid to true
-        player = FindObjectOfType<PlayerEntity>();
+        player = PlayerEntity.Instance;
         m_state = State.MOVING;
     }
 
@@ -69,7 +70,7 @@ public class ArcherEntity : GridEntity
 
         DecideState();
 
-        switch(m_state)
+        switch (m_state)
         {
             case State.MOVING:
                 MoveState();
@@ -81,7 +82,7 @@ public class ArcherEntity : GridEntity
         }
     }
 
-    void DecideState()
+    private void DecideState()
     {
         m_gizmoColour = Color.cyan;
         m_state = State.MOVING;
@@ -136,7 +137,6 @@ public class ArcherEntity : GridEntity
 
             if (targetNode != null)
                 targetPosition = targetNode.position;
-
         }
 
         path = new Vector3[0];

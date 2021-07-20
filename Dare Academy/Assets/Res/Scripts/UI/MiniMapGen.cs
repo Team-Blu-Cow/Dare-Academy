@@ -32,7 +32,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
     {
         App.GetModule<LevelModule>().StepController.RoomChangeEvent += DrawMap;
         transform = GetComponent<RectTransform>();
-        player = FindObjectOfType<PlayerEntity>();
+        player = PlayerEntity.Instance;
     }
 
     private void OnEnable()
