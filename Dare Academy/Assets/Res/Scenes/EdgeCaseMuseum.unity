@@ -358,6 +358,7 @@ MonoBehaviour:
   m_head: 0
   m_followEntity: {fileID: 1928266206}
   m_stepTimer: 0
+  m_prevPosition: {x: 0, y: 0, z: 0}
   m_firingPhaseTwo: 0
   m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
   m_fireCooldown: 0
@@ -404,7 +405,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 322930402}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.5, y: -11.53, z: 0}
+  m_LocalPosition: {x: 5.5, y: -11.53, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1451595984}
@@ -484,6 +485,7 @@ MonoBehaviour:
   m_head: 0
   m_followEntity: {fileID: 0}
   m_stepTimer: 0
+  m_prevPosition: {x: 0, y: 0, z: 0}
   m_firingPhaseTwo: 0
   m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
   m_fireCooldown: 0
@@ -495,7 +497,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 333985282}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.5, y: -9.53, z: 0}
+  m_LocalPosition: {x: 5.5, y: -9.53, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 679930886}
@@ -707,6 +709,7 @@ MonoBehaviour:
   m_head: 0
   m_followEntity: {fileID: 607107390}
   m_stepTimer: 0
+  m_prevPosition: {x: 0, y: 0, z: 0}
   m_firingPhaseTwo: 0
   m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
   m_fireCooldown: 0
@@ -753,7 +756,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 489761354}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.5, y: -13.53, z: 0}
+  m_LocalPosition: {x: 5.5, y: -13.53, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 335494683}
@@ -833,6 +836,7 @@ MonoBehaviour:
   m_head: 0
   m_followEntity: {fileID: 489761355}
   m_stepTimer: 0
+  m_prevPosition: {x: 0, y: 0, z: 0}
   m_firingPhaseTwo: 1
   m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
   m_fireCooldown: 0
@@ -844,7 +848,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 510124170}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.5, y: -14.53, z: 0}
+  m_LocalPosition: {x: 5.5, y: -14.53, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1793641044}
@@ -933,6 +937,36 @@ Transform:
   m_Father: {fileID: 163415490}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &532686069
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 532686070}
+  m_Layer: 0
+  m_Name: Telegraph Container
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &532686070
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 532686069}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 17
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &607107389
 GameObject:
   m_ObjectHideFlags: 0
@@ -971,6 +1005,7 @@ MonoBehaviour:
   m_head: 0
   m_followEntity: {fileID: 322930403}
   m_stepTimer: 0
+  m_prevPosition: {x: 0, y: 0, z: 0}
   m_firingPhaseTwo: 1
   m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
   m_fireCooldown: 0
@@ -1017,7 +1052,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 607107389}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.5, y: -12.53, z: 0}
+  m_LocalPosition: {x: 5.5, y: -12.53, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1058918831}
@@ -1388,6 +1423,12 @@ MonoBehaviour:
     m_entities: []
     m_currentRoomIndex: 0
     m_targetRoomIndex: 0
+  m_telegraphDrawer:
+    m_spriteList: []
+    m_telegraphParentGameobject: {fileID: 532686069}
+    m_prefabList:
+    - {fileID: 4838930727580122806, guid: fd3b0691a3fc00e47ab99a1e05455599, type: 3}
+    - {fileID: 4603401333253293011, guid: 583baecee8e3f9a40873456791f82605, type: 3}
   m_grid:
     grids: []
     gridInfo:
@@ -16487,6 +16528,7 @@ MonoBehaviour:
   m_head: 0
   m_followEntity: {fileID: 333985285}
   m_stepTimer: 0
+  m_prevPosition: {x: 0, y: 0, z: 0}
   m_firingPhaseTwo: 1
   m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
   m_fireCooldown: 0
@@ -16533,7 +16575,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1928266205}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 12.5, y: -10.53, z: 0}
+  m_LocalPosition: {x: 5.5, y: -10.53, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 708395575}

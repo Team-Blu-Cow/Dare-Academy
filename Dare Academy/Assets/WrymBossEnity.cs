@@ -15,7 +15,7 @@ public class WrymBossEnity : GridEntity
 
     [Header("Phase Two Variables")]
     [SerializeField] private int m_stepTimer = 0;
-
+    [SerializeField] private Vector3 m_prevPosition = new Vector3(0,0,0);
     [SerializeField] private bool m_firingPhaseTwo;
     [SerializeField] private GameObject m_bulletPrefab;
     [SerializeField] private int m_fireCooldown = 3;
@@ -106,12 +106,22 @@ public class WrymBossEnity : GridEntity
 
             if (m_currentNode.GetNeighbour(new Vector2Int(0, -1)) != null)
             {
-                if (currentNode.GetNeighbour(new Vector2Int(0, -1)).GetGridEntities().Count == 0)
+                if (m_currentNode.GetNeighbour(new Vector2Int(0, -1)).GetGridEntities().Count == 0)
                 {
                     tempDir = new Vector2Int(0, -1);
                 }
+            }           
+
+            if(m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && m_prevPosition == m_currentNode.position.world && m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
+            {
+                tempDir = new Vector2Int(1, 0);
+            }
+            if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null && m_prevPosition == m_currentNode.position.world && m_currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0)
+            {
+                tempDir = new Vector2Int(-1, 0);
             }
 
+            m_prevPosition = m_currentNode.position.world;
             dir = tempDir;
         }
         else
