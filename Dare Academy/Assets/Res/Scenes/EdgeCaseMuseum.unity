@@ -200,6 +200,7 @@ MonoBehaviour:
       distance: 1
     textData: 
     gameObject: {fileID: 5633297861241632379}
+    boolData: 0
   - type: 2
     intData: 0
     moveData:
@@ -207,6 +208,7 @@ MonoBehaviour:
       distance: 5
     textData: 
     gameObject: {fileID: 0}
+    boolData: 0
   - type: 3
     intData: 0
     moveData:
@@ -214,6 +216,7 @@ MonoBehaviour:
       distance: 1
     textData: 
     gameObject: {fileID: 4345965794360214484, guid: 1813a0834428ada46adea6d1b3f2e4b2, type: 3}
+    boolData: 0
   - type: 1
     intData: 3
     moveData:
@@ -221,6 +224,7 @@ MonoBehaviour:
       distance: 1
     textData: 
     gameObject: {fileID: 0}
+    boolData: 0
   - type: 5
     intData: 0
     moveData:
@@ -228,6 +232,7 @@ MonoBehaviour:
       distance: 1
     textData: 
     gameObject: {fileID: 0}
+    boolData: 0
 --- !u!1 &163415486
 GameObject:
   m_ObjectHideFlags: 0
@@ -346,7 +351,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad16140adfc8a2146afc9dedf5bcce40, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_mass: 2
+  m_mass: 10
   m_flags:
     m_flagData: 0
   m_direction: {x: 0, y: 0}
@@ -594,12 +599,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_stepTime: 0.2
-  m_defaultPlayerSpawnIndex: 6
+  m_defaultPlayerSpawnIndex: 0
   m_defaultPlayerPosition: {x: 8, y: 5}
   m_stepController:
     m_entities: []
     m_currentRoomIndex: 0
     m_targetRoomIndex: 0
+  m_telegraphDrawer:
+    m_spriteList: []
+    m_telegraphParentGameobject: {fileID: 1976381829}
+    m_prefabList:
+    - {fileID: 4838930727580122806, guid: fd3b0691a3fc00e47ab99a1e05455599, type: 3}
+    - {fileID: 4603401333253293011, guid: 583baecee8e3f9a40873456791f82605, type: 3}
   m_grid:
     grids: []
     gridInfo:
@@ -15497,6 +15508,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2467622dff9238e4ebdcbc44d4c21152, type: 3}
+--- !u!1 &1976381829
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1976381830}
+  m_Layer: 0
+  m_Name: Telegraph Container
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1976381830
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1976381829}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 11
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &2113229507
 PrefabInstance:
   m_ObjectHideFlags: 0
