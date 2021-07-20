@@ -201,7 +201,7 @@ namespace blu
             _input.DialogueController.Dialogue.Skip.performed += SkipDialogue;
             SceneManager.sceneLoaded += OnSceneSwitch;
 
-            _dialogueCanvasPrefab = Resources.Load<GameObject>("prefabs/DialogueCanvas");
+            _dialogueCanvasPrefab = Resources.Load<GameObject>("prefabs/UI prefabs/DialogueCanvas");
             InitDialogueCanvas();
         }
 

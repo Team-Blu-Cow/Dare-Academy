@@ -38,7 +38,7 @@ public class PlayerEntity : GridEntity
 
     // HEALTH
 
-    private int m_maxHealth = 1;
+    private int m_maxHealth = 3;
     public int MaxHealth { get { return m_maxHealth; } set { m_maxHealth = value; } }
 
     // ENERGY
@@ -268,7 +268,7 @@ public class PlayerEntity : GridEntity
         {
             Vector2 v = Vector2.up.Rotate(angle);
             GridNode node = m_currentNode.Neighbors[v].reference;
-            if (node != null)
+            if (node != null && node.roomIndex == m_currentNode.roomIndex)
             {
                 App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.MOVE);
             }
@@ -449,7 +449,7 @@ public class PlayerEntity : GridEntity
 
     public override void OnDeath()
     {
-        GameObject temp = Resources.Load<GameObject>("prefabs/DeathScreenCanvas");
+        GameObject temp = Resources.Load<GameObject>("prefabs/UI prefabs/DeathScreenCanvas");
         Instantiate(temp).transform.parent = Camera.main.transform;
     }
 
