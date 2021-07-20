@@ -115,7 +115,8 @@ public abstract class GridEntity : MonoBehaviour
         if (m_animationController == null)
         {
             m_animationController = GetComponent<GridEntityAnimationController>();
-            //#todo #matthew - log warning if failed
+            if (m_animationController == null)
+                Debug.LogWarning($"[GridEntity] [name = {gameObject.name}] failed to get GridEntityAnimationController");
         }
 
         AnalyseStep();

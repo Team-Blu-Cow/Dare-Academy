@@ -215,7 +215,7 @@ namespace blu
             m_activeSavedata = savedata;
 
             if (logToConsole)
-            { Debug.Log($"Save file loaded: [DisplayName = {savedata.displayName}] [File = {m_activeSavedataPath}]"); }  //#todo #matthew: Use [App/IOModule]:
+            { Debug.Log($"Save file loaded: [DisplayName = {savedata.displayName}] [File = {m_activeSavedataPath}]"); }
 
             return true;
         }
@@ -269,9 +269,9 @@ namespace blu
             return false;
         }
 
-        private DebugSaveConfigFile LoadDebugConfig() // #TODO #matthew: sorry for nit picking but can you please use
-        {                                             // consistent braces? 209 is a oneliner and 212-215 just changes
-            if (!Application.isEditor)                // for no dicernable reason
+        private DebugSaveConfigFile LoadDebugConfig()
+        {
+            if (!Application.isEditor)
             { return null; }
 
             BaseFileLoader<DebugSaveConfigFile> fileloader = new DebugFileLoader<DebugSaveConfigFile>(m_applicationPath + FileIO.DebugSaveConfigFile.path);
@@ -303,13 +303,13 @@ namespace blu
                     {
                         m_activeSavedata = fileloader.ReadData();
                         m_activeSavedataPath = m_debugConfig.debugFileLocation;
-                        Debug.Log($"Save file loaded: [DisplayName = {savedata.displayName}] [File = {m_activeSavedataPath}]"); //#todo #matthew: see 153:
+                        Debug.Log($"Save file loaded: [DisplayName = {savedata.displayName}] [File = {m_activeSavedataPath}]");
                     }
                 }
                 else
                 {
                     m_usingDebugFile = false;
-                    Debug.LogWarning("Could not find Debug Save File"); //#todo #matthew: see 153:
+                    Debug.LogWarning("Could not find Debug Save File");
                 }
             }
         }

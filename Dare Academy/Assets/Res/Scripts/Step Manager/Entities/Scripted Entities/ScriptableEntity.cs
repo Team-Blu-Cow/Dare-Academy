@@ -28,30 +28,34 @@ public class ScriptableEntity : GridEntity
 
         if (m_prefab == null)
         {
-            Debug.LogWarning($"ScriptableEntity [{gameObject.name}] has no assigned prefab, killing self");
+            Debug.LogWarning($"[ScriptableEntity] [{gameObject.name}] has no assigned prefab, killing self");
             Kill();
         }
         else
         {
             SpriteRenderer otherSr = m_prefab.GetComponentInChildren<SpriteRenderer>();
 
-            if (otherSr)//#todo #matthew - log warning if failed
+            if (otherSr)
             {
                 sr.sprite = otherSr.sprite;
+            }
+            else
+            {
+                Debug.LogWarning($"[ScriptableEntity] [name = {gameObject.name}] could not get sprite renderer of prefab");
             }
 
             anim = GetComponent<Animator>();
             Animator otherAnim = m_prefab.GetComponent<Animator>();
 
-            //#todo #matthew - log this failing
             if (anim != null && otherAnim != null)
             {
                 anim.runtimeAnimatorController = otherAnim.runtimeAnimatorController;
             }
+            else
+            {
+                Debug.LogWarning($"[ScriptableEntity] [name = {gameObject.name}] could not get animator of prefab");
+            }
         }
-
-        if (m_actionQueue.m_actionList.Count == 0)
-            ReplaceWithPrefab(); //#todo #matthew - log warning
     }
 
     public override void ResetAnimations()
@@ -66,9 +70,8 @@ public class ScriptableEntity : GridEntity
 
         if (m_actionQueue.m_actionList.Count == 0)
         {
-            //#todo #matthew - log warning
+            Debug.LogWarning($"[ScriptableEntity] [name = {gameObject.name}] action queue has no content");
             ReplaceWithPrefab();
-            return;
         }
 
     RunAgainLabel:
@@ -135,7 +138,7 @@ public class ScriptableEntity : GridEntity
                 break;
 
             default:
-                Debug.LogWarning($"ScriptedEntity [{gameObject.name}] could not resolve action [type = {currentAction.type.ToString()}]");
+                Debug.LogWarning($"[ScriptedEntity] [{gameObject.name}] could not resolve action [type = {currentAction.type.ToString()}]");
                 break;
         }
         if (stepQueue)
@@ -156,12 +159,12 @@ public class ScriptableEntity : GridEntity
             GameObject obj = GameObject.Instantiate(m_prefab, m_currentNode.position.world, Quaternion.identity);
             if (obj == null)
             {
-                Debug.LogWarning($"ScriptableEntity [{gameObject.name}] could not instantiate prefab [prefab = {m_prefab.name}]");
+                Debug.LogWarning($"[ScriptableEntity] [{gameObject.name}] could not instantiate prefab [prefab = {m_prefab.name}]");
             }
         }
         else
         {
-            Debug.LogWarning($"ScriptableEntity [{gameObject.name}] prefab was null");
+            Debug.LogWarning($"[ScriptableEntity] [{gameObject.name}] prefab was null");
         }
 
         RemoveFromCurrentNode();
@@ -211,13 +214,13 @@ public class ScriptableEntity : GridEntity
                     break;
 
                 default:
-                    //#todo #matthew - log warning
+                    Debug.LogWarning($"[ScriptedEntity] [name = {gameObject.name}] could not execute move action");
                     break;
             }
         }
         else
         {
-            //#todo #matthew - log warning
+            Debug.LogWarning($"[ScriptedEntity] [name = {gameObject.name}] move action data was null");
         }
     }
 
@@ -232,9 +235,5 @@ public class ScriptableEntity : GridEntity
             return false;
 
         return true;
-    }
-
-    protected void DialogueAction(ScriptedActionQueue.ActionWrapper data)
-    {
     }
 }

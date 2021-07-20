@@ -24,6 +24,6 @@ namespace blu
             return;
         }
 
-        public static void Save() => PlayerPrefs.Save(); //TODO #matthew: why is this static? we have App.GetModule<T>();
+        public static void Save() => PlayerPrefs.Save();
     }
 }

@@ -204,7 +204,7 @@ public class PlayerEntity : GridEntity
             else
             {
                 // failed to dash, no enough energy
-                // #TODO #matthew #adam - sound effect here
+                // #TODO #sound #adam - sound effect here
                 m_abilityDirection = Vector2Int.zero;
             }
         }
@@ -221,7 +221,7 @@ public class PlayerEntity : GridEntity
             else
             {
                 // failed to dash, no enough energy
-                // #TODO #matthew #adam - sound effect here
+                // #TODO #sound #adam - sound effect here
                 m_abilityDirection = Vector2Int.zero;
             }
         }

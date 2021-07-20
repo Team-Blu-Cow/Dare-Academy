@@ -88,7 +88,7 @@ namespace blu
                 //NOTE: if camera is acting weird, very likely due to the fact
                 // that it assumes all grid cells are the size of 1.
                 //
-                // shout at #adam (or #matthew if youre feeling spicy) to fix it
+                // shout at Adam (or Matthew if youre feeling spicy) to fix it
 
                 //_virtualCam.Follow.position = _player.transform.position;
 
