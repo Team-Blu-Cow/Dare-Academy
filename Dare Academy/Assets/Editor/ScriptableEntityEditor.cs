@@ -12,6 +12,12 @@ public class ScriptableEntityEditor : Editor
         True = 1,
     }
 
+    private enum _cameraOptionsEnum
+    {
+        gameobject,
+        vec3,
+    }
+
     private SerializedProperty prefabProperty;
 
     private bool foldout = false;
@@ -99,6 +105,7 @@ public class ScriptableEntityEditor : Editor
                 queue.m_actionList[i].moveData = new ScriptedActionQueue.MoveData();
                 queue.m_actionList[i].gameObject = null;
                 queue.m_actionList[i].boolData = false;
+                queue.m_actionList[i].vec3data = Vector3.zero;
             }
 
             switch (queue.m_actionList[i].type)
@@ -132,6 +139,10 @@ public class ScriptableEntityEditor : Editor
 
                 case ScriptedActionQueue.ActionType.SetEventFlagValue:
                     EventFlagField(ref queue.m_actionList[i].int32Data, ref queue.m_actionList[i].boolData);
+                    break;
+
+                case ScriptedActionQueue.ActionType.SetCameraPosition:
+                    SetCameraPositionField(ref queue.m_actionList[i].boolData, ref queue.m_actionList[i].vec3data, ref queue.m_actionList[i].gameObject);
                     break;
 
                 default:
@@ -187,6 +198,11 @@ public class ScriptableEntityEditor : Editor
         return (int)i;
     }
 
+    private GameObject ObjectField(GameObject obj)
+    {
+        return EditorGUILayout.ObjectField(obj, typeof(GameObject), true) as GameObject;
+    }
+
     private ScriptedActionQueue.MoveData MoveDataField(ScriptedActionQueue.MoveData data)
     {
         if (data == null)
@@ -233,5 +249,32 @@ public class ScriptableEntityEditor : Editor
             b = true;
         else
             b = false;
+    }
+
+    private void SetCameraPositionField(ref bool b, ref Vector3 vec3, ref GameObject obj)
+    {
+        _cameraOptionsEnum e;
+        if (b)
+            e = _cameraOptionsEnum.gameobject;
+        else
+            e = _cameraOptionsEnum.vec3;
+
+        e = (_cameraOptionsEnum)EditorGUILayout.EnumPopup(e, GUILayout.Width(100f));
+
+        if (e == _cameraOptionsEnum.gameobject)
+            b = true;
+        else
+            b = false;
+
+        if (b)
+        {
+            obj = ObjectField(obj);
+            vec3 = Vector3.zero;
+        }
+        else
+        {
+            obj = null;
+            vec3 = EditorGUILayout.Vector3Field("", vec3);
+        }
     }
 }

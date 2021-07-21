@@ -137,6 +137,16 @@ public class ScriptableEntity : GridEntity
                 runAgain = true;
                 break;
 
+            case ScriptedActionQueue.ActionType.SetCameraPosition:
+                CameraPosAction(currentAction);
+                runAgain = true;
+                break;
+
+            case ScriptedActionQueue.ActionType.SetCameraToPlayer:
+                CameraToPlayerAction();
+                runAgain = true;
+                break;
+
             default:
                 Debug.LogWarning($"[ScriptedEntity] [{gameObject.name}] could not resolve action [type = {currentAction.type.ToString()}]");
                 break;
@@ -235,5 +245,22 @@ public class ScriptableEntity : GridEntity
             return false;
 
         return true;
+    }
+
+    protected void CameraPosAction(ScriptedActionQueue.ActionWrapper data)
+    {
+        if (data.boolData)
+        {
+            blu.App.CameraController.MoveToPosition(data.gameObject.transform);
+        }
+        else
+        {
+            blu.App.CameraController.MoveToPosition(data.vec3data);
+        }
+    }
+
+    protected void CameraToPlayerAction()
+    {
+        blu.App.CameraController.KeepPlayerInFrame();
     }
 }
