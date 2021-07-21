@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerEnitiyAnimationController : GridEntityAnimationController
+public class PlayerEntityAnimationController : GridEntityAnimationController
 {
     // INITIALISATION METHODS *********************************************************************
     protected override void Start()
@@ -13,7 +13,5 @@ public class PlayerEnitiyAnimationController : GridEntityAnimationController
     protected override void OnValidate()
     {
         base.OnValidate();
-
-
     }
 }
