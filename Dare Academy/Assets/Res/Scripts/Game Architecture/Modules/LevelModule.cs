@@ -18,6 +18,13 @@ namespace blu
         private PathfindingMultiGrid m_grid = null;
         private GameEventFlags m_gameEventFlags = new GameEventFlags();
 
+        private bool m_initialised = false;
+
+        public bool IsInitialised
+        {
+            get => m_initialised;
+        }
+
         public SaveData ActiveSaveData
         {
             get { return blu.App.GetModule<IOModule>().savedata; }
@@ -94,6 +101,8 @@ namespace blu
 
             if (m_playerPrefab == null)
                 m_playerPrefab = Resources.Load<GameObject>("prefabs/Entities/Player");
+
+            m_initialised = true;
         }
 
         protected override void SetDependancies()
@@ -168,6 +177,7 @@ namespace blu
 
         public async void SaveGame()
         {
+            await AwaitSaveLoad();
             App.GetModule<IOModule>().savedata.gameEventFlags = m_gameEventFlags._FlagData;
             // #TODO #matthew - move the await out of here
             await App.GetModule<IOModule>().SaveAsync();
@@ -183,6 +193,17 @@ namespace blu
             blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
             while (levelModule.IsSaveLoaded == false)
             { }
+            return true;
+        }
+
+        public Task<bool> AwaitInitialised()
+        {
+            return Task.Run(() => AwaitInitialisedImpl());
+        }
+
+        internal bool AwaitInitialisedImpl()
+        {
+            while (!IsInitialised) { }
             return true;
         }
     }

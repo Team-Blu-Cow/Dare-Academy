@@ -9,6 +9,7 @@ using JUtil;
 
 using flags = GridEntityFlags.Flags;
 using interalFlags = GridEntityInternalFlags.Flags;
+using eventFlags = GameEventFlags.Flags;
 using AbilityEnum = PlayerAbilities.AbilityEnum;
 using System.Threading.Tasks;
 
@@ -88,7 +89,16 @@ public class PlayerEntity : GridEntity
 
         Energy = MaxEnergy;
         Health = MaxHealth;
-        m_abilities.Initialise();
+
+        // #RemoveBeforeRelease
+        blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
+        levelModule.EventFlags.SetFlags(eventFlags.shoot_unlocked, true);
+        levelModule.EventFlags.SetFlags(eventFlags.dash_unlocked, true);
+        levelModule.EventFlags.SetFlags(eventFlags.block_unlocked, true);
+
+        Abilities.Refresh();
+
+        Abilities.Initialise();
         m_animationController = GetComponent<GridEntityAnimationController>();
 
         await App.GetModule<LevelModule>().AwaitSaveLoad();
@@ -330,6 +340,8 @@ public class PlayerEntity : GridEntity
     public override void EndStep()
     {
         base.EndStep();
+
+        Abilities.Refresh();
 
         Energy++;
 

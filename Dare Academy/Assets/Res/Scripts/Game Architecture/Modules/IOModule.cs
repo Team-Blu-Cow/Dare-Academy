@@ -24,9 +24,6 @@ namespace blu
         public System.Int32 gameEventFlags = 0;
         public int respawnRoomID = -1;
 
-        public bool shootUnlocked = false;
-        public bool dashUnlocked = true;
-        public bool blockUnlocked = true;
         public List<Quest.StringListIntPair> m_roomsTraveled = new List<Quest.StringListIntPair>();
     }
 

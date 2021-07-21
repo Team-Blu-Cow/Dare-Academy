@@ -1,6 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using eventFlags = GameEventFlags.Flags;
 
 [System.Serializable]
 public class PlayerAbilities
@@ -16,6 +16,27 @@ public class PlayerAbilities
     private List<AbilityEnum> m_avalibleAbilities = new List<AbilityEnum>();
 
     [SerializeField] protected AbilityEnum m_activeAbility = AbilityEnum.None;
+
+    public void Refresh()
+    {
+        blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
+        if (levelModule.EventFlags.IsFlagsSet(eventFlags.shoot_unlocked))
+            Unlock(AbilityEnum.Shoot);
+        else
+            Lock(AbilityEnum.Shoot);
+
+        if (levelModule.EventFlags.IsFlagsSet(eventFlags.dash_unlocked))
+            Unlock(AbilityEnum.Dash);
+        else
+            Lock(AbilityEnum.Dash);
+
+        if (levelModule.EventFlags.IsFlagsSet(eventFlags.block_unlocked))
+            Unlock(AbilityEnum.Block);
+        else
+            Lock(AbilityEnum.Block);
+
+        WriteToSaveData();
+    }
 
     public AbilityEnum GetActiveAbility()
     {
@@ -81,17 +102,19 @@ public class PlayerAbilities
 
         await levelModule.AwaitSaveLoad();
 
-        if (levelModule.ActiveSaveData.shootUnlocked)
+        await levelModule.AwaitInitialised();
+
+        if (levelModule.EventFlags.IsFlagsSet(eventFlags.shoot_unlocked))
         {
-            Unlock(AbilityEnum.Shoot, false);
+            Unlock(AbilityEnum.Shoot);
         }
-        if (levelModule.ActiveSaveData.dashUnlocked)
+        if (levelModule.EventFlags.IsFlagsSet(eventFlags.dash_unlocked))
         {
-            Unlock(AbilityEnum.Dash, false);
+            Unlock(AbilityEnum.Dash);
         }
-        if (levelModule.ActiveSaveData.blockUnlocked)
+        if (levelModule.EventFlags.IsFlagsSet(eventFlags.block_unlocked))
         {
-            Unlock(AbilityEnum.Block, false);
+            Unlock(AbilityEnum.Block);
         }
 
         if (m_avalibleAbilities.Count > 0)
@@ -113,7 +136,7 @@ public class PlayerAbilities
         return false;
     }
 
-    public void Unlock(AbilityEnum ability, bool writeToSavedata = true)
+    private void Unlock(AbilityEnum ability)
     {
         bool contains = false;
         for (int i = m_avalibleAbilities.Count - 1; i >= 0; i--)
@@ -128,14 +151,9 @@ public class PlayerAbilities
         {
             m_avalibleAbilities.Add(ability);
         }
-
-        if (writeToSavedata)
-        {
-            WriteToSaveData(ability, true);
-        }
     }
 
-    public void Lock(AbilityEnum ability, bool writeToSavedata = true)
+    private void Lock(AbilityEnum ability)
     {
         for (int i = m_avalibleAbilities.Count - 1; i >= 0; i--)
         {
@@ -145,37 +163,40 @@ public class PlayerAbilities
                 break;
             }
         }
-
-        if (writeToSavedata)
-        {
-            WriteToSaveData(ability, false);
-        }
     }
 
-    private void WriteToSaveData(AbilityEnum ability, bool unlocked)
+    private void WriteToSaveData()
     {
-        blu.SaveData savedata =  blu.App.GetModule<blu.LevelModule>().ActiveSaveData;
+        blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
+        levelModule.AwaitInitialised();
 
-        switch (ability)
+        levelModule.EventFlags.SetFlags(eventFlags.shoot_unlocked | eventFlags.dash_unlocked | eventFlags.block_unlocked, false);
+
+        eventFlags flag = 0;
+
+        foreach (var ability in m_avalibleAbilities)
         {
-            case AbilityEnum.None:
-                break;
+            switch (ability)
+            {
+                case AbilityEnum.Shoot:
+                    flag |= eventFlags.shoot_unlocked;
+                    break;
 
-            case AbilityEnum.Shoot:
-                savedata.shootUnlocked = unlocked;
-                break;
+                case AbilityEnum.Dash:
+                    flag |= eventFlags.dash_unlocked;
+                    break;
 
-            case AbilityEnum.Dash:
-                savedata.dashUnlocked = unlocked;
-                break;
+                case AbilityEnum.Block:
+                    flag |= eventFlags.block_unlocked;
+                    break;
 
-            case AbilityEnum.Block:
-                savedata.blockUnlocked = unlocked;
-                break;
-
-            default:
-                Debug.LogWarning("[Player Abilities] - unexpected value");
-                break;
+                default:
+                    break;
+            }
         }
+
+        levelModule.EventFlags.SetFlags(flag, true);
+
+        levelModule.SaveGame();
     }
 }
