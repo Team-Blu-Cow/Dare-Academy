@@ -68,11 +68,13 @@ namespace blu
 
         public void MoveToPosition(Vector3 in_position)
         {
+            KeepPlayerInFrame(false);
             Move(in_position);
         }
 
         public void MoveToPosition(Transform in_transform)
         {
+            KeepPlayerInFrame(false);
             Move(in_transform.position);
         }
 
