@@ -22,8 +22,11 @@ namespace blu
         private GameObject _ContinueButton;
         private InputModule _input;
         private GameObject _dialogueCanvasPrefab;
+        private int _countActiveDialogue = 0;
 
         public static event Action DialogueFinished;
+
+        public bool DialogueActive => _countActiveDialogue != 0;
 
         //private Image _continueButton;
         public GameObject EventSystem { set => _EventSystem = value; }
@@ -53,6 +56,7 @@ namespace blu
                 return;
             }
 
+            _countActiveDialogue++;
             StartCoroutine(_StartDialogue(in_conversation));
         }
 
@@ -69,6 +73,7 @@ namespace blu
 
             App.CanvasManager.OpenCanvas(App.CanvasManager.GetCanvasContainer("Dialogue Canvas"), true);
 
+            
             ConversationManager.Instance._EnableUI();
             StartCoroutine(ProgressDialogue());
 
@@ -114,6 +119,8 @@ namespace blu
             _closable = false;
             StartCoroutine(FadeOutCanvas());
             _dialogueCanvas.SetActive(false);
+
+            _countActiveDialogue--;
 
             InputModule input = App.GetModule<InputModule>();
             input.DialogueController.Disable();

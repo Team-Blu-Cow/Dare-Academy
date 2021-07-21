@@ -12,6 +12,7 @@ public class ScriptedActionQueue : ScriptableObject
         WaitTurns = 1,              // int
         Move = 2,                   // MoveData
         Dialogue = 3,               // prefab
+        AwaitDialogueComplete = 11, // void
         WaitPlayerEnterTrigger = 4, // gameObject
         WaitPlayerExitTrigger = 6,  // gameObject
         SetFlagEntityValue =  7,    // int, bool

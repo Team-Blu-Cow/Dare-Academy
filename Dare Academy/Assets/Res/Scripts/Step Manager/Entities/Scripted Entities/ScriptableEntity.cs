@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Threading.Tasks;
 
 public class ScriptableEntity : GridEntity
 {
@@ -13,6 +14,8 @@ public class ScriptableEntity : GridEntity
     private SpriteRenderer sr;
 
     private Animator anim;
+
+    private bool m_awaitingDialogueComplete = false;
 
     protected override void OnValidate()
     {
@@ -54,6 +57,18 @@ public class ScriptableEntity : GridEntity
             else
             {
                 Debug.LogWarning($"[ScriptableEntity] [name = {gameObject.name}] could not get animator of prefab");
+            }
+        }
+    }
+
+    protected void Update()
+    {
+        if (m_awaitingDialogueComplete)
+        {
+            if (!blu.App.GetModule<blu.DialogueModule>().DialogueActive)
+            {
+                m_awaitingDialogueComplete = false;
+                this.AnalyseStep();
             }
         }
     }
@@ -135,6 +150,10 @@ public class ScriptableEntity : GridEntity
                     blu.App.GetModule<blu.DialogueModule>().StartDialogue(currentAction.gameObject);
                 }
                 runAgain = true;
+                break;
+
+            case ScriptedActionQueue.ActionType.AwaitDialogueComplete:
+                runAgain = AwaitDialogueAction();
                 break;
 
             case ScriptedActionQueue.ActionType.SetCameraPosition:
@@ -262,5 +281,15 @@ public class ScriptableEntity : GridEntity
     protected void CameraToPlayerAction()
     {
         blu.App.CameraController.KeepPlayerInFrame();
+    }
+
+    protected bool AwaitDialogueAction()
+    {
+        if (blu.App.GetModule<blu.DialogueModule>().DialogueActive)
+        {
+            m_awaitingDialogueComplete = true;
+            return false;
+        }
+        return true;
     }
 }
