@@ -20,7 +20,8 @@ public class WrymBossEnity : GridEntity
 
     [Header("Phase Two Variables")]
     [SerializeField] private int m_stepTimer = 0;
-    [SerializeField] private Vector3 m_prevPosition = new Vector3(0,0,0);
+
+    [SerializeField] private Vector3 m_prevPosition = new Vector3(0, 0, 0);
     [SerializeField] private bool m_firingPhaseTwo;
     [SerializeField] private GameObject m_bulletPrefab;
     [SerializeField] private int m_fireCooldown = 3;
@@ -52,27 +53,11 @@ public class WrymBossEnity : GridEntity
         if (m_player == null)
             return;
 
-        if (m_burrowPos != Vector2Int.zero)
-        {
-            var currentRoom = App.GetModule<LevelModule>().CurrentRoom;
-
-            RemoveFromCurrentNode();
-
-            if (currentRoom[m_burrowPos].GetGridEntities().Count < 1)
-            {
-                m_currentNode = currentRoom[m_burrowPos];
-                transform.position = currentRoom[m_burrowPos].position.world;
-            }
-
-            AddToCurrentNode();
-
-            m_burrowPos = Vector2Int.zero;
-        }
-
         Phase1();
 
         //if (Health > 5)
         //{
+        //    Phase1();
         //}
         //else if (m_stepTimer < 100) // TODO: add phase 2 timer
         //{
@@ -100,7 +85,22 @@ public class WrymBossEnity : GridEntity
     private void Phase1()
     {
         //PHASE 1
-        Vector2 dir = new Vector2();
+        if (m_burrowPos != Vector2Int.zero)
+        {
+            var currentRoom = App.GetModule<LevelModule>().CurrentRoom;
+
+            RemoveFromCurrentNode();
+
+            if (currentRoom[m_burrowPos].GetGridEntities().Count < 1)
+            {
+                m_currentNode = currentRoom[m_burrowPos];
+                transform.position = currentRoom[m_burrowPos].position.world;
+            }
+
+            AddToCurrentNode();
+
+            m_burrowPos = Vector2Int.zero;
+        }
 
         Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, m_player.transform.position); // Find path to player
 
@@ -114,7 +114,7 @@ public class WrymBossEnity : GridEntity
         }
         else if (path != null && path.Length > 1)
         {
-            dir = path[1] - path[0]; // Set direction to be distance vector of the two closest pathfinding nodes
+            Vector2 dir = path[1] - path[0]; // Set direction to be distance vector of the two closest pathfinding nodes
             SetMovementDirection(dir, m_moveSpeed); // Set movement
         }
 
@@ -162,9 +162,9 @@ public class WrymBossEnity : GridEntity
                 {
                     tempDir = new Vector2Int(0, -1);
                 }
-            }           
+            }
 
-            if(m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && m_prevPosition == m_currentNode.position.world && m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
+            if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && m_prevPosition == m_currentNode.position.world && m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
             {
                 tempDir = new Vector2Int(1, 0);
             }
