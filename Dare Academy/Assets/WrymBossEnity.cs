@@ -11,7 +11,6 @@ public class WrymBossEnity : GridEntity
     [SerializeField] private int m_moveSpeed;
 
     [SerializeField] private bool m_head;
-    [SerializeField] private GridEntity m_followEntity;
 
     private bool m_attack = false;
     private Vector2 m_fireDirection;
@@ -41,13 +40,8 @@ public class WrymBossEnity : GridEntity
     {
         base.Start();
         m_player = PlayerEntity.Instance;
-
-        if (m_followEntity == null)
-        {
-            m_head = true;
-        }
-
         m_damageEntityPrefab = Resources.Load<GameObject>("prefabs/Entities/DamageEntity");
+        m_health = 10;
     }
 
     protected override void OnValidate()
@@ -61,7 +55,7 @@ public class WrymBossEnity : GridEntity
         if (m_player == null)
             return;
 
-        Phase1();
+        Phase2();
 
         //if (Health > 5)
         //{
@@ -197,16 +191,25 @@ public class WrymBossEnity : GridEntity
             {
                 tempDir = new Vector2Int(-1, 0);
             }
-
+            
             if (m_currentNode.GetNeighbour(new Vector2Int(0, -1)) == null)
             {
-                tempDir = new Vector2Int(-1, 0);
+                if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null && m_currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0)
+                {
+                    tempDir = new Vector2Int(-1, 0);
+                }
+
+                if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
+                {
+                    tempDir = new Vector2Int(1, 0);
+                }
+
                 if (m_currentNode.GetNeighbour(new Vector2Int(0, 1)) != null && m_currentNode.GetNeighbour(new Vector2Int(0, 1)).GetGridEntities().Count == 0)
                 {
                     tempDir = new Vector2Int(0, 1);
                 }
             }
-
+            
             if (m_currentNode.GetNeighbour(new Vector2Int(0, -1)) != null)
             {
                 if (m_currentNode.GetNeighbour(new Vector2Int(0, -1)).GetGridEntities().Count == 0)
@@ -214,7 +217,7 @@ public class WrymBossEnity : GridEntity
                     tempDir = new Vector2Int(0, -1);
                 }
             }
-
+            
             if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && m_prevPosition == m_currentNode.position.world && m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
             {
                 tempDir = new Vector2Int(1, 0);
@@ -223,15 +226,38 @@ public class WrymBossEnity : GridEntity
             {
                 tempDir = new Vector2Int(-1, 0);
             }
-
+            
             m_prevPosition = m_currentNode.position.world;
             dir = tempDir;
+            m_previousMoves.Insert(0, dir);   
+           
+
+            if (m_previousMoves.Count > m_body.Count)
+            {
+                for (int i = 0; i < m_body.Count; i++)
+                {
+                    m_body[i].SetMovementDirection(m_previousMoves[i + 1]);
+                }
+                m_previousMoves.RemoveAt(m_previousMoves.Count - 1);
+            }
+            else
+            {
+                for (int i = 0; i < m_body.Count; i++)
+                {
+                    if (m_previousMoves.Count > i + 1)
+                    {
+                        m_body[i].SetMovementDirection(m_previousMoves[i + 1]);
+                    }
+                    else
+                    {
+                        m_body[i].SetMovementDirection(m_previousMoves[m_previousMoves.Count - 1]);
+                    }
+
+                }
+            }
         }
-        else
-        {
-            Vector3 path = m_followEntity.Position.world - Position.world;
-            dir = Vector3.Normalize(path);
-        }
+
+
 
         if (m_firingPhaseTwo && m_fireCooldown == 0)
         {
@@ -242,7 +268,7 @@ public class WrymBossEnity : GridEntity
                     SpawnBullet(m_bulletPrefab, m_currentNode, new Vector2(1, 0));
                 }
             }
-
+        
             if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null)
             {
                 if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0)
@@ -252,6 +278,38 @@ public class WrymBossEnity : GridEntity
             }
         }
 
+        if(m_fireCooldown == 1 && m_head)
+        {
+            m_attackNodes.Clear();
+
+            if (m_firingPhaseTwo)
+            {
+                m_attackNodes.Add(Position.grid + new Vector2Int(1, (int)dir.y));
+                m_attackNodes.Add(Position.grid + new Vector2Int(-1, (int)dir.y));
+                m_attackNodes.Add(m_body[1].Position.grid + new Vector2Int(1, (int)(m_body[1].Position.world.y - m_body[2].Position.world.y)));
+                m_attackNodes.Add(m_body[1].Position.grid + new Vector2Int(-1, (int)(m_body[1].Position.world.y - m_body[2].Position.world.y)));
+                m_attackNodes.Add(m_body[3].Position.grid + new Vector2Int(1, (int)(m_body[3].Position.world.y - m_body[4].Position.world.y)));
+                m_attackNodes.Add(m_body[3].Position.grid + new Vector2Int(-1, (int)(m_body[3].Position.world.y - m_body[4].Position.world.y)));
+            }
+            else
+            {
+                m_attackNodes.Add(m_body[0].Position.grid + new Vector2Int(1, (int)(m_body[0].Position.world.y - m_body[1].Position.world.y)));
+                m_attackNodes.Add(m_body[0].Position.grid + new Vector2Int(-1, (int)(m_body[0].Position.world.y - m_body[1].Position.world.y)));
+                m_attackNodes.Add(m_body[2].Position.grid + new Vector2Int(1, (int)(m_body[2].Position.world.y - m_body[3].Position.world.y)));
+                m_attackNodes.Add(m_body[2].Position.grid + new Vector2Int(-1, (int)(m_body[2].Position.world.y - m_body[3].Position.world.y)));
+                m_attackNodes.Add(m_body[4].Position.grid + new Vector2Int(1, -(int)(m_body[4].Position.world.y - m_body[4].Position.world.y)));
+                m_attackNodes.Add(m_body[4].Position.grid + new Vector2Int(-1, -(int)(m_body[3].Position.world.y - m_body[3].Position.world.y)));
+            }
+
+            foreach (var node in m_attackNodes)
+            {
+                if (node != null && App.GetModule<LevelModule>().CurrentRoom[node] != null)
+                {
+                    App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(App.GetModule<LevelModule>().CurrentRoom[node], TelegraphDrawer.Type.ATTACK);
+                }
+            }
+        }
+        
         if (m_fireCooldown <= 0)
         {
             m_firingPhaseTwo = !m_firingPhaseTwo;
