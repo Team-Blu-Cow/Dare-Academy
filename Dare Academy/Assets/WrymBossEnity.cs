@@ -16,7 +16,15 @@ public class WrymBossEnity : GridEntity
     private bool m_attack = false;
     private Vector2 m_fireDirection;
     private Vector2Int m_burrowPos;
+    private Vector2Int m_lastBurrowPos;
     private List<Vector2Int> m_attackNodes = new List<Vector2Int>();
+
+    [Header("Following Variables")]
+    [SerializeField]
+    private List<WrymBossEnity> m_body;
+
+    private List<Vector2> m_previousMoves = new List<Vector2>();
+    private int stepcount = 0;
 
     [Header("Phase Two Variables")]
     [SerializeField] private int m_stepTimer = 0;
@@ -32,7 +40,7 @@ public class WrymBossEnity : GridEntity
     protected override void Start()
     {
         base.Start();
-        m_player = FindObjectOfType<PlayerEntity>();
+        m_player = PlayerEntity.Instance;
 
         if (m_followEntity == null)
         {
@@ -77,7 +85,7 @@ public class WrymBossEnity : GridEntity
             foreach (var node in m_attackNodes)
             {
                 GameObject obj = Instantiate(m_damageEntityPrefab, App.GetModule<LevelModule>().CurrentRoom.ToWorld(node), Quaternion.identity);
-                obj.GetComponent<DamageEntity>().Countdown = 1;
+                obj.GetComponent<DamageEntity>().Countdown = 0;
             }
         }
     }
@@ -85,6 +93,79 @@ public class WrymBossEnity : GridEntity
     private void Phase1()
     {
         //PHASE 1
+        if (m_head)
+        {
+            for (int i = 0; i < m_body.Count; i++)
+            {
+                if (m_previousMoves.Count > i + 1 && m_previousMoves[i + 1] == Vector2.zero)
+                {
+                    m_body[i].m_burrowPos = m_lastBurrowPos;
+                    m_body[i].MoveToBurrow();
+                }
+            }
+            MoveToBurrow();
+
+            Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, m_player.transform.position); // Find path to player
+
+            if (Vector2Int.Distance(Position.grid, m_player.Position.grid) <= 1)
+            {
+                Vector2 temp = Position.grid - m_player.Position.grid;
+                m_attack = true;
+                FireAttack(temp.normalized);
+
+                Burrow();
+                m_previousMoves.Insert(0, Vector2.zero);
+            }
+            else if (path != null && path.Length > 1)
+            {
+                Vector2 dir = path[1] - path[0]; // Set direction to be distance vector of the two closest path finding nodes
+                SetMovementDirection(dir, m_moveSpeed); // Set movement
+                m_previousMoves.Insert(0, dir);
+            }
+
+            int count = 0;
+
+            for (int i = 0; i < 8; i += 2)
+            {
+                if (m_currentNode.Neighbors[i].reference != null && m_currentNode.Neighbors[i].reference.GetGridEntities().Count > 0)
+                {
+                    count++;
+                }
+            }
+
+            if (count == 4)
+            {
+                Burrow();
+                SetMovementDirection(Vector2.zero, m_moveSpeed); // Set movement
+            }
+
+            if (m_previousMoves.Count > m_body.Count)
+            {
+                for (int i = 0; i < m_body.Count; i++)
+                {
+                    m_body[i].SetMovementDirection(m_previousMoves[i + 1]);
+                }
+                m_previousMoves.RemoveAt(m_previousMoves.Count - 1);
+            }
+            else
+            {
+                for (int i = 0; i < m_body.Count; i++)
+                {
+                    if (m_previousMoves.Count > i + 1)
+                    {
+                        m_body[i].SetMovementDirection(m_previousMoves[i + 1]);
+                    }
+                    else
+                    {
+                        m_body[i].SetMovementDirection(m_previousMoves[m_previousMoves.Count - 1]);
+                    }
+                }
+            }
+        }
+    }
+
+    public void MoveToBurrow()
+    {
         if (m_burrowPos != Vector2Int.zero)
         {
             var currentRoom = App.GetModule<LevelModule>().CurrentRoom;
@@ -99,38 +180,8 @@ public class WrymBossEnity : GridEntity
 
             AddToCurrentNode();
 
+            m_lastBurrowPos = m_burrowPos;
             m_burrowPos = Vector2Int.zero;
-        }
-
-        Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, m_player.transform.position); // Find path to player
-
-        if (Vector2Int.Distance(Position.grid, m_player.Position.grid) <= 1)
-        {
-            Vector2 temp = Position.grid - m_player.Position.grid;
-            m_attack = true;
-            FireAttack(temp.normalized);
-
-            Burrow();
-        }
-        else if (path != null && path.Length > 1)
-        {
-            Vector2 dir = path[1] - path[0]; // Set direction to be distance vector of the two closest pathfinding nodes
-            SetMovementDirection(dir, m_moveSpeed); // Set movement
-        }
-
-        int count = 0;
-        foreach (var neighbor in m_currentNode.Neighbors)
-        {
-            if (neighbor.reference.GetGridEntities().Count > 0)
-            {
-                count++;
-            }
-        }
-
-        if (count == 4)
-        {
-            Burrow();
-            SetMovementDirection(Vector2.zero, m_moveSpeed); // Set movement
         }
     }
 
