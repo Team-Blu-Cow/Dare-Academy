@@ -11,10 +11,11 @@ public class WrymBossEnity : GridEntity
     [SerializeField] private int m_moveSpeed;
 
     [SerializeField] private bool m_head;
+    [SerializeField] private WrymBossEnity m_headEntity;
+
     [SerializeField] private GridEntity m_followEntity;
 
     private bool m_attack = false;
-    private Vector2 m_fireDirection;
     private Vector2Int m_burrowPos;
     private Vector2Int m_lastBurrowPos;
     private List<Vector2Int> m_attackNodes = new List<Vector2Int>();
@@ -24,7 +25,6 @@ public class WrymBossEnity : GridEntity
     private List<WrymBossEnity> m_body;
 
     private List<Vector2> m_previousMoves = new List<Vector2>();
-    private int stepcount = 0;
 
     [Header("Phase Two Variables")]
     [SerializeField] private int m_stepTimer = 0;
@@ -41,6 +41,7 @@ public class WrymBossEnity : GridEntity
     {
         base.Start();
         m_player = PlayerEntity.Instance;
+        Health = 5;
 
         if (m_followEntity == null)
         {
@@ -62,6 +63,12 @@ public class WrymBossEnity : GridEntity
             return;
 
         Phase1();
+
+        if (!m_head && Health < 5)
+        {
+            m_headEntity.Health -= (5 - Health);
+            Health = 5;
+        }
 
         //if (Health > 5)
         //{
@@ -95,6 +102,7 @@ public class WrymBossEnity : GridEntity
         //PHASE 1
         if (m_head)
         {
+            MoveToBurrow();
             for (int i = 0; i < m_body.Count; i++)
             {
                 if (m_previousMoves.Count > i + 1 && m_previousMoves[i + 1] == Vector2.zero)
@@ -103,7 +111,6 @@ public class WrymBossEnity : GridEntity
                     m_body[i].MoveToBurrow();
                 }
             }
-            MoveToBurrow();
 
             Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, m_player.transform.position); // Find path to player
 
@@ -139,7 +146,7 @@ public class WrymBossEnity : GridEntity
                 SetMovementDirection(Vector2.zero, m_moveSpeed); // Set movement
             }
 
-            if (m_previousMoves.Count > m_body.Count)
+            if (m_previousMoves.Count > m_body.Count + 1)
             {
                 for (int i = 0; i < m_body.Count; i++)
                 {
@@ -170,6 +177,7 @@ public class WrymBossEnity : GridEntity
         {
             var currentRoom = App.GetModule<LevelModule>().CurrentRoom;
 
+            SetMovementDirection(new Vector2(1, 0));
             RemoveFromCurrentNode();
 
             if (currentRoom[m_burrowPos].GetGridEntities().Count < 1)
