@@ -33,6 +33,10 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
 
     public bool IsTraversable()
     {
+        if (GetGridEntities().Count > 0)
+        {
+            //return false;
+        }
         return walkable;
     }
 
@@ -139,7 +143,7 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
     {
         Vector2 direction = target.position.grid - position.grid;
 
-        int distance = Mathf.RoundToInt( direction.magnitude);
+        int distance = Mathf.RoundToInt(direction.magnitude);
 
         GridNode workingNode = this;
         for (int i = 0; i < distance; i++)
