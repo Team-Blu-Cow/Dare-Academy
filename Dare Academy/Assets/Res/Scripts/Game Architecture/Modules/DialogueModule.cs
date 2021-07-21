@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+using System;
 using UnityEngine.InputSystem;
 using DialogueEditor;
 using System.Threading.Tasks;
@@ -22,6 +22,8 @@ namespace blu
         private GameObject _ContinueButton;
         private InputModule _input;
         private GameObject _dialogueCanvasPrefab;
+
+        public static event Action DialogueFinished;
 
         //private Image _continueButton;
         public GameObject EventSystem { set => _EventSystem = value; }
@@ -99,6 +101,7 @@ namespace blu
             _canvasAnimation.SetTrigger("FadeOut");
             yield return new WaitForSeconds(_fadeDelay);
             App.CanvasManager.RemoveCanvasContainer("Dialogue Canvas", false);
+            DialogueFinished?.Invoke();
             yield break;
         }
 
