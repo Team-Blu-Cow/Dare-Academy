@@ -91,13 +91,13 @@ namespace blu
 
             await ioModule.awaitInitialised;
 
-            if (!ioModule.isSaveLoaded)
-            {
-                Debug.LogWarning("[Level Module] save file not loaded, creating new save");
-                await ioModule.CreateNewSave("new save", true);
-            }
+            //if (!ioModule.isSaveLoaded)
+            //{
+            //    Debug.LogWarning("[Level Module] save file not loaded, creating new save");
+            //    await ioModule.CreateNewSave("new save", true);
+            //}
 
-            m_gameEventFlags._FlagData = ActiveSaveData.gameEventFlags;
+            //m_gameEventFlags._FlagData = ActiveSaveData.gameEventFlags; #todo #matthew 
 
             if (m_playerPrefab == null)
                 m_playerPrefab = Resources.Load<GameObject>("prefabs/Entities/Player");

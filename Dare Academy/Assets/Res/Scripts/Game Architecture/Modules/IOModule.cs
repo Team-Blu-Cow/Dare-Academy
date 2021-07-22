@@ -35,7 +35,7 @@ namespace blu
         // check if a valid save file has been loaded
         public bool isSaveLoaded { get => savedata != null; }
 
-        public const int MaxSaveFiles = 3;
+        public const int MaxSaveFiles = 4;
 
         // if save slots are currently loaded
         public bool isSaveSlotsLoaded { get => m_saveSlotsLoaded; }
@@ -81,7 +81,7 @@ namespace blu
         { yield return LoadSaveAsync(slotData, logToConsole); }
 
         // creates a new save file
-        public Task<bool> CreateNewSave(string displayName, bool loadSave) => Task.Run(() => CreateNewSaveImpl(displayName, loadSave));
+        public Task<bool> CreateNewSave(int slot, bool loadSave) => Task.Run(() => CreateNewSaveImpl(slot, loadSave));
 
         // write the current contents of saveData to disk
         public Task<bool> SaveAsync() => Task.Run(() => SaveAsyncImpl());
@@ -146,7 +146,7 @@ namespace blu
             { return false; }
         }
 
-        private bool LoadSaveSlots()
+        public bool LoadSaveSlots()
         {
             m_saveSlotsLoaded = false;
 
@@ -255,7 +255,7 @@ namespace blu
             return true;
         }
 
-        private bool CreateNewSaveImpl(string displayName, bool loadSave)
+        private bool CreateNewSaveImpl(int slot, bool loadSave)
         {
             // check for duplicate
             // for (int i = 0; i < saveSlots.Count; i++)
@@ -270,6 +270,7 @@ namespace blu
             int cur_time = (int)(System.DateTime.UtcNow - epochStart).TotalSeconds;
 
             SaveData savedata = new SaveData();
+            savedata.saveSlot = slot;
 
             string filename = m_kSaveGameDir + cur_time.ToString();
             string filepath = m_applicationPath + "/" + filename + "." + savedata.FileExtension();

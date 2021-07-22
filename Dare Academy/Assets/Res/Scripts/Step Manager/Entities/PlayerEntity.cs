@@ -108,6 +108,15 @@ public class PlayerEntity : GridEntity
                 m_dictRoomsTraveled.Add(pair.key, pair.value);
         }
 
+        // add starting room to minimap list
+        if (m_dictRoomsTraveled.ContainsKey(SceneManager.GetActiveScene().name))
+        {
+            if (!m_dictRoomsTraveled[SceneManager.GetActiveScene().name].Contains(m_roomIndex))
+                m_dictRoomsTraveled[SceneManager.GetActiveScene().name].Add(m_roomIndex);
+        }
+        else
+            m_dictRoomsTraveled.Add(SceneManager.GetActiveScene().name, new List<int> { m_roomIndex });
+
         SetInteractPosition();
         try
         {
@@ -117,15 +126,6 @@ public class PlayerEntity : GridEntity
         {
             Debug.LogWarning("[PlayerEntity.Start] failed to draw MiniMap");
         }
-
-        // add starting room to minimap list
-        if (m_dictRoomsTraveled.ContainsKey(SceneManager.GetActiveScene().name))
-        {
-            if (!m_dictRoomsTraveled[SceneManager.GetActiveScene().name].Contains(m_roomIndex))
-                m_dictRoomsTraveled[SceneManager.GetActiveScene().name].Add(m_roomIndex);
-        }
-        else
-            m_dictRoomsTraveled.Add(SceneManager.GetActiveScene().name, new List<int> { m_roomIndex });
 
         UpdateSaveFile();
     }
