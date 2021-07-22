@@ -4,6 +4,8 @@ using UnityEngine;
 using blu;
 using JUtil;
 
+// #TODO #Jack - Clean Up The Movement Code
+
 public class WrymBossEnity : GridEntity
 {
     private PlayerEntity m_player;
@@ -12,8 +14,7 @@ public class WrymBossEnity : GridEntity
 
     [SerializeField] private bool m_head;
     [SerializeField] private WrymBossEnity m_headEntity;
-    [SerializeField] private GridEntity m_followEntity;
-
+    [SerializeField] private bool m_split;
 
     private bool m_attack = false;
     private Vector2Int m_burrowPos;
@@ -27,8 +28,7 @@ public class WrymBossEnity : GridEntity
     private List<Vector2> m_previousMoves = new List<Vector2>();
 
     [Header("Phase Two Variables")]
-    [SerializeField] private int m_stepTimer = 0;
-
+    [SerializeField] private int m_stepTimer = 10;
     [SerializeField] private Vector3 m_prevPosition = new Vector3(0, 0, 0);
     [SerializeField] private bool m_firingPhaseTwo;
     [SerializeField] private GameObject m_bulletPrefab;
@@ -42,8 +42,7 @@ public class WrymBossEnity : GridEntity
         base.Start();
         m_player = PlayerEntity.Instance;
         Health = 5;
-        m_damageEntityPrefab = Resources.Load<GameObject>("prefabs/Entities/DamageEntity");
-        m_health = 10;
+        m_damageEntityPrefab = Resources.Load<GameObject>("prefabs/Entities/DamageEntity");       
     }
 
     protected override void OnValidate()
@@ -57,7 +56,6 @@ public class WrymBossEnity : GridEntity
         if (m_player == null)
             return;
 
-        Phase2();
 
         if (!m_head && Health < 5)
         {
@@ -65,17 +63,21 @@ public class WrymBossEnity : GridEntity
             Health = 5;
         }
 
-        //if (Health > 5)
-        //{
-        //    Phase1();
-        //}
-        //else if (m_stepTimer < 100) // TODO: add phase 2 timer
-        //{
-        //    Phase2();
-        //}
-        //else // Phase 3
-        //{
-        //}
+        if (m_head)
+        {
+            if (Health > 5)
+            {
+                Phase1();
+            }
+            else if (m_stepTimer > 0) // TODO: add phase 2 timer
+            {
+                Phase2();
+            }
+            else // Phase 3
+            {
+                Phase3();
+            }
+        }
     }
 
     public override void DamageStep()
@@ -166,28 +168,6 @@ public class WrymBossEnity : GridEntity
         }
     }
 
-    public void MoveToBurrow()
-    {
-        if (m_burrowPos != Vector2Int.zero)
-        {
-            var currentRoom = App.GetModule<LevelModule>().CurrentRoom;
-
-            SetMovementDirection(new Vector2(1, 0));
-            RemoveFromCurrentNode();
-
-            if (currentRoom[m_burrowPos].GetGridEntities().Count < 1)
-            {
-                m_currentNode = currentRoom[m_burrowPos];
-                transform.position = currentRoom[m_burrowPos].position.world;
-            }
-
-            AddToCurrentNode();
-
-            m_lastBurrowPos = m_burrowPos;
-            m_burrowPos = Vector2Int.zero;
-        }
-    }
-
     private void Phase2()
     {
         Vector2 dir = new Vector2();
@@ -207,8 +187,7 @@ public class WrymBossEnity : GridEntity
                 {
                     tempDir = new Vector2Int(-1, 0);
                 }
-
-                if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
+                else if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
                 {
                     tempDir = new Vector2Int(1, 0);
                 }
@@ -264,25 +243,46 @@ public class WrymBossEnity : GridEntity
 
                 }
             }
+
+            if (m_firingPhaseTwo && m_fireCooldown == 0)
+            {
+                if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null)
+                {
+                    if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
+                    {
+                        SpawnBullet(m_bulletPrefab, m_currentNode, new Vector2(1, 0));
+                    }
+                }
+
+                if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null)
+                {
+                    if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0)
+                    {
+                        SpawnBullet(m_bulletPrefab, m_currentNode, new Vector2(-1, 0));
+                    }
+                }
+            }
         }
 
 
-
-        if (m_firingPhaseTwo && m_fireCooldown == 0)
+        for (int i = 0; i < m_body.Count; i++)
         {
-            if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null)
+            if (m_body[i].m_firingPhaseTwo && m_body[i].m_fireCooldown == 0)
             {
-                if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
+                if (m_body[i].m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null)
                 {
-                    SpawnBullet(m_bulletPrefab, m_currentNode, new Vector2(1, 0));
+                    if (m_body[i].m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
+                    {
+                        SpawnBullet(m_bulletPrefab, m_body[i].m_currentNode, new Vector2(1, 0));
+                    }
                 }
-            }
-        
-            if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null)
-            {
-                if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0)
+
+                if (m_body[i].m_currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null)
                 {
-                    SpawnBullet(m_bulletPrefab, m_currentNode, new Vector2(-1, 0));
+                    if (m_body[i].m_currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0)
+                    {
+                        SpawnBullet(m_bulletPrefab, m_body[i].m_currentNode, new Vector2(-1, 0));
+                    }
                 }
             }
         }
@@ -293,21 +293,23 @@ public class WrymBossEnity : GridEntity
 
             if (m_firingPhaseTwo)
             {
-                m_attackNodes.Add(Position.grid + new Vector2Int(1, (int)dir.y));
-                m_attackNodes.Add(Position.grid + new Vector2Int(-1, (int)dir.y));
-                m_attackNodes.Add(m_body[1].Position.grid + new Vector2Int(1, (int)(m_body[1].Position.world.y - m_body[2].Position.world.y)));
-                m_attackNodes.Add(m_body[1].Position.grid + new Vector2Int(-1, (int)(m_body[1].Position.world.y - m_body[2].Position.world.y)));
-                m_attackNodes.Add(m_body[3].Position.grid + new Vector2Int(1, (int)(m_body[3].Position.world.y - m_body[4].Position.world.y)));
-                m_attackNodes.Add(m_body[3].Position.grid + new Vector2Int(-1, (int)(m_body[3].Position.world.y - m_body[4].Position.world.y)));
+                if (m_currentNode.GetNeighbour(new Vector2Int(1, (int)dir.y)) != null)
+                {
+                    if (m_currentNode.GetNeighbour(new Vector2Int(1, (int)dir.y)).GetGridEntities().Count == 0)
+                        m_attackNodes.Add(Position.grid + new Vector2Int(1, (int)dir.y));
+                }
+
+                if (m_currentNode.GetNeighbour(new Vector2Int(-1, (int)dir.y)) != null)
+                {
+                    if (m_currentNode.GetNeighbour(new Vector2Int(-1, (int)dir.y)).GetGridEntities().Count == 0)
+                        m_attackNodes.Add(Position.grid + new Vector2Int(-1, (int)dir.y));
+                }
+
+                TelegraphBullets(-1, 1, 3);
             }
             else
             {
-                m_attackNodes.Add(m_body[0].Position.grid + new Vector2Int(1, (int)(m_body[0].Position.world.y - m_body[1].Position.world.y)));
-                m_attackNodes.Add(m_body[0].Position.grid + new Vector2Int(-1, (int)(m_body[0].Position.world.y - m_body[1].Position.world.y)));
-                m_attackNodes.Add(m_body[2].Position.grid + new Vector2Int(1, (int)(m_body[2].Position.world.y - m_body[3].Position.world.y)));
-                m_attackNodes.Add(m_body[2].Position.grid + new Vector2Int(-1, (int)(m_body[2].Position.world.y - m_body[3].Position.world.y)));
-                m_attackNodes.Add(m_body[4].Position.grid + new Vector2Int(1, -(int)(m_body[4].Position.world.y - m_body[4].Position.world.y)));
-                m_attackNodes.Add(m_body[4].Position.grid + new Vector2Int(-1, -(int)(m_body[3].Position.world.y - m_body[3].Position.world.y)));
+                TelegraphBullets(0,2,4);
             }
 
             foreach (var node in m_attackNodes)
@@ -318,16 +320,118 @@ public class WrymBossEnity : GridEntity
                 }
             }
         }
-        
+
+        for (int i = 0; i < m_body.Count; i++)
+        {
+            if (m_body[i].m_fireCooldown <= 0)
+            {
+                m_body[i].m_firingPhaseTwo = !m_body[i].m_firingPhaseTwo;
+                m_body[i].m_fireCooldown = 3;
+            }
+
+            m_body[i].m_fireCooldown--;
+        }
+
         if (m_fireCooldown <= 0)
         {
             m_firingPhaseTwo = !m_firingPhaseTwo;
             m_fireCooldown = 3;
         }
 
+
         m_fireCooldown--;
-        m_stepTimer++;
+        m_stepTimer--;
         SetMovementDirection(dir, m_moveSpeed); // Set movement
+    }
+
+    private void Phase3()
+    {
+        if(m_split == true)
+        {
+            m_body[2].m_head = true;
+
+            m_body[2].m_body.Add(m_body[3]);
+            m_body[2].m_body.Add(m_body[4]);
+
+            m_body[2].m_headEntity = m_body[2];
+            m_body[3].m_headEntity = m_body[2];
+            m_body[4].m_headEntity = m_body[2];
+
+            m_body[2].Health = (int)Mathf.Ceil(Health / 2);
+            Health = (int)Mathf.Ceil(Health / 2);
+
+            m_body.RemoveAt(4);
+            m_body.RemoveAt(3);
+            m_body.RemoveAt(2);
+
+            m_split = false;
+        }
+
+        Phase1();
+    }
+
+    private void TelegraphBullets(int secOne, int secTwo, int secThree)
+    {
+        if (secOne == 0)
+        {
+            if (m_body[secOne].m_currentNode.GetNeighbour(new Vector2Int(1, (int)(m_body[secOne].Position.world.y - m_body[secOne + 1].Position.world.y))) != null)
+            {
+                if (m_body[secOne].m_currentNode.GetNeighbour(new Vector2Int(1, (int)(m_body[secOne].Position.world.y - m_body[secOne + 1].Position.world.y))).GetGridEntities().Count == 0)
+                    m_attackNodes.Add(m_body[secOne].Position.grid + new Vector2Int(1, (int)(m_body[secOne].Position.world.y - m_body[secOne + 1].Position.world.y)));
+            }
+
+            if (m_body[secOne].m_currentNode.GetNeighbour(new Vector2Int(-1, (int)(m_body[secOne].Position.world.y - m_body[secOne + 1].Position.world.y))) != null)
+            {
+                if (m_body[secOne].m_currentNode.GetNeighbour(new Vector2Int(-1, (int)(m_body[secOne].Position.world.y - m_body[secOne + 1].Position.world.y))).GetGridEntities().Count == 0)
+                    m_attackNodes.Add(m_body[secOne].Position.grid + new Vector2Int(-1, (int)(m_body[secOne].Position.world.y - m_body[secOne + 1].Position.world.y)));
+            }
+        }
+
+        if (m_body[secTwo].m_currentNode.GetNeighbour(new Vector2Int(1, (int)(m_body[secTwo].Position.world.y - m_body[secTwo + 1].Position.world.y))) != null)
+        {
+            if (m_body[secTwo].m_currentNode.GetNeighbour(new Vector2Int(1, (int)(m_body[secTwo].Position.world.y - m_body[secTwo + 1].Position.world.y))).GetGridEntities().Count == 0)
+                m_attackNodes.Add(m_body[secTwo].Position.grid + new Vector2Int(1, (int)(m_body[secTwo].Position.world.y - m_body[secTwo + 1].Position.world.y)));
+        }
+
+        if (m_body[secTwo].m_currentNode.GetNeighbour(new Vector2Int(-1, (int)(m_body[secTwo].Position.world.y - m_body[secTwo + 1].Position.world.y))) != null)
+        {
+            if (m_body[secTwo].m_currentNode.GetNeighbour(new Vector2Int(-1, (int)(m_body[secTwo].Position.world.y - m_body[secTwo + 1].Position.world.y))).GetGridEntities().Count == 0)
+                m_attackNodes.Add(m_body[secTwo].Position.grid + new Vector2Int(-1, (int)(m_body[secTwo].Position.world.y - m_body[secTwo + 1].Position.world.y)));
+        }
+
+        if (m_body[secThree].m_currentNode.GetNeighbour(new Vector2Int(1, -(int)(m_body[secThree].Position.world.y - m_body[secThree - 1].Position.world.y))) != null)
+        {
+            if (m_body[secThree].m_currentNode.GetNeighbour(new Vector2Int(1, -(int)(m_body[secThree].Position.world.y - m_body[secThree - 1].Position.world.y))).GetGridEntities().Count == 0)
+                m_attackNodes.Add(m_body[secThree].Position.grid + new Vector2Int(1, -(int)(m_body[secThree].Position.world.y - m_body[secThree - 1].Position.world.y)));
+        }
+
+        if (m_body[secThree].m_currentNode.GetNeighbour(new Vector2Int(-1, -(int)(m_body[secThree].Position.world.y - m_body[secThree - 1].Position.world.y))) != null)
+        {
+            if (m_body[secThree].m_currentNode.GetNeighbour(new Vector2Int(-1, -(int)(m_body[secThree].Position.world.y - m_body[secThree - 1].Position.world.y))).GetGridEntities().Count == 0)
+                m_attackNodes.Add(m_body[secThree].Position.grid + new Vector2Int(-1, -(int)(m_body[secThree].Position.world.y - m_body[secThree - 1].Position.world.y)));
+        }
+    }
+
+    public void MoveToBurrow()
+    {
+        if (m_burrowPos != Vector2Int.zero)
+        {
+            var currentRoom = App.GetModule<LevelModule>().CurrentRoom;
+
+            SetMovementDirection(new Vector2(1, 0));
+            RemoveFromCurrentNode();
+
+            if (currentRoom[m_burrowPos].GetGridEntities().Count < 1)
+            {
+                m_currentNode = currentRoom[m_burrowPos];
+                transform.position = currentRoom[m_burrowPos].position.world;
+            }
+
+            AddToCurrentNode();
+
+            m_lastBurrowPos = m_burrowPos;
+            m_burrowPos = Vector2Int.zero;
+        }
     }
 
     private void FireAttack(Vector2 dir)
