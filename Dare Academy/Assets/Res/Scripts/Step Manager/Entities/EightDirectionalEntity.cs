@@ -22,13 +22,14 @@ public class EightDirectionalEntity : GridEntity
 
     protected override void Start()
     {
-        base.Start(); // Run base start
         m_health = 5; // Set health to 5
         m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true); // Set flag for killable to true
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true); // Set flag for if solid to true
 
         player = PlayerEntity.Instance; // Find the player
         m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet"); // Find the bullet prefab
+        base.Start(); // Run base start
+        m_animationController.SetAnimationSpeed(0.5f);
     }
 
     protected override void OnValidate()
@@ -39,11 +40,15 @@ public class EightDirectionalEntity : GridEntity
     public override void AnalyseStep()
     {
         base.AnalyseStep(); // Run base function
+        m_animationController.SetAnimationSpeed(1);
+        //Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, player.transform.position); // Find path to player
+        float dist = Vector3.Distance(m_currentNode.position.world, player.currentNode.position.world);
 
-        Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, player.transform.position); // Find path to player
+        m_animationController.animator.SetBool("isAsleep", dist >= agroRange);
 
-        if (path.Length < agroRange) // If the player is within agro range
+        if (dist < agroRange) // If the player is within agro range
         {
+            
             if (m_attackCounter >= m_attackSpeed) //  If the cooldown has expired
             {
                 isAttacking = true; // Set attacking to true
