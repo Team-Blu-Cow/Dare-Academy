@@ -30,6 +30,7 @@ public class ButtonContainer
     public bool test;
     public int transition;
     public int loadingBar;
+    public string sceneName = "";
     public bool swapScene;
 
     public bool showInEditor = false;

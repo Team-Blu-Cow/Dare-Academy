@@ -25,6 +25,11 @@ public class SaveSlots : MonoBehaviour
                 Debug.LogWarning("[UI/MainMenu.SaveSlot] Not enough children for save slots");
             }
         }
+
+        foreach (var button in GetComponentInParent<CanvasTool.ButtonWrapper>().buttons)
+        {
+            button.sceneName = "Crashsite Top"; //#todo #matthew Change to saved scene
+        }
     }
 
     public async void OnOpen()
