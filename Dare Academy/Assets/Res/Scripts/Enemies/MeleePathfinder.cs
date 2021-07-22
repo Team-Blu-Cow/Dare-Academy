@@ -6,11 +6,6 @@ using JUtil;
 
 public class MeleePathfinder : GridEntity
 {
-    private int m_attackCounter = 0;
-    private int m_waitCounter = 1;
-    private bool m_attack = false;
-    private Vector2 m_attackDirection = new Vector2();
-
     private Vector2 m_dir = new Vector2();
     [SerializeField] private int moveSpeed = 1;
 
@@ -59,34 +54,7 @@ public class MeleePathfinder : GridEntity
             case State.MOVE:
                 MoveState();
                 break;
-
-            case State.ATTACK:
-                break;
         }
-
-        /*if (!m_attack)
-        {
-            Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(m_currentNode, m_player.currentNode);
-
-            Vector3 dir = new Vector3();
-
-            if (path.Length > 1)
-                dir = path[1] - path[0];
-            else if (path.Length == 1)
-            {
-                m_attackDirection = m_player.Position.grid - Position.grid;
-                m_attack = true;
-            }
-
-            m_dir = new Vector2Int((int)dir.x, (int)dir.y);
-        }
-        else
-        {
-            m_dir = Vector2.zero;
-        }
-
-        SetMovementDirection(m_dir, moveSpeed);*/
-
     }
 
     private void DecideState()
@@ -106,14 +74,11 @@ public class MeleePathfinder : GridEntity
                     if(e.Flags.IsFlagsSet(GridEntityFlags.Flags.isPlayer))
                     {
                         m_state = State.ATTACK;
-                        m_attackDirection = m_currentNode.Neighbors[v].offsetVector;
                         m_attackNode = node;
                         App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.ATTACK);
                         return;
                     }
                 }
-
-                
             }
             angle += 90;
         }
