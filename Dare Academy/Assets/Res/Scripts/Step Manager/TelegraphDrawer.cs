@@ -57,6 +57,17 @@ public class TelegraphDrawer
         m_spriteList.Add(newTelegraph);
     }
 
+    public void CreateTelegraph(GridNode node, Type type, Color colour)
+    {
+        GameObject newTelegraph =  GameObject.Instantiate(m_prefabList[GetPrefabIndex(type)], node.position.world, Quaternion.identity);
+
+        newTelegraph.transform.parent = m_telegraphParentGameobject.transform;
+
+        newTelegraph.GetComponent<SpriteRenderer>().color = colour;
+
+        m_spriteList.Add(newTelegraph);
+    }
+
     private int GetPrefabIndex(Type type)
     {
         switch (type)

@@ -301,9 +301,6 @@ public class PlayerEntity : GridEntity
     {
         m_overlayToggle = !m_overlayToggle;
 
-
-        float angle = 0;
-
         Grid<GridNode> currentGrid = App.GetModule<LevelModule>().CurrentRoom;
 
         GridNodePosition startOffset = m_currentNode.position;
@@ -322,9 +319,6 @@ public class PlayerEntity : GridEntity
             yy = startOffset.grid.y - m_overlayRadius;
             for (int y = 0; y < diameter; y++)
             {
-                float val_x = (x % diameter)/diameter;
-                float val_y = (y % diameter)/diameter;
-
                 if ((x+y)%2 != modVal)
                 {
                     GridNode node = currentGrid[xx,yy];
@@ -344,21 +338,6 @@ public class PlayerEntity : GridEntity
 
             xx++;
         }
-
-
-        
-
-
-        /*for (int i = 0; i < 4; i++)
-        {
-            Vector2 v = Vector2.up.Rotate(angle);
-            GridNode node = m_currentNode.Neighbors[v].reference;
-            if (node != null && node.roomIndex == m_currentNode.roomIndex)
-            {
-                App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.MOVE);
-            }
-            angle += 90;
-        }*/
     }
 
     protected void ToggleAbilityMode(InputAction.CallbackContext context)
