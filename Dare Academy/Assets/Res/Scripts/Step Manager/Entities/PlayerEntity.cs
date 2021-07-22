@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using JUtil;
+using JUtil.Grids;
 
 using flags = GridEntityFlags.Flags;
 using interalFlags = GridEntityInternalFlags.Flags;
@@ -63,6 +64,9 @@ public class PlayerEntity : GridEntity
 
     private Vector2Int m_moveDirection = Vector2Int.zero;
     [SerializeField] private Vector2Int m_abilityDirection = Vector2Int.zero;
+
+    [SerializeField] private int m_overlayRadius = 3;
+    [SerializeField] private bool m_overlayToggle;
 
     public Dictionary<string, List<int>> m_dictRoomsTraveled = new Dictionary<string, List<int>>();
 
@@ -199,7 +203,7 @@ public class PlayerEntity : GridEntity
             {
                 SetMovementDirection(m_abilityDirection, m_dashDistance);
                 m_abilityDirection = Vector2Int.zero;
-                App.GetModule<LevelModule>().StepController.ExecuteStep();
+                ExecuteStep();
             }
             else
             {
@@ -216,7 +220,7 @@ public class PlayerEntity : GridEntity
                 SetMovementDirection(Vector2Int.zero, 0);
                 m_abilityDirection = Vector2Int.zero;
                 m_moveDirection = Vector2Int.zero;
-                App.GetModule<LevelModule>().StepController.ExecuteStep();
+                ExecuteStep();
             }
             else
             {
@@ -231,10 +235,16 @@ public class PlayerEntity : GridEntity
             SetMovementDirection(m_moveDirection, 1);
             m_moveDirection = Vector2Int.zero;
             if (!m_sceneHasSwitched)
-                App.GetModule<LevelModule>().StepController.ExecuteStep();
+                ExecuteStep();
 
             SetMovementDirection(Vector2Int.zero, 0);
         }
+    }
+
+
+    public void ExecuteStep()
+    {
+        App.GetModule<LevelModule>().StepController.ExecuteStep();
     }
 
     protected void UpdateSaveFile()
@@ -274,15 +284,62 @@ public class PlayerEntity : GridEntity
 
         if (m_animationController != null)
             SetAbilityAnimationFlag(0);
-
         DrawMoveOverlays();
     }
 
     public void DrawMoveOverlays()
     {
+        m_overlayToggle = !m_overlayToggle;
+
+
         float angle = 0;
 
-        for (int i = 0; i < 4; i++)
+        Grid<GridNode> currentGrid = App.GetModule<LevelModule>().CurrentRoom;
+
+        GridNodePosition startOffset = m_currentNode.position;
+        int xx = startOffset.grid.x - m_overlayRadius;
+        int yy = startOffset.grid.y - m_overlayRadius;
+
+        int diameter =  (m_overlayRadius*2) +1;
+
+        int modVal = 0;
+
+        if (m_overlayToggle)
+            modVal = 1;
+
+        for (int x = 0; x < diameter; x++)
+        {
+            yy = startOffset.grid.y - m_overlayRadius;
+            for (int y = 0; y < diameter; y++)
+            {
+                float val_x = (x % diameter)/diameter;
+                float val_y = (y % diameter)/diameter;
+
+                if ((x+y)%2 != modVal)
+                {
+                    GridNode node = currentGrid[xx,yy];
+                    if (node != null && node.roomIndex == m_currentNode.roomIndex && node.IsTraversable())
+                    {
+
+                        float dist = Vector3.Distance(node.position.world, m_currentNode.position.world);
+
+                        dist = ((m_overlayRadius - dist) / (m_overlayRadius))/2;
+
+
+                        App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.MOVE, dist);
+                    }
+                }
+                yy++;
+            }
+
+            xx++;
+        }
+
+
+        
+
+
+        /*for (int i = 0; i < 4; i++)
         {
             Vector2 v = Vector2.up.Rotate(angle);
             GridNode node = m_currentNode.Neighbors[v].reference;
@@ -291,7 +348,7 @@ public class PlayerEntity : GridEntity
                 App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.MOVE);
             }
             angle += 90;
-        }
+        }*/
     }
 
     protected void ToggleAbilityMode(InputAction.CallbackContext context)
