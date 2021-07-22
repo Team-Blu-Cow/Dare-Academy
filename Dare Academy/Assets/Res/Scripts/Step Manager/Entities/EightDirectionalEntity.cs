@@ -20,6 +20,8 @@ public class EightDirectionalEntity : GridEntity
 
     [SerializeField] private GridEntity player; // Player to figure out how close they are to the entity (for agro range check)
 
+    [SerializeField] private ParticleSystem m_sleepyParticles;
+
     protected override void Start()
     {
         m_health = 5; // Set health to 5
@@ -35,26 +37,41 @@ public class EightDirectionalEntity : GridEntity
     protected override void OnValidate()
     {
         base.OnValidate();
+        m_sleepyParticles = GetComponentInChildren<ParticleSystem>();
     }
 
     public override void AnalyseStep()
     {
+        if (player == null)
+            return;
+
         base.AnalyseStep(); // Run base function
         m_animationController.SetAnimationSpeed(1);
-        //Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, player.transform.position); // Find path to player
         float dist = Vector3.Distance(m_currentNode.position.world, player.currentNode.position.world);
 
         m_animationController.animator.SetBool("isAsleep", dist >= agroRange);
 
         if (dist < agroRange) // If the player is within agro range
         {
-            
+
             if (m_attackCounter >= m_attackSpeed) //  If the cooldown has expired
             {
                 isAttacking = true; // Set attacking to true
                 TelegraphAttack(); // Telegraph the attacking position
             }
         }
+    }
+
+    public void StartSleeping()
+    {
+        if (!m_sleepyParticles.isPlaying)
+            m_sleepyParticles.Play();
+    }
+
+    public void StopSleeping()
+    {
+        if (m_sleepyParticles.isPlaying)
+            m_sleepyParticles.Stop();
     }
 
     public override void AttackStep()

@@ -9,7 +9,7 @@ public class MeleeAttackEntity : GridEntity
 
     public void Init(GridNode node)
     {
-        m_currentNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(transform.position);
+        m_currentNode = node;
 
         if (m_currentNode == null)
         {
@@ -44,6 +44,11 @@ public class MeleeAttackEntity : GridEntity
     }
 
     public override void EndStep()
+    {
+        OnDeath();
+    }
+
+    public override void RoomChange()
     {
         OnDeath();
     }
