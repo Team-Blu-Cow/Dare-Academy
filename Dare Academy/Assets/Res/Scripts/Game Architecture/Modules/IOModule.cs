@@ -19,7 +19,7 @@ namespace blu
             { return "uwu"; }
         }
 
-        public string displayName = null;
+        public int saveSlot = 0;
         public LevelID levelId = LevelID._default;
         public System.Int32 gameEventFlags = 0;
         public int respawnRoomID = -1;
@@ -35,18 +35,20 @@ namespace blu
         // check if a valid save file has been loaded
         public bool isSaveLoaded { get => savedata != null; }
 
+        public const int MaxSaveFiles = 3;
+
         // if save slots are currently loaded
         public bool isSaveSlotsLoaded { get => m_saveSlotsLoaded; }
 
         // a list of every save slot available to the player
         // the SaveSlotData structure can be handed to LoadSaveAsync to load the associated file into memory
-        public List<SaveSlotData> saveSlots { get => m_SaveSlots; }
+        public SaveSlotData[] saveSlots { get => m_saveSlots; }
 
         private string m_applicationPath = null;
         private Encryptor m_encryptor = new Encryptor(Crypto.FileEncryptionKeys.key, Crypto.FileEncryptionKeys.iv);
         private SaveData m_activeSavedata = null;
         private string m_activeSavedataPath = null;
-        private List<SaveSlotData> m_SaveSlots = new List<SaveSlotData>();
+        private SaveSlotData[] m_saveSlots = new SaveSlotData[MaxSaveFiles];
         private int m_runtimeIdCounter = 0;
         private const string m_kSaveGameDir = "SavedGames/";
         private bool m_saveSlotsLoaded = false;
@@ -147,13 +149,22 @@ namespace blu
         private bool LoadSaveSlots()
         {
             m_saveSlotsLoaded = false;
-            saveSlots.Clear();
+
+            for (int i = saveSlots.Length - 1; i >= 0; i--)
+            {
+                saveSlots[i] = null;
+            }
 
             FileLoaderStaticUtility.CreateDirectory(m_applicationPath + "/" + m_kSaveGameDir);
 
             try
             {
                 List<string> files = GetAllFilesOfType<SaveData>(m_kSaveGameDir);
+
+                while (files.Count > MaxSaveFiles)
+                {
+                    files.RemoveAt(files.Count - 1);
+                }
 
                 for (int i = 0; i < files.Count; i++)
                 {
@@ -165,11 +176,38 @@ namespace blu
                     SaveData savedata = fileloader.ReadData();
 
                     if (savedata == null)
-                    { continue; }
+                    {
+                        Debug.LogWarning($"[App/IOModule.LoadSaveSlots] could not load savedata");
+                    }
 
-                    data.m_displayName = savedata.displayName;
+                    int slot = savedata.saveSlot;
+                    int startSlot = slot;
 
-                    m_SaveSlots.Add(data);
+                    while (true)
+                    {
+                        if (slot >= m_saveSlots.Length)
+                            slot = 0;
+
+                        if (m_saveSlots[slot] == null)
+                        {
+                            m_saveSlots[slot] = data;
+                            break;
+                        }
+
+                        slot++;
+
+                        if (slot == startSlot)
+                        {
+                            Debug.LogWarning("[App/IOModule] error assigning savedata to save slot");
+                            break;
+                        }
+                    }
+
+                    if (slot != startSlot)
+                    {
+                        savedata.saveSlot = slot;
+                        fileloader.WriteData(savedata); // set new slot
+                    }
                 }
             }
             catch
@@ -212,7 +250,7 @@ namespace blu
             m_activeSavedata = savedata;
 
             if (logToConsole)
-            { Debug.Log($"Save file loaded: [DisplayName = {savedata.displayName}] [File = {m_activeSavedataPath}]"); }
+            { Debug.Log($"Save file loaded: [File = {m_activeSavedataPath}]"); }
 
             return true;
         }
@@ -232,7 +270,6 @@ namespace blu
             int cur_time = (int)(System.DateTime.UtcNow - epochStart).TotalSeconds;
 
             SaveData savedata = new SaveData();
-            savedata.displayName = displayName;
 
             string filename = m_kSaveGameDir + cur_time.ToString();
             string filepath = m_applicationPath + "/" + filename + "." + savedata.FileExtension();
@@ -300,7 +337,7 @@ namespace blu
                     {
                         m_activeSavedata = fileloader.ReadData();
                         m_activeSavedataPath = m_debugConfig.debugFileLocation;
-                        Debug.Log($"Save file loaded: [DisplayName = {savedata.displayName}] [File = {m_activeSavedataPath}]");
+                        Debug.Log($"Save file loaded: [File = {m_activeSavedataPath}]");
                     }
                 }
                 else
