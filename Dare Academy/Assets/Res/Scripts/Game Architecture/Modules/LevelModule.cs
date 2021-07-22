@@ -10,7 +10,12 @@ namespace blu
     // for use when saving game to signify which scene should be loaded when opening the game
     public enum LevelID
     {
-        _default = 0, // default value, open first level?
+        _default = 0,
+        crashsite_top = 1,
+        crashsite_bottom = 2,
+        mushroom_start = 3,
+        mushroom_end = 4,
+        misplaced_forest = 5,
     }
 
     public class LevelModule : Module
@@ -207,6 +212,68 @@ namespace blu
         {
             while (!IsInitialised) { }
             return true;
+        }
+
+        // HELPER FUNCTIONS
+
+        public static string ResolveSceneNameString(LevelID id)
+        {
+            switch (id)
+            {
+                case LevelID._default:
+                    return "Crashsite Top";
+
+                case LevelID.crashsite_top:
+                    return "Crashsite Top";
+
+                case LevelID.crashsite_bottom:
+                    return "Crashsite Bottom";
+
+                case LevelID.mushroom_start:
+                    return "Mushroom Forest Start";
+
+                case LevelID.mushroom_end:
+                    return "Mushroom Forest End";
+
+                case LevelID.misplaced_forest:
+                    return "Misplaced Forest";
+
+                default:
+                    Debug.LogWarning("[LevelModule] could not resolve scene name from LevelId, get @matthew to fix this");
+                    return "Crashsite Top";
+            }
+        }
+
+        public static LevelID ResolveLevelId(int buildIndex)
+        {
+            string sceneName = SceneUtility.GetScenePathByBuildIndex(buildIndex);
+
+            switch (sceneName)
+            {
+                case "Assets/Res/Scenes/Game Scenes/Crashsite Top.unity":
+                    return LevelID.crashsite_top;
+
+                case "Assets/Res/Scenes/Game Scenes/Crashsite Bottom.unity":
+                    return LevelID.crashsite_bottom;
+
+                case "Assets/Res/Scenes/Game Scenes/Mushroom Forest Start.unity":
+                    return LevelID.mushroom_start;
+
+                case "Assets/Res/Scenes/Game Scenes/Mushroom Forest End.unity":
+                    return LevelID.mushroom_end;
+
+                case "Assets/Res/Scenes/Game Scenes/Misplaced Forest.unity":
+                    return LevelID.misplaced_forest;
+
+                default:
+                    Debug.LogWarning("[LevelModule] could not resolve scene name from buildIndex, get @matthew to fix this");
+                    return LevelID._default;
+            }
+        }
+
+        public static LevelID CurrentLevelId()
+        {
+            return ResolveLevelId(SceneManager.GetActiveScene().buildIndex);
         }
     }
 

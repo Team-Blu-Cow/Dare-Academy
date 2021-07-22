@@ -24,9 +24,18 @@ namespace CanvasTool
                 else if (!button.swapScene)
                     button.button.onClick.AddListener(delegate { canvasManager.CloseCanvas(button.closeAll); });
                 else
-                    button.button.onClick.AddListener(delegate
+                    button.button.onClick.AddListener(async delegate
                     {
-                        App.GetModule<SceneModule>().SwitchScene(button.sceneName, (TransitionType)button.transition, (LoadingBarType)button.loadingBar, button.test);
+                        // #jack
+                        // i changed this up a bit to read in data from save file for scene switch
+                        // if i've been a nincompoop let me know 
+                        // -Matthew <3
+
+                        LevelModule lv = App.GetModule<LevelModule>();
+                        await lv.AwaitSaveLoad();
+                        string name = LevelModule.ResolveSceneNameString(lv.ActiveSaveData.levelId);
+
+                        App.GetModule<SceneModule>().SwitchScene(name, (TransitionType)button.transition, (LoadingBarType)button.loadingBar, button.test);
                     });
 
                 //button.button.onClick.AddListener(delegate { blu.Application.ModuleManager.GetModule<AudioModule>().PlayAudioEvent("event:/UI/buttons/on click"); });

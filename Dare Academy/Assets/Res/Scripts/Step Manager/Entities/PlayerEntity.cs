@@ -104,6 +104,8 @@ public class PlayerEntity : GridEntity
         await App.GetModule<LevelModule>().AwaitSaveLoad();
         App.GetModule<LevelModule>().LoadFromSave();
 
+        App.GetModule<LevelModule>().ActiveSaveData.levelId = LevelModule.CurrentLevelId();
+
         foreach (Quest.StringListIntPair pair in App.GetModule<LevelModule>().ActiveSaveData.m_roomsTraveled)
         {
             if (!m_dictRoomsTraveled.ContainsKey(pair.key))

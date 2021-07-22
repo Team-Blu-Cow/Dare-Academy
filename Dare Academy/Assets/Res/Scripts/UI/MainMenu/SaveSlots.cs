@@ -51,16 +51,17 @@ public class SaveSlots : MonoBehaviour
     }
 
     public async void OnSave(int slotNumber)
-    {        
-        if (io.saveSlots[slotNumber] == null)        
-            await io.CreateNewSave(slotNumber, true);        
+    {
+        if (io.saveSlots[slotNumber] == null)
+            await io.CreateNewSave(slotNumber, true);
         else
+        {
             await io.LoadSaveAsync(io.saveSlots[slotNumber]); //#todo #matthew cleany up please
+        }
     }
-    
+
     public void OnDelete(int slotNumber)
     {
-
         System.IO.File.Delete(io.saveSlots[slotNumber].m_filepath);
         io.LoadSaveSlots(); //#todo #matthew you better fix
 
