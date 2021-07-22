@@ -83,21 +83,9 @@ namespace blu
             SaveGame();
         }
 
-        public async override void Initialize()
+        public override void Initialize()
         {
             SceneManager.sceneLoaded += LevelChanged;
-
-            IOModule ioModule = App.GetModule<IOModule>();
-
-            await ioModule.awaitInitialised;
-
-            //if (!ioModule.isSaveLoaded)
-            //{
-            //    Debug.LogWarning("[Level Module] save file not loaded, creating new save");
-            //    await ioModule.CreateNewSave("new save", true);
-            //}
-
-            //m_gameEventFlags._FlagData = ActiveSaveData.gameEventFlags; #todo #matthew 
 
             if (m_playerPrefab == null)
                 m_playerPrefab = Resources.Load<GameObject>("prefabs/Entities/Player");
@@ -174,6 +162,20 @@ namespace blu
         }
 
         // FILE IO
+
+        public async void LoadFromSave()
+        {
+            IOModule ioModule = App.GetModule<IOModule>();
+            await ioModule.awaitInitialised;
+
+            if (ActiveSaveData == null)
+            {
+                Debug.LogWarning("[LevelModule] attempted to read from save file but no file was loaded");
+                return;
+            }
+
+            m_gameEventFlags._FlagData = ActiveSaveData.gameEventFlags;
+        }
 
         public async void SaveGame()
         {

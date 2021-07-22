@@ -102,6 +102,8 @@ public class PlayerEntity : GridEntity
         m_animationController = GetComponent<GridEntityAnimationController>();
 
         await App.GetModule<LevelModule>().AwaitSaveLoad();
+        App.GetModule<LevelModule>().LoadFromSave();
+
         foreach (Quest.StringListIntPair pair in App.GetModule<LevelModule>().ActiveSaveData.m_roomsTraveled)
         {
             if (!m_dictRoomsTraveled.ContainsKey(pair.key))
