@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using blu;
+using TMPro;
 
 public class MainMenuSelector : MonoBehaviour
 {
@@ -24,6 +25,12 @@ public class MainMenuSelector : MonoBehaviour
         {
             if (ES.currentSelectedGameObject != null && m_selected != ES.currentSelectedGameObject && ES.currentSelectedGameObject.transform.position != Vector3.zero)
             {
+                if (m_selected != null)
+                {
+                    m_selected.GetComponentInChildren<TextMeshProUGUI>().color = new Color32(255,255,255,200);
+                    ES.currentSelectedGameObject.GetComponentInChildren<TextMeshProUGUI>().alpha = 255;
+                }
+
                 m_selected = ES.currentSelectedGameObject;
                 LeanTween.cancel(gameObject);
 
