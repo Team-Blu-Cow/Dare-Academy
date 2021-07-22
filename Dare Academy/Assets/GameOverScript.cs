@@ -26,7 +26,7 @@ public class GameOverScript : MonoBehaviour
         }
         else if (_killPlayer)
         {
-            KillPLayerAndResetPosition();
+            KillPlayerAndResetPosition();
         }
         else
         {
@@ -34,7 +34,7 @@ public class GameOverScript : MonoBehaviour
         }
     }
 
-    private void KillPLayerAndResetPosition()
+    private void KillPlayerAndResetPosition()
     {
         blu.App.GetModule<blu.InputModule>().PlayerController.Enable();
         if (!_playerRef.MoveToRespawnLocation())
