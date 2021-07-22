@@ -63,6 +63,11 @@ public class WrymBossEnity : GridEntity
             Health = 5;
         }
 
+        if(m_headEntity == null)
+        {
+            Kill();
+        }
+
         if (m_head)
         {
             if (Health > 5)
