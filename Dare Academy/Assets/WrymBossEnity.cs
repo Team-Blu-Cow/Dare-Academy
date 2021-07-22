@@ -28,7 +28,7 @@ public class WrymBossEnity : GridEntity
     private List<Vector2> m_previousMoves = new List<Vector2>();
 
     [Header("Phase Two Variables")]
-    [SerializeField] private int m_stepTimer = 10;
+    [SerializeField] private int m_stepTimer = 40;
     [SerializeField] private Vector3 m_prevPosition = new Vector3(0, 0, 0);
     [SerializeField] private bool m_firingPhaseTwo;
     [SerializeField] private GameObject m_bulletPrefab;
@@ -41,7 +41,7 @@ public class WrymBossEnity : GridEntity
     {
         base.Start();
         m_player = PlayerEntity.Instance;
-        Health = 5;
+        Health = 10;
         m_damageEntityPrefab = Resources.Load<GameObject>("prefabs/Entities/DamageEntity");       
     }
 
