@@ -150,6 +150,7 @@ public class ScriptableEntityEditor : Editor
 
                 case ScriptedActionQueue.ActionType.ExecuteSteps:
                     queue.m_actionList[i].int32Data = IntField(queue.m_actionList[i].int32Data);
+                    queue.m_actionList[i].doubleData = DoubleField(queue.m_actionList[i].doubleData);
                     break;
 
                 default:
@@ -203,6 +204,19 @@ public class ScriptableEntityEditor : Editor
             i = 0;
 
         return (int)i;
+    }
+
+    private double DoubleField(double? d)
+    {
+        if (d == null)
+        { d = new double(); }
+
+        d = EditorGUILayout.DoubleField((double)d);
+
+        if (d < 0)
+            d = 0;
+
+        return (double)d;
     }
 
     private GameObject ObjectField(GameObject obj)

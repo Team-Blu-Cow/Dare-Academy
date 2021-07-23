@@ -13,11 +13,24 @@ public class LevelManager : MonoBehaviour
     public static LevelManager Instance => _instance;
 
     private int m_forceStepsCount = 0;
+    private double m_forceStepTime = 0d;
+
+    private double m_forceStepTimer = 0d;
 
     public int ForceStepsCount
     {
         get => m_forceStepsCount;
-        set => m_forceStepsCount = value;
+        set
+        {
+            m_forceStepsCount = value;
+            m_forceStepTimer = 0d;
+        }
+    }
+
+    public double ForceStepTime
+    {
+        get => m_forceStepTime;
+        set => m_forceStepTime = value;
     }
 
     public bool AllowPlayerMovement
@@ -83,9 +96,14 @@ public class LevelManager : MonoBehaviour
         StepController.timer += Time.deltaTime;
         if (ForceStepsCount > 0)
         {
-            if (m_stepController.ExecuteStep())
+            m_forceStepTimer += Time.deltaTime;
+            if (m_forceStepTimer > m_forceStepTime)
             {
-                ForceStepsCount--;
+                m_forceStepTimer = 0;
+                if (m_stepController.ExecuteStep())
+                {
+                    ForceStepsCount--;
+                }
             }
         }
     }

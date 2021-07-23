@@ -49,6 +49,7 @@ public class ScriptedActionQueue : ScriptableObject
         [SerializeField] public ActionType type = ActionType.None;
 
         [SerializeField] public int int32Data = 0;
+        [SerializeField] public double doubleData = 0d;
         [SerializeField] public MoveData moveData = new MoveData();
         [SerializeField] public string textData = "";
         [SerializeField] public GameObject gameObject;

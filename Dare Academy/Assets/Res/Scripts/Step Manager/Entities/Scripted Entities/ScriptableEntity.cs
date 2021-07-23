@@ -311,5 +311,6 @@ public class ScriptableEntity : GridEntity
     protected void ExecuteSteps(ScriptedActionQueue.ActionWrapper data)
     {
         LevelManager.Instance.ForceStepsCount = data.int32Data;
+        LevelManager.Instance.ForceStepTime = data.doubleData;
     }
 }
