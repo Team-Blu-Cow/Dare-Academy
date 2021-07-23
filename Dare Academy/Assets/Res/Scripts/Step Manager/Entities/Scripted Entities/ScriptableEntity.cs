@@ -9,6 +9,8 @@ public class ScriptableEntity : GridEntity
     [SerializeField] private GameObject m_prefab = null;
     [SerializeField] private ScriptedActionQueue m_actionQueue = null;
 
+    [SerializeField] private int m_flagValue; // so custom editor can access this
+
     public int m_queuePos = 0;
 
     private SpriteRenderer sr;
@@ -23,6 +25,11 @@ public class ScriptableEntity : GridEntity
 
         sr = GetComponentInChildren<SpriteRenderer>();
         anim = GetComponent<Animator>();
+    }
+
+    protected void Awake()
+    {
+        m_flags._FlagData = m_flagValue;
     }
 
     protected override void Start()
@@ -195,6 +202,9 @@ public class ScriptableEntity : GridEntity
             {
                 Debug.LogWarning($"[ScriptableEntity] [{gameObject.name}] could not instantiate prefab [prefab = {m_prefab.name}]");
             }
+
+            GridEntity entity = obj.GetComponent<GridEntity>();
+            entity.Flags.SetFlags(this.Flags._FlagData, true);
         }
         else
         {

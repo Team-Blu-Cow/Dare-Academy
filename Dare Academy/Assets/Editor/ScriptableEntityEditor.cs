@@ -20,7 +20,8 @@ public class ScriptableEntityEditor : Editor
 
     private SerializedProperty prefabProperty;
 
-    private bool foldout = false;
+    private bool flagFoldout = false;
+    private bool actionFoldout = false;
 
     private void OnValidate()
     {
@@ -31,19 +32,21 @@ public class ScriptableEntityEditor : Editor
         serializedObject.Update();
 
         prefabProperty = serializedObject.FindProperty("m_prefab");
+        EditorGUILayout.PropertyField(prefabProperty);
 
         SerializedProperty actionQueueProperty = serializedObject.FindProperty("m_actionQueue");
+        SerializedProperty flagsProperty = serializedObject.FindProperty("m_flagValue");
+
+        flagsProperty.intValue = DisplayFlags(flagsProperty.intValue);
 
         if (actionQueueProperty.objectReferenceValue == null)
         {
             actionQueueProperty.objectReferenceValue = ScriptableObject.CreateInstance<ScriptedActionQueue>();
         }
 
-        EditorGUILayout.PropertyField(prefabProperty);
+        actionFoldout = EditorGUILayout.Foldout(actionFoldout, "Actions");
 
-        foldout = EditorGUILayout.Foldout(foldout, "Actions");
-
-        if (foldout)
+        if (actionFoldout)
         {
             ScriptedActionQueue actionQueue = actionQueueProperty.objectReferenceValue as ScriptedActionQueue;
             DisplayActionQueue(ref actionQueue);
@@ -280,5 +283,28 @@ public class ScriptableEntityEditor : Editor
             obj = null;
             vec3 = EditorGUILayout.Vector3Field("", vec3);
         }
+    }
+
+    private int DisplayFlags(int value)
+    {
+        flagFoldout = EditorGUILayout.Foldout(flagFoldout, "Flags");
+        if (flagFoldout)
+        {
+            string[] flagNames = BitFlagsBase.FlagNames<GridEntityFlags.Flags>();
+
+            System.Array flagValues = System.Enum.GetValues(typeof(GridEntityFlags.Flags));
+
+            for (int i = 0; i < BitFlagsBase.NumberOfFlags<GridEntityFlags.Flags>(); i++)
+            {
+                bool fieldBool = GridEntityFlags.IsFlagSet((int)flagValues.GetValue(i), value);
+
+                fieldBool = EditorGUILayout.Toggle(flagNames[i], fieldBool);
+
+                int mask = (int)flagValues.GetValue(i);
+
+                value = GridEntityFlags.SetFlags(mask, value, fieldBool);
+            }
+        }
+        return value;
     }
 }
