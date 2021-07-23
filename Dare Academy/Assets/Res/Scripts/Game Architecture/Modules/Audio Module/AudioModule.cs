@@ -12,6 +12,7 @@ namespace blu
 
         private Dictionary<string, AudioEvent> _musicEvents = new Dictionary<string, AudioEvent>();
         private Dictionary<string, AudioEvent> _audioEvents = new Dictionary<string, AudioEvent>();
+        public string currentSong;
 
         public void NewAudioEvent(string name, int poly = 0) // use "object/event"
         {                                      // e.g. "player/footstep"
@@ -72,6 +73,16 @@ namespace blu
         public void PlayMusicEvent(string name) // use copied path from event browser
         {                                       // e.g. "event:/player/footstep"
             _musicEvents[name].Play();
+            currentSong = name;
+        }
+
+        public AudioEvent GetCurrentSong()
+        {
+            if (currentSong != null)
+            {
+                return _musicEvents[currentSong];
+            }
+            return null;
         }
 
         public void DeleteAudioEvent(string name)
