@@ -142,8 +142,6 @@ public class PlayerEntity : GridEntity
 
     private void OnEnable()
     {
-        App.GetModule<AudioModule>().PlayMusicEvent("event:/Music/Crash Site/Crash Site");
-
         m_input = App.GetModule<InputModule>().PlayerController;
 
         m_playerInput.Init();
@@ -371,6 +369,7 @@ public class PlayerEntity : GridEntity
     {
         m_abilities.SetActiveAbility(m_abilities.LeftAbility());
         SetAbilityAnimationFlag();
+        App.GetModule<AudioModule>().PlayMusicEvent("event:/Music/Mushroom Forest/Boyfriends Helmet");
     }
 
     public override void EndStep()
