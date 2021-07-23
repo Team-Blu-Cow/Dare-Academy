@@ -84,6 +84,8 @@ public class PlayerEntity : GridEntity
             Debug.LogWarning("[PlayerEntity] Instance already exists");
         }
 
+        App.GetModule<LevelModule>().LoadFromSave();
+
         _Instance = this;
     }
 
@@ -106,9 +108,6 @@ public class PlayerEntity : GridEntity
 
         Abilities.Initialise();
         m_animationController = GetComponent<GridEntityAnimationController>();
-
-        await App.GetModule<LevelModule>().AwaitSaveLoad();
-        App.GetModule<LevelModule>().LoadFromSave();
 
         App.GetModule<LevelModule>().ActiveSaveData.levelId = LevelModule.CurrentLevelId();
 
@@ -223,6 +222,7 @@ public class PlayerEntity : GridEntity
         {
             if (Dash())
             {
+                m_abilityDirection = m_playerInput.DirectionFour(true);
                 SetMovementDirection(m_abilityDirection, m_dashDistance);
                 m_abilityDirection = Vector2Int.zero;
                 ExecuteStep();

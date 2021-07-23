@@ -35,6 +35,9 @@ public class GridEntityFlags : BitFlags_32
 
     public bool IsFlagsSet(Flags flags)
     {
+        if (m_flagData == 0)
+            return false;
+
         if (((Int32)flags & m_flagData) == (Int32)flags)
             return true;
 

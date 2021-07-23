@@ -122,6 +122,9 @@ public class BitFlags_64 : BitFlagsBase
 
     public bool IsFlagsSet(Flags_64Base flags)
     {
+        if (m_flagData == 0)
+            return false;
+
         if (((Int64)flags & m_flagData) == (Int64)flags)
             return true;
 
@@ -140,6 +143,9 @@ public class BitFlags_64 : BitFlagsBase
 
     public static bool IsFlagSet(Int64 flags, Int64 flagData)
     {
+        if (flagData == 0)
+            return false;
+
         if (((Int64)flags & flagData) == (Int64)flags)
             return true;
 

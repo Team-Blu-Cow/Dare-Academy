@@ -170,8 +170,7 @@ namespace blu
 
         public async void LoadFromSave()
         {
-            IOModule ioModule = App.GetModule<IOModule>();
-            await ioModule.awaitInitialised;
+            await AwaitSaveLoad();
 
             if (ActiveSaveData == null)
             {
@@ -179,13 +178,13 @@ namespace blu
                 return;
             }
 
-            m_gameEventFlags._FlagData = ActiveSaveData.gameEventFlags;
+            EventFlags._FlagData = ActiveSaveData.gameEventFlags;
         }
 
         public async void SaveGame()
         {
             await AwaitSaveLoad();
-            App.GetModule<IOModule>().savedata.gameEventFlags = m_gameEventFlags._FlagData;
+            App.GetModule<IOModule>().savedata.gameEventFlags = EventFlags._FlagData;
             // #TODO #matthew - move the await out of here
             await App.GetModule<IOModule>().SaveAsync();
         }

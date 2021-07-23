@@ -65,6 +65,9 @@ public class BitFlags_32 : BitFlagsBase
 
     public bool IsFlagsSet(Int32 flags)
     {
+        if (m_flagData == 0)
+            return false;
+
         if ((flags & (Int32)m_flagData) == flags)
             return true;
 
@@ -83,6 +86,9 @@ public class BitFlags_32 : BitFlagsBase
 
     public static bool IsFlagSet(Int32 flags, Int32 flagData)
     {
+        if (flagData == 0)
+            return false;
+
         if (((Int32)flags & flagData) == (Int32)flags)
             return true;
 

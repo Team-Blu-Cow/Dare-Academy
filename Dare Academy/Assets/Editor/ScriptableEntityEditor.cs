@@ -18,6 +18,12 @@ public class ScriptableEntityEditor : Editor
         vec3,
     }
 
+    private enum _anyallEnum
+    {
+        any,
+        all,
+    }
+
     private SerializedProperty prefabProperty;
 
     private bool flagFoldout = false;
@@ -153,6 +159,10 @@ public class ScriptableEntityEditor : Editor
                     queue.m_actionList[i].doubleData = DoubleField(queue.m_actionList[i].doubleData);
                     break;
 
+                case ScriptedActionQueue.ActionType.KillIfEventFlagSet:
+                    KillIfEventFlagSet(ref queue.m_actionList[i].int32Data, ref queue.m_actionList[i].boolData);
+                    break;
+
                 default:
                     break;
             }
@@ -267,6 +277,24 @@ public class ScriptableEntityEditor : Editor
         e = (_boolEnum)EditorGUILayout.EnumPopup(e, GUILayout.Width(100f));
 
         if (e == _boolEnum.True)
+            b = true;
+        else
+            b = false;
+    }
+
+    private void KillIfEventFlagSet(ref int i, ref bool b)
+    {
+        i = (int)(GameEventFlags.Flags)EditorGUILayout.EnumFlagsField((GameEventFlags.Flags)(i), GUILayout.Width(160f));
+
+        _anyallEnum e;
+        if (b)
+            e = _anyallEnum.all;
+        else
+            e = _anyallEnum.any;
+
+        e = (_anyallEnum)EditorGUILayout.EnumPopup(e, GUILayout.Width(100f));
+
+        if (e == _anyallEnum.all)
             b = true;
         else
             b = false;
