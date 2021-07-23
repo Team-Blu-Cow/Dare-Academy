@@ -63,6 +63,10 @@ namespace blu
         private IEnumerator _StartDialogue(GameObject in_conversation)
         {
             _dialogueCanvas.SetActive(true);
+
+            if (_ContinueButton == null)
+                _ContinueButton = ConversationManager.Instance.DialoguePanel.transform.Find("ContinueButton").gameObject;
+
             _ContinueButton.SetActive(false);
 
             _currentConversation = in_conversation.GetComponent<NPCConversation>();
@@ -73,7 +77,6 @@ namespace blu
 
             App.CanvasManager.OpenCanvas(App.CanvasManager.GetCanvasContainer("Dialogue Canvas"), true);
 
-            
             ConversationManager.Instance._EnableUI();
             StartCoroutine(ProgressDialogue());
 
@@ -103,6 +106,9 @@ namespace blu
 
         private IEnumerator FadeOutCanvas()
         {
+            if (_canvasAnimation == null)
+                _canvasAnimation = _dialogueCanvas.GetComponentInChildren<Animator>();
+
             _canvasAnimation.SetTrigger("FadeOut");
             yield return new WaitForSeconds(_fadeDelay);
             App.CanvasManager.RemoveCanvasContainer("Dialogue Canvas", false);
