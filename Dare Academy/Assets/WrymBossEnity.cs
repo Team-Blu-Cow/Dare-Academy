@@ -356,28 +356,28 @@ public class WrymBossEnity : GridEntity
 
     private void Phase3()
     {
-        if(m_split == true)
+        if(m_split == true) // If the wyrm has not split yet
         {
-            m_body[2].m_head = true;
+            m_body[2].m_head = true; // Set the fourth entity of the worm to be a head
 
-            m_body[2].m_body.Add(m_body[3]);
-            m_body[2].m_body.Add(m_body[4]);
+            m_body[2].m_body.Add(m_body[3]); // Add the fifth entity to the new head
+            m_body[2].m_body.Add(m_body[4]); // Add the sixth entity to the new head
 
-            m_body[2].m_headEntity = m_body[2];
-            m_body[3].m_headEntity = m_body[2];
-            m_body[4].m_headEntity = m_body[2];
+            m_body[2].m_headEntity = m_body[2]; // Set the head entity for the fourth entity to itself
+            m_body[3].m_headEntity = m_body[2]; // Set the head entity for the fifth entity to the fourth entity
+            m_body[4].m_headEntity = m_body[2];// Set the head entity for the sixth entity to the fourth entity
 
-            m_body[2].Health = (int)Mathf.Ceil(Health / 2);
-            Health = (int)Mathf.Ceil(Health / 2);
+            m_body[2].Health = (int)Mathf.Ceil(Health / 2); // Set health of the 4th entity to be the current health divided by 2 rounded up
+            Health = (int)Mathf.Ceil(Health / 2); // Do the same for the current head
 
-            m_body.RemoveAt(4);
-            m_body.RemoveAt(3);
-            m_body.RemoveAt(2);
+            m_body.RemoveAt(4); // Remove the 6th entity from the body variable for the current head
+            m_body.RemoveAt(3); // Remove the 5th entity from the body variable for the current head
+            m_body.RemoveAt(2); // Remove the 4th entity from the body variable for the current head
 
-            m_split = false;
+            m_split = false; // Now that the split has complete we don't want to run this code again so set this variable to false
         }
 
-        Phase1();
+        Phase1(); // Run phase 1
     }
 
     private void TelegraphBullets(int secOne, int secTwo, int secThree)
