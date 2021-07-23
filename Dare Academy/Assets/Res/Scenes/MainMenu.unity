@@ -2027,7 +2027,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 4
+  m_SortingOrder: 5
   m_TargetDisplay: 0
 --- !u!114 &338148374
 MonoBehaviour:
@@ -3009,7 +3009,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 3
+  m_SortingOrder: 4
   m_TargetDisplay: 0
 --- !u!225 &509968593
 CanvasGroup:
@@ -4766,7 +4766,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 2
+  m_SortingOrder: 3
   m_TargetDisplay: 0
 --- !u!114 &864598709
 MonoBehaviour:
@@ -6949,7 +6949,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 6
+  m_SortingOrder: 7
   m_TargetDisplay: 0
 --- !u!114 &1201197584
 MonoBehaviour:
@@ -7387,7 +7387,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 0
   m_SortingLayerID: 0
-  m_SortingOrder: 8
+  m_SortingOrder: 2
   m_TargetDisplay: 0
 --- !u!1 &1334000582
 GameObject:
@@ -7860,7 +7860,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 7
+  m_SortingOrder: 8
   m_TargetDisplay: 0
 --- !u!1 &1397416667
 GameObject:
@@ -8705,6 +8705,14 @@ MonoBehaviour:
     layer: 0
     transition: 0
     showInEditor: 0
+  - gameObject: {fileID: 1297392205}
+    canvas: {fileID: 1297392210}
+    canvasScaler: {fileID: 1297392209}
+    name: Logo
+    desc: 
+    layer: 0
+    transition: 0
+    showInEditor: 0
   - gameObject: {fileID: 864598706}
     canvas: {fileID: 864598708}
     canvasScaler: {fileID: 864598707}
@@ -8712,7 +8720,7 @@ MonoBehaviour:
     desc: 
     layer: 0
     transition: 0
-    showInEditor: 1
+    showInEditor: 0
   - gameObject: {fileID: 509968587}
     canvas: {fileID: 509968592}
     canvasScaler: {fileID: 509968591}
@@ -8752,15 +8760,7 @@ MonoBehaviour:
     desc: 
     layer: 0
     transition: 0
-    showInEditor: 1
-  - gameObject: {fileID: 1297392205}
-    canvas: {fileID: 1297392210}
-    canvasScaler: {fileID: 1297392209}
-    name: Logo
-    desc: 
-    layer: 0
-    transition: 0
-    showInEditor: 1
+    showInEditor: 0
   layerNames: []
   startingCanvas:
   - gameObject: {fileID: 0}
@@ -9819,7 +9819,7 @@ Canvas:
   m_SortingBucketNormalizedSize: 0
   m_AdditionalShaderChannelsFlag: 25
   m_SortingLayerID: 0
-  m_SortingOrder: 5
+  m_SortingOrder: 6
   m_TargetDisplay: 0
 --- !u!114 &1773626254
 MonoBehaviour:
