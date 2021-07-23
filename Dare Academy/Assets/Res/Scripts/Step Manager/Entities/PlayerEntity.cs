@@ -142,6 +142,8 @@ public class PlayerEntity : GridEntity
 
     private void OnEnable()
     {
+        App.GetModule<AudioModule>().PlayMusicEvent("event:/Music/Crash Site/Crash Site");
+
         m_input = App.GetModule<InputModule>().PlayerController;
 
         m_playerInput.Init();
