@@ -3,6 +3,7 @@
 using UnityEngine;
 using blu;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using JUtil;
@@ -251,7 +252,6 @@ public class PlayerEntity : GridEntity
         }
     }
 
-
     public void ExecuteStep()
     {
         App.GetModule<LevelModule>().StepController.ExecuteStep();
@@ -307,7 +307,7 @@ public class PlayerEntity : GridEntity
         int xx = startOffset.grid.x - m_overlayRadius;
         int yy = startOffset.grid.y - m_overlayRadius;
 
-        int diameter =  (m_overlayRadius*2) +1;
+        int diameter = (m_overlayRadius * 2) + 1;
 
         int modVal = 0;
 
@@ -319,16 +319,14 @@ public class PlayerEntity : GridEntity
             yy = startOffset.grid.y - m_overlayRadius;
             for (int y = 0; y < diameter; y++)
             {
-                if ((x+y)%2 != modVal)
+                if ((x + y) % 2 != modVal)
                 {
-                    GridNode node = currentGrid[xx,yy];
+                    GridNode node = currentGrid[xx, yy];
                     if (node != null && node.roomIndex == m_currentNode.roomIndex && node.IsTraversable())
                     {
-
                         float dist = Vector3.Distance(node.position.world, m_currentNode.position.world);
 
-                        dist = ((m_overlayRadius - dist) / (m_overlayRadius))/2;
-
+                        dist = ((m_overlayRadius - dist) / (m_overlayRadius)) / 2;
 
                         App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.MOVE, dist);
                     }

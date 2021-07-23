@@ -5,6 +5,7 @@ using JUtil.Grids;
 using JUtil;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
+using blu;
 
 public class LevelManager : MonoBehaviour
 {
@@ -17,6 +18,7 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private TelegraphDrawer m_telegraphDrawer;
 
     [SerializeField] private PathfindingMultiGrid m_grid = null;
+    private bool paused = false;
 
     public StepController StepController
     { get { return m_stepController; } }
@@ -42,12 +44,14 @@ public class LevelManager : MonoBehaviour
     {
         PlayerControls input = blu.App.GetModule<blu.InputModule>().PlayerController;
         input.Player.ExecuteStep.performed += Step;
+        App.GetModule<InputModule>().SystemController.UI.Pause.performed += PauseGame;
     }
 
     private void OnDisable()
     {
         PlayerControls input = blu.App.GetModule<blu.InputModule>().PlayerController;
         input.Player.ExecuteStep.performed -= Step;
+        App.GetModule<InputModule>().SystemController.UI.Pause.performed -= PauseGame;
     }
 
     private void OnDrawGizmos()
@@ -68,5 +72,32 @@ public class LevelManager : MonoBehaviour
     private void Step(InputAction.CallbackContext context)
     {
         m_stepController.ExecuteStep();
+    }
+
+    public void PauseGame(InputAction.CallbackContext ctx)
+    {
+        if (paused)
+        {
+            if (App.CanvasManager.topCanvas.name == "Options Menu")
+            {
+                paused = false;
+                App.GetModule<InputModule>().PlayerController.Player.Enable();
+            }
+
+            App.CanvasManager.CloseCanvas();
+        }
+        else
+        {
+            App.CanvasManager.OpenCanvas("Options Menu", true);
+            //EventSystem.current.SetSelectedGameObject();
+
+            App.GetModule<InputModule>().PlayerController.Player.Disable();
+            paused = true;
+        }
+    }
+
+    public void Pause()
+    {
+        PauseGame(new InputAction.CallbackContext());
     }
 }
