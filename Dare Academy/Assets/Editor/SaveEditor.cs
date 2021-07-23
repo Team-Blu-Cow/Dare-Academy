@@ -101,6 +101,10 @@ namespace blu.EditorTools
                             obj = DisplayGameEventFlags((Int32)obj);
                             break;
 
+                        case "levelId":
+                            obj = DisplayLevelId((blu.LevelID)obj);
+                            break;
+
                         default:
                             // fallback for built in types
                             obj = DefaultFieldHandleing(obj);
@@ -218,6 +222,11 @@ namespace blu.EditorTools
             }
 
             return gameEventFlags;
+        }
+
+        private blu.LevelID DisplayLevelId(blu.LevelID levelid)
+        {
+            return (blu.LevelID)EditorGUILayout.EnumPopup(levelid);
         }
     }
 }
