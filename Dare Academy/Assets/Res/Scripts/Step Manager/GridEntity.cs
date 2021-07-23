@@ -207,7 +207,9 @@ public abstract class GridEntity : MonoBehaviour
             m_currentNode = m_targetNode;
             m_targetNode = null;
 
-            AddAnimationAction(m_currentNode.position, ActionTypes.MOVE, "walk");
+            AddAnimationAction(m_currentNode.position, ActionTypes.MOVE, "WalkBlend");
+            m_animationController.animator.SetFloat("WalkDirX", m_movementDirection.x);
+            m_animationController.animator.SetFloat("WalkDirY", m_movementDirection.y);
 
             // add ourself to the list of entities currently on the node
             m_currentNode.AddEntity(this);
@@ -273,7 +275,7 @@ public abstract class GridEntity : MonoBehaviour
 
             entity.ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
 
-            entity.AddAnimationAction(ActionTypes.MOVE, "walk");
+            entity.AddAnimationAction(ActionTypes.MOVE, "WalkBlend");
 
             entity.m_speed = 0;
             entity.m_movementDirection = Vector2Int.zero;
@@ -776,7 +778,7 @@ public abstract class GridEntity : MonoBehaviour
         m_currentNode = m_previousNode;
         AddToCurrentNode();
         ModifyPreviousAction(ActionTypes.PUSHBACK, true);
-        AddAnimationAction(ActionTypes.MOVE, "walk");
+        AddAnimationAction(ActionTypes.MOVE, "WalkBlend");
         m_previousNode = null;
         return true;
     }
@@ -830,7 +832,7 @@ public abstract class GridEntity : MonoBehaviour
         if (return_value)
         {
             ModifyPreviousAction(ActionTypes.PUSHBACK, true);
-            AddAnimationAction(m_currentNode, ActionTypes.MOVE, "walk");
+            AddAnimationAction(m_currentNode, ActionTypes.MOVE, "WalkBlend");
         }
 
         AddToCurrentNode();
@@ -856,7 +858,7 @@ public abstract class GridEntity : MonoBehaviour
                 losing_objects[0].m_speed = 0;
                 losing_objects[0].AddToCurrentNode();
                 losing_objects[0].ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
-                losing_objects[0].AddAnimationAction(ActionTypes.MOVE, "walk");
+                losing_objects[0].AddAnimationAction(ActionTypes.MOVE, "WalkBlend");
 
                 winning_objects[0].RemoveFromCurrentNode();
                 winning_objects[0].m_currentNode = winning_objects[0].m_previousNode;
@@ -866,7 +868,7 @@ public abstract class GridEntity : MonoBehaviour
                 winning_objects[0].m_speed = 0;
                 winning_objects[0].AddToCurrentNode();
                 winning_objects[0].ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
-                winning_objects[0].AddAnimationAction(ActionTypes.MOVE, "walk");
+                winning_objects[0].AddAnimationAction(ActionTypes.MOVE, "WalkBlend");
 
                 return;
             }
@@ -885,7 +887,7 @@ public abstract class GridEntity : MonoBehaviour
         losing_objects[0].m_speed = 0;
         losing_objects[0].m_movementDirection = Vector2Int.zero;
         losing_objects[0].ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
-        losing_objects[0].AddAnimationAction(ActionTypes.MOVE, "walk");
+        losing_objects[0].AddAnimationAction(ActionTypes.MOVE, "WalkBlend");
     }
 
     // DRAW STEP METHODS **************************************************************************
@@ -907,6 +909,8 @@ public abstract class GridEntity : MonoBehaviour
 
             yield return null;
         }
+
+        
     }
 
     public IEnumerator AnimateAction(float animTime, GridEnityAction action)

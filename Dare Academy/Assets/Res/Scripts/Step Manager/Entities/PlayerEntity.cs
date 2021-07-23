@@ -290,12 +290,12 @@ public class PlayerEntity : GridEntity
             default: animationFlag = 0; break;
         }
 
-        m_animationController.animator.SetInteger("AbilityState", animationFlag);
+        //m_animationController.animator.SetInteger("AbilityState", animationFlag);
     }
 
     protected void SetAbilityAnimationFlag(int animationFlag)
     {
-        m_animationController.animator.SetInteger("AbilityState", animationFlag);
+        //m_animationController.animator.SetInteger("AbilityState", animationFlag);
     }
 
     public override void AnalyseStep()
