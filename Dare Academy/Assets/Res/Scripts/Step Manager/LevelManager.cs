@@ -4,6 +4,7 @@ using UnityEngine;
 using JUtil.Grids;
 using JUtil;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using blu;
 
@@ -45,6 +46,8 @@ public class LevelManager : MonoBehaviour
         PlayerControls input = blu.App.GetModule<blu.InputModule>().PlayerController;
         input.Player.ExecuteStep.performed += Step;
         App.GetModule<InputModule>().SystemController.UI.Pause.performed += PauseGame;
+        App.GetModule<InputModule>().SystemController.UI.Back.performed += BackPause;
+        App.GetModule<AudioModule>().PlayMusicEvent("event:/Music/Crash Site/Crash Site"); //#todo remove
     }
 
     private void OnDisable()
@@ -52,6 +55,7 @@ public class LevelManager : MonoBehaviour
         PlayerControls input = blu.App.GetModule<blu.InputModule>().PlayerController;
         input.Player.ExecuteStep.performed -= Step;
         App.GetModule<InputModule>().SystemController.UI.Pause.performed -= PauseGame;
+        App.GetModule<InputModule>().SystemController.UI.Back.performed -= BackPause;
     }
 
     private void OnDrawGizmos()
@@ -78,22 +82,41 @@ public class LevelManager : MonoBehaviour
     {
         if (paused)
         {
-            if (App.CanvasManager.topCanvas.name == "Options Menu")
-            {
-                paused = false;
-                App.GetModule<InputModule>().PlayerController.Player.Enable();
-                App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
-            }
-
+            if (App.CanvasManager.topCanvas.name != "Options Menu")
+                App.CanvasManager.CloseCanvas();
             App.CanvasManager.CloseCanvas();
+
+            App.GetModule<InputModule>().PlayerController.Player.Enable();
+            if (App.GetModule<AudioModule>().GetCurrentSong() != null)
+                App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
+
+            paused = false;
         }
         else
         {
             App.CanvasManager.OpenCanvas("Options Menu", true);
-            //EventSystem.current.SetSelectedGameObject(App.CanvasManager.GetCanvasContainer("Options Menu").gameObject.transform.GetChild(1).GetChild(1).gameObject);
-            App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 1);
+            EventSystem.current.SetSelectedGameObject(App.CanvasManager.GetCanvasContainer("Options Menu").gameObject.transform.GetChild(1).GetChild(1).gameObject);
+            if (App.GetModule<AudioModule>().GetCurrentSong() != null)
+                App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 1);
             App.GetModule<InputModule>().PlayerController.Player.Disable();
             paused = true;
+        }
+    }
+
+    public void BackPause(InputAction.CallbackContext ctx)
+    {
+        if (paused)
+        {
+            if (App.CanvasManager.topCanvas.name == "Options Menu")
+            {
+                paused = false;
+                App.GetModule<InputModule>().PlayerController.Player.Enable();
+                if (App.GetModule<AudioModule>().GetCurrentSong() != null)
+                    App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
+            }
+
+            App.CanvasManager.CloseCanvas();
+            EventSystem.current.SetSelectedGameObject(App.CanvasManager.GetCanvasContainer("Options Menu").gameObject.transform.GetChild(1).GetChild(1).gameObject);
         }
     }
 
