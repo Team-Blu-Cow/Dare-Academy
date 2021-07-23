@@ -38,6 +38,7 @@ namespace blu
             else
             {
                 _musicEvents.Add(name, new AudioEvent());
+                Debug.LogWarning("Invalid Name");
             }
         }
 
@@ -153,7 +154,6 @@ namespace blu
             NewMusicEvent("event:/Music/Main Menu/Main Theme");
             NewMusicEvent("event:/Music/Mushroom Forest/Boyfriends Helmet");
             NewMusicEvent("event:/Music/Mushroom Forest/Undergrowth");
-            NewMusicEvent("event:/Music/Unused/Found Cassette");
 
             // put any new mono event in here
         }
