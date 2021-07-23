@@ -76,6 +76,15 @@ namespace blu
             currentSong = name;
         }
 
+        public AudioEvent GetCurrentSong()
+        {
+            if (currentSong != null)
+            {
+                return _musicEvents[currentSong];
+            }
+            return null;
+        }
+
         public void DeleteAudioEvent(string name)
         {
             _audioEvents[name].DeleteEvent();
