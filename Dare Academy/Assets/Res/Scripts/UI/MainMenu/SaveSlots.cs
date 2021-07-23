@@ -52,7 +52,11 @@ public class SaveSlots : MonoBehaviour
             if (io.saveSlots[i] == null)
                 m_slots[i].GetComponentInChildren<TextMeshProUGUI>().text = "New Game"; //#todo #jack #matthew add in time played data
             else
-                m_slots[i].GetComponentInChildren<TextMeshProUGUI>().text = "Save " + (i + 1); //#todo #jack #matthew add in time played data
+            {
+                string playtime = System.TimeSpan.FromSeconds(io.saveSlots[i].playtime).ToString(@"hh\:mm\:ss");
+
+                m_slots[i].GetComponentInChildren<TextMeshProUGUI>().text = $"Save {i + 1}          {playtime}";
+            }
         }
     }
 

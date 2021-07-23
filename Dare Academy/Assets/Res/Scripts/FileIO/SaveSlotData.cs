@@ -9,5 +9,6 @@ namespace blu.FileIO
         public int m_runtimeID;
         public string m_filepath = null;
         public blu.LevelID levelId = blu.LevelID._default;
+        public double playtime = 0;
     }
 }

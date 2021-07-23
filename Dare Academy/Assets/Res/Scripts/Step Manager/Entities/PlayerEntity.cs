@@ -180,6 +180,8 @@ public class PlayerEntity : GridEntity
         m_moveDirection = Vector2Int.zero;
         // m_abilityDirection = Vector2Int.zero;
 
+        App.GetModule<LevelModule>().ActiveSaveData.playtime += Time.deltaTime;
+
         if (isDead)
             return;
 

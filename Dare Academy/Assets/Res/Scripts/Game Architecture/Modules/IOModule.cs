@@ -23,6 +23,7 @@ namespace blu
         public LevelID levelId = LevelID._default;
         public System.Int32 gameEventFlags = 0;
         public int respawnRoomID = -1;
+        public double playtime = 0;
 
         public List<Quest.StringListIntPair> m_roomsTraveled = new List<Quest.StringListIntPair>();
     }
@@ -176,6 +177,7 @@ namespace blu
                     SaveData savedata = fileloader.ReadData();
 
                     data.levelId = savedata.levelId;
+                    data.playtime = savedata.playtime;
 
                     if (savedata == null)
                     {
