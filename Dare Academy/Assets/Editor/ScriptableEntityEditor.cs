@@ -145,6 +145,10 @@ public class ScriptableEntityEditor : Editor
                     SetCameraPositionField(ref queue.m_actionList[i].boolData, ref queue.m_actionList[i].vec3data, ref queue.m_actionList[i].gameObject);
                     break;
 
+                case ScriptedActionQueue.ActionType.ExecuteSteps:
+                    queue.m_actionList[i].int32Data = IntField(queue.m_actionList[i].int32Data);
+                    break;
+
                 default:
                     break;
             }

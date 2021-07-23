@@ -37,10 +37,10 @@ public class StepController
     }
 
     // STEP METHODS *******************************************************************************
-    public void ExecuteStep()
+    public bool ExecuteStep()
     {
         if (m_timer < m_stepTime)
-            return;
+            return false;
 
         m_timer = 0;
 
@@ -67,6 +67,8 @@ public class StepController
         CheckForRoomChange();
 
         AnalyseStep();
+
+        return true;
     }
 
     // STEP STAGES ********************************************************************************

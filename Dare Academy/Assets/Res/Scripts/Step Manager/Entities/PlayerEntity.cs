@@ -96,10 +96,12 @@ public class PlayerEntity : GridEntity
 
         // #RemoveBeforeRelease
         blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
+        await levelModule.AwaitInitialised();
         levelModule.EventFlags.SetFlags(eventFlags.shoot_unlocked, true);
         levelModule.EventFlags.SetFlags(eventFlags.dash_unlocked, true);
         levelModule.EventFlags.SetFlags(eventFlags.block_unlocked, true);
 
+        await levelModule.AwaitSaveLoad();
         Abilities.Refresh();
 
         Abilities.Initialise();
@@ -179,12 +181,16 @@ public class PlayerEntity : GridEntity
         m_input.Player.SwapAbilityR.performed -= CycleAbilityR;
     }
 
-    protected void Update()
+    protected async void Update()
     {
         m_moveDirection = Vector2Int.zero;
         // m_abilityDirection = Vector2Int.zero;
 
+        await App.GetModule<LevelModule>().AwaitSaveLoad();
         App.GetModule<LevelModule>().ActiveSaveData.playtime += Time.deltaTime;
+
+        if (!LevelManager.Instance.AllowPlayerMovement)
+            return;
 
         if (isDead)
             return;
@@ -257,7 +263,6 @@ public class PlayerEntity : GridEntity
         }
     }
 
-
     public void ExecuteStep()
     {
         App.GetModule<LevelModule>().StepController.ExecuteStep();
@@ -325,16 +330,14 @@ public class PlayerEntity : GridEntity
             yy = startOffset.grid.y - m_overlayRadius;
             for (int y = 0; y < diameter; y++)
             {
-                if ((x+y)%2 != modVal)
+                if ((x + y) % 2 != modVal)
                 {
                     GridNode node = currentGrid[xx,yy];
                     if (node != null && node.roomIndex == m_currentNode.roomIndex && node.IsTraversable())
                     {
-
                         float dist = Vector3.Distance(node.position.world, m_currentNode.position.world);
 
-                        dist = ((m_overlayRadius - dist) / (m_overlayRadius))/2;
-
+                        dist = ((m_overlayRadius - dist) / (m_overlayRadius)) / 2;
 
                         App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.MOVE, dist);
                     }

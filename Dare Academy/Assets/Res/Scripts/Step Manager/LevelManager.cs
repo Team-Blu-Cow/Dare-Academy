@@ -8,6 +8,23 @@ using UnityEngine.SceneManagement;
 
 public class LevelManager : MonoBehaviour
 {
+    private static LevelManager _instance;
+
+    public static LevelManager Instance => _instance;
+
+    private int m_forceStepsCount = 0;
+
+    public int ForceStepsCount
+    {
+        get => m_forceStepsCount;
+        set => m_forceStepsCount = value;
+    }
+
+    public bool AllowPlayerMovement
+    {
+        get { return m_forceStepsCount == 0; }
+    }
+
     [SerializeField] private float m_stepTime = 0.2f;
     [SerializeField] public int m_defaultPlayerSpawnIndex;
     [SerializeField] public Vector2Int m_defaultPlayerPosition;
@@ -29,6 +46,7 @@ public class LevelManager : MonoBehaviour
 
     private void Awake()
     {
+        _instance = this;
         m_telegraphDrawer.Initialise();
         m_stepController = new StepController(m_stepTime, m_telegraphDrawer);
     }
@@ -63,10 +81,18 @@ public class LevelManager : MonoBehaviour
     private void Update()
     {
         StepController.timer += Time.deltaTime;
+        if (ForceStepsCount > 0)
+        {
+            if (m_stepController.ExecuteStep())
+            {
+                ForceStepsCount--;
+            }
+        }
     }
 
     private void Step(InputAction.CallbackContext context)
     {
-        m_stepController.ExecuteStep();
+        if (AllowPlayerMovement)
+            m_stepController.ExecuteStep();
     }
 }

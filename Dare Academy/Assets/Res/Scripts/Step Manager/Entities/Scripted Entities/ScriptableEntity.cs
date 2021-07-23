@@ -166,6 +166,11 @@ public class ScriptableEntity : GridEntity
                 runAgain = true;
                 break;
 
+            case ScriptedActionQueue.ActionType.ExecuteSteps:
+                ExecuteSteps(currentAction);
+                runAgain = true;
+                break;
+
             default:
                 Debug.LogWarning($"[ScriptedEntity] [{gameObject.name}] could not resolve action [type = {currentAction.type.ToString()}]");
                 break;
@@ -291,5 +296,10 @@ public class ScriptableEntity : GridEntity
             return false;
         }
         return true;
+    }
+
+    protected void ExecuteSteps(ScriptedActionQueue.ActionWrapper data)
+    {
+        LevelManager.Instance.ForceStepsCount = data.int32Data;
     }
 }
