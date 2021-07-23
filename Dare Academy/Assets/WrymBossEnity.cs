@@ -43,7 +43,7 @@ public class WrymBossEnity : GridEntity
     {
         base.Start();
         m_player = PlayerEntity.Instance;
-        Health = 5;
+        Health = 10;
         m_damageEntityPrefab = Resources.Load<GameObject>("prefabs/Entities/DamageEntity");       
     }
 
