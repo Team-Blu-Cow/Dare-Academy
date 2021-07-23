@@ -149,6 +149,12 @@ namespace blu
 
         private void CreateEvents()
         {
+            NewMusicEvent("event:/Music/Crash Site/Crash Site");
+            NewMusicEvent("event:/Music/Main Menu/Main Theme");
+            NewMusicEvent("event:/Music/Mushroom Forest/Boyfriends Helmet");
+            NewMusicEvent("event:/Music/Mushroom Forest/Undergrowth");
+            NewMusicEvent("event:/Music/Unused/Found Cassette");
+
             // put any new mono event in here
         }
     }
