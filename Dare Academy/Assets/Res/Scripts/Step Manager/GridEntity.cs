@@ -909,6 +909,8 @@ public abstract class GridEntity : MonoBehaviour
 
             yield return null;
         }
+
+        
     }
 
     public IEnumerator AnimateAction(float animTime, GridEnityAction action)
