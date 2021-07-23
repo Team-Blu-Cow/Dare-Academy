@@ -28,11 +28,13 @@ public class WrymBossEnity : GridEntity
     private List<Vector2> m_previousMoves = new List<Vector2>();
 
     [Header("Phase Two Variables")]
-    [SerializeField] private int m_stepTimer = 40;
-    [SerializeField] private Vector3 m_prevPosition = new Vector3(0, 0, 0);
-    [SerializeField] private bool m_firingPhaseTwo;
-    [SerializeField] private GameObject m_bulletPrefab;
-    [SerializeField] private int m_fireCooldown = 3;
+    [SerializeField] private int m_stepTimer = 40; // How many steps the wyrm stays in this phase
+    [SerializeField] private bool m_firingPhaseTwo; // If the certain compartment of the wyrm has to fire a bullet this step
+    [SerializeField] private GameObject m_bulletPrefab; // Bullet prefab for spawning the bullets
+    [SerializeField] private int m_fireCooldown = 3; // The time after firing a bullet until it can fire another
+    [SerializeField] private int m_phaseTwoDirection = 1; // Which way the wyrm is going 
+    private Vector3 m_prevPosition = new Vector3(0, 0, 0); // Last position
+
 
     private GameObject m_damageEntityPrefab;
 
@@ -41,7 +43,7 @@ public class WrymBossEnity : GridEntity
     {
         base.Start();
         m_player = PlayerEntity.Instance;
-        Health = 10;
+        Health = 5;
         m_damageEntityPrefab = Resources.Load<GameObject>("prefabs/Entities/DamageEntity");       
     }
 
@@ -63,24 +65,24 @@ public class WrymBossEnity : GridEntity
             Health = 5;
         }
 
-        if(m_headEntity == null)
+        if(m_headEntity == null) // If the head the body is following is dead
         {
-            Kill();
+            Kill(); // Destroy the body
         }
 
-        if (m_head)
+        if (m_head) // If this is the head
         {
-            if (Health > 5)
+            if (Health > 5) // If health is greater than 5
             {
-                Phase1();
+                Phase1(); // Boss is in phase 1
             }
-            else if (m_stepTimer > 0) // TODO: add phase 2 timer
+            else if (m_stepTimer > 0) // If the timer is greater than 0 
             {
-                Phase2();
+                Phase2(); // Boss is in phase 2
             }
-            else // Phase 3
+            else // If past phases are done
             {
-                Phase3();
+                Phase3(); // Boss is in phase 3
             }
         }
     }
@@ -175,177 +177,180 @@ public class WrymBossEnity : GridEntity
 
     private void Phase2()
     {
-        Vector2 dir = new Vector2();
+        Vector2 dir = new Vector2(); // Direction
 
-        if (m_head)
+        if (m_head) // If this is the front of the worm
         {
-            Vector2Int tempDir = new Vector2Int(0, 1);
+            Vector2Int tempDir = new Vector2Int(0, 1 * m_phaseTwoDirection); // Create temp direction which starts either going up or down
 
-            if (m_currentNode.GetNeighbour(tempDir) == null)
+            if (m_currentNode.GetNeighbour(tempDir) == null) // If the wyrm can't go in its direction
             {
-                tempDir = new Vector2Int(-1, 0);
+                tempDir = new Vector2Int(-1 * m_phaseTwoDirection, 0); // Change direction to go either left or right depending on its overall direction of movement (e.g. moving from right to left on screen or left to right)
             }
             
-            if (m_currentNode.GetNeighbour(new Vector2Int(0, -1)) == null)
+            if (m_currentNode.GetNeighbour(new Vector2Int(0, -1 * m_phaseTwoDirection)) == null) // If it can't go up or down
             {
-                if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null && m_currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0)
+                if (m_currentNode.GetNeighbour(new Vector2Int(-1 * m_phaseTwoDirection, 0)) != null && m_currentNode.GetNeighbour(new Vector2Int(-1 * m_phaseTwoDirection, 0)).GetGridEntities().Count == 0) // Try to go left or right depending on movement 
                 {
-                    tempDir = new Vector2Int(-1, 0);
+                    tempDir = new Vector2Int(-1 * m_phaseTwoDirection, 0); // If it can then set the direction
                 }
-                else if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
+                else if (m_currentNode.GetNeighbour(new Vector2Int(1 * m_phaseTwoDirection, 0)) != null && m_currentNode.GetNeighbour(new Vector2Int(1 * m_phaseTwoDirection, 0)).GetGridEntities().Count == 0) // Else try to go right or left depending on movement
                 {
-                    tempDir = new Vector2Int(1, 0);
+                    tempDir = new Vector2Int(1 * m_phaseTwoDirection, 0); // If it can then set the direction
+                    m_phaseTwoDirection *= -1; // Also change direction of overall movement
                 }
 
-                if (m_currentNode.GetNeighbour(new Vector2Int(0, 1)) != null && m_currentNode.GetNeighbour(new Vector2Int(0, 1)).GetGridEntities().Count == 0)
+                if (m_currentNode.GetNeighbour(new Vector2Int(0, 1 * m_phaseTwoDirection)) != null && m_currentNode.GetNeighbour(new Vector2Int(0, 1 * m_phaseTwoDirection)).GetGridEntities().Count == 0) // If it can move up or down
                 {
-                    tempDir = new Vector2Int(0, 1);
+                    tempDir = new Vector2Int(0, 1 * m_phaseTwoDirection); // Set direction to do so
                 }
             }
             
-            if (m_currentNode.GetNeighbour(new Vector2Int(0, -1)) != null)
+            if (m_currentNode.GetNeighbour(new Vector2Int(0, -1 * m_phaseTwoDirection)) != null) // If going down or up
             {
-                if (m_currentNode.GetNeighbour(new Vector2Int(0, -1)).GetGridEntities().Count == 0)
+                if (m_currentNode.GetNeighbour(new Vector2Int(0, -1 * m_phaseTwoDirection)).GetGridEntities().Count == 0) // If there are no entities in the square
                 {
-                    tempDir = new Vector2Int(0, -1);
+                    tempDir = new Vector2Int(0, -1 * m_phaseTwoDirection); // Move with the corresponding direction
                 }
             }
             
-            if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && m_prevPosition == m_currentNode.position.world && m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
+            // These two if statements follow the same logic but make sure the wyrm does not get stuck when next to a room transition thing
+            if (m_currentNode.GetNeighbour(new Vector2Int(1 * m_phaseTwoDirection, 0)) != null && m_prevPosition == m_currentNode.position.world && m_currentNode.GetNeighbour(new Vector2Int(1 * m_phaseTwoDirection, 0)).GetGridEntities().Count == 0)
             {
-                tempDir = new Vector2Int(1, 0);
+                tempDir = new Vector2Int(1 * m_phaseTwoDirection, 0);
             }
-            if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null && m_prevPosition == m_currentNode.position.world && m_currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0)
+            if (m_currentNode.GetNeighbour(new Vector2Int(-1 * m_phaseTwoDirection, 0)) != null && m_prevPosition == m_currentNode.position.world && m_currentNode.GetNeighbour(new Vector2Int(-1 * m_phaseTwoDirection, 0)).GetGridEntities().Count == 0)
             {
-                tempDir = new Vector2Int(-1, 0);
+                tempDir = new Vector2Int(-1 * m_phaseTwoDirection, 0);
             }
             
-            m_prevPosition = m_currentNode.position.world;
-            dir = tempDir;
-            m_previousMoves.Insert(0, dir);   
+
+            m_prevPosition = m_currentNode.position.world; // Set previous position
+            dir = tempDir; // Set direction to be the temporary direction
+            m_previousMoves.Insert(0, dir); // Add this direction to the list of previous moves
            
 
-            if (m_previousMoves.Count > m_body.Count)
+            if (m_previousMoves.Count > m_body.Count) // If the previous moves are larger than the body count
             {
-                for (int i = 0; i < m_body.Count; i++)
+                for (int i = 0; i < m_body.Count; i++) // Start for loop for the amount of entities in the body
                 {
-                    m_body[i].SetMovementDirection(m_previousMoves[i + 1]);
+                    m_body[i].SetMovementDirection(m_previousMoves[i + 1]); // Set direction of the corresponding body to the previous direction
                 }
-                m_previousMoves.RemoveAt(m_previousMoves.Count - 1);
+                m_previousMoves.RemoveAt(m_previousMoves.Count - 1); // Remove the oldest previous move
             }
-            else
+            else // If not
             {
-                for (int i = 0; i < m_body.Count; i++)
+                for (int i = 0; i < m_body.Count; i++) // Start for loop for amount of entities in the body 
                 {
-                    if (m_previousMoves.Count > i + 1)
+                    if (m_previousMoves.Count > i + 1) // If the previous moves list is greater than the iterator + 1
                     {
-                        m_body[i].SetMovementDirection(m_previousMoves[i + 1]);
+                        m_body[i].SetMovementDirection(m_previousMoves[i + 1]); // Set direction of movement to corresponding direction
                     }
-                    else
+                    else // If not
                     {
-                        m_body[i].SetMovementDirection(m_previousMoves[m_previousMoves.Count - 1]);
+                        m_body[i].SetMovementDirection(m_previousMoves[m_previousMoves.Count - 1]); // Set direction to oldest value in list
                     }
 
                 }
             }
 
-            if (m_firingPhaseTwo && m_fireCooldown == 0)
+            if (m_firingPhaseTwo && m_fireCooldown == 0) // If the head can fire and is meant to fire this step
             {
-                if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null)
+                if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null) // If the neighbour to the left is not null
                 {
-                    if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
+                    if (m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0) // IF there are no entities in the left node
                     {
-                        SpawnBullet(m_bulletPrefab, m_currentNode, new Vector2(1, 0));
+                        SpawnBullet(m_bulletPrefab, m_currentNode, new Vector2(1, 0)); // Spawn a bullet
                     }
                 }
 
-                if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null)
+                if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null) // If the neighbour to the right is not null
                 {
-                    if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0)
+                    if (m_currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0) // If there are no entities in the right node
                     {
-                        SpawnBullet(m_bulletPrefab, m_currentNode, new Vector2(-1, 0));
+                        SpawnBullet(m_bulletPrefab, m_currentNode, new Vector2(-1, 0)); // Spawn a bullet
                     }
                 }
             }
         }
 
 
-        for (int i = 0; i < m_body.Count; i++)
+        for (int i = 0; i < m_body.Count; i++) // Loop for body count
         {
-            if (m_body[i].m_firingPhaseTwo && m_body[i].m_fireCooldown == 0)
+            if (m_body[i].m_firingPhaseTwo && m_body[i].m_fireCooldown == 0) // If the body compartment can fire and is meant to fire this step
             {
-                if (m_body[i].m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null)
+                if (m_body[i].m_currentNode.GetNeighbour(new Vector2Int(1, 0)) != null) // Find its left neighbour and make sure it isnt null
                 {
-                    if (m_body[i].m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
+                    if (m_body[i].m_currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0) // Check if there are any entities on this node
                     {
-                        SpawnBullet(m_bulletPrefab, m_body[i].m_currentNode, new Vector2(1, 0));
+                        SpawnBullet(m_bulletPrefab, m_body[i].m_currentNode, new Vector2(1, 0)); // Spawn bullet to the left
                     }
                 }
 
-                if (m_body[i].m_currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null)
+                if (m_body[i].m_currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null) // Find its right neighbour and make sure it isnt null
                 {
-                    if (m_body[i].m_currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0)
+                    if (m_body[i].m_currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0) // Check if there are any entities on this node
                     {
-                        SpawnBullet(m_bulletPrefab, m_body[i].m_currentNode, new Vector2(-1, 0));
+                        SpawnBullet(m_bulletPrefab, m_body[i].m_currentNode, new Vector2(-1, 0)); // Spawn bullet to the right
                     }
                 }
             }
         }
 
-        if(m_fireCooldown == 1 && m_head)
+        if(m_fireCooldown == 1 && m_head) // If fire cooldown is 1, as in the body is meant to fire next step
         {
-            m_attackNodes.Clear();
+            m_attackNodes.Clear(); // Clear attack nodes for the worm
 
-            if (m_firingPhaseTwo)
+            if (m_firingPhaseTwo) // If the head is firing
             {
-                if (m_currentNode.GetNeighbour(new Vector2Int(1, (int)dir.y)) != null)
+                if (m_currentNode.GetNeighbour(new Vector2Int(1, (int)dir.y)) != null) // If the next nodes isnt null
                 {
-                    if (m_currentNode.GetNeighbour(new Vector2Int(1, (int)dir.y)).GetGridEntities().Count == 0)
-                        m_attackNodes.Add(Position.grid + new Vector2Int(1, (int)dir.y));
+                    if (m_currentNode.GetNeighbour(new Vector2Int(1, (int)dir.y)).GetGridEntities().Count == 0) // If there are no entities
+                        m_attackNodes.Add(Position.grid + new Vector2Int(1, (int)dir.y)); // Telegrpah attack
                 }
 
-                if (m_currentNode.GetNeighbour(new Vector2Int(-1, (int)dir.y)) != null)
+                if (m_currentNode.GetNeighbour(new Vector2Int(-1, (int)dir.y)) != null) // If the next node isnt null
                 {
-                    if (m_currentNode.GetNeighbour(new Vector2Int(-1, (int)dir.y)).GetGridEntities().Count == 0)
-                        m_attackNodes.Add(Position.grid + new Vector2Int(-1, (int)dir.y));
+                    if (m_currentNode.GetNeighbour(new Vector2Int(-1, (int)dir.y)).GetGridEntities().Count == 0) // If there are no entities
+                        m_attackNodes.Add(Position.grid + new Vector2Int(-1, (int)dir.y)); // Telegraph attack
                 }
 
-                TelegraphBullets(-1, 1, 3);
+                TelegraphBullets(-1, 1, 3); // Telegraph attacks for the other body compartments
             }
-            else
+            else // If the head isn't firing
             {
-                TelegraphBullets(0,2,4);
+                TelegraphBullets(0,2,4); // Telegraph attacks for the corresponding body compartments
             }
 
-            foreach (var node in m_attackNodes)
+            foreach (var node in m_attackNodes) // Loop for amount of attack nodes
             {
-                if (node != null && App.GetModule<LevelModule>().CurrentRoom[node] != null)
+                if (node != null && App.GetModule<LevelModule>().CurrentRoom[node] != null) // If the node is not null
                 {
-                    App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(App.GetModule<LevelModule>().CurrentRoom[node], TelegraphDrawer.Type.ATTACK);
+                    App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(App.GetModule<LevelModule>().CurrentRoom[node], TelegraphDrawer.Type.ATTACK); // Draw attack telegraph
                 }
             }
         }
 
-        for (int i = 0; i < m_body.Count; i++)
+        for (int i = 0; i < m_body.Count; i++) // Loop for amount of body entities
         {
-            if (m_body[i].m_fireCooldown <= 0)
+            if (m_body[i].m_fireCooldown <= 0) // IF the body entity's fire cooldown is less than 1
             {
-                m_body[i].m_firingPhaseTwo = !m_body[i].m_firingPhaseTwo;
-                m_body[i].m_fireCooldown = 3;
+                m_body[i].m_firingPhaseTwo = !m_body[i].m_firingPhaseTwo; // Change the firing phase two variable, controls whether this body compartment is going to fire any bullets
+                m_body[i].m_fireCooldown = 3; // Set its cooldown to  3
             }
 
-            m_body[i].m_fireCooldown--;
+            m_body[i].m_fireCooldown--; // Tick tock, it's bullet o'clock
         }
 
-        if (m_fireCooldown <= 0)
+        if (m_fireCooldown <= 0) // If it is timer to fire bullets
         {
-            m_firingPhaseTwo = !m_firingPhaseTwo;
-            m_fireCooldown = 3;
+            m_firingPhaseTwo = !m_firingPhaseTwo; //  Change the firing phase two variable, controls whether the head is going to fire any bullets
+            m_fireCooldown = 3; // Set its cooldown to 3
         }
 
 
-        m_fireCooldown--;
-        m_stepTimer--;
+        m_fireCooldown--; // Tick tock :]
+        m_stepTimer--; // Decrease the time left in phase 2
         SetMovementDirection(dir, m_moveSpeed); // Set movement
     }
 
@@ -377,13 +382,15 @@ public class WrymBossEnity : GridEntity
 
     private void TelegraphBullets(int secOne, int secTwo, int secThree)
     {
-        if (secOne == 0)
+        if (secOne == 0) // If a body compartment is trying to telegraph attacks, this is here because in the other case it is the head
         {
-            if (m_body[secOne].m_currentNode.GetNeighbour(new Vector2Int(1, (int)(m_body[secOne].Position.world.y - m_body[secOne + 1].Position.world.y))) != null)
+            if (m_body[secOne].m_currentNode.GetNeighbour(new Vector2Int(1, (int)(m_body[secOne].Position.world.y - m_body[secOne + 1].Position.world.y))) != null) // If the node we are trying to telegraph is not null
             {
-                if (m_body[secOne].m_currentNode.GetNeighbour(new Vector2Int(1, (int)(m_body[secOne].Position.world.y - m_body[secOne + 1].Position.world.y))).GetGridEntities().Count == 0)
-                    m_attackNodes.Add(m_body[secOne].Position.grid + new Vector2Int(1, (int)(m_body[secOne].Position.world.y - m_body[secOne + 1].Position.world.y)));
+                if (m_body[secOne].m_currentNode.GetNeighbour(new Vector2Int(1, (int)(m_body[secOne].Position.world.y - m_body[secOne + 1].Position.world.y))).GetGridEntities().Count == 0) // If there are no entities in this node
+                    m_attackNodes.Add(m_body[secOne].Position.grid + new Vector2Int(1, (int)(m_body[secOne].Position.world.y - m_body[secOne + 1].Position.world.y))); // Add this node to attack telegraph list
             }
+
+            // THe previously commented if statement essentially explains the rest of this code. Attacks are telegraphed on the left and right side of the nodes which are passed into this function via there index in the list. :]
 
             if (m_body[secOne].m_currentNode.GetNeighbour(new Vector2Int(-1, (int)(m_body[secOne].Position.world.y - m_body[secOne + 1].Position.world.y))) != null)
             {
