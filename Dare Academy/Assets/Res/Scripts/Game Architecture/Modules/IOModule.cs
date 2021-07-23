@@ -175,6 +175,8 @@ namespace blu
                     CreateFileLoader<SaveData>(out BaseFileLoader<SaveData> fileloader, data.m_filepath);
                     SaveData savedata = fileloader.ReadData();
 
+                    data.levelId = savedata.levelId;
+
                     if (savedata == null)
                     {
                         Debug.LogWarning($"[App/IOModule.LoadSaveSlots] could not load savedata");

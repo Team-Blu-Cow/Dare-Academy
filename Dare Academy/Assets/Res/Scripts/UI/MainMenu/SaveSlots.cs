@@ -10,7 +10,7 @@ public class SaveSlots : MonoBehaviour
     private IOModule io;
 
     // Start is called before the first frame update
-    private void Start()
+    private async void Start()
     {
         io = App.GetModule<IOModule>();
 
@@ -26,9 +26,20 @@ public class SaveSlots : MonoBehaviour
             }
         }
 
-        foreach (var button in GetComponentInParent<CanvasTool.ButtonWrapper>().buttons)
+        await io.awaitInitialised;
+        for (int i = 0; i < IOModule.MaxSaveFiles; i++)
         {
-            button.sceneName = "Crashsite Top"; //#todo #matthew Change to saved scene
+            string name;
+            if (io.saveSlots[i] == null)
+            {
+                name = LevelModule.ResolveSceneNameString(blu.LevelID._default);
+            }
+            else
+            {
+                name = LevelModule.ResolveSceneNameString(io.saveSlots[i].levelId);
+            }
+
+            GetComponentInParent<CanvasTool.ButtonWrapper>().buttons[i].sceneName = name;
         }
     }
 
@@ -62,9 +73,12 @@ public class SaveSlots : MonoBehaviour
 
     public void OnDelete(int slotNumber)
     {
-        System.IO.File.Delete(io.saveSlots[slotNumber].m_filepath);
-        io.LoadSaveSlots(); //#todo #matthew you better fix
-
-        OnOpen();
+        if (io.saveSlots[slotNumber] != null)
+        {
+            System.IO.File.Delete(io.saveSlots[slotNumber].m_filepath);
+            io.LoadSaveSlots(); //#todo #matthew you better fix
+            GetComponentInParent<CanvasTool.ButtonWrapper>().buttons[slotNumber].sceneName = LevelModule.ResolveSceneNameString(blu.LevelID._default);
+            OnOpen();
+        }
     }
 }
