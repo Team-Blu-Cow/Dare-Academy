@@ -47,13 +47,16 @@ public class EightDirectionalEntity : GridEntity
 
         base.AnalyseStep(); // Run base function
         m_animationController.SetAnimationSpeed(1);
+
+        if (player.currentNode == null)
+            return;
+
         float dist = Vector3.Distance(m_currentNode.position.world, player.currentNode.position.world);
 
         m_animationController.animator.SetBool("isAsleep", dist >= agroRange);
 
         if (dist < agroRange) // If the player is within agro range
         {
-
             if (m_attackCounter >= m_attackSpeed) //  If the cooldown has expired
             {
                 isAttacking = true; // Set attacking to true
@@ -108,30 +111,21 @@ public class EightDirectionalEntity : GridEntity
         {
             Vector2Int[] m_attackDirections = GetAttackDirections(); // Get the attacking directions
 
-            for (int j = 0; j < 4; j++) // Loop for each direction
+            bool success = true;
+            try
             {
-                Vector3 spawnPosition; // Declare spawn position variable
-                if (m_currentNode.GetNeighbour(m_attackDirections[j]) != null) // If the node where the bullet is meant to spawn is not a wall
+                for (int i = 0; i < 4; i++)
                 {
-                    spawnPosition = m_currentNode.GetNeighbour(m_attackDirections[j]).position.world; // Set the bullet's spawn position to the current attacking directions's grid node
-                    GameObject obj = GameObject.Instantiate(m_bulletPrefab, spawnPosition, Quaternion.identity); // Spawn the bullet
-
-                    if (obj) // If the bullet exists
-                    {
-                        BulletEntity bullet = obj.GetComponent<BulletEntity>(); // Get the bullet entity script from the game object
-                        if (bullet) // If the script exists within the bullet game object
-                        {
-                            bullet.m_bulletDirection = m_attackDirections[j]; // Set the bullet's direction to the corresponding attack direction
-
-                            if (j == 3) // If this is the last bullet to be spawned
-                            {
-                                isFiringHorizontal = !isFiringHorizontal; // Change the firing direction
-                                return true; // Return true (Don't think this is needed anymore)
-                            }
-                        }
-                    }
+                    SpawnBullet(m_bulletPrefab, m_currentNode, m_attackDirections[i]);
                 }
             }
+            catch (System.Exception)
+            {
+                success = false;
+            }
+
+            isFiringHorizontal = !isFiringHorizontal;
+            return success;
         }
 
         return false;
