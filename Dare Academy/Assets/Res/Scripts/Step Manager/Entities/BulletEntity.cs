@@ -88,7 +88,7 @@ public class BulletEntity : GridEntity
 
     public override void RoomChange()
     {
-        CleanUp();
+        OnDeath();
     }
 
     protected void TryReflectBullet()

@@ -12,6 +12,7 @@ namespace blu
 
         private Dictionary<string, AudioEvent> _musicEvents = new Dictionary<string, AudioEvent>();
         private Dictionary<string, AudioEvent> _audioEvents = new Dictionary<string, AudioEvent>();
+        public string currentSong;
 
         public void NewAudioEvent(string name, int poly = 0) // use "object/event"
         {                                      // e.g. "player/footstep"
@@ -37,6 +38,7 @@ namespace blu
             else
             {
                 _musicEvents.Add(name, new AudioEvent());
+                Debug.LogWarning("Invalid Name");
             }
         }
 
@@ -72,6 +74,16 @@ namespace blu
         public void PlayMusicEvent(string name) // use copied path from event browser
         {                                       // e.g. "event:/player/footstep"
             _musicEvents[name].Play();
+            currentSong = name;
+        }
+
+        public AudioEvent GetCurrentSong()
+        {
+            if (currentSong != null)
+            {
+                return _musicEvents[currentSong];
+            }
+            return null;
         }
 
         public void DeleteAudioEvent(string name)
@@ -138,6 +150,11 @@ namespace blu
 
         private void CreateEvents()
         {
+            NewMusicEvent("event:/Music/Crash Site/Crash Site");
+            NewMusicEvent("event:/Music/Main Menu/Main Theme");
+            NewMusicEvent("event:/Music/Mushroom Forest/Boyfriends Helmet");
+            NewMusicEvent("event:/Music/Mushroom Forest/Undergrowth");
+
             // put any new mono event in here
         }
     }
