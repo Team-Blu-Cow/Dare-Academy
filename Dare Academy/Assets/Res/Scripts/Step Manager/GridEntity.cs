@@ -1030,6 +1030,9 @@ public abstract class GridEntity : MonoBehaviour
         {
             Kill();
         }
+        else if (m_flags.IsFlagsSet(flags.dontMoveOnReset))
+        {
+        }
         else
         {
             RemoveFromCurrentNode();
