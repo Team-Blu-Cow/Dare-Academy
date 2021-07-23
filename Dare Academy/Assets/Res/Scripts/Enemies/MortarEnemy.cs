@@ -7,6 +7,7 @@ public class MortarEnemy : GridEntity
 {
     [SerializeField] private GridEntity m_player;
     [SerializeField] private int m_attackRadius;
+    [SerializeField] private int m_mortarShotFallTime = 3;
 
     private GameObject mortarGraphic;
 
@@ -14,15 +15,18 @@ public class MortarEnemy : GridEntity
     private bool m_attack = false;
     private int m_attackTimer = 0;
 
-    private int m_fireRate = 2;
+    [SerializeField] private int m_fireRate = 2;
     private int m_cooldown = 0;
 
     private GameObject m_damageEntityPrefab;
+    private GameObject m_shotUpPrefab;
+
 
     protected override void OnValidate()
     {
         base.OnValidate();
-        m_damageEntityPrefab = Resources.Load<GameObject>("prefabs/Entities/DamageEntity");
+        m_damageEntityPrefab = Resources.Load<GameObject>("prefabs/Entities/MortarShot");
+        m_shotUpPrefab = Resources.Load<GameObject>("prefabs/Entities/MortarFire");
     }
 
     protected override void Start()
@@ -36,6 +40,8 @@ public class MortarEnemy : GridEntity
     {
         m_cooldown--;
 
+        m_animationController.animator.SetBool("isAsleep", !PlayerInFiringRange());
+
         if (PlayerInFiringRange() && m_cooldown < 0)
         {
             m_attack = true;
@@ -44,9 +50,42 @@ public class MortarEnemy : GridEntity
         base.AnalyseStep();
     }
 
+    public override void AttackStep()
+    {
+        if(m_attack)
+        {
+            m_animationController.PlayAnimation("shoot", m_stepController.stepTime*2f);
+
+            m_attack = false;
+
+            List<GridNode> nodes = new List<GridNode>();
+            nodes.Add(m_player.currentNode);
+
+            for (int i = 0; i < 8; i += 2)
+            {
+                nodes.Add(m_player.currentNode.Neighbors[i].reference);
+            }
+
+            foreach (var node in nodes)
+            {
+                if (node != null && node != currentNode)
+                {
+                    GameObject obj = Instantiate(m_damageEntityPrefab, node.position.world, Quaternion.identity);
+                    obj.GetComponent<MortarShot>().m_landTime = m_mortarShotFallTime;
+                }
+            }
+
+        }
+    }
+
+    public void FireMortarShot()
+    {
+        GameObject obj = Instantiate(m_shotUpPrefab, transform.position, Quaternion.identity);
+    }
+
     public override void DamageStep()
     {
-        if (m_attack)
+        /*if (m_attack)
         {
             m_attack = false;
 
@@ -66,7 +105,7 @@ public class MortarEnemy : GridEntity
                     obj.GetComponent<DamageEntity>().Countdown = 2;
                 }
             }
-        }
+        }*/
     }
 
     private bool PlayerInFiringRange()

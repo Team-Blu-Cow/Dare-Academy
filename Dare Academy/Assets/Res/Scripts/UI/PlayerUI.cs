@@ -118,7 +118,7 @@ public class PlayerUI : MonoBehaviour
 
         if (numOfAbilitiesUnlocked == 0) // If the number of abilities has not been set yet
         {
-            /// TODO @Sandy call this function when player unlocks new ability !!!!!!!!!!!!!!!!!!
+            ///#todo #Sandy call this function when player unlocks new ability !!!!!!!!!!!!!!!!!!
             CheckAbilitiesUnlocked(); // Find the amount of abilities unlocked
             SetIconPositions(); // Set the icons to their right positions
         }
@@ -137,7 +137,7 @@ public class PlayerUI : MonoBehaviour
         if (m_playerInfo.Abilities.IsUnlocked(PlayerAbilities.AbilityEnum.Block)) // If the player has block unlocked
         {
             blockIcon.SetActive(true); // Set the block icon to be active
-            numOfAbilitiesUnlocked++; // Increment the amonut of abilities unlocked
+            numOfAbilitiesUnlocked++; // Increment the amount of abilities unlocked
         }
 
         if (m_playerInfo.Abilities.IsUnlocked(PlayerAbilities.AbilityEnum.Shoot)) // If the player has gun unlocked

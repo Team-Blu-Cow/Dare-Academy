@@ -2,17 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Threading.Tasks;
 
 public class ScriptableEntity : GridEntity
 {
     [SerializeField] private GameObject m_prefab = null;
     [SerializeField] private ScriptedActionQueue m_actionQueue = null;
 
+    [SerializeField] private int m_flagValue; // so custom editor can access this
+
     public int m_queuePos = 0;
 
     private SpriteRenderer sr;
 
     private Animator anim;
+
+    private bool m_awaitingDialogueComplete = false;
 
     protected override void OnValidate()
     {
@@ -22,36 +27,57 @@ public class ScriptableEntity : GridEntity
         anim = GetComponent<Animator>();
     }
 
+    protected void Awake()
+    {
+        m_flags._FlagData = m_flagValue;
+    }
+
     protected override void Start()
     {
         base.Start();
 
         if (m_prefab == null)
         {
-            Debug.LogWarning($"ScriptableEntity [{gameObject.name}] has no assigned prefab, killing self");
+            Debug.LogWarning($"[ScriptableEntity] [{gameObject.name}] has no assigned prefab, killing self");
             Kill();
         }
         else
         {
             SpriteRenderer otherSr = m_prefab.GetComponentInChildren<SpriteRenderer>();
 
-            if (otherSr)// TODO @matthew - log warning if failed
+            if (otherSr)
             {
                 sr.sprite = otherSr.sprite;
+            }
+            else
+            {
+                Debug.LogWarning($"[ScriptableEntity] [name = {gameObject.name}] could not get sprite renderer of prefab");
             }
 
             anim = GetComponent<Animator>();
             Animator otherAnim = m_prefab.GetComponent<Animator>();
 
-            // TODO @matthew - log this failing
             if (anim != null && otherAnim != null)
             {
                 anim.runtimeAnimatorController = otherAnim.runtimeAnimatorController;
             }
+            else
+            {
+                Debug.LogWarning($"[ScriptableEntity] [name = {gameObject.name}] could not get animator of prefab");
+            }
         }
+    }
 
-        if (m_actionQueue.m_actionList.Count == 0)
-            ReplaceWithPrefab(); // TODO @matthew - log warning
+    protected void Update()
+    {
+        if (m_awaitingDialogueComplete)
+        {
+            if (!blu.App.GetModule<blu.DialogueModule>().DialogueActive)
+            {
+                m_awaitingDialogueComplete = false;
+                this.AnalyseStep();
+            }
+        }
     }
 
     public override void ResetAnimations()
@@ -66,9 +92,8 @@ public class ScriptableEntity : GridEntity
 
         if (m_actionQueue.m_actionList.Count == 0)
         {
-            // TODO @matthew - log warning
+            Debug.LogWarning($"[ScriptableEntity] [name = {gameObject.name}] action queue has no content");
             ReplaceWithPrefab();
-            return;
         }
 
     RunAgainLabel:
@@ -114,9 +139,15 @@ public class ScriptableEntity : GridEntity
 
                 break;
 
-            case ScriptedActionQueue.ActionType.SetFlagValue:
+            case ScriptedActionQueue.ActionType.SetFlagEntityValue:
 
-                m_flags.SetFlags(currentAction.intData, currentAction.boolData);
+                m_flags.SetFlags(currentAction.int32Data, currentAction.boolData);
+                runAgain = true;
+                break;
+
+            case ScriptedActionQueue.ActionType.SetEventFlagValue:
+
+                blu.App.GetModule<blu.LevelModule>().EventFlags.SetFlags(currentAction.int32Data, currentAction.boolData);
                 runAgain = true;
                 break;
 
@@ -128,8 +159,27 @@ public class ScriptableEntity : GridEntity
                 runAgain = true;
                 break;
 
+            case ScriptedActionQueue.ActionType.AwaitDialogueComplete:
+                runAgain = AwaitDialogueAction();
+                break;
+
+            case ScriptedActionQueue.ActionType.SetCameraPosition:
+                CameraPosAction(currentAction);
+                runAgain = true;
+                break;
+
+            case ScriptedActionQueue.ActionType.SetCameraToPlayer:
+                CameraToPlayerAction();
+                runAgain = true;
+                break;
+
+            case ScriptedActionQueue.ActionType.ExecuteSteps:
+                ExecuteSteps(currentAction);
+                runAgain = true;
+                break;
+
             default:
-                Debug.LogWarning($"ScriptedEntity [{gameObject.name}] could not resolve action [type = {currentAction.type.ToString()}]");
+                Debug.LogWarning($"[ScriptedEntity] [{gameObject.name}] could not resolve action [type = {currentAction.type.ToString()}]");
                 break;
         }
         if (stepQueue)
@@ -150,12 +200,15 @@ public class ScriptableEntity : GridEntity
             GameObject obj = GameObject.Instantiate(m_prefab, m_currentNode.position.world, Quaternion.identity);
             if (obj == null)
             {
-                Debug.LogWarning($"ScriptableEntity [{gameObject.name}] could not instantiate prefab [prefab = {m_prefab.name}]");
+                Debug.LogWarning($"[ScriptableEntity] [{gameObject.name}] could not instantiate prefab [prefab = {m_prefab.name}]");
             }
+
+            GridEntity entity = obj.GetComponent<GridEntity>();
+            entity.Flags.SetFlags(this.Flags._FlagData, true);
         }
         else
         {
-            Debug.LogWarning($"ScriptableEntity [{gameObject.name}] prefab was null");
+            Debug.LogWarning($"[ScriptableEntity] [{gameObject.name}] prefab was null");
         }
 
         RemoveFromCurrentNode();
@@ -205,13 +258,13 @@ public class ScriptableEntity : GridEntity
                     break;
 
                 default:
-                    // TODO @matthew - log warning
+                    Debug.LogWarning($"[ScriptedEntity] [name = {gameObject.name}] could not execute move action");
                     break;
             }
         }
         else
         {
-            // TODO @matthew - log warning
+            Debug.LogWarning($"[ScriptedEntity] [name = {gameObject.name}] move action data was null");
         }
     }
 
@@ -220,15 +273,44 @@ public class ScriptableEntity : GridEntity
         if (data == null)
             return true;
 
-        data.intData--;
+        data.int32Data--;
 
-        if (data.intData > 0)
+        if (data.int32Data > 0)
             return false;
 
         return true;
     }
 
-    protected void DialogueAction(ScriptedActionQueue.ActionWrapper data)
+    protected void CameraPosAction(ScriptedActionQueue.ActionWrapper data)
     {
+        if (data.boolData)
+        {
+            blu.App.CameraController.MoveToPosition(data.gameObject.transform);
+        }
+        else
+        {
+            blu.App.CameraController.MoveToPosition(data.vec3data);
+        }
+    }
+
+    protected void CameraToPlayerAction()
+    {
+        blu.App.CameraController.KeepPlayerInFrame();
+    }
+
+    protected bool AwaitDialogueAction()
+    {
+        if (blu.App.GetModule<blu.DialogueModule>().DialogueActive)
+        {
+            m_awaitingDialogueComplete = true;
+            return false;
+        }
+        return true;
+    }
+
+    protected void ExecuteSteps(ScriptedActionQueue.ActionWrapper data)
+    {
+        LevelManager.Instance.ForceStepsCount = data.int32Data;
+        LevelManager.Instance.ForceStepTime = data.doubleData;
     }
 }

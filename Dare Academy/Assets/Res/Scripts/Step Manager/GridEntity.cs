@@ -100,7 +100,7 @@ public abstract class GridEntity : MonoBehaviour
 
         m_stepController.RoomChangeEvent += RoomChange;
 
-        if (m_roomIndex == m_stepController.m_currentRoomIndex)
+        if (m_roomIndex == m_stepController.m_currentRoomIndex || Flags.IsFlagsSet(flags.keepAwake))
         {
             m_stepController.AddEntity(this);
         }
@@ -115,7 +115,8 @@ public abstract class GridEntity : MonoBehaviour
         if (m_animationController == null)
         {
             m_animationController = GetComponent<GridEntityAnimationController>();
-            // TODO @matthew - log warning if failed
+            if (m_animationController == null)
+                Debug.LogWarning($"[GridEntity] [name = {gameObject.name}] failed to get GridEntityAnimationController");
         }
 
         AnalyseStep();
@@ -488,7 +489,7 @@ public abstract class GridEntity : MonoBehaviour
 
         if (isDead)
         {
-            // TODO @matthew/@jay - don't remove immediately to allow for death animation
+            //#todo #matthew / #jay - don't remove immediately to allow for death animation
             // kill entity
             OnDeath();
         }
@@ -818,7 +819,7 @@ public abstract class GridEntity : MonoBehaviour
 
         for (int i = entities.Count - 1; i >= 0; i--)
         {
-            // TODO @matthew - if entities are moving in the same direction, combine their mass
+            //#todo #matthew - if entities are moving in the same direction, combine their mass
             bool success = entities[i].PushBack(direction, force - entities[i].Mass);
 
             if (!success)
@@ -840,7 +841,7 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual protected void RemovePassThrough(List<GridEntity> winning_objects, List<GridEntity> losing_objects)
     {
-        // TODO @matthew/@jay : this does not respect entities with the isAttack flag yet
+        //#todo #matthew / #jay : this does not respect entities with the isAttack flag yet
         GridNode node = winning_objects[0].m_currentNode;
 
         // if entity is trying to push entity against a wall / edge of grid
@@ -1030,6 +1031,9 @@ public abstract class GridEntity : MonoBehaviour
         if (m_flags.IsFlagsSet(flags.destroyOnReset))
         {
             Kill();
+        }
+        else if (m_flags.IsFlagsSet(flags.dontMoveOnReset))
+        {
         }
         else
         {

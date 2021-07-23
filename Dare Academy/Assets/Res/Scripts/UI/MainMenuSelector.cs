@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using blu;
+using TMPro;
 
 public class MainMenuSelector : MonoBehaviour
 {
@@ -20,10 +21,16 @@ public class MainMenuSelector : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (App.CanvasManager.topCanvas.canvas.name == "Main Menu (Canvas)")
+        if (App.CanvasManager.topCanvas.canvas.name == "Main Menu")
         {
             if (ES.currentSelectedGameObject != null && m_selected != ES.currentSelectedGameObject && ES.currentSelectedGameObject.transform.position != Vector3.zero)
             {
+                if (m_selected != null)
+                {
+                    m_selected.GetComponentInChildren<TextMeshProUGUI>().color = new Color32(255,255,255,200);
+                    ES.currentSelectedGameObject.GetComponentInChildren<TextMeshProUGUI>().alpha = 255;
+                }
+
                 m_selected = ES.currentSelectedGameObject;
                 LeanTween.cancel(gameObject);
 
@@ -44,9 +51,17 @@ public class MainMenuSelector : MonoBehaviour
 
     public void HoverExit()
     {
-        LeanTween.cancel(gameObject);
-        float Xsize = m_selected.GetComponentInChildren<TMPro.TMP_Text>().text.Length * (m_selected.GetComponentInChildren<TMPro.TMP_Text>().fontSize / 100);
-        LeanTween.scaleX(gameObject, Xsize, 0.2f).setEase(LeanTweenType.easeInOutSine);
-        LeanTween.moveY(gameObject, m_selected.transform.position.y, 0.2f).setEase(LeanTweenType.easeInOutSine);
+        if (m_selected != null)
+        {
+            LeanTween.cancel(gameObject);
+            float Xsize = m_selected.GetComponentInChildren<TMPro.TMP_Text>().text.Length * (m_selected.GetComponentInChildren<TMPro.TMP_Text>().fontSize / 100);
+            LeanTween.scaleX(gameObject, Xsize, 0.2f).setEase(LeanTweenType.easeInOutSine);
+            LeanTween.moveY(gameObject, m_selected.transform.position.y, 0.2f).setEase(LeanTweenType.easeInOutSine);
+        }
+        else
+        {
+            //#todo #jack #adam some shit brokey
+            Debug.LogWarning("m_seleced is null");
+        }
     }
 }

@@ -13,8 +13,8 @@ namespace JUtil.Grids
         private Heap<T> openSet;
         private HashSet<T> closedSet;
 
-        T startNode;
-        T targetNode;
+        private T startNode;
+        private T targetNode;
 
         public int area { set; private get; }
 
@@ -76,7 +76,6 @@ namespace JUtil.Grids
 
         public Vector3[] FindPathWithAvoidance(T startPos, T targetPos, T fearNode, int fearRange, bool eightDir = false, bool showtime = false)
         {
-            
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
@@ -95,7 +94,6 @@ namespace JUtil.Grids
 
                 while (openSet.Count > 0)
                 {
-
                     T currentNode = openSet.RemoveFirst();
                     closedSet.Add(currentNode);
 
@@ -125,14 +123,14 @@ namespace JUtil.Grids
             return null;
         }
 
-        T GetNeighbor(T node, NodeNeighbor<T> neighbour)
+        private T GetNeighbor(T node, NodeNeighbor<T> neighbour)
         {
-            // TODO: this method is redundant
+            //#todo: this method is redundant
             T neighbourNode = neighbour.reference;
             return neighbourNode;
         }
 
-        void CheckNeighborsMoore(T currentNode)
+        private void CheckNeighborsMoore(T currentNode)
         {
             foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
             {
@@ -156,78 +154,10 @@ namespace JUtil.Grids
                     else
                         openSet.UpdateItem(neighbour);
                 }
-
             }
         }
 
-        void CheckNeighborsVonNeuman(T currentNode)
-        {
-            int count = -1;
-            foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
-            {
-                count++;
-                if (count % 2 != 0)
-                {
-                    continue;
-                }
-
-                T neighbour = GetNeighbor(currentNode, neighbourStruct);
-
-                if (!neighbourStruct.connected || neighbour == null)
-                    continue;
-
-                if (!neighbour.IsTraversable() || closedSet.Contains(neighbour))
-                    continue;
-
-                int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
-                if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
-                {
-                    neighbour.gCost = newMovementCostToNeighbour;
-                    neighbour.hCost = GetDistance(neighbour, targetNode);
-                    neighbour.parent = currentNode;
-
-                    if (!openSet.Contains(neighbour))
-                        openSet.Add(neighbour);
-                    else
-                        openSet.UpdateItem(neighbour);
-                }
-
-
-            }
-        }
-
-        void CheckNeighborsMooreWithAvoidance(T currentNode, T fearNode, int fearRange)
-        {
-            foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
-            {
-                T neighbour = GetNeighbor(currentNode, neighbourStruct);
-
-                if (!neighbourStruct.connected || neighbour == null)
-                    continue;
-
-                if (!neighbour.IsTraversable() || closedSet.Contains(neighbour))
-                    continue;
-
-                if (Vector3.Distance(neighbour.position.world, fearNode.position.world) <= fearRange-1)
-                    continue;
-
-                int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
-                if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
-                {
-                    neighbour.gCost = newMovementCostToNeighbour;
-                    neighbour.hCost = GetDistance(neighbour, targetNode);
-                    neighbour.parent = currentNode;
-
-                    if (!openSet.Contains(neighbour))
-                        openSet.Add(neighbour);
-                    else
-                        openSet.UpdateItem(neighbour);
-                }
-
-            }
-        }
-
-        void CheckNeighborsVonNeumanWithAvoidance(T currentNode, T fearNode, int fearRange)
+        private void CheckNeighborsVonNeuman(T currentNode)
         {
             int count = -1;
             foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
@@ -246,7 +176,34 @@ namespace JUtil.Grids
                 if (!neighbour.IsTraversable() || closedSet.Contains(neighbour))
                     continue;
 
-                if (Vector3.Distance(neighbour.position.world, fearNode.position.world) <= fearRange-1)
+                int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
+                if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                {
+                    neighbour.gCost = newMovementCostToNeighbour;
+                    neighbour.hCost = GetDistance(neighbour, targetNode);
+                    neighbour.parent = currentNode;
+
+                    if (!openSet.Contains(neighbour))
+                        openSet.Add(neighbour);
+                    else
+                        openSet.UpdateItem(neighbour);
+                }
+            }
+        }
+
+        private void CheckNeighborsMooreWithAvoidance(T currentNode, T fearNode, int fearRange)
+        {
+            foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
+            {
+                T neighbour = GetNeighbor(currentNode, neighbourStruct);
+
+                if (!neighbourStruct.connected || neighbour == null)
+                    continue;
+
+                if (!neighbour.IsTraversable() || closedSet.Contains(neighbour))
+                    continue;
+
+                if (Vector3.Distance(neighbour.position.world, fearNode.position.world) <= fearRange - 1)
                     continue;
 
                 int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
@@ -261,12 +218,47 @@ namespace JUtil.Grids
                     else
                         openSet.UpdateItem(neighbour);
                 }
-
-
             }
         }
 
-        Vector3[] RetracePath(T startNode, T endNode)
+        private void CheckNeighborsVonNeumanWithAvoidance(T currentNode, T fearNode, int fearRange)
+        {
+            int count = -1;
+            foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
+            {
+                count++;
+                if (count % 2 != 0)
+                {
+                    continue;
+                }
+
+                T neighbour = GetNeighbor(currentNode, neighbourStruct);
+
+                if (!neighbourStruct.connected || neighbour == null)
+                    continue;
+
+                if (!neighbour.IsTraversable() || closedSet.Contains(neighbour))
+                    continue;
+
+                if (Vector3.Distance(neighbour.position.world, fearNode.position.world) <= fearRange - 1)
+                    continue;
+
+                int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
+                if (newMovementCostToNeighbour < neighbour.gCost || !openSet.Contains(neighbour))
+                {
+                    neighbour.gCost = newMovementCostToNeighbour;
+                    neighbour.hCost = GetDistance(neighbour, targetNode);
+                    neighbour.parent = currentNode;
+
+                    if (!openSet.Contains(neighbour))
+                        openSet.Add(neighbour);
+                    else
+                        openSet.UpdateItem(neighbour);
+                }
+            }
+        }
+
+        private Vector3[] RetracePath(T startNode, T endNode)
         {
             List<T> path = new List<T>();
             T currentNode = endNode;
@@ -283,7 +275,7 @@ namespace JUtil.Grids
             return waypoints;
         }
 
-        Vector3[] SimplifyPath(List<T> path)
+        private Vector3[] SimplifyPath(List<T> path)
         {
             List<Vector3> waypoints = new List<Vector3>();
 
@@ -295,7 +287,7 @@ namespace JUtil.Grids
             return waypoints.ToArray();
         }
 
-        int GetDistance(T nodeA, T nodeB)
+        private int GetDistance(T nodeA, T nodeB)
         {
             int dstX = Mathf.Abs(nodeA.position.grid.x - nodeB.position.grid.x);
             int dstY = Mathf.Abs(nodeA.position.grid.y - nodeB.position.grid.y);
@@ -305,7 +297,6 @@ namespace JUtil.Grids
 
             return 14 * dstX + 10 * (dstY - dstX);
         }
-
     }
 
     // PATHFINDING NODE INTERFACE *******************************************************************************************************************
@@ -340,7 +331,7 @@ namespace JUtil.Grids
 
         public NodeNeighbor<T> this[Vector2 dir]
         {
-            get 
+            get
             {
                 if (dir == Vector2.zero)
                     return null;
@@ -351,7 +342,7 @@ namespace JUtil.Grids
 
         public NodeNeighbor<T> this[Vector2 dir, int sliceAngle]
         {
-            get 
+            get
             {
                 if (dir == Vector2.zero)
                     return null;
@@ -378,7 +369,6 @@ namespace JUtil.Grids
         {
             return neighbors.GetEnumerator();
         }
-
     }
 
     // NODE NEIGHBOUR "STRUCT" **********************************************************************************************************************

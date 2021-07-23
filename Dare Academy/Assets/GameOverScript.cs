@@ -26,29 +26,39 @@ public class GameOverScript : MonoBehaviour
         }
         else if (_killPlayer)
         {
-            blu.App.GetModule<blu.InputModule>().PlayerController.Enable();
-            if (!_playerRef.MoveToRespawnLocation())
-            {
-                Debug.LogWarning("Player failed to respawn, reloading scene");
-                blu.App.GetModule<blu.SceneModule>().SwitchScene(SceneManager.GetActiveScene().name, blu.TransitionType.Fade);
-            }
-
-            _destroySelf = true;
+            KillPlayerAndResetPosition();
         }
         else
         {
-            DontDestroyOnLoad(_prefab);
-            _camRef = Camera.main;
-            blu.App.GetModule<blu.InputModule>().PlayerController.Disable();
-            _playerRef = PlayerEntity.Instance;
-            _playerRef.GetComponent<SortingGroup>().sortingLayerName = "World Space UI";
-            _prefab.transform.position = new Vector3(_camRef.transform.localPosition.x, _camRef.transform.localPosition.y, 0);
-            int order = _playerRef.GetComponent<SortingGroup>().sortingOrder;
-            _foreground.transform.localScale = _camRef.OrthographicBounds().size;
-            _background.transform.localScale = _camRef.OrthographicBounds().size;
-            _foregroundSG.sortingOrder = order + 1;
-            _backgroundSG.sortingOrder = order - 1;
-            _killPlayer = true;
+            InitialiseDeathScreen();
         }
+    }
+
+    private void KillPlayerAndResetPosition()
+    {
+        blu.App.GetModule<blu.InputModule>().PlayerController.Enable();
+        if (!_playerRef.MoveToRespawnLocation())
+        {
+            Debug.LogWarning("Player failed to respawn, reloading scene");
+            blu.App.GetModule<blu.SceneModule>().SwitchScene(SceneManager.GetActiveScene().name, blu.TransitionType.Fade);
+        }
+
+        _destroySelf = true;
+    }
+
+    private void InitialiseDeathScreen()
+    {
+        DontDestroyOnLoad(_prefab);
+        _camRef = Camera.main;
+        blu.App.GetModule<blu.InputModule>().PlayerController.Disable();
+        _playerRef = PlayerEntity.Instance;
+        _playerRef.GetComponent<SortingGroup>().sortingLayerName = "World Space UI";
+        _prefab.transform.position = new Vector3(_camRef.transform.localPosition.x, _camRef.transform.localPosition.y, 0);
+        int order = _playerRef.GetComponent<SortingGroup>().sortingOrder;
+        _foreground.transform.localScale = _camRef.OrthographicBounds().size;
+        _background.transform.localScale = _camRef.OrthographicBounds().size;
+        _foregroundSG.sortingOrder = order + 1;
+        _backgroundSG.sortingOrder = order - 1;
+        _killPlayer = true;
     }
 }

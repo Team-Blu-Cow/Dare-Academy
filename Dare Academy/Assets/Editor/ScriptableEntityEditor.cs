@@ -12,9 +12,16 @@ public class ScriptableEntityEditor : Editor
         True = 1,
     }
 
+    private enum _cameraOptionsEnum
+    {
+        gameobject,
+        vec3,
+    }
+
     private SerializedProperty prefabProperty;
 
-    private bool foldout = false;
+    private bool flagFoldout = false;
+    private bool actionFoldout = false;
 
     private void OnValidate()
     {
@@ -25,19 +32,21 @@ public class ScriptableEntityEditor : Editor
         serializedObject.Update();
 
         prefabProperty = serializedObject.FindProperty("m_prefab");
+        EditorGUILayout.PropertyField(prefabProperty);
 
         SerializedProperty actionQueueProperty = serializedObject.FindProperty("m_actionQueue");
+        SerializedProperty flagsProperty = serializedObject.FindProperty("m_flagValue");
+
+        flagsProperty.intValue = DisplayFlags(flagsProperty.intValue);
 
         if (actionQueueProperty.objectReferenceValue == null)
         {
             actionQueueProperty.objectReferenceValue = ScriptableObject.CreateInstance<ScriptedActionQueue>();
         }
 
-        EditorGUILayout.PropertyField(prefabProperty);
+        actionFoldout = EditorGUILayout.Foldout(actionFoldout, "Actions");
 
-        foldout = EditorGUILayout.Foldout(foldout, "Actions");
-
-        if (foldout)
+        if (actionFoldout)
         {
             ScriptedActionQueue actionQueue = actionQueueProperty.objectReferenceValue as ScriptedActionQueue;
             DisplayActionQueue(ref actionQueue);
@@ -94,11 +103,12 @@ public class ScriptableEntityEditor : Editor
             if (currentType != newType)
             {
                 queue.m_actionList[i].type = newType;
-                queue.m_actionList[i].intData = 0;
+                queue.m_actionList[i].int32Data = 0;
                 queue.m_actionList[i].textData = "";
                 queue.m_actionList[i].moveData = new ScriptedActionQueue.MoveData();
                 queue.m_actionList[i].gameObject = null;
                 queue.m_actionList[i].boolData = false;
+                queue.m_actionList[i].vec3data = Vector3.zero;
             }
 
             switch (queue.m_actionList[i].type)
@@ -107,7 +117,7 @@ public class ScriptableEntityEditor : Editor
                     break;
 
                 case ScriptedActionQueue.ActionType.WaitTurns:
-                    queue.m_actionList[i].intData = IntField((int?)(queue.m_actionList[i].intData));
+                    queue.m_actionList[i].int32Data = IntField((int?)(queue.m_actionList[i].int32Data));
                     break;
 
                 case ScriptedActionQueue.ActionType.Move:
@@ -126,8 +136,21 @@ public class ScriptableEntityEditor : Editor
                     queue.m_actionList[i].gameObject = EditorGUILayout.ObjectField(queue.m_actionList[i].gameObject, typeof(GameObject), true) as GameObject;
                     break;
 
-                case ScriptedActionQueue.ActionType.SetFlagValue:
-                    FlagField(ref queue.m_actionList[i].intData, ref queue.m_actionList[i].boolData);
+                case ScriptedActionQueue.ActionType.SetFlagEntityValue:
+                    EntityFlagField(ref queue.m_actionList[i].int32Data, ref queue.m_actionList[i].boolData);
+                    break;
+
+                case ScriptedActionQueue.ActionType.SetEventFlagValue:
+                    EventFlagField(ref queue.m_actionList[i].int32Data, ref queue.m_actionList[i].boolData);
+                    break;
+
+                case ScriptedActionQueue.ActionType.SetCameraPosition:
+                    SetCameraPositionField(ref queue.m_actionList[i].boolData, ref queue.m_actionList[i].vec3data, ref queue.m_actionList[i].gameObject);
+                    break;
+
+                case ScriptedActionQueue.ActionType.ExecuteSteps:
+                    queue.m_actionList[i].int32Data = IntField(queue.m_actionList[i].int32Data);
+                    queue.m_actionList[i].doubleData = DoubleField(queue.m_actionList[i].doubleData);
                     break;
 
                 default:
@@ -183,6 +206,24 @@ public class ScriptableEntityEditor : Editor
         return (int)i;
     }
 
+    private double DoubleField(double? d)
+    {
+        if (d == null)
+        { d = new double(); }
+
+        d = EditorGUILayout.DoubleField((double)d);
+
+        if (d < 0)
+            d = 0;
+
+        return (double)d;
+    }
+
+    private GameObject ObjectField(GameObject obj)
+    {
+        return EditorGUILayout.ObjectField(obj, typeof(GameObject), true) as GameObject;
+    }
+
     private ScriptedActionQueue.MoveData MoveDataField(ScriptedActionQueue.MoveData data)
     {
         if (data == null)
@@ -195,7 +236,7 @@ public class ScriptableEntityEditor : Editor
         return (ScriptedActionQueue.MoveData)data;
     }
 
-    private void FlagField(ref int i, ref bool b)
+    private void EntityFlagField(ref int i, ref bool b)
     {
         i = (int)(GridEntityFlags.Flags)EditorGUILayout.EnumFlagsField((GridEntityFlags.Flags)(i), GUILayout.Width(160f));
 
@@ -211,5 +252,73 @@ public class ScriptableEntityEditor : Editor
             b = true;
         else
             b = false;
+    }
+
+    private void EventFlagField(ref int i, ref bool b)
+    {
+        i = (int)(GameEventFlags.Flags)EditorGUILayout.EnumFlagsField((GameEventFlags.Flags)(i), GUILayout.Width(160f));
+
+        _boolEnum e;
+        if (b)
+            e = _boolEnum.True;
+        else
+            e = _boolEnum.False;
+
+        e = (_boolEnum)EditorGUILayout.EnumPopup(e, GUILayout.Width(100f));
+
+        if (e == _boolEnum.True)
+            b = true;
+        else
+            b = false;
+    }
+
+    private void SetCameraPositionField(ref bool b, ref Vector3 vec3, ref GameObject obj)
+    {
+        _cameraOptionsEnum e;
+        if (b)
+            e = _cameraOptionsEnum.gameobject;
+        else
+            e = _cameraOptionsEnum.vec3;
+
+        e = (_cameraOptionsEnum)EditorGUILayout.EnumPopup(e, GUILayout.Width(100f));
+
+        if (e == _cameraOptionsEnum.gameobject)
+            b = true;
+        else
+            b = false;
+
+        if (b)
+        {
+            obj = ObjectField(obj);
+            vec3 = Vector3.zero;
+        }
+        else
+        {
+            obj = null;
+            vec3 = EditorGUILayout.Vector3Field("", vec3);
+        }
+    }
+
+    private int DisplayFlags(int value)
+    {
+        flagFoldout = EditorGUILayout.Foldout(flagFoldout, "Flags");
+        if (flagFoldout)
+        {
+            string[] flagNames = BitFlagsBase.FlagNames<GridEntityFlags.Flags>();
+
+            System.Array flagValues = System.Enum.GetValues(typeof(GridEntityFlags.Flags));
+
+            for (int i = 0; i < BitFlagsBase.NumberOfFlags<GridEntityFlags.Flags>(); i++)
+            {
+                bool fieldBool = GridEntityFlags.IsFlagSet((int)flagValues.GetValue(i), value);
+
+                fieldBool = EditorGUILayout.Toggle(flagNames[i], fieldBool);
+
+                int mask = (int)flagValues.GetValue(i);
+
+                value = GridEntityFlags.SetFlags(mask, value, fieldBool);
+            }
+        }
+        return value;
     }
 }

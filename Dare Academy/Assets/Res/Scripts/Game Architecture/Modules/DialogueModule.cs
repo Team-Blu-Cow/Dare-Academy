@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
+using System;
 using UnityEngine.InputSystem;
 using DialogueEditor;
 using System.Threading.Tasks;
@@ -22,6 +22,11 @@ namespace blu
         private GameObject _ContinueButton;
         private InputModule _input;
         private GameObject _dialogueCanvasPrefab;
+        private int _countActiveDialogue = 0;
+
+        public static event Action DialogueFinished;
+
+        public bool DialogueActive => _countActiveDialogue != 0;
 
         //private Image _continueButton;
         public GameObject EventSystem { set => _EventSystem = value; }
@@ -51,12 +56,17 @@ namespace blu
                 return;
             }
 
+            _countActiveDialogue++;
             StartCoroutine(_StartDialogue(in_conversation));
         }
 
         private IEnumerator _StartDialogue(GameObject in_conversation)
         {
             _dialogueCanvas.SetActive(true);
+
+            if (_ContinueButton == null)
+                _ContinueButton = ConversationManager.Instance.DialoguePanel.transform.Find("ContinueButton").gameObject;
+
             _ContinueButton.SetActive(false);
 
             _currentConversation = in_conversation.GetComponent<NPCConversation>();
@@ -96,9 +106,13 @@ namespace blu
 
         private IEnumerator FadeOutCanvas()
         {
+            if (_canvasAnimation == null)
+                _canvasAnimation = _dialogueCanvas.GetComponentInChildren<Animator>();
+
             _canvasAnimation.SetTrigger("FadeOut");
             yield return new WaitForSeconds(_fadeDelay);
             App.CanvasManager.RemoveCanvasContainer("Dialogue Canvas", false);
+            DialogueFinished?.Invoke();
             yield break;
         }
 
@@ -111,6 +125,8 @@ namespace blu
             _closable = false;
             StartCoroutine(FadeOutCanvas());
             _dialogueCanvas.SetActive(false);
+
+            _countActiveDialogue--;
 
             InputModule input = App.GetModule<InputModule>();
             input.DialogueController.Disable();
