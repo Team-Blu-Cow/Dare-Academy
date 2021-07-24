@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
+using TMPro;
 using blu;
 
 public class AddQuest : MonoBehaviour, IInteractable
@@ -13,6 +14,7 @@ public class AddQuest : MonoBehaviour, IInteractable
     [SerializeField] private GameObject m_playerUI;
     GameObject popup;
     RectTransform rectTransform; // Add rect transform
+    GameObject textObject;
     private float m_timer = 0.0f;
     private bool m_popupOn = false;
     private bool m_timing = false;
@@ -22,8 +24,8 @@ public class AddQuest : MonoBehaviour, IInteractable
         if (m_playerInRange)
         {
             Debug.Log("Interacted");
-            ShowQuestPopup();
             App.GetModule<QuestModule>().AddQuest(Resources.Load<Quest>("Quests/TestQuest"));
+            ShowQuestPopup();
         }
     }
 
@@ -41,9 +43,11 @@ public class AddQuest : MonoBehaviour, IInteractable
 
     private void Update()
     {
-        if(m_popupOn && m_timer > 4.0f)
+        if(m_popupOn && m_timer > 2.5f)
         {
-            LeanTween.move(popup, new Vector3(rectTransform.position.x, -50.0f, rectTransform.position.z), 1.0f);
+            LeanTween.move(popup, new Vector3(rectTransform.position.x, -100.0f, rectTransform.position.z), 1.0f);
+            LeanTween.move(textObject, new Vector3(rectTransform.position.x, -100.0f, rectTransform.position.z), 1.0f);
+
         }
 
         if (m_timing)
@@ -74,7 +78,9 @@ public class AddQuest : MonoBehaviour, IInteractable
         popup.transform.parent = m_playerUI.transform; // Set parent
         rectTransform = popup.AddComponent<RectTransform>(); // Add rect transform
         popup.AddComponent<CanvasRenderer>(); // Add canvas renderer
+
         RawImage image = popup.AddComponent<RawImage>(); // Add image
+        image.color = new Color(0.0f, 0.0f, 0.0f, 0.5f);
 
         rectTransform.anchorMin = new Vector2(0.5f, 0.0f);
         rectTransform.anchorMax = new Vector2(0.5f, 0.0f);
@@ -82,7 +88,29 @@ public class AddQuest : MonoBehaviour, IInteractable
 
         rectTransform.localScale = new Vector3(8.0f, 2.5f, 1.0f);
         rectTransform.anchoredPosition = new Vector3(0.0f, -50.0f, 0.0f);
+
+
+        textObject = new GameObject("Quest Text");
+        textObject.transform.SetParent(m_playerUI.transform);
+
+        TextMeshPro text = textObject.AddComponent<TextMeshPro>();
+        text.text = "Quest - '" + App.GetModule<QuestModule>().GetActiveQuest("Test").name + "' - has been added to your Quest Log";
+        text.alignment = TextAlignmentOptions.Center;
+        // #TODO #Sandy ADD IN TEXT FONT
+
+        RectTransform textTransform = textObject.GetComponent<RectTransform>();
+        textTransform.anchorMin = new Vector2(0.5f, 0.0f);
+        textTransform.anchorMax = new Vector2(0.5f, 0.0f);
+        textTransform.pivot = new Vector2(0.5f, 0.5f);
+
+        textTransform.localScale = new Vector3(8.0f, 2.5f, 1.0f);
+        textTransform.anchoredPosition = new Vector3(0.0f, -50.0f, 0.0f);        
+        textTransform.sizeDelta = new Vector2(120, 20);
+
+
+
         LeanTween.move(popup, new Vector3(rectTransform.position.x, 50.0f, rectTransform.position.z), 1.0f);
+        LeanTween.move(textObject, new Vector3(textTransform.position.x, 50.0f, textTransform.position.z), 1.0f);
 
         m_popupOn = true;
         m_timing = true;
