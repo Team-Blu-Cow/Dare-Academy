@@ -225,6 +225,8 @@ MonoBehaviour:
   m_currentEnergy: 0
   m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
   m_abilityDirection: {x: 0, y: 0}
+  m_overlayRadius: 3
+  m_overlayToggle: 0
 --- !u!114 &8411778651980417412
 MonoBehaviour:
   m_ObjectHideFlags: 0

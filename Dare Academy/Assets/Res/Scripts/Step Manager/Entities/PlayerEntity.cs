@@ -3,7 +3,6 @@
 using UnityEngine;
 using blu;
 using UnityEngine.InputSystem;
-using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using System.Collections.Generic;
 using JUtil;
@@ -369,7 +368,6 @@ public class PlayerEntity : GridEntity
     {
         m_abilities.SetActiveAbility(m_abilities.LeftAbility());
         SetAbilityAnimationFlag();
-        App.GetModule<AudioModule>().PlayMusicEvent("event:/Music/Mushroom Forest/Boyfriends Helmet");
     }
 
     public override void EndStep()

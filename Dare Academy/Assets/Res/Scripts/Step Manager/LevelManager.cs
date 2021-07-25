@@ -87,6 +87,7 @@ public class LevelManager : MonoBehaviour
             App.CanvasManager.CloseCanvas();
 
             App.GetModule<InputModule>().PlayerController.Player.Enable();
+
             if (App.GetModule<AudioModule>().GetCurrentSong() != null)
                 App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
 
