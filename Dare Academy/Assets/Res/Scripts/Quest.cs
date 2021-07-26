@@ -54,4 +54,56 @@ public class Quest : ScriptableObject
             DictPrerequisites.Add(pair.key, pair.value);
         }
     }
+
+    public Quest(StrippedQuest stripped)
+    {
+        name = stripped.name;
+        Prerequisites = stripped.Prerequisites;
+        Requierments = stripped.Requierments;
+        activeDescription = stripped.activeDescription;
+        completeDescription = stripped.completeDescription;
+        complete = stripped.complete;
+        showMarker = stripped.showMarker;
+        markerLocations = stripped.markerLocations;
+        markerScene = stripped.markerScene;
+
+        foreach (StringBoolPair pair in Prerequisites)
+        {
+            DictRequierments.Add(pair.key, pair.value);
+        }
+        foreach (StringBoolPair pair in Requierments)
+        {
+            DictPrerequisites.Add(pair.key, pair.value);
+        }
+    }
+}
+
+[System.Serializable]
+public class StrippedQuest
+{
+    public StrippedQuest(Quest quest)
+    {
+        name = quest.name;
+        Prerequisites = quest.Prerequisites;
+        Requierments = quest.Requierments;
+        activeDescription = quest.activeDescription;
+        completeDescription = quest.completeDescription;
+        complete = quest.complete;
+        showMarker = quest.showMarker;
+        markerLocations = quest.markerLocations;
+        markerScene = quest.markerScene;
+    }
+
+    public string name;
+
+    public List<Quest.StringBoolPair> Prerequisites = new List<Quest.StringBoolPair>();
+
+    public List<Quest.StringBoolPair> Requierments = new List<Quest.StringBoolPair>();
+
+    public string activeDescription;
+    public string completeDescription;
+    public bool complete = false;
+    public bool showMarker;
+    public List<int> markerLocations;
+    public string markerScene;
 }

@@ -13,12 +13,23 @@ namespace blu
 
         public bool AddQuest(Quest in_quest)
         {
-            if (in_quest != null && !_activeQuests.Contains(in_quest) && !_completedQuests.Contains(in_quest))
+            if (in_quest == null)
+                return false;
+
+            foreach (var quest in _activeQuests)
             {
-                _activeQuests.Add(in_quest);
-                return true;
+                if (quest.name == in_quest.name)
+                    return false;
             }
-            return false;
+
+            foreach (var quest in _completedQuests)
+            {
+                if (quest.name == in_quest.name)
+                    return false;
+            }
+
+            _activeQuests.Add(in_quest);
+            return true;
         }
 
         public bool SetRequiermentsComplete(Quest in_quest, string in_req)
@@ -92,6 +103,59 @@ namespace blu
                 return holder;
             }
             return null;
+        }
+
+        public bool LoadFromFile()
+        {
+            LevelModule levelModule = App.GetModule<LevelModule>();
+
+            List<StrippedQuest> active = levelModule.ActiveSaveData.activeQuests;
+            List<StrippedQuest> completed = levelModule.ActiveSaveData.completedQuests;
+
+            if (active != null)
+            {
+                for (int i = 0; i < active.Count; i++)
+                {
+                    if (active[i] != null)
+                        AddQuest(new Quest(active[i]));
+                }
+            }
+
+            if (completed != null)
+            {
+                for (int i = 0; i < completed.Count; i++)
+                {
+                    if (completed[i] != null)
+                        SetComplete(new Quest(completed[i]));
+                }
+            }
+
+            return true;
+        }
+
+        public bool WriteToFile()
+        {
+            LevelModule levelModule = App.GetModule<LevelModule>();
+
+            levelModule.ActiveSaveData.activeQuests.Clear();
+            levelModule.ActiveSaveData.completedQuests.Clear();
+
+            for (int i = 0; i < _activeQuests.Count; i++)
+            {
+                levelModule.ActiveSaveData.activeQuests.Add(new StrippedQuest(_activeQuests[i]));
+            }
+
+            for (int i = 0; i < _completedQuests.Count; i++)
+            {
+                levelModule.ActiveSaveData.completedQuests.Add(new StrippedQuest(_completedQuests[i]));
+            }
+
+            return true;
+        }
+
+        protected override void SetDependancies()
+        {
+            _dependancies.Add(typeof(LevelModule));
         }
     }
 }
