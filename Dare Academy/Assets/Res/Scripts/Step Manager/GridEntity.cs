@@ -22,6 +22,8 @@ public abstract class GridEntity : MonoBehaviour
     private int m_stepsTaken = 0;
     private bool m_failedAttemptToSwitchRoom = false;
 
+    bool m_hasBeenLoaded = false;
+
     protected int m_roomIndex = 0;
 
     [SerializeField] protected GridEntityFlags m_flags = new GridEntityFlags();
@@ -83,6 +85,8 @@ public abstract class GridEntity : MonoBehaviour
     // INITIALISATION METHODS *********************************************************************
     protected virtual void Start()
     {
+        m_hasBeenLoaded = false;
+
         m_currentNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(transform.position);
 
         if (m_currentNode == null)
@@ -100,7 +104,7 @@ public abstract class GridEntity : MonoBehaviour
 
         m_stepController.RoomChangeEvent += RoomChange;
 
-        if (m_roomIndex == m_stepController.m_currentRoomIndex || Flags.IsFlagsSet(flags.keepAwake))
+        if (m_roomIndex == m_stepController.m_currentRoomIndex)
         {
             m_stepController.AddEntity(this);
         }
@@ -1017,8 +1021,11 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void RoomChange()
     {
-        if (m_roomIndex == m_stepController.m_currentRoomIndex || Flags.IsFlagsSet(flags.keepAwake))
+        if (m_roomIndex == m_stepController.m_currentRoomIndex || m_hasBeenLoaded )
         {
+            if (Flags.IsFlagsSet(flags.keepAwake))
+                m_hasBeenLoaded = true;
+
             m_stepController.AddEntity(this);
         }
         else
