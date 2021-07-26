@@ -196,7 +196,5 @@ public class PlayerAbilities
         }
 
         levelModule.EventFlags.SetFlags(flag, true);
-
-        levelModule.SaveGame();
     }
 }

@@ -9,7 +9,7 @@ public class ScriptableEntity : GridEntity
     [SerializeField] private GameObject m_prefab = null;
     [SerializeField] private ScriptedActionQueue m_actionQueue = null;
 
-    [SerializeField] private int m_flagValue; // so custom editor can access this
+    [SerializeField] private int m_flagValue = 0; // so custom editor can access this
 
     public int m_queuePos = 0;
 
@@ -38,8 +38,8 @@ public class ScriptableEntity : GridEntity
 
         if (m_prefab == null)
         {
-            Debug.LogWarning($"[ScriptableEntity] [{gameObject.name}] has no assigned prefab, killing self");
-            Kill();
+            // Debug.LogWarning($"[ScriptableEntity] [{gameObject.name}] has no assigned prefab, killing self");
+            // Kill();
         }
         else
         {
@@ -85,8 +85,11 @@ public class ScriptableEntity : GridEntity
         base.ResetAnimations();
     }
 
-    public override void AnalyseStep()
+    public override async void AnalyseStep()
     {
+        await blu.App.GetModule<blu.LevelModule>().AwaitSaveLoad();
+        await blu.App.GetModule<blu.LevelModule>().AwaitInitialised();
+
         bool stepQueue = true;
         bool runAgain = false;
 
@@ -176,6 +179,10 @@ public class ScriptableEntity : GridEntity
             case ScriptedActionQueue.ActionType.ExecuteSteps:
                 ExecuteSteps(currentAction);
                 runAgain = true;
+                break;
+
+            case ScriptedActionQueue.ActionType.KillIfEventFlagSet:
+                runAgain = KillIfEventFlagSet(currentAction);
                 break;
 
             default:
@@ -312,5 +319,32 @@ public class ScriptableEntity : GridEntity
     {
         LevelManager.Instance.ForceStepsCount = data.int32Data;
         LevelManager.Instance.ForceStepTime = data.doubleData;
+    }
+
+    protected bool KillIfEventFlagSet(ScriptedActionQueue.ActionWrapper data)
+    {
+        if (data.boolData)
+        {
+            // all
+            if (blu.App.GetModule<blu.LevelModule>().EventFlags.IsFlagsSet(data.int32Data))
+            {
+                Kill();
+                return false;
+            }
+        }
+        else
+        {
+            // any
+            for (int i = 0; i < 31; i++)
+            {
+                if (blu.App.GetModule<blu.LevelModule>().EventFlags.IsFlagsSet(data.int32Data & (1 << i)))
+                {
+                    Kill();
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 }

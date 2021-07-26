@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
+using UnityEditor.SceneManagement;
 
 [CustomEditor(typeof(ScriptableEntity))]
 public class ScriptableEntityEditor : Editor
@@ -16,6 +17,12 @@ public class ScriptableEntityEditor : Editor
     {
         gameobject,
         vec3,
+    }
+
+    private enum _anyallEnum
+    {
+        any,
+        all,
     }
 
     private SerializedProperty prefabProperty;
@@ -49,7 +56,10 @@ public class ScriptableEntityEditor : Editor
         if (actionFoldout)
         {
             ScriptedActionQueue actionQueue = actionQueueProperty.objectReferenceValue as ScriptedActionQueue;
-            DisplayActionQueue(ref actionQueue);
+            if(DisplayActionQueue(ref actionQueue))
+            {
+                EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
+            }
 
             actionQueueProperty.objectReferenceValue = actionQueue;
         }
@@ -57,19 +67,23 @@ public class ScriptableEntityEditor : Editor
         serializedObject.ApplyModifiedProperties();
     }
 
-    private void DisplayActionQueue(ref ScriptedActionQueue queue)
+    private bool DisplayActionQueue(ref ScriptedActionQueue queue)
     {
+        bool dirty = false;
+
         EditorGUILayout.BeginHorizontal();
 
         int len = EditorGUILayout.IntField(queue.m_actionList.Count);
 
         if (GUILayout.Button("+", GUILayout.Width(24f)))
         {
+            dirty = true;
             len++;
         }
 
         if (GUILayout.Button("-", GUILayout.Width(24f)))
         {
+            dirty = true;
             len--;
         }
 
@@ -153,6 +167,10 @@ public class ScriptableEntityEditor : Editor
                     queue.m_actionList[i].doubleData = DoubleField(queue.m_actionList[i].doubleData);
                     break;
 
+                case ScriptedActionQueue.ActionType.KillIfEventFlagSet:
+                    KillIfEventFlagSet(ref queue.m_actionList[i].int32Data, ref queue.m_actionList[i].boolData);
+                    break;
+
                 default:
                     break;
             }
@@ -163,6 +181,7 @@ public class ScriptableEntityEditor : Editor
             {
                 if (i > 0)
                 {
+                    dirty = true;
                     ScriptedActionQueue.ActionWrapper temp = queue.m_actionList[i];
                     queue.m_actionList[i] = queue.m_actionList[i - 1];
                     queue.m_actionList[i - 1] = temp;
@@ -173,6 +192,7 @@ public class ScriptableEntityEditor : Editor
             {
                 if (i < queue.m_actionList.Count - 1)
                 {
+                    dirty = true;
                     ScriptedActionQueue.ActionWrapper temp = queue.m_actionList[i];
                     queue.m_actionList[i] = queue.m_actionList[i + 1];
                     queue.m_actionList[i + 1] = temp;
@@ -181,6 +201,8 @@ public class ScriptableEntityEditor : Editor
 
             EditorGUILayout.EndHorizontal();
         }
+
+        return dirty;
     }
 
     private string StringField(string s)
@@ -267,6 +289,24 @@ public class ScriptableEntityEditor : Editor
         e = (_boolEnum)EditorGUILayout.EnumPopup(e, GUILayout.Width(100f));
 
         if (e == _boolEnum.True)
+            b = true;
+        else
+            b = false;
+    }
+
+    private void KillIfEventFlagSet(ref int i, ref bool b)
+    {
+        i = (int)(GameEventFlags.Flags)EditorGUILayout.EnumFlagsField((GameEventFlags.Flags)(i), GUILayout.Width(160f));
+
+        _anyallEnum e;
+        if (b)
+            e = _anyallEnum.all;
+        else
+            e = _anyallEnum.any;
+
+        e = (_anyallEnum)EditorGUILayout.EnumPopup(e, GUILayout.Width(100f));
+
+        if (e == _anyallEnum.all)
             b = true;
         else
             b = false;
