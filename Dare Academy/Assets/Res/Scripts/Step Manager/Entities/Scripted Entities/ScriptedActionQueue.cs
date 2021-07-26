@@ -6,7 +6,7 @@ public class ScriptedActionQueue : ScriptableObject
 {
     // values are set to prevent scripts being damaged when features are added or removed
     [System.Serializable]
-    public enum ActionType // 12
+    public enum ActionType // 13
     {
         None = 0,
         WaitTurns = 1,              // int
@@ -20,6 +20,7 @@ public class ScriptedActionQueue : ScriptableObject
         SetCameraPosition = 9,      // bool , (false)vec3 OR (true)gameobject
         SetCameraToPlayer = 10,     // void
         ExecuteSteps = 12,          // int
+        KillIfEventFlagSet = 13,    // int, bool (false)any OR (true)all
         Kill = 5,                   // void
     }
 
