@@ -318,7 +318,7 @@ public class PlayerEntity : GridEntity
         int xx = startOffset.grid.x - m_overlayRadius;
         int yy = startOffset.grid.y - m_overlayRadius;
 
-        int diameter =  (m_overlayRadius*2) +1;
+        int diameter = (m_overlayRadius * 2) + 1;
 
         int modVal = 0;
 
@@ -332,7 +332,7 @@ public class PlayerEntity : GridEntity
             {
                 if ((x + y) % 2 != modVal)
                 {
-                    GridNode node = currentGrid[xx,yy];
+                    GridNode node = currentGrid[xx, yy];
                     if (node != null && node.roomIndex == m_currentNode.roomIndex && node.IsTraversable())
                     {
                         float dist = Vector3.Distance(node.position.world, m_currentNode.position.world);
