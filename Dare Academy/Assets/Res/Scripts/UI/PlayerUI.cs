@@ -340,7 +340,7 @@ public class PlayerUI : MonoBehaviour
     public void AddHealth()
     {
         GameObject newHealth = new GameObject("Health", typeof(RectTransform), typeof(Image)); // Create new object
-        newHealth.transform.parent = gameObject.transform.GetChild(0); // Set parent
+        newHealth.transform.SetParent(gameObject.transform.GetChild(0)); // Set parent
 
         newHealth.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1); // Set scale
         newHealth.GetComponent<Image>().sprite = Resources.Load<Sprite>("GFX/HeartFull"); // Set color
@@ -350,7 +350,7 @@ public class PlayerUI : MonoBehaviour
     public void AddEnergy()
     {
         GameObject newEnergy = new GameObject("Energy", typeof(RectTransform), typeof(Image)); // Create new object
-        newEnergy.transform.parent = gameObject.transform.GetChild(1); // Set parent
+        newEnergy.transform.SetParent(gameObject.transform.GetChild(1)); // Set parent
 
         newEnergy.GetComponent<RectTransform>().localScale = new Vector3(0.6f, 0.6f, 0.6f); // Set scale
         newEnergy.GetComponent<Image>().color = new Color(0.0f, 1.0f, 1.0f, 1.0f); // Set color

@@ -18,11 +18,11 @@ public abstract class GridEntity : MonoBehaviour
     [SerializeField] protected int m_mass = 2;
     protected int m_baseSpeed = 1;
     private int m_speed = 1;
-    protected int m_health = 1;
+    [SerializeField] protected int m_health = 1;
     private int m_stepsTaken = 0;
     private bool m_failedAttemptToSwitchRoom = false;
 
-    bool m_hasBeenLoaded = false;
+    private bool m_hasBeenLoaded = false;
 
     protected int m_roomIndex = 0;
 
@@ -487,7 +487,7 @@ public abstract class GridEntity : MonoBehaviour
             interalFlags.refectBullets_NE |
             interalFlags.refectBullets_NW |
             interalFlags.refectBullets_SE |
-            interalFlags.refectBullets_SW ;
+            interalFlags.refectBullets_SW;
 
         m_internalFlags.SetFlags(fl, false);
 
@@ -913,8 +913,6 @@ public abstract class GridEntity : MonoBehaviour
 
             yield return null;
         }
-
-        
     }
 
     public IEnumerator AnimateAction(float animTime, GridEnityAction action)
@@ -1021,7 +1019,7 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void RoomChange()
     {
-        if (m_roomIndex == m_stepController.m_currentRoomIndex || m_hasBeenLoaded )
+        if (m_roomIndex == m_stepController.m_currentRoomIndex || m_hasBeenLoaded)
         {
             if (Flags.IsFlagsSet(flags.keepAwake))
                 m_hasBeenLoaded = true;

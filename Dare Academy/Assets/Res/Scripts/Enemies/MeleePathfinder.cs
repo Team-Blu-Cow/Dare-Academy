@@ -33,7 +33,6 @@ public class MeleePathfinder : GridEntity
     protected override void Start()
     {
         base.Start();
-        m_health = 2;
         m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true);
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true);
         m_player = PlayerEntity.Instance;
@@ -49,7 +48,7 @@ public class MeleePathfinder : GridEntity
 
         DecideState();
 
-        switch(m_state)
+        switch (m_state)
         {
             case State.MOVE:
                 MoveState();
@@ -69,9 +68,9 @@ public class MeleePathfinder : GridEntity
             GridNode node = m_currentNode.Neighbors[v].reference;
             if (node != null && node.roomIndex == m_currentNode.roomIndex)
             {
-                foreach(var e in node.GetGridEntities())
+                foreach (var e in node.GetGridEntities())
                 {
-                    if(e.Flags.IsFlagsSet(GridEntityFlags.Flags.isPlayer))
+                    if (e.Flags.IsFlagsSet(GridEntityFlags.Flags.isPlayer))
                     {
                         m_state = State.ATTACK;
                         m_attackNode = node;
@@ -100,14 +99,13 @@ public class MeleePathfinder : GridEntity
 
     public override void AttackStep()
     {
-        if(m_state == State.ATTACK && m_attackNode != null)
+        if (m_state == State.ATTACK && m_attackNode != null)
         {
             GameObject gobj = Instantiate(m_attackPrefab, m_attackNode.position.world, Quaternion.identity);
 
             MeleeAttackEntity ent = gobj.GetComponent<MeleeAttackEntity>();
 
             ent.Init(m_attackNode);
-
         }
     }
 }
