@@ -11,22 +11,27 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
     [SerializeField] private Color[] m_abilityColours;
 
-    [SerializeField] private float m_vignetteIntensity = 0.25f;
+    [SerializeField] private float m_vignetteIntensity = 0.4f;
 
     bool m_vignetteExists = false;
     [SerializeField] bool m_abilityMode;
+    [SerializeField] int m_abilityState;
 
     protected override void OnValidate()
     {
         base.OnValidate();
 
-        m_ppVolume = FindObjectOfType<Volume>();
-        m_ppVolume.profile.TryGet<Vignette>(out m_ppVignette);
+        //m_ppVolume = FindObjectOfType<Volume>();
+        //m_ppVolume.profile.TryGet<Vignette>(out m_ppVignette);
     }
 
     protected override void Start()
     {
         base.Start();
+
+
+        m_ppVolume = GetComponentInChildren<Volume>();
+        m_ppVolume.profile.TryGet<Vignette>(out m_ppVignette);
 
         m_vignetteExists = false;
 
@@ -42,19 +47,40 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
     public void SetAbilityMode(bool abilityMode, int abilityState)
     {
-        m_abilityMode = abilityMode;
+        m_abilityMode = true;
+        m_abilityState = abilityState;
 
-        if (m_abilityMode)
-            m_ppVignette.intensity.value = m_vignetteIntensity;
+        m_ppVignette.intensity.overrideState = abilityMode;
+        m_ppVignette.intensity.value = m_vignetteIntensity;
+
+        /*if (m_abilityMode)
+            //m_ppVignette.intensity.value = m_vignetteIntensity;
+            m_ppVignette.intensity.overrideState = m_abilityMode;
         else
-            m_ppVignette.intensity.value = 0;
+            //m_ppVignette.intensity.value = 0;*/
 
-        SetAbilityState(abilityState);
+            SetAbilityState(abilityState);
     }
 
     public void SetAbilityState(int abilityState)
     {
+        if (abilityState <= 0)
+            return;
+
         m_ppVignette.color.value = m_abilityColours[abilityState];
+    }
+
+    public void DisableVignette()
+    {
+        m_abilityMode = false;
+        //m_ppVignette.intensity.overrideState = false;
+    }
+
+    protected override void Update()
+    {
+        m_ppVignette.intensity.overrideState = m_abilityMode;
+
+        base.Update();
     }
 
 }

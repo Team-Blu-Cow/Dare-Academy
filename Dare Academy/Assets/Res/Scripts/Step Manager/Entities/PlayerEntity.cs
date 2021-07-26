@@ -354,34 +354,35 @@ public class PlayerEntity : GridEntity
     {
         m_abilityMode = !m_abilityMode;
         ToggleAnimationState();
-        SetAbilityAnimationFlag();
+        //SetAbilityAnimationFlag();
     }
 
     protected void EnterAbilityMode(InputAction.CallbackContext context)
     {
         m_abilityMode = true;
-        SetAbilityAnimationFlag();
+        //SetAbilityAnimationFlag();
         ToggleAnimationState();
     }
 
     protected void ExitAbilityMode(InputAction.CallbackContext context)
     {
         m_abilityMode = false;
-        ToggleAnimationState();
+        //ToggleAnimationState();
+        ((PlayerEntityAnimationController)m_animationController).DisableVignette();
     }
 
     protected void CancelAbility(InputAction.CallbackContext context)
     {
         m_abilityMode = false;
-        ToggleAnimationState();
+        //ToggleAnimationState();
     }
 
     protected void ToggleAnimationState()
     {
-        ((PlayerEntityAnimationController)m_animationController).SetAbilityMode(m_abilityMode, GetAbityStateInt());
+        ((PlayerEntityAnimationController)m_animationController).SetAbilityMode(m_abilityMode, GetAbilityStateInt());
     }
 
-    private int GetAbityStateInt()
+    private int GetAbilityStateInt()
     {
         switch (m_abilities.GetActiveAbility())
         {
@@ -576,6 +577,7 @@ public class PlayerEntity : GridEntity
         {
             if (m_abilityDirection != Vector2.zero)
             {
+                m_abilityDirection = m_playerInput.DirectionFour(true);
                 GridNode node;
                 if (m_previousNode != null)
                 {

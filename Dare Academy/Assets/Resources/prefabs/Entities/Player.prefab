@@ -1,5 +1,69 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2068295684
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2068295687}
+  - component: {fileID: 2068295686}
+  - component: {fileID: 2068295685}
+  m_Layer: 0
+  m_Name: post process
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2068295687
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2068295684}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -6.9525895, y: -0.38986963, z: -1.3826718}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 8411778651980417413}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2068295686
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2068295684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 172515602e62fb746b5d573b38a5fe58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isGlobal: 1
+  priority: 0
+  blendDistance: 0
+  weight: 1
+  sharedProfile: {fileID: 11400000, guid: 59dfb8f547b49f74cabda36c969f9948, type: 2}
+--- !u!114 &2068295685
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2068295684}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83542bba98d0dc84c9dc4957b798f999, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ppVolume: {fileID: 2068295686}
+  m_ppVignette: {fileID: 0}
+  intensityVal: 0.4
 --- !u!1 &7335592454540902904
 GameObject:
   m_ObjectHideFlags: 0
@@ -201,6 +265,7 @@ Transform:
   m_Children:
   - {fileID: 8411778651801602623}
   - {fileID: 723099817301728692}
+  - {fileID: 2068295687}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -217,6 +282,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_mass: 2
+  m_health: 1
   m_flags:
     m_flagData: 61
   m_abilities:
@@ -244,13 +310,16 @@ MonoBehaviour:
   m_sprite: {fileID: 8411778651801602617}
   m_spriteHead: {fileID: 8411778651999712004}
   m_hasHead: 1
-  m_ppVolume: {fileID: 0}
+  m_ppVolume: {fileID: 2068295686}
   m_ppVignette: {fileID: 0}
   m_abilityColours:
   - {r: 0, g: 0, b: 0, a: 0}
   - {r: 1, g: 0, b: 0.365098, a: 1}
   - {r: 1, g: 0.80166066, b: 0, a: 1}
   - {r: 0, g: 1, b: 0.9616327, a: 1}
+  m_vignetteIntensity: 0.4
+  m_abilityMode: 0
+  m_abilityState: 0
 --- !u!95 &8411778651980417419
 Animator:
   serializedVersion: 3
