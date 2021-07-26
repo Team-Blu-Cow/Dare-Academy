@@ -68,7 +68,7 @@ public class PlayerUI : MonoBehaviour
         }
 
         m_iconPositions = new Vector2[]{ // Positions for where the icons should be
-        m_Icons[(int)IconIndex.Dash].position,
+        m_Icons[(int)IconIndex.Dash].position ,
         m_Icons[(int)IconIndex.Gun].position,
         m_Icons[(int)IconIndex.Block].position };
 
@@ -239,13 +239,13 @@ public class PlayerUI : MonoBehaviour
                     if (m_Icons[i].index == 2)
                     {
                         LeanTween.move(m_Icons[i].GO, m_iconPositions[(int)IconIndex.Gun], transitionSpeed);
-                        LeanTween.scale(m_Icons[i].GO, new Vector3(1, 1, 1), transitionSpeed);
+                        LeanTween.scale(m_Icons[i].GO, new Vector3(1.5f, 1.5f, 1.5f), transitionSpeed);
                         m_Icons[i].index--;
                     }
                     else
                     {
                         LeanTween.move(m_Icons[i].GO, m_iconPositions[(int)IconIndex.Block], transitionSpeed);
-                        LeanTween.scale(m_Icons[i].GO, new Vector3(0.66f, 0.66f, 0.66f), transitionSpeed);
+                        LeanTween.scale(m_Icons[i].GO, new Vector3(1, 1, 1), transitionSpeed);
                         m_Icons[i].GO.transform.SetAsFirstSibling();
 
                         m_Icons[i].index++;
@@ -261,13 +261,13 @@ public class PlayerUI : MonoBehaviour
                         // Move Position
                         if (m_Icons[i].index > 0)
                         {
-                            LeanTween.move(m_Icons[i].GO, m_iconPositions[m_Icons[i].index - 1], transitionSpeed);
+                            LeanTween.moveLocal(m_Icons[i].GO, m_iconPositions[m_Icons[i].index - 1], transitionSpeed);
 
                             m_Icons[i].index--;
                         }
                         else
                         {
-                            LeanTween.move(m_Icons[i].GO, m_iconPositions[m_Icons.Length - 1], transitionSpeed);
+                            LeanTween.moveLocal(m_Icons[i].GO, m_iconPositions[m_Icons.Length - 1], transitionSpeed);
                             m_Icons[i].GO.transform.SetAsFirstSibling();
 
                             m_Icons[i].index = m_Icons.Length - 1;
@@ -275,20 +275,20 @@ public class PlayerUI : MonoBehaviour
 
                         //Scale
                         if (m_Icons[i].index != 1)
-                            LeanTween.scale(m_Icons[i].GO, new Vector3(0.66f, 0.66f, 0.66f), transitionSpeed);
-                        else
                             LeanTween.scale(m_Icons[i].GO, new Vector3(1, 1, 1), transitionSpeed);
+                        else
+                            LeanTween.scale(m_Icons[i].GO, new Vector3(1.5f, 1.5f, 1.5f), transitionSpeed);
                     }
                     else // Cycle icons to the right
                     {
                         if (m_Icons[i].index < m_Icons.Length - 1)
                         {
-                            LeanTween.move(m_Icons[i].GO, m_iconPositions[m_Icons[i].index + 1], transitionSpeed);
+                            LeanTween.moveLocal(m_Icons[i].GO, m_iconPositions[m_Icons[i].index + 1], transitionSpeed);
                             m_Icons[i].index++;
                         }
                         else
                         {
-                            LeanTween.move(m_Icons[i].GO, m_iconPositions[0], transitionSpeed);
+                            LeanTween.moveLocal(m_Icons[i].GO, m_iconPositions[0], transitionSpeed);
                             m_Icons[i].GO.transform.SetAsFirstSibling();
 
                             m_Icons[i].index = 0;
@@ -296,9 +296,9 @@ public class PlayerUI : MonoBehaviour
 
                         //Scale
                         if (m_Icons[i].index != 1)
-                            LeanTween.scale(m_Icons[i].GO, new Vector3(0.66f, 0.66f, 0.66f), transitionSpeed);
-                        else
                             LeanTween.scale(m_Icons[i].GO, new Vector3(1, 1, 1), transitionSpeed);
+                        else
+                            LeanTween.scale(m_Icons[i].GO, new Vector3(1.5f, 1.5f, 1.5f), transitionSpeed);
                     }
                 }
                 break;
