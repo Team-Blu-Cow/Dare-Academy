@@ -55,7 +55,7 @@ public class GameEventFlags : BitFlags_32
 
     public bool IsFlagsSet(Flags flags)
     {
-        if (m_flagData == 0)
+        if (m_flagData == 0 || flags == 0)
             return false;
 
         if (((Int32)flags & m_flagData) == (Int32)flags)

@@ -94,8 +94,6 @@ namespace blu
 
             if (m_playerPrefab == null)
                 m_playerPrefab = Resources.Load<GameObject>("prefabs/Entities/Player");
-
-            m_initialised = true;
         }
 
         protected override void SetDependancies()
@@ -179,6 +177,8 @@ namespace blu
             }
 
             EventFlags._FlagData = ActiveSaveData.gameEventFlags;
+
+            m_initialised = true;
         }
 
         public async void SaveGame()

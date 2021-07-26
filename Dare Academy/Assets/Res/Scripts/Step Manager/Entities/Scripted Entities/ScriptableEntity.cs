@@ -88,6 +88,7 @@ public class ScriptableEntity : GridEntity
     public override async void AnalyseStep()
     {
         await blu.App.GetModule<blu.LevelModule>().AwaitSaveLoad();
+        await blu.App.GetModule<blu.LevelModule>().AwaitInitialised();
 
         bool stepQueue = true;
         bool runAgain = false;
@@ -150,7 +151,6 @@ public class ScriptableEntity : GridEntity
             case ScriptedActionQueue.ActionType.SetEventFlagValue:
 
                 blu.App.GetModule<blu.LevelModule>().EventFlags.SetFlags(currentAction.int32Data, currentAction.boolData);
-                blu.App.GetModule<blu.LevelModule>().SaveGame();
                 runAgain = true;
                 break;
 

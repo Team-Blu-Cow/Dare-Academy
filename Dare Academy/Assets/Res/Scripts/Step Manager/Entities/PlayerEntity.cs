@@ -402,6 +402,10 @@ public class PlayerEntity : GridEntity
             {
                 m_sceneHasSwitched = true;
                 App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+
+                // save game
+                App.GetModule<LevelModule>().SaveGame();
+
                 // transition to a new scene
                 App.GetModule<SceneModule>().SwitchScene(
                     m_currentNode.lvlTransitionInfo.targetSceneName,
