@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+
 using UnityEngine.UI;
+
 using TMPro;
 using blu;
 
@@ -16,12 +18,10 @@ public class AddQuest : MonoBehaviour, IInteractable
 
     private ShowQuestUI m_questPopup;
 
-
     public void OnInteract(InputAction.CallbackContext ctx)
     {
         if (m_playerInRange)
         {
-            Debug.Log("Interacted");
             App.GetModule<QuestModule>().AddQuest(Resources.Load<Quest>("Quests/TestQuest"));
             m_questPopup.ShowQuestPopup();
         }
@@ -75,7 +75,6 @@ public class AddQuest : MonoBehaviour, IInteractable
 
     private void Update()
     {
-
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
