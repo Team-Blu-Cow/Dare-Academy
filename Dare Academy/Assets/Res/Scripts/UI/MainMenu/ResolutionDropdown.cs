@@ -54,6 +54,7 @@ public class ResolutionDropdown : MonoBehaviour
     public void HandleInput(int in_value)
     {
         Resolution newResolution = listResolutions[in_value];
+        Application.targetFrameRate = newResolution.refreshRate;
         Screen.SetResolution(newResolution.width, newResolution.height, App.GetModule<SettingsModule>().m_graphicsSettings.Fullscreen, newResolution.refreshRate);
         App.GetModule<SettingsModule>().m_graphicsSettings.Resolution = newResolution;
         SettingsModule.Save();
