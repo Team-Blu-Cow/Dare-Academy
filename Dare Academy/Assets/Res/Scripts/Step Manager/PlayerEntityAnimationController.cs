@@ -73,6 +73,7 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
     public void DisableVignette()
     {
         m_abilityMode = false;
+        m_ppVignette.intensity.value = 0;
         //m_ppVignette.intensity.overrideState = false;
     }
 
