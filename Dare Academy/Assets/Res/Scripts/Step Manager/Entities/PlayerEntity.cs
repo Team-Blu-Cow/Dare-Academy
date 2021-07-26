@@ -291,6 +291,7 @@ public class PlayerEntity : GridEntity
         }
 
         //m_animationController.animator.SetInteger("AbilityState", animationFlag);
+        ((PlayerEntityAnimationController)m_animationController).SetAbilityState(animationFlag);
     }
 
     protected void SetAbilityAnimationFlag(int animationFlag)
@@ -352,7 +353,7 @@ public class PlayerEntity : GridEntity
     protected void ToggleAbilityMode(InputAction.CallbackContext context)
     {
         m_abilityMode = !m_abilityMode;
-
+        ToggleAnimationState();
         SetAbilityAnimationFlag();
     }
 
@@ -360,13 +361,36 @@ public class PlayerEntity : GridEntity
     {
         m_abilityMode = true;
         SetAbilityAnimationFlag();
+        ToggleAnimationState();
     }
 
-    protected void ExitAbilityMode(InputAction.CallbackContext context) => m_abilityMode = false;
+    protected void ExitAbilityMode(InputAction.CallbackContext context)
+    {
+        m_abilityMode = false;
+        ToggleAnimationState();
+    }
 
     protected void CancelAbility(InputAction.CallbackContext context)
     {
         m_abilityMode = false;
+        ToggleAnimationState();
+    }
+
+    protected void ToggleAnimationState()
+    {
+        ((PlayerEntityAnimationController)m_animationController).SetAbilityMode(m_abilityMode, GetAbityStateInt());
+    }
+
+    private int GetAbityStateInt()
+    {
+        switch (m_abilities.GetActiveAbility())
+        {
+            case AbilityEnum.None:  return 0;
+            case AbilityEnum.Shoot: return 1;
+            case AbilityEnum.Dash:  return 2;
+            case AbilityEnum.Block: return 3;
+            default:                return 0;
+        }
     }
 
     protected void CycleAbilityR(InputAction.CallbackContext context)

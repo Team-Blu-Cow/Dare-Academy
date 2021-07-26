@@ -244,6 +244,13 @@ MonoBehaviour:
   m_sprite: {fileID: 8411778651801602617}
   m_spriteHead: {fileID: 8411778651999712004}
   m_hasHead: 1
+  m_ppVolume: {fileID: 0}
+  m_ppVignette: {fileID: 0}
+  m_abilityColours:
+  - {r: 0, g: 0, b: 0, a: 0}
+  - {r: 1, g: 0, b: 0.365098, a: 1}
+  - {r: 1, g: 0.80166066, b: 0, a: 1}
+  - {r: 0, g: 1, b: 0.9616327, a: 1}
 --- !u!95 &8411778651980417419
 Animator:
   serializedVersion: 3
