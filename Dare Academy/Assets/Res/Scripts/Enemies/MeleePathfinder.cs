@@ -33,7 +33,7 @@ public class MeleePathfinder : GridEntity
     protected override void Start()
     {
         base.Start();
-        m_health = 5;
+        m_health = 2;
         m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true);
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true);
         m_player = PlayerEntity.Instance;
