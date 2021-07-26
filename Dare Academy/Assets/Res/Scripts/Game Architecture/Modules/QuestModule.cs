@@ -13,7 +13,7 @@ namespace blu
 
         public bool AddQuest(Quest in_quest)
         {
-            if (in_quest)
+            if (in_quest != null && !_activeQuests.Contains(in_quest) && !_completedQuests.Contains(in_quest))
             {
                 _activeQuests.Add(in_quest);
                 return true;
@@ -49,16 +49,30 @@ namespace blu
 
         public bool AbandonQuest(Quest in_quest)
         {
-            Quest holder = _activeQuests.Find(x => x == in_quest);
-            if (holder)
+            for (int i = _activeQuests.Count - 1; i >= 0; i--)
             {
-                _activeQuests.Remove(in_quest);
-                return true;
+                if (_activeQuests[i] == in_quest)
+                {
+                    _activeQuests.RemoveAt(i);
+                    return true;
+                }
             }
+
             return false;
         }
 
-        public bool AbandonQuest(string in_name) => AbandonQuest(_activeQuests.Find(x => x.name.Contains("in_name")));
+        public bool AbandonQuest(string in_name)
+        {
+            for (int i = _activeQuests.Count - 1; i >= 0; i--)
+            {
+                if (_activeQuests[i].name == in_name)
+                {
+                    _activeQuests.RemoveAt(i);
+                    return true;
+                }
+            }
+            return true;
+        }
 
         public Quest GetActiveQuest(string in_name)
         {

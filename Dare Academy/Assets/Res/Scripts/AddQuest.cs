@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+
 using UnityEngine.UI;
+
 using TMPro;
 using blu;
 
@@ -16,50 +18,64 @@ public class AddQuest : MonoBehaviour, IInteractable
 
     private ShowQuestUI m_questPopup;
 
+    private InputModule m_inputModule;
+
+    [SerializeField] private Quest m_quest;
 
     public void OnInteract(InputAction.CallbackContext ctx)
     {
         if (m_playerInRange)
         {
-            Debug.Log("Interacted");
-            App.GetModule<QuestModule>().AddQuest(Resources.Load<Quest>("Quests/TestQuest"));
-            m_questPopup.ShowQuestPopup();
+            if (m_quest)
+            {
+                if (App.GetModule<QuestModule>().AddQuest(m_quest))
+                    m_questPopup.ShowQuestPopup();
+            }
+            else
+            {
+                Debug.LogWarning("[AddQuest.cs] m_quest was null");
+            }
         }
     }
 
-    public bool PlayerInRange(Transform transform)
-    {
-        return false;
-    }
-
-    // Start is called before the first frame update
     private void Start()
     {
-        App.GetModule<InputModule>().PlayerController.Player.Interact.started += OnInteract;
         m_player = PlayerEntity.Instance;
-        m_questPopup = GameObject.Find("PlayerUI").GetComponent<ShowQuestUI>();
-        App.GetModule<InputModule>().LastDeviceChanged += DeviceChanged;
+    }
+
+    private void OnEnable()
+    {
+        if (m_inputModule == null)
+            m_inputModule = App.GetModule<InputModule>();
+
+        m_inputModule.PlayerController.Player.Interact.started += OnInteract;
+        m_inputModule.LastDeviceChanged += DeviceChanged;
     }
 
     private void OnDisable()
     {
-        App.GetModule<InputModule>().LastDeviceChanged -= DeviceChanged;
-        App.GetModule<InputModule>().PlayerController.Player.Interact.started -= OnInteract;
+        m_inputModule.LastDeviceChanged -= DeviceChanged;
+        m_inputModule.PlayerController.Player.Interact.started -= OnInteract;
     }
 
     private void OnValidate()
     {
         m_interactImages[0] = Resources.Load<Sprite>("GFX/ButtonImages/EButton");
         m_interactImages[1] = Resources.Load<Sprite>("GFX/ButtonImages/AButton");
+        m_questPopup = GameObject.FindObjectOfType<ShowQuestUI>();
     }
 
     private void DeviceChanged()
     {
         if (m_playerInRange)
         {
-            switch (App.GetModule<InputModule>().LastUsedDevice.displayName)
+            switch (m_inputModule.LastUsedDevice.displayName)
             {
                 case "Keyboard":
+                    m_player.m_interactToolTip.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[0];
+                    break;
+
+                case "Mouse":
                     m_player.m_interactToolTip.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[0];
                     break;
 
@@ -68,14 +84,11 @@ public class AddQuest : MonoBehaviour, IInteractable
                     break;
 
                 default:
+
+                    Debug.LogWarning($"[AddQuest.cs] unknown input device type [InputType = {m_inputModule.LastUsedDevice.displayName}]");
                     break;
             }
         }
-    }
-
-    private void Update()
-    {
-
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
