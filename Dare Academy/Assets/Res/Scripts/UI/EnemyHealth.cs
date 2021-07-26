@@ -49,7 +49,6 @@ public class EnemyHealth : MonoBehaviour
         foreach (var heart in m_hearts)
         {
             heart.transform.localPosition = heart.transform.localPosition - new Vector3(0.3f, 0, 0);
-            // LeanTween.moveLocalX(heart, heart.transform.localPosition.x - 0.6f, 0.0f);
         }
     }
 
@@ -60,13 +59,22 @@ public class EnemyHealth : MonoBehaviour
         {
             for (int i = 0; i < m_storedHealth - m_entity.Health; i++)
                 OnHit();
+
+            m_storedHealth = m_entity.Health;
         }
     }
 
     private void OnHit()
     {
         //Remove sprite
+        GameObject temp = m_hearts[m_hearts.Count - 1];
+        m_hearts.RemoveAt(m_hearts.Count - 1);
+        Destroy(temp);
 
         //Move across
+        foreach (var heart in m_hearts)
+        {
+            heart.transform.localPosition = heart.transform.localPosition + new Vector3(0.3f, 0, 0);
+        }
     }
 }

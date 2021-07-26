@@ -21,7 +21,6 @@ public class MortarEnemy : GridEntity
     private GameObject m_damageEntityPrefab;
     private GameObject m_shotUpPrefab;
 
-
     protected override void OnValidate()
     {
         base.OnValidate();
@@ -31,7 +30,6 @@ public class MortarEnemy : GridEntity
 
     protected override void Start()
     {
-        m_health = 2;
         m_player = PlayerEntity.Instance;
         base.Start();
     }
@@ -52,9 +50,9 @@ public class MortarEnemy : GridEntity
 
     public override void AttackStep()
     {
-        if(m_attack)
+        if (m_attack)
         {
-            m_animationController.PlayAnimation("shoot", m_stepController.stepTime*2f);
+            m_animationController.PlayAnimation("shoot", m_stepController.stepTime * 2f);
 
             m_attack = false;
 
@@ -74,7 +72,6 @@ public class MortarEnemy : GridEntity
                     obj.GetComponent<MortarShot>().m_landTime = m_mortarShotFallTime;
                 }
             }
-
         }
     }
 

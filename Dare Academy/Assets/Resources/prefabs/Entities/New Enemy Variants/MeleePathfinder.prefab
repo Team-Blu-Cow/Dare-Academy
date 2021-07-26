@@ -71,6 +71,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6754036733429259749, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: -2311659948842064771, guid: 70777af41f6c84a4b98f0e762ab70511, type: 3}
+    - target: {fileID: 6754036733429259749, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
+      propertyPath: m_Color.b
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6754036733429259749, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
+      propertyPath: m_Color.g
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6754036733429259749, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6754036733429259749, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
+      propertyPath: m_WasSpriteAssigned
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7765752218238835681, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
       propertyPath: m_Name
       value: MeleePathfinder

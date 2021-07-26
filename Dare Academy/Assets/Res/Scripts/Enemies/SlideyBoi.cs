@@ -14,7 +14,6 @@ public class SlideyBoi : GridEntity
     protected override void Start()
     {
         base.Start();
-        m_health = 2;
         m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true);
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true);
     }

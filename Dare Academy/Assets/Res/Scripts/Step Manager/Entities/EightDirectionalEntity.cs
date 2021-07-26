@@ -13,7 +13,7 @@ public class EightDirectionalEntity : GridEntity
     [SerializeField] private int agroRange = 5; // Variable which controls when the entity starts firing
     private int m_attackCounter = 0; // Cooldown timer for after firing bullets
     private bool isAttacking = false; // Boolean for whether the entity is firing or not
-    private Vector2[] telegraphPos = { new Vector2(0,0), new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0)}; // Positions for telegraphing where the entity is going to spawn bullets in the next step
+    private Vector2[] telegraphPos = { new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0) }; // Positions for telegraphing where the entity is going to spawn bullets in the next step
 
     [Header("Resources needed")]
     [SerializeField] private GameObject m_bulletPrefab = null; // Bullet prefab for spawning
@@ -24,7 +24,6 @@ public class EightDirectionalEntity : GridEntity
 
     protected override void Start()
     {
-        m_health = 5; // Set health to 5
         m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true); // Set flag for killable to true
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true); // Set flag for if solid to true
 
