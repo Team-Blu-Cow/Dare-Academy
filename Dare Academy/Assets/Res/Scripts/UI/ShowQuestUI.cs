@@ -22,8 +22,8 @@ public class ShowQuestUI : MonoBehaviour
     {
         if (m_popupOn && m_timer > 2.5f) // If the popup is on screen and has stayed there for 2.5 seconds
         {
-            LeanTween.move(m_tBox, new Vector3(rectTransform.position.x, -100.0f, rectTransform.position.z), 1.0f); // Move transparent box down
-            LeanTween.move(m_text, new Vector3(rectTransform.position.x, -100.0f, rectTransform.position.z), 1.0f); // Move text down
+            LeanTween.move(m_tBox, new Vector3(rectTransform.position.x, -200.0f, rectTransform.position.z), 1.0f); // Move transparent box down
+            LeanTween.move(m_text, new Vector3(rectTransform.position.x, -200.0f, rectTransform.position.z), 1.0f); // Move text down
 
             m_popupOn = false; // Set the popup on bool to false
             m_timing = false; // Don't time anymore
@@ -39,6 +39,8 @@ public class ShowQuestUI : MonoBehaviour
         {
             if (m_tBox.GetComponent<RectTransform>().position.y < -70.0f) // If it is off screen
             {
+                m_tBox.SetActive(false);
+                m_text.SetActive(false);
                 isGoingDown = false; // The popup should no longer be going down
             }
         }
@@ -48,6 +50,9 @@ public class ShowQuestUI : MonoBehaviour
     {
         if (m_tBox.transform.position.y < -70.0f && isGoingDown == false) // If the popup is not going down or is off screen
         {
+            m_tBox.SetActive(true);
+            m_text.SetActive(true);
+
             rectTransform = m_tBox.GetComponent<RectTransform>(); // Add rect transform
             RawImage image = m_tBox.GetComponent<RawImage>(); // Add image
             image.color = new Color(0.0f, 0.0f, 0.0f, 0.5f); // Set box to have a transparent color
@@ -58,7 +63,7 @@ public class ShowQuestUI : MonoBehaviour
             rectTransform.pivot = new Vector2(0.5f, 0.5f);
 
             rectTransform.localScale = new Vector3(8.0f, 2.5f, 1.0f); // Set the rect transforms to a certain scale
-            rectTransform.anchoredPosition = new Vector3(0.0f, -170.0f, 0.0f); // Set its position of screen
+            rectTransform.anchoredPosition = new Vector3(0.0f, -200.0f, 0.0f); // Set its position of screen
 
             TextMeshProUGUI text = m_text.GetComponent<TextMeshProUGUI>(); // Get text
             text.text = "Quest - '" + App.GetModule<QuestModule>().GetActiveQuest("Test").name + "' - has been added to your Quest Log"; // Set text
