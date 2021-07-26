@@ -32,7 +32,7 @@ public class AddQuest : MonoBehaviour, IInteractable
     {
         App.GetModule<InputModule>().PlayerController.Player.Interact.started += OnInteract;
         m_player = PlayerEntity.Instance;
-        m_questPopup = GetComponent<ShowQuestUI>();
+        m_questPopup = GameObject.Find("PlayerUI").GetComponent<ShowQuestUI>();
     }
 
     private void Update()
