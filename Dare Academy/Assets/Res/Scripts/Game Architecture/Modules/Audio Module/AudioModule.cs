@@ -59,6 +59,7 @@ namespace blu
 
         public void StopMusicEvent(string name, bool fade = false)
         {
+            currentSong = "";
             if (fade)
 
                 _musicEvents[name].FadeStop();
@@ -79,7 +80,7 @@ namespace blu
 
         public AudioEvent GetCurrentSong()
         {
-            if (currentSong != null)
+            if (currentSong != "")
             {
                 return _musicEvents[currentSong];
             }
@@ -108,6 +109,7 @@ namespace blu
 
         public void StopAllEvents(bool fade = false)
         {
+            currentSong = "";
             if (fade)
             {
                 FMODUnity.RuntimeManager.GetBus("bus:/Master").stopAllEvents(FMOD.Studio.STOP_MODE.ALLOWFADEOUT);

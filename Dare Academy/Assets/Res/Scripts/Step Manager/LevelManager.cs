@@ -78,7 +78,6 @@ public class LevelManager : MonoBehaviour
         input.Player.ExecuteStep.performed += Step;
         App.GetModule<InputModule>().SystemController.UI.Pause.performed += PauseGame;
         App.GetModule<InputModule>().SystemController.UI.Back.performed += BackPause;
-        App.GetModule<AudioModule>().PlayMusicEvent("event:/Music/Crash Site/Crash Site"); //#todo remove
     }
 
     private void OnDisable()

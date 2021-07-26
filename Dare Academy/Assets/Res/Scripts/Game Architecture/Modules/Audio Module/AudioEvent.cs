@@ -11,6 +11,7 @@ public class AudioEvent
     private FMOD.Studio.EventInstance _instance;
 
     private string _eventName = "event:/Warning Noise/New Event";
+    public string name { get => _eventName; }
 
     public AudioEvent(string name)
     {
