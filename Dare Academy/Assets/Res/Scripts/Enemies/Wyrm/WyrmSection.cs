@@ -11,8 +11,17 @@ public abstract class WyrmSection : GridEntity
 
     protected SpriteRenderer spriteRenderer;
 
-    protected WyrmSection SectionInfront => m_sectionInfront;
-    protected WyrmSection SectionBehind => m_sectionBehind;
+    public WyrmSection SectionInfront
+    {
+        get => m_sectionInfront;
+        set => m_sectionInfront = value;
+    }
+
+    public WyrmSection SectionBehind
+    {
+        get => m_sectionBehind;
+        set => m_sectionBehind = value;
+    }
 
     protected GridNode m_burromFrom;
 
@@ -31,8 +40,6 @@ public abstract class WyrmSection : GridEntity
     {
         base.OnValidate();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
-
-        Flags.SetFlags(flags.alwaysWinConflict, true);
     }
 
     protected override void Start()

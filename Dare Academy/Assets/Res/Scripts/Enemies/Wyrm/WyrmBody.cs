@@ -1,9 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using flags = GridEntityFlags.Flags;
+using interalFlags = GridEntityInternalFlags.Flags;
 
 public class WyrmBody : WyrmSection
 {
+    protected override void OnValidate()
+    {
+        base.OnValidate();
+        Flags.SetFlags(flags.alwaysWinConflict, true);
+    }
+
     public override void AnalyseStep()
     {
         base.AnalyseStep();

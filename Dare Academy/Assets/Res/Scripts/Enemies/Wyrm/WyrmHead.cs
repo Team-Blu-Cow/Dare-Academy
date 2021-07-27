@@ -15,6 +15,8 @@ public class WyrmHead : WyrmSection
 
     private GameObject m_damageEntityPrefab;
 
+    private bool m_hasSplit = false;
+
     protected override void OnValidate()
     {
         base.OnValidate();
@@ -113,6 +115,49 @@ public class WyrmHead : WyrmSection
 
     private void Phase3()
     {
+        if (!m_hasSplit)
+        {
+            List<WyrmSection> sections = new List<WyrmSection>();
+
+            WyrmSection current = this;
+            while (current)
+            {
+                sections.Add(current);
+                current = current.SectionBehind;
+            }
+
+            if (sections.Count >= 4)
+            {
+                int newHead = (sections.Count/2);
+
+                // tail will auto disconnect
+
+                // kill script
+                {
+                    GameObject obj  = sections[newHead].gameObject;
+                    GameObject.Destroy(sections[newHead]);
+                    WyrmHead head = obj.AddComponent<WyrmHead>();
+                    head.m_hasSplit = true;
+                    head.m_phase = BossPhase.Phase3;
+
+                    //set health
+                    int h = Health/2;
+                    head.Health = h;
+                    Health = h;
+
+                    // add back to list
+                    sections[newHead] = head;
+                    sections[newHead].SectionBehind = sections[newHead + 1];
+                    sections[newHead + 1].SectionInfront = sections[newHead];
+                }
+            }
+            else
+            {
+                // worm to short
+            }
+        }
+
+        Phase1();
     }
 
     protected bool ShouldBurrow()
