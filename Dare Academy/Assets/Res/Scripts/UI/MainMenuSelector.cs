@@ -19,6 +19,7 @@ public class MainMenuSelector : MonoBehaviour
     private void Start()
     {
         ES = EventSystem.current;
+        lastTouched = m_selected;
         ES.SetSelectedGameObject(m_selected);
         ES.currentSelectedGameObject.GetComponentInChildren<TextMeshProUGUI>().alpha = m_selectedOpacity;
     }
@@ -26,46 +27,40 @@ public class MainMenuSelector : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (App.CanvasManager.topCanvas.canvas.name == "Main Menu (Canvas)" || App.CanvasManager.topCanvas.canvas.name == "Save Select (Canvas)")
+        if (ES.currentSelectedGameObject != null && m_selected != ES.currentSelectedGameObject)
         {
-            if (ES.currentSelectedGameObject != null && m_selected != ES.currentSelectedGameObject)
+            if (m_selected != null)
             {
-                if (m_selected != null)
-                {
-                    if (m_selected.name.Contains("Delete")) { }
-                    //ES.currentSelectedGameObject.GetComponent<Button>().interactable = false;
-                    else
-                        m_selected.GetComponentInChildren<TextMeshProUGUI>().color = new Color32(255, 255, 255, (byte)m_unselectedOpacity);
+                if (m_selected.transform.GetChild(0).TryGetComponent(out TextMeshProUGUI text))
+                    text.color = new Color32(255, 255, 255, (byte)m_unselectedOpacity);
+                else
+                { }
 
-                    if (ES.currentSelectedGameObject.name.Contains("Delete")) { }
-                    //ES.currentSelectedGameObject.GetComponent<Button>().interactable = true;
-                    else
-                        ES.currentSelectedGameObject.GetComponentInChildren<TextMeshProUGUI>().alpha = m_selectedOpacity;
-                }
-                m_selected = ES.currentSelectedGameObject;
+                if (ES.currentSelectedGameObject.transform.GetChild(0).TryGetComponent(out text))
+                    text.alpha = m_selectedOpacity;
+                else { }
             }
+            m_selected = ES.currentSelectedGameObject;
+            lastTouched = m_selected;
         }
     }
 
     public void HoverEnter(GameObject hoveredGo)
     {
-        if (lastTouched)
-            lastTouched.GetComponentInChildren<TextMeshProUGUI>().color = new Color32(255, 255, 255, (byte)m_unselectedOpacity);
+        if (lastTouched && lastTouched.transform.GetChild(0).TryGetComponent(out TextMeshProUGUI text))
+            text.color = new Color32(255, 255, 255, (byte)m_unselectedOpacity);
 
         ES.SetSelectedGameObject(hoveredGo);
         m_selected = ES.currentSelectedGameObject;
 
-        ES.currentSelectedGameObject.GetComponentInChildren<TextMeshProUGUI>().alpha = m_selectedOpacity;
+        if (ES.currentSelectedGameObject.transform.GetChild(0).TryGetComponent(out text))
+            text.alpha = m_selectedOpacity;
     }
 
     public void HoverExit()
     {
         if (m_selected != null)
         {
-            LeanTween.cancel(gameObject);
-            float Xsize = m_selected.GetComponentInChildren<TMPro.TMP_Text>().text.Length * (m_selected.GetComponentInChildren<TMPro.TMP_Text>().fontSize / 100);
-            LeanTween.scaleX(gameObject, Xsize, 0.2f).setEase(LeanTweenType.easeInOutSine);
-            LeanTween.moveY(gameObject, m_selected.transform.position.y, 0.2f).setEase(LeanTweenType.easeInOutSine);
             lastTouched = m_selected;
         }
         else
