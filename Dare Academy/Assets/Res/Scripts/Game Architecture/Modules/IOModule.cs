@@ -26,6 +26,9 @@ namespace blu
         public double playtime = 0;
 
         public List<Quest.StringListIntPair> m_roomsTraveled = new List<Quest.StringListIntPair>();
+
+        public List<StrippedQuest> activeQuests = new List<StrippedQuest>();
+        public List<StrippedQuest> completedQuests = new List<StrippedQuest>();
     }
 
     public class IOModule : Module
