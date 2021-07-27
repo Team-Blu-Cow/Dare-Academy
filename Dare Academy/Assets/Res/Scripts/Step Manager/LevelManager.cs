@@ -139,7 +139,7 @@ public class LevelManager : MonoBehaviour
         else
         {
             App.CanvasManager.OpenCanvas("Options Menu", true);
-            EventSystem.current.SetSelectedGameObject(App.CanvasManager.GetCanvasContainer("Options Menu").gameObject.transform.GetChild(1).GetChild(1).gameObject);
+            EventSystem.current.SetSelectedGameObject(App.CanvasManager.GetCanvasContainer("Options Menu").gameObject.transform.GetChild(1).GetChild(0).GetChild(2).gameObject);
             if (App.GetModule<AudioModule>().GetCurrentSong() != null)
                 App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 1);
             App.GetModule<InputModule>().PlayerController.Player.Disable();

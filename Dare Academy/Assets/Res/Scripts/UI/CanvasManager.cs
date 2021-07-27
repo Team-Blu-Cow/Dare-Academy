@@ -18,9 +18,9 @@ namespace CanvasTool
         [SerializeField] public List<CanvasContainer> startingCanvas = new List<CanvasContainer>();
 
         // Stack of open canvases
-        private Stack<CanvasContainer> openCanvases = new Stack<CanvasContainer>();
+        private List<CanvasContainer> openCanvases = new List<CanvasContainer>();
 
-        public CanvasContainer topCanvas => openCanvases.Peek();
+        public CanvasContainer topCanvas => openCanvases.Count > 0 ? openCanvases[openCanvases.Count - 1] : null;
 
         public Vector2 refrenenceResolution = new Vector2(1600, 900);
 
@@ -46,7 +46,7 @@ namespace CanvasTool
 
                 Go.transform.SetParent(transform);
 
-                // Add compenents to the game Object
+                // Add components to the game Object
                 Canvas canvas = Go.AddComponent<Canvas>();
                 CanvasScaler canvasScaler = Go.AddComponent<CanvasScaler>();
                 Go.AddComponent<GraphicRaycaster>();
@@ -87,11 +87,12 @@ namespace CanvasTool
                     // If the canvas is already open
                     if (openCanvases.Contains(container))
                     {
-                        // Close untill at desired canvas
-                        while (openCanvases.Peek() != container)
+                        // Close until at desired canvas
+                        while (openCanvases[openCanvases.Count - 1] != container)
                         {
                             // Close canvases
-                            CanvasContainer top = openCanvases.Pop();
+                            CanvasContainer top = openCanvases[openCanvases.Count - 1];
+                            openCanvases.Remove(openCanvases[openCanvases.Count - 1]);
                             top.CloseCanvas();
                         }
                         overlay.canvas.sortingOrder = openCanvases.Count + sortingBoost;
@@ -129,15 +130,10 @@ namespace CanvasTool
                 if (container != null)
                 {
                     container.OpenCanvas();
-                    openCanvases.Push(container);
+                    openCanvases.Add(container);
                 }
             }
             overlay.canvas.sortingOrder = openCanvases.Count + sortingBoost;
-        }
-
-        public void OpenCanvas(string container, bool stack = false)
-        {
-            OpenCanvas(GetCanvasContainer(container), stack);
         }
 
         public void OpenCanvas(CanvasContainer container, bool stack = false)
@@ -145,23 +141,27 @@ namespace CanvasTool
             //overlay.canvas.enabled = true;
             if (container == null)
             {
-                Debug.LogWarning("Tring to open a non-exiting container");
+                Debug.LogWarning("Trying to open a non-exiting container");
                 return;
             }
 
             // If the canvas is already open
-            if (openCanvases.Contains(container))
-            {
-                // Close untill at desired canvas
-                while (openCanvases.Peek() != container)
-                {
-                    // Close canvases
-                    CanvasContainer top = openCanvases.Pop();
-                    top.CloseCanvas();
-                }
-                overlay.canvas.sortingOrder = openCanvases.Count + sortingBoost;
-                return;
-            }
+            //if (openCanvases.Contains(container))
+            //{
+            //    // Close until at desired canvas
+            //    while (openCanvases[openCanvases.Count - 1] != container)
+            //    {
+            //        // Close canvases
+            //        if (openCanvases.Count > 0)
+            //        {
+            //            CanvasContainer top = openCanvases[openCanvases.Count - 1];
+            //            openCanvases.Remove(openCanvases[openCanvases.Count - 1]);
+            //            top.CloseCanvas();
+            //        }
+            //    }
+            //    overlay.canvas.sortingOrder = openCanvases.Count + sortingBoost;
+            //    return;
+            //}
 
             if (stack)
             {
@@ -177,7 +177,7 @@ namespace CanvasTool
                     }
                 }
 
-                openCanvases.Push(container);
+                openCanvases.Add(container);
             }
             else
             {
@@ -195,6 +195,16 @@ namespace CanvasTool
                 overlay.canvas.sortingOrder = openCanvases.Count + sortingBoost;
         }
 
+        public void OpenCanvas(string container, bool stack = false)
+        {
+            OpenCanvas(GetCanvasContainer(container), stack);
+        }
+
+        public void OpenStackCanvas(string container)
+        {
+            OpenCanvas(GetCanvasContainer(container), true);
+        }
+
         public void CloseCanvas(bool all = false)
         {
             if (all)
@@ -206,9 +216,24 @@ namespace CanvasTool
             }
             else
             {
-                CanvasContainer top = openCanvases.Pop();
-                top.CloseCanvas();
-                overlay.canvas.sortingOrder = openCanvases.Count - 1;
+                if (openCanvases.Count > 0)
+                {
+                    CanvasContainer top = openCanvases[openCanvases.Count - 1];
+                    top.CloseCanvas();
+                    overlay.canvas.sortingOrder = openCanvases.Count - 1;
+                }
+            }
+        }
+
+        public void CloseCanvas(string canvasName)
+        {
+            foreach (CanvasContainer canvas in canvases)
+            {
+                if (canvas.name == canvasName)
+                {
+                    canvas.CloseCanvas();
+                    openCanvases.Remove(canvas);
+                }
             }
         }
 
