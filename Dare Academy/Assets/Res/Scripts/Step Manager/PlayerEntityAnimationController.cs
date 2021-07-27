@@ -6,15 +6,17 @@ using UnityEngine.Rendering.Universal;
 
 public class PlayerEntityAnimationController : GridEntityAnimationController
 {
-    [SerializeField] private Volume m_ppVolume;
-    [SerializeField] private Vignette m_ppVignette;
-    [SerializeField] private ChromaticAberration m_ppChromaticAberration;
-    [SerializeField] private LensDistortion m_ppLensDistortion;
+    private Volume m_ppVolume;
+    private Vignette m_ppVignette;
+    private ChromaticAberration m_ppChromaticAberration;
+    private LensDistortion m_ppLensDistortion;
+
+    [SerializeField] private ParticleSystem m_luvGunParticles;
 
     [SerializeField] private Color[] m_abilityColours;
 
     [SerializeField] private float m_vignetteIntensityVal = 0.4f;
-    [SerializeField] private float m_currentVignetteIntensityVal = 0;
+    private float m_currentVignetteIntensityVal = 0;
     private Color m_vignetteColour;
 
     [SerializeField] private float m_chromaticIntensityVal = 1;
@@ -25,7 +27,6 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
     [SerializeField] private float m_lerpTime = 0.1f;
 
-    bool m_vignetteExists = false;
     bool m_abilityMode;
     int m_abilityState;
 
@@ -48,10 +49,7 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         m_ppVolume.profile.TryGet<ChromaticAberration>(out m_ppChromaticAberration);
         m_ppVolume.profile.TryGet<LensDistortion>(out m_ppLensDistortion);
 
-        m_vignetteExists = false;
-
-        if (m_ppVignette != null)
-            m_vignetteExists = true;
+        StopLuvParticles();
     }
 
     public void ResetFaceDirection()
@@ -65,17 +63,7 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         m_abilityMode = true;
         m_abilityState = abilityState;
 
-        m_ppVignette.intensity.overrideState = abilityMode;
-        m_ppVignette.intensity.value = m_vignetteIntensityVal;
-
-
-        /*if (m_abilityMode)
-            //m_ppVignette.intensity.value = m_vignetteIntensity;
-            m_ppVignette.intensity.overrideState = m_abilityMode;
-        else
-            //m_ppVignette.intensity.value = 0;*/
-
-            SetAbilityState(abilityState);
+        SetAbilityState(abilityState);
 
         Tween(m_currentVignetteIntensityVal, m_vignetteIntensityVal, m_lerpTime, (value) =>
         {
@@ -95,16 +83,50 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
     public void SetAbilityState(int abilityState)
     {
-        if (abilityState <= 0)
-            return;
+        m_abilityState = abilityState;
 
+        switch(m_abilityState)
+        {
+            case 1: // shoot
+                StartLuvParticles();
+                break;
 
+            case 2: // dash
+                StopLuvParticles();
+                break;
+
+            case 3: // shield
+                StopLuvParticles();
+                break;
+
+            default:
+                StopLuvParticles();
+                break;
+        }
 
         LeanTween.value(gameObject, m_vignetteColour, m_abilityColours[abilityState], m_lerpTime)
             .setOnUpdateColor((value) =>
             {
                 m_vignetteColour = value;
             });
+    }
+
+    public void StartLuvParticles()
+    {
+        if (m_luvGunParticles == null)
+            return;
+
+        if (!m_luvGunParticles.isPlaying)
+            m_luvGunParticles.Play();
+    }
+
+    public void StopLuvParticles()
+    {
+        if (m_luvGunParticles == null)
+            return;
+
+        if (m_luvGunParticles.isPlaying)
+            m_luvGunParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
     }
 
     public void Tween(float tweenVal, float targetVal, float time, System.Action<float> setMethod)
@@ -117,7 +139,6 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
     {
         m_abilityMode = false;
         m_ppVignette.intensity.value = 0;
-        //m_ppVignette.intensity.overrideState = false;
 
         Tween(m_currentVignetteIntensityVal, 0, m_lerpTime, (value) =>
         {

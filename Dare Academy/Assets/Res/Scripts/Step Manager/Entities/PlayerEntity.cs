@@ -71,6 +71,11 @@ public class PlayerEntity : GridEntity
 
     public Dictionary<string, List<int>> m_dictRoomsTraveled = new Dictionary<string, List<int>>();
 
+    public PlayerEntityAnimationController animationController
+    {
+        get { return ((PlayerEntityAnimationController)m_animationController); }
+    }
+
     protected override void OnValidate()
     {
         base.OnValidate();
@@ -304,7 +309,7 @@ public class PlayerEntity : GridEntity
         }
 
         //m_animationController.animator.SetInteger("AbilityState", animationFlag);
-        ((PlayerEntityAnimationController)m_animationController).SetAbilityState(animationFlag);
+        animationController.SetAbilityState(animationFlag);
     }
 
     protected void SetAbilityAnimationFlag(int animationFlag)
@@ -381,7 +386,10 @@ public class PlayerEntity : GridEntity
     {
         m_abilityMode = false;
         //ToggleAnimationState();
-        ((PlayerEntityAnimationController)m_animationController).DisableVignette();
+        animationController.DisableVignette();
+
+        if (m_abilityDirection == Vector2Int.zero)
+            animationController.SetAbilityState(0);
     }
 
     protected void CancelAbility(InputAction.CallbackContext context)
@@ -411,13 +419,17 @@ public class PlayerEntity : GridEntity
     {
         m_abilities.SetActiveAbility(m_abilities.RightAbility());
 
-        SetAbilityAnimationFlag();
+        animationController.SetAbilityState(GetAbilityStateInt());
+
+        //SetAbilityAnimationFlag();
     }
 
     protected void CycleAbilityL(InputAction.CallbackContext context)
     {
         m_abilities.SetActiveAbility(m_abilities.LeftAbility());
-        SetAbilityAnimationFlag();
+
+        animationController.SetAbilityState(GetAbilityStateInt());
+        //SetAbilityAnimationFlag();
     }
 
     public override void EndStep()
@@ -590,7 +602,7 @@ public class PlayerEntity : GridEntity
         {
             if (m_abilityDirection != Vector2.zero)
             {
-                m_abilityDirection = m_playerInput.DirectionFour(true);
+                //m_abilityDirection = m_playerInput.DirectionFour(true);
                 GridNode node;
                 if (m_previousNode != null)
                 {
@@ -609,6 +621,7 @@ public class PlayerEntity : GridEntity
 
                 AddAnimationAction(ActionTypes.STATIC_ACTION, "Head Gun Fire", 1);
                 SetAbilityAnimationFlag(0);
+                animationController.StopLuvParticles();
 
                 if (SpawnBullet(m_bulletPrefab, node, m_abilityDirection))
                 {
