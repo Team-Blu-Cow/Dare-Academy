@@ -131,7 +131,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
                 GameObject tempRoom = new GameObject("Room");
                 Image image = tempRoom.AddComponent<Image>();
                 RectTransform rect = tempRoom.GetComponent<RectTransform>();
-                tempRoom.transform.SetParent(transform.GetChild(0));
+                tempRoom.transform.SetParent(transform.GetChild(1));
                 rect.localScale = Vector3.one;
                 rect.sizeDelta = new Vector2(grid.width, grid.height);
                 rect.localPosition = grid.originPosition + (new Vector3(grid.width, grid.height, 0) / 2) - currentRoom.OriginPosition;
@@ -142,8 +142,8 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
                 }
 
                 m_squares.Add(tempRoom);
-                i++;
             }
+            i++;
         }
     }
 
@@ -170,19 +170,26 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
                 if (angle < 5 && angle > -5)
                     angle = 0;
 
+                if (Mathf.Abs(angle) > 90)
+                    length++;
+
                 // Spawning the square
                 GameObject tempLink = new GameObject("Link");
                 tempLink.AddComponent<Image>();
                 RectTransform rect = tempLink.GetComponent<RectTransform>();
-                tempLink.transform.SetParent(transform.GetChild(1));
+                tempLink.transform.SetParent(transform.GetChild(0));
 
-                // Seting the size and position
-                rect.sizeDelta = new Vector2(link.width, length);
+                // Setting the size and position
+                if (Mathf.Abs(angle) % 90 == 0)
+                    rect.sizeDelta = new Vector2(link.width, length);
+                else
+                    rect.sizeDelta = new Vector2(link.width + 1, length / 2);
+
                 rect.localScale = Vector3.one;
                 rect.localPosition = ((linkStart + linkEnd) / 2) - currentRoom.OriginPosition;
                 rect.rotation = Quaternion.Euler(0, 0, angle);
 
-                // offset link to be in the centre
+                // offset link to be in the center
                 angle = (link.grid1.direction + 2) * 45;
                 float width = (link.width / 2.0f) - 0.5f;
 
@@ -321,7 +328,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
         Image image = Go.AddComponent<Image>();
         image.color = Color.green;
 
-        Go.transform.SetParent(transform.GetChild(2));
+        Go.transform.SetParent(transform.GetChild(3));
 
         RectTransform rect = (RectTransform)Go.transform;
         rect.sizeDelta = Vector2.one * 3;
@@ -333,7 +340,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
         }
         else
         {
-            Debug.LogWarning("Attemping to show quest marker without location set");
+            Debug.LogWarning("attempting to show quest marker without location set");
         }
 
         ToolTip tooltip = Go.AddComponent<ToolTip>();
@@ -364,7 +371,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
                 Image image = Go.AddComponent<Image>();
                 image.color = Color.blue;
 
-                Go.transform.SetParent(transform.GetChild(1));
+                Go.transform.SetParent(transform.GetChild(2));
 
                 RectTransform rect = (RectTransform)Go.transform;
                 rect.sizeDelta = Vector2.one * 3;
@@ -445,6 +452,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
     private void MoveStart(InputAction.CallbackContext ctx)
     {
         m_movePos = ctx.ReadValue<Vector2>();
+        m_movePos.y *= -1;
     }
 
     private void MoveEnd(InputAction.CallbackContext ctx)
@@ -456,7 +464,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
     {
         if (m_movePos != Vector2.zero)
         {
-            Vector2 moveAmount = m_movePos * (5 * Mathf.Log10(transform.localScale.x));
+            Vector2 moveAmount = m_movePos * (10 * Mathf.Log10(transform.localScale.x));
             Vector2 newPos = transform.anchoredPosition + moveAmount;
             float scale = transform.localScale.x;
 
