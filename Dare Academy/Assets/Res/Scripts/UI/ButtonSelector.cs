@@ -6,14 +6,14 @@ using UnityEngine.EventSystems;
 using blu;
 using TMPro;
 
-public class MainMenuSelector : MonoBehaviour
+public class ButtonSelector : MonoBehaviour
 {
     private EventSystem ES;
     public GameObject m_selected;
     private GameObject lastTouched = null;
 
-    [SerializeField] private float m_selectedOpacity = 255;
-    [SerializeField] private float m_unselectedOpacity = 100;
+    [SerializeField] private Color m_selectedColor;
+    [SerializeField] private Color m_unselectedColor;
 
     // Start is called before the first frame update
     private void Start()
@@ -21,7 +21,8 @@ public class MainMenuSelector : MonoBehaviour
         ES = EventSystem.current;
         lastTouched = m_selected;
         ES.SetSelectedGameObject(m_selected);
-        ES.currentSelectedGameObject.GetComponentInChildren<TextMeshProUGUI>().alpha = m_selectedOpacity;
+        if (m_selected)
+            ES.currentSelectedGameObject.GetComponentInChildren<TextMeshProUGUI>().color = m_selectedColor;
     }
 
     // Update is called once per frame
@@ -32,12 +33,12 @@ public class MainMenuSelector : MonoBehaviour
             if (m_selected != null)
             {
                 if (m_selected.transform.GetChild(0).TryGetComponent(out TextMeshProUGUI text))
-                    text.color = new Color32(255, 255, 255, (byte)m_unselectedOpacity);
+                    text.color = m_unselectedColor;
                 else
                 { }
 
                 if (ES.currentSelectedGameObject.transform.GetChild(0).TryGetComponent(out text))
-                    text.alpha = m_selectedOpacity;
+                    text.color = m_selectedColor;
                 else { }
             }
             m_selected = ES.currentSelectedGameObject;
@@ -48,13 +49,13 @@ public class MainMenuSelector : MonoBehaviour
     public void HoverEnter(GameObject hoveredGo)
     {
         if (lastTouched && lastTouched.transform.GetChild(0).TryGetComponent(out TextMeshProUGUI text))
-            text.color = new Color32(255, 255, 255, (byte)m_unselectedOpacity);
+            text.color = m_unselectedColor;
 
         ES.SetSelectedGameObject(hoveredGo);
         m_selected = ES.currentSelectedGameObject;
 
         if (ES.currentSelectedGameObject.transform.GetChild(0).TryGetComponent(out text))
-            text.alpha = m_selectedOpacity;
+            text.color = m_selectedColor;
     }
 
     public void HoverExit()

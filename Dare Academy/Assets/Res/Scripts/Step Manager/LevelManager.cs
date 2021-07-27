@@ -129,6 +129,8 @@ public class LevelManager : MonoBehaviour
                 App.CanvasManager.CloseCanvas();
             App.CanvasManager.CloseCanvas();
 
+            EventSystem.current.SetSelectedGameObject(null);
+
             App.GetModule<InputModule>().PlayerController.Player.Enable();
 
             if (App.GetModule<AudioModule>().GetCurrentSong() != null)

@@ -10073,8 +10073,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_selected: {fileID: 20775291}
-  m_selectedOpacity: 255
-  m_unselectedOpacity: 100
+  m_selectedColor: {r: 1, g: 1, b: 1, a: 1}
+  m_unselectedColor: {r: 1, g: 1, b: 1, a: 0.39215687}
 --- !u!114 &1670458574
 MonoBehaviour:
   m_ObjectHideFlags: 0
