@@ -14,11 +14,6 @@ public class EnemyHealth : MonoBehaviour
     private void Start()
     {
         m_storedHealth = m_entity.Health;
-
-        for (int i = 0; i < m_entity.Health; i++)
-        {
-            AddHeart();
-        }
     }
 
     private void OnValidate()
@@ -66,6 +61,14 @@ public class EnemyHealth : MonoBehaviour
 
     private void OnHit()
     {
+        if (m_hearts.Count == 0)
+        {
+            for (int i = 0; i < m_entity.Health; i++)
+            {
+                AddHeart();
+            }
+        }
+
         //Remove sprite
         GameObject temp = m_hearts[m_hearts.Count - 1];
         m_hearts.RemoveAt(m_hearts.Count - 1);
