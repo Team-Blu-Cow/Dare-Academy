@@ -40,6 +40,7 @@ public class LevelManager : MonoBehaviour
         get { return m_forceStepsCount == 0; }
     }
 
+    public bool debug_SpawnPlayer = true;
     [SerializeField] private float m_stepTime = 0.2f;
     [SerializeField] public int m_defaultPlayerSpawnIndex;
     [SerializeField] public Vector2Int m_defaultPlayerPosition;

@@ -21,13 +21,13 @@ public class PostProcessVolumeController : MonoBehaviour
 
         if (m_ppVignette != null)
         {
-            m_ppVignette.intensity.value = m_vignetteIntensityVal;
-            m_ppVignette.intensity.overrideState = false;
+            m_ppVignette.intensity.value = 0;
+            m_ppVignette.intensity.overrideState = true;
         }
 
         if(m_ppChromaticAberration != null)
         {
-            m_ppChromaticAberration.intensity.value = m_vignetteIntensityVal;
+            m_ppChromaticAberration.intensity.value = 0;
         }
 
         if(m_ppLensDistortion != null)
@@ -40,7 +40,7 @@ public class PostProcessVolumeController : MonoBehaviour
     {
         if (m_ppVignette != null)
         {
-            m_ppVignette.intensity.value = m_vignetteIntensityVal;
+            m_ppVignette.intensity.value = 0;
             //m_ppVignette.intensity.overrideState = false;
         }
 

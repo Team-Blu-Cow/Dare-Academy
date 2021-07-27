@@ -119,44 +119,67 @@ namespace blu
             if (m_playerPrefab == null)
                 m_playerPrefab = Resources.Load<GameObject>("prefabs/Entities/Player");
 
-            if (m_lvlTransitionInfo == null)
-            {
-                Vector3 pos = m_grid.Grid(m_levelManager.m_defaultPlayerSpawnIndex)[m_levelManager.m_defaultPlayerPosition].position.world;
-
-                m_levelManager.StepController.m_currentRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
-                m_levelManager.StepController.m_targetRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
-
-                Instantiate(m_playerPrefab, pos, Quaternion.identity);
-            }
+            if (m_levelManager.debug_SpawnPlayer == true)
+                SpawnPlayer();
             else
-            {
-                Vector2Int nodePos = m_lvlTransitionInfo.targetNodeIndex + ((-m_lvlTransitionInfo.offsetVector) * m_lvlTransitionInfo.offsetIndex);
+                FindPlayer();
 
-                GridNode node = m_grid.Grid(m_lvlTransitionInfo.targetRoomIndex)[nodePos];
+            //m_levelManager.StepController.InitialAnalyse();
+        }
 
-                if (node == null)
+        public void FindPlayer()
+        {
+            PlayerEntity playerEnt = FindObjectOfType<PlayerEntity>();
+            if (playerEnt == null)
+                SpawnPlayer();
+
+            playerEnt.DebugSetNode();
+
+            m_levelManager.StepController.m_currentRoomIndex = playerEnt.RoomIndex;
+            m_levelManager.StepController.m_targetRoomIndex = playerEnt.RoomIndex;
+        }
+
+        public void SpawnPlayer()
+        {
+            if (m_levelManager.debug_SpawnPlayer == true)
+
+                if (m_lvlTransitionInfo == null)
                 {
-                    node = m_grid.Grid(m_lvlTransitionInfo.targetRoomIndex)[m_lvlTransitionInfo.targetNodeIndex];
-                }
+                    Vector3 pos = m_grid.Grid(m_levelManager.m_defaultPlayerSpawnIndex)[m_levelManager.m_defaultPlayerPosition].position.world;
 
-                Vector3 pos;
-
-                if (node == null)
-                {
-                    pos = m_grid.Grid(m_levelManager.m_defaultPlayerSpawnIndex)[m_levelManager.m_defaultPlayerPosition].position.world;
                     m_levelManager.StepController.m_currentRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
                     m_levelManager.StepController.m_targetRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
+
+                    Instantiate(m_playerPrefab, pos, Quaternion.identity);
                 }
                 else
                 {
-                    pos = node.position.world;
-                    m_levelManager.StepController.m_currentRoomIndex = m_lvlTransitionInfo.targetRoomIndex;
-                    m_levelManager.StepController.m_targetRoomIndex = m_lvlTransitionInfo.targetRoomIndex;
-                }
+                    Vector2Int nodePos = m_lvlTransitionInfo.targetNodeIndex + ((-m_lvlTransitionInfo.offsetVector) * m_lvlTransitionInfo.offsetIndex);
 
-                Instantiate(m_playerPrefab, pos, Quaternion.identity);
-            }
-            //m_levelManager.StepController.InitialAnalyse();
+                    GridNode node = m_grid.Grid(m_lvlTransitionInfo.targetRoomIndex)[nodePos];
+
+                    if (node == null)
+                    {
+                        node = m_grid.Grid(m_lvlTransitionInfo.targetRoomIndex)[m_lvlTransitionInfo.targetNodeIndex];
+                    }
+
+                    Vector3 pos;
+
+                    if (node == null)
+                    {
+                        pos = m_grid.Grid(m_levelManager.m_defaultPlayerSpawnIndex)[m_levelManager.m_defaultPlayerPosition].position.world;
+                        m_levelManager.StepController.m_currentRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
+                        m_levelManager.StepController.m_targetRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
+                    }
+                    else
+                    {
+                        pos = node.position.world;
+                        m_levelManager.StepController.m_currentRoomIndex = m_lvlTransitionInfo.targetRoomIndex;
+                        m_levelManager.StepController.m_targetRoomIndex = m_lvlTransitionInfo.targetRoomIndex;
+                    }
+
+                    Instantiate(m_playerPrefab, pos, Quaternion.identity);
+                }
         }
 
         public void AddEntityToCurrentRoom(GridEntity entity)

@@ -89,6 +89,19 @@ public class PlayerEntity : GridEntity
         _Instance = this;
     }
 
+    public void DebugSetNode()
+    {
+        m_currentNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(transform.position);
+
+        if (m_currentNode == null)
+        {
+            m_roomIndex = -1;
+            return;
+        }
+
+        m_roomIndex = m_currentNode.roomIndex;
+    }
+
     protected override async void Start()
     {
         base.Start();
