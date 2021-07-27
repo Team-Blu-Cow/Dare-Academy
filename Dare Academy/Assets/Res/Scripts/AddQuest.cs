@@ -83,6 +83,10 @@ public class AddQuest : MonoBehaviour, IInteractable
                     m_player.m_interactToolTip.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[1];
                     break;
 
+                case "Wireless Controller":
+                    m_player.m_interactToolTip.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[1];
+                    break;
+
                 default:
 
                     Debug.LogWarning($"[AddQuest.cs] unknown input device type [InputType = {m_inputModule.LastUsedDevice.displayName}]");
