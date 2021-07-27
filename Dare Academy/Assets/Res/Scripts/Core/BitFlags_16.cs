@@ -56,8 +56,10 @@ public class BitFlags_16
     }
 
     public bool IsFlagsSet(Int16 flags)
-
     {
+        if (m_flagData == 0 || flags == 0)
+            return false;
+
         if (((Int16)(flags & m_flagData)) == flags)
             return true;
 
@@ -76,6 +78,9 @@ public class BitFlags_16
 
     public static bool IsFlagSet(Int16 flags, Int16 flagData)
     {
+        if (flagData == 0 || flags == 0)
+            return false;
+
         if (((Int16)(flags & flagData)) == flags)
             return true;
 

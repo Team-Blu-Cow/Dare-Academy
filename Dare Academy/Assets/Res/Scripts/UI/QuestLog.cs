@@ -91,7 +91,7 @@ public class QuestLog : MonoBehaviour, IPointerDownHandler
         int i = 0;
         foreach (Quest quest in App.GetModule<QuestModule>().ActiveQuests)
         {
-            GameObject questPrefab = Resources.Load<GameObject>("prefabs/Quest");
+            GameObject questPrefab = Resources.Load<GameObject>("prefabs/UI prefabs/Quest");
 
             GameObject questGo = Instantiate(questPrefab, transform);
             m_instantiatedQuests.Add(questGo);

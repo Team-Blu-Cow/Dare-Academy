@@ -13,38 +13,48 @@ public class EightDirectionalEntity : GridEntity
     [SerializeField] private int agroRange = 5; // Variable which controls when the entity starts firing
     private int m_attackCounter = 0; // Cooldown timer for after firing bullets
     private bool isAttacking = false; // Boolean for whether the entity is firing or not
-    private Vector2[] telegraphPos = { new Vector2(0,0), new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0)}; // Positions for telegraphing where the entity is going to spawn bullets in the next step
+    private Vector2[] telegraphPos = { new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0), new Vector2(0, 0) }; // Positions for telegraphing where the entity is going to spawn bullets in the next step
 
     [Header("Resources needed")]
     [SerializeField] private GameObject m_bulletPrefab = null; // Bullet prefab for spawning
 
     [SerializeField] private GridEntity player; // Player to figure out how close they are to the entity (for agro range check)
 
+    [SerializeField] private ParticleSystem m_sleepyParticles;
+
     protected override void Start()
     {
-        base.Start(); // Run base start
-        m_health = 5; // Set health to 5
         m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true); // Set flag for killable to true
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true); // Set flag for if solid to true
 
-        player = FindObjectOfType<PlayerEntity>(); // Find the player // WILL NEED TO CHANGE TO PROPER NAME
+        player = PlayerEntity.Instance; // Find the player
         m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet"); // Find the bullet prefab
-
+        base.Start(); // Run base start
+        m_animationController.SetAnimationSpeed(0.5f);
     }
 
     protected override void OnValidate()
     {
         base.OnValidate();
-
+        m_sleepyParticles = GetComponentInChildren<ParticleSystem>();
     }
 
     public override void AnalyseStep()
     {
+        if (player == null)
+            return;
+
         base.AnalyseStep(); // Run base function
+        m_animationController.SetAnimationSpeed(1);
 
-        Vector3[] path = App.GetModule<LevelModule>().MetaGrid.GetPath(Position.world, player.transform.position); // Find path to player
+        if (player.currentNode == null)
+            return;
 
-        if (path.Length < agroRange) // If the player is within agro range
+        float dist = Vector3.Distance(m_currentNode.position.world, player.currentNode.position.world);
+
+        m_animationController.animator.SetBool("isAsleep", dist >= agroRange);
+
+        if (dist < agroRange) // If the player is within agro range
         {
             if (m_attackCounter >= m_attackSpeed) //  If the cooldown has expired
             {
@@ -52,6 +62,18 @@ public class EightDirectionalEntity : GridEntity
                 TelegraphAttack(); // Telegraph the attacking position
             }
         }
+    }
+
+    public void StartSleeping()
+    {
+        if (!m_sleepyParticles.isPlaying)
+            m_sleepyParticles.Play();
+    }
+
+    public void StopSleeping()
+    {
+        if (m_sleepyParticles.isPlaying)
+            m_sleepyParticles.Stop();
     }
 
     public override void AttackStep()
@@ -88,30 +110,21 @@ public class EightDirectionalEntity : GridEntity
         {
             Vector2Int[] m_attackDirections = GetAttackDirections(); // Get the attacking directions
 
-            for (int j = 0; j < 4; j++) // Loop for each direction
+            bool success = true;
+            try
             {
-                Vector3 spawnPosition; // Declare spawn position variable
-                if (m_currentNode.GetNeighbour(m_attackDirections[j]) != null) // If the node where the bullet is meant to spawn is not a wall
+                for (int i = 0; i < 4; i++)
                 {
-                    spawnPosition = m_currentNode.GetNeighbour(m_attackDirections[j]).position.world; // Set the bullet's spawn position to the current attacking directions's grid node
-                    GameObject obj = GameObject.Instantiate(m_bulletPrefab, spawnPosition, Quaternion.identity); // Spawn the bullet
-
-                    if (obj) // If the bullet exists
-                    {
-                        BulletEntity bullet = obj.GetComponent<BulletEntity>(); // Get the bullet entity script from the game object
-                        if (bullet) // If the script exists within the bullet game object
-                        {
-                            bullet.m_bulletDirection = m_attackDirections[j]; // Set the bullet's direction to the corresponding attack direction
-
-                            if (j == 3) // If this is the last bullet to be spawned
-                            {
-                                isFiringHorizontal = !isFiringHorizontal; // Change the firing direction
-                                return true; // Return true (Don't think this is needed anymore)
-                            }
-                        }
-                    }
+                    SpawnBullet(m_bulletPrefab, m_currentNode, m_attackDirections[i]);
                 }
             }
+            catch (System.Exception)
+            {
+                success = false;
+            }
+
+            isFiringHorizontal = !isFiringHorizontal;
+            return success;
         }
 
         return false;

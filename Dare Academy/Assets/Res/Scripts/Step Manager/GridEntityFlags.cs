@@ -17,6 +17,7 @@ public class GridEntityFlags : BitFlags_32
         allowedOffGrid      = 0b00000000000000000000001000000000,
         alwaysWinConflict   = 0b00000000000000000000010000000000,
         keepAwake           = 0b00000000000000000000100000000000,
+        dontMoveOnReset     = 0b00000000000000000001000000000000,
     }
 
     public void SetFlags(Flags flags, bool value)
@@ -34,6 +35,9 @@ public class GridEntityFlags : BitFlags_32
 
     public bool IsFlagsSet(Flags flags)
     {
+        if (m_flagData == 0 || flags == 0)
+            return false;
+
         if (((Int32)flags & m_flagData) == (Int32)flags)
             return true;
 

@@ -223,6 +223,7 @@ namespace blu.FileIO
             _currentResolution.height = PlayerPrefs.GetInt("ScreenHeight", 800);
             _fullscreen = PlayerPrefs.GetInt("Fullscreen", 0) == 1;
 
+            Application.targetFrameRate = _currentResolution.refreshRate;
             Screen.SetResolution(_currentResolution.width, _currentResolution.height, _fullscreen, _currentResolution.refreshRate);
 
             return true;

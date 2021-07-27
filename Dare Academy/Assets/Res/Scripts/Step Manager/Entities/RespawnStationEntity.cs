@@ -1,13 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 using flags = GridEntityFlags.Flags;
+using blu;
 
-public class RespawnStationEntity : GridEntity
+public class RespawnStationEntity : GridEntity, IInteractable
 {
     [SerializeField] private Vector2Int m_respawnLocation = Vector2Int.zero;
 
     static private RespawnStationEntity m_currentRespawnStation = null;
+
+    private bool m_playerInRange;
+    private PlayerEntity m_player;
+
+    private Sprite[] m_interactImages = new Sprite[2];
 
     static public RespawnStationEntity CurrentRespawnStation
     {
@@ -15,47 +22,31 @@ public class RespawnStationEntity : GridEntity
         set { m_currentRespawnStation = value; }
     }
 
-    private void Update()
+    protected override void Start()
     {
-        Color color = new Color(0,0,0,1);
+        base.Start();
 
-        if (m_currentRespawnStation == this)
-        {
-            color = new Color(1, 1, 1, 1);
-        }
-
-        GetComponent<SpriteRenderer>().color = color;
+        m_player = PlayerEntity.Instance;
     }
 
-    public override void EndStep()
+    private void OnValidate()
     {
-        base.EndStep();
+        m_interactImages[0] = Resources.Load<Sprite>("GFX/ButtonImages/EButton");
+        m_interactImages[1] = Resources.Load<Sprite>("GFX/ButtonImages/AButton");
+    }
 
-        bool nextToPlayer = false;
+    private void OnEnable()
+    {
+        App.GetModule<InputModule>().PlayerController.Player.Interact.started += OnInteract;
+    }
 
-        for (int i = 0; i < 8; i++)
-        {
-            GridNode neighbour = m_currentNode.Neighbors[i].reference;
-            if (neighbour != null)
-            {
-                List<GridEntity> entities = neighbour.GetGridEntities();
-                foreach (GridEntity entity in entities)
-                {
-                    if (entity.Flags.IsFlagsSet(flags.isPlayer))
-                    {
-                        nextToPlayer = true;
-                        break;
-                    }
-                }
-            }
-        }
+    private void OnDisable()
+    {
+        App.GetModule<InputModule>().PlayerController.Player.Interact.started -= OnInteract;
+    }
 
-        if (nextToPlayer)
-        {
-            blu.App.GetModule<blu.LevelModule>().ActiveSaveData.respawnRoomID = this.RoomIndex;
-
-            m_currentRespawnStation = this;
-        }
+    private void Update()
+    {
     }
 
     public GridNode RespawnLocation()
@@ -89,5 +80,59 @@ public class RespawnStationEntity : GridEntity
         Debug.LogWarning($"Could not find fallback respawn loaction [Room ID = {RoomIndex}]");
 
         return null;
+    }
+
+    public void OnInteract(InputAction.CallbackContext ctx)
+    {
+        if (m_playerInRange)
+        {
+            if (m_currentRespawnStation != null)
+                m_currentRespawnStation.GetComponent<SpriteRenderer>().color = Color.white;
+
+            blu.App.GetModule<blu.LevelModule>().ActiveSaveData.respawnRoomID = this.RoomIndex;
+
+            m_currentRespawnStation = this;
+
+            m_currentRespawnStation.GetComponent<SpriteRenderer>().color = Color.black;
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            m_player.m_interactToolTip.SetActive(true);
+            m_playerInRange = true;
+            DeviceChanged();
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Player"))
+        {
+            m_player.m_interactToolTip.SetActive(false);
+            m_playerInRange = false;
+        }
+    }
+
+    private void DeviceChanged()
+    {
+        if (m_playerInRange)
+        {
+            switch (App.GetModule<InputModule>().LastUsedDevice.displayName)
+            {
+                case "Keyboard":
+                    m_player.m_interactToolTip.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[0];
+                    break;
+
+                case "Xbox Controller":
+                    m_player.m_interactToolTip.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[1];
+                    break;
+
+                default:
+                    break;
+            }
+        }
     }
 }

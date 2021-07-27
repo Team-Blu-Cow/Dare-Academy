@@ -161,7 +161,7 @@ public class PathfindingMultiGrid
 
         grid.Init();
 
-        // TODO: doing this in two loops is kinda yuck, there is probably a better way of doing this.
+        //#todo: doing this in two loops is kinda yuck, there is probably a better way of doing this.
         for (int x = 0; x < grid.Width; x++)
         {
             for (int y = 0; y < grid.Height; y++)
@@ -214,7 +214,7 @@ public class PathfindingMultiGrid
             bool matching = false;
             bool neighborIsOneway = false;
 
-            // TODO: this next stuff is kinda gross.. there is probably a better way of doing this.
+            //#todo: this next stuff is kinda gross.. there is probably a better way of doing this.
 
             // Search through all neighbour directions to find this nodes opposite (so both
             // neighbour vectors point at each other) and check that both these connections are active.

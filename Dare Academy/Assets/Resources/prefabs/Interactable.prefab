@@ -9,8 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6870311590277460645}
-  - component: {fileID: 6870311590277460667}
-  - component: {fileID: 6870311590277460644}
   - component: {fileID: 6870311590277460646}
   - component: {fileID: 6870311590277460666}
   m_Layer: 0
@@ -35,41 +33,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!95 &6870311590277460667
-Animator:
-  serializedVersion: 3
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6870311590277460647}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorControllerStateOnDisable: 0
---- !u!114 &6870311590277460644
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6870311590277460647}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f5cff47f2717fe0409605bc38b60f05b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_animator: {fileID: 6870311590277460667}
-  m_sprite: {fileID: 6870311590605695722}
-  m_spriteHead: {fileID: 0}
-  m_hasHead: 0
 --- !u!114 &6870311590277460646
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -82,6 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53fb1a775738c694f83af324210c6735, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_quest: {fileID: 11400000, guid: dac8780be49fdfa4399c30217958cc7f, type: 2}
 --- !u!61 &6870311590277460666
 BoxCollider2D:
   m_ObjectHideFlags: 0
