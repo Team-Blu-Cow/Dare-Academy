@@ -93,6 +93,8 @@ public class PlayerEntity : GridEntity
     {
         base.Start();
 
+        App.GetModule<InputModule>().PlayerController.Player.Enable();
+
         Energy = MaxEnergy;
         Health = MaxHealth;
 

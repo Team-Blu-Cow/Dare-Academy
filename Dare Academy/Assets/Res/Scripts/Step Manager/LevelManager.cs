@@ -168,4 +168,9 @@ public class LevelManager : MonoBehaviour
     {
         PauseGame(new InputAction.CallbackContext());
     }
+
+    public void SaveGame()
+    {
+        App.GetModule<LevelModule>().SaveGame();
+    }
 }
