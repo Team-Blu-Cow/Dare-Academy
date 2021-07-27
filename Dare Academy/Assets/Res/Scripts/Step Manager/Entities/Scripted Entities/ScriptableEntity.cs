@@ -18,6 +18,7 @@ public class ScriptableEntity : GridEntity
     private Animator anim;
 
     private bool m_awaitingDialogueComplete = false;
+    private bool m_hasBeenReplaced = false;
 
     protected override void OnValidate()
     {
@@ -202,6 +203,9 @@ public class ScriptableEntity : GridEntity
 
     protected void ReplaceWithPrefab()
     {
+        if (m_hasBeenReplaced)
+            return;
+
         if (m_prefab)
         {
             GameObject obj = GameObject.Instantiate(m_prefab, m_currentNode.position.world, Quaternion.identity);
@@ -210,6 +214,7 @@ public class ScriptableEntity : GridEntity
                 Debug.LogWarning($"[ScriptableEntity] [{gameObject.name}] could not instantiate prefab [prefab = {m_prefab.name}]");
             }
 
+            m_hasBeenReplaced = true;
             GridEntity entity = obj.GetComponent<GridEntity>();
             entity.Flags.SetFlags(this.Flags._FlagData, true);
         }
