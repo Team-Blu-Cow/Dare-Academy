@@ -15,6 +15,9 @@ namespace blu
         {
             if (in_quest)
             {
+                GameObject popUp = Instantiate(Resources.Load<GameObject>("prefabs/UI prefabs/QuestPopUp"));
+                popUp.GetComponentInChildren<QuestPopUp>().SetTitle(in_quest.name);
+                popUp.GetComponentInChildren<QuestPopUp>().SetBody(in_quest.activeDescription);
                 _activeQuests.Add(in_quest);
                 return true;
             }

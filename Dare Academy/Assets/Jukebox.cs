@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// #TODO #Anyone cleanup you todos cucks, half that shit is already fixed and I have to sift through it
+
 namespace blu
 {
     public enum MusicParameter
@@ -20,7 +22,6 @@ namespace blu
             if (StartSong != "")
             {
                 if (StartSong == "NONE")
-
                     Stop();
                 else
                     Play(StartSong);

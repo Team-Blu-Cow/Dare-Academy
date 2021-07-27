@@ -20,7 +20,6 @@ namespace blu
         private NPCConversation _currentConversation;
         public GameObject _EventSystem;
         private GameObject _ContinueButton;
-        private InputModule _input;
         private GameObject _dialogueCanvasPrefab;
         private int _countActiveDialogue = 0;
 
@@ -41,17 +40,13 @@ namespace blu
                 _EventSystem.SetActive(false);
             }
 
-            _input.PlayerController.Disable();                // stop all input other than dialogue
-            _input.SystemController.Disable();                //
-            _input.DialogueController.Enable();               //
+            DisablePlayerController();
 
             if (App.CanvasManager == null)
             {
                 Debug.LogWarning("[App/DialogueModule] could not find canvas manager");
 
-                _input.PlayerController.Enable();
-                _input.SystemController.Enable();
-                _input.DialogueController.Disable();
+                EnablePlayerController();
 
                 return;
             }
@@ -128,10 +123,23 @@ namespace blu
 
             _countActiveDialogue--;
 
+            EnablePlayerController();
+        }
+
+        private static void EnablePlayerController()
+        {
             InputModule input = App.GetModule<InputModule>();
             input.DialogueController.Disable();
             input.PlayerController.Enable();
             input.SystemController.Enable();
+        }
+
+        private static void DisablePlayerController()
+        {
+            InputModule input = App.GetModule<InputModule>();
+            input.PlayerController.Disable();                // stop all input other than dialogue
+            input.SystemController.Disable();                //
+            input.DialogueController.Enable();               //
         }
 
         private void StopDialogue(InputAction.CallbackContext context)
@@ -208,27 +216,37 @@ namespace blu
 
         private void Start()
         {
-            _input = App.GetModule<InputModule>();
-
-            _input.DialogueController.Dialogue.Cancel.performed += StopDialogue;
-            _input.DialogueController.Dialogue.NextOption.performed += NextOption;
-            _input.DialogueController.Dialogue.PreviousOption.performed += PreviousOption;
-            _input.DialogueController.Dialogue.Select.performed += SelectOption;
-            _input.DialogueController.Dialogue.Skip.performed += SkipDialogue;
-            SceneManager.sceneLoaded += OnSceneSwitch;
+            InitDelegates();
 
             _dialogueCanvasPrefab = Resources.Load<GameObject>("prefabs/UI prefabs/DialogueCanvas");
             InitDialogueCanvas();
         }
 
+        private void InitDelegates()
+        {
+            InputModule input = App.GetModule<InputModule>();
+            input.DialogueController.Dialogue.Cancel.performed += StopDialogue;
+            input.DialogueController.Dialogue.NextOption.performed += NextOption;
+            input.DialogueController.Dialogue.PreviousOption.performed += PreviousOption;
+            input.DialogueController.Dialogue.Select.performed += SelectOption;
+            input.DialogueController.Dialogue.Skip.performed += SkipDialogue;
+            SceneManager.sceneLoaded += OnSceneSwitch;
+        }
+
+        private void RemoveDelegates()
+        {
+            InputModule input = App.GetModule<InputModule>();
+            input.DialogueController.Dialogue.Cancel.performed -= StopDialogue;
+            input.DialogueController.Dialogue.NextOption.performed -= NextOption;
+            input.DialogueController.Dialogue.PreviousOption.performed -= PreviousOption;
+            input.DialogueController.Dialogue.Select.performed -= SelectOption;
+            input.DialogueController.Dialogue.Skip.performed -= SkipDialogue;
+            SceneManager.sceneLoaded -= OnSceneSwitch;
+        }
+
         private void OnDestroy()
         {
-            _input.DialogueController.Dialogue.Cancel.performed -= StopDialogue;
-            _input.DialogueController.Dialogue.NextOption.performed -= NextOption;
-            _input.DialogueController.Dialogue.PreviousOption.performed -= PreviousOption;
-            _input.DialogueController.Dialogue.Select.performed -= SelectOption;
-            _input.DialogueController.Dialogue.Skip.performed -= SkipDialogue;
-            SceneManager.sceneLoaded -= OnSceneSwitch;
+            RemoveDelegates();
             GameObject.Destroy(_dialogueCanvas);
         }
 

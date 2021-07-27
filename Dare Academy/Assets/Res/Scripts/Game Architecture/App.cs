@@ -39,8 +39,8 @@ namespace blu
             {
                 Destroy(gameObject);
             }
-            FindSceneCanvasManager();
-            SceneManager.sceneLoaded += FindSceneCanvasManager;
+            FindNonPersistantManagers();
+            SceneManager.sceneLoaded += FindNonPersistantManagers;
 
             #endregion Singleton Code
 
@@ -78,30 +78,16 @@ namespace blu
             //_moduleManager.AddModule<blu.AudioModule>(); // not nessessary, included for readablility
         }
 
-        private void FindSceneCanvasManager(Scene newScene = new Scene(), LoadSceneMode sceneMode = new LoadSceneMode())
+        private void FindNonPersistantManagers(Scene newScene = new Scene(), LoadSceneMode sceneMode = new LoadSceneMode())
         {
-            _canvasManager = null;
-            _canvasManager = FindObjectOfType<CanvasTool.CanvasManager>();
-            if (_canvasManager)
-                Debug.Log("[App]: Canvas Manager found.");
-            else
-                Debug.Log("[App]: Canvas Manager is null.");
+            FindCanvasManager();
+            FindJukebox();
+            FindCameraController();
+            FindEventSystem();
+        }
 
-            _jukebox = null;
-            _jukebox = FindObjectOfType<blu.Jukebox>();
-            if (_jukebox)
-                if (_canvasManager)
-                    Debug.Log("[App]: Jukebox found.");
-                else
-                    Debug.Log("[App]: Jukebox is null.");
-
-            _cameraController = null;
-            _cameraController = FindObjectOfType<blu.CamContoller>();
-            if (_cameraController)
-                Debug.Log("[App]: Camera Controller found.");
-            else
-                Debug.Log("[App]: Camera Controller is null.");
-
+        private static void FindEventSystem()
+        {
             if (App.GetModule<DialogueModule>() != null)
             {
                 UnityEngine.EventSystems.EventSystem temp = GameObject.FindObjectOfType<UnityEngine.EventSystems.EventSystem>();
@@ -115,6 +101,37 @@ namespace blu
                     Debug.Log("[App]: Event System is null.");
                 }
             }
+        }
+
+        private void FindCameraController()
+        {
+            _cameraController = null;
+            _cameraController = FindObjectOfType<blu.CamContoller>();
+            if (_cameraController)
+                Debug.Log("[App]: Camera Controller found.");
+            else
+                Debug.Log("[App]: Camera Controller is null.");
+        }
+
+        private void FindJukebox()
+        {
+            _jukebox = null;
+            _jukebox = FindObjectOfType<blu.Jukebox>();
+            if (_jukebox)
+                if (_canvasManager)
+                    Debug.Log("[App]: Jukebox found.");
+                else
+                    Debug.Log("[App]: Jukebox is null.");
+        }
+
+        private void FindCanvasManager()
+        {
+            _canvasManager = null;
+            _canvasManager = FindObjectOfType<CanvasTool.CanvasManager>();
+            if (_canvasManager)
+                Debug.Log("[App]: Canvas Manager found.");
+            else
+                Debug.Log("[App]: Canvas Manager is null.");
         }
 
         public static T GetModule<T>() where T : blu.Module
