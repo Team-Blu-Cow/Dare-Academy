@@ -22,7 +22,7 @@ public class AddQuest : MonoBehaviour, IInteractable
     {
         if (m_playerInRange)
         {
-            App.GetModule<QuestModule>().AddQuest(Resources.Load<Quest>("Quests/TestQuest"));
+            App.GetModule<QuestModule>().AddQuest(Resources.Load<Quest>("Quests/TestQuest2"));
             m_questPopup.ShowQuestPopup();
         }
     }
