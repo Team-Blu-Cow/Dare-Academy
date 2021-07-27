@@ -17,7 +17,7 @@ public class WyrmHead : WyrmSection
 
     private bool m_hasSplit = false;
 
-    private Vector3 m_prevPosition = Vector3.zero;
+    private Vector2Int m_prevPosition = Vector2Int.zero;
     private int m_phaseTwoDir = 1;
     private GameObject m_bulletPrefab = null; // Bullet prefab for spawning bullets
     private int m_fireCooldown = 3;
@@ -59,12 +59,11 @@ public class WyrmHead : WyrmSection
             return;
         }
 
-
-        if(Health > 5)
+        if (Health > 5)
         {
             m_phase = BossPhase.Phase1;
         }
-        else if(m_stepTimer > 0)
+        else if (m_stepTimer > 0)
         {
             m_phase = BossPhase.Phase2;
         }
@@ -78,11 +77,11 @@ public class WyrmHead : WyrmSection
             case BossPhase.Phase1:
                 Phase1();
                 break;
-        
+
             case BossPhase.Phase2:
                 Phase2();
                 break;
-        
+
             case BossPhase.Phase3:
                 Phase3();
                 break;
@@ -103,6 +102,9 @@ public class WyrmHead : WyrmSection
     {
         GridNode target = PlayerEntity.Instance.currentNode;
         if (target == null)
+            return;
+
+        if (currentNode == null)
             return;
 
         Vector3[] path;
@@ -138,22 +140,22 @@ public class WyrmHead : WyrmSection
     {
         Vector2 dir = new Vector2(0, 1);
 
-        if (m_currentNode.GetNeighbour(new Vector2Int((int)dir.x, (int)dir.y)) == null || m_prevPosition == m_currentNode.position.world)
+        if (m_currentNode.GetNeighbour(new Vector2Int((int)dir.x, (int)dir.y)) == null || m_prevPosition == m_currentNode.position.grid)
         {
             dir = new Vector2(-1 * m_phaseTwoDir, 0);
-        }        
+        }
 
-        if(m_currentNode.GetNeighbour(new Vector2Int(0, -1)) != null && m_currentNode.GetNeighbour(new Vector2Int(0, -1)).GetGridEntities().Count == 0)
+        if (m_currentNode.GetNeighbour(new Vector2Int(0, -1)) != null && m_currentNode.GetNeighbour(new Vector2Int(0, -1)).GetGridEntities().Count == 0)
         {
             dir = new Vector2(0, -1);
         }
 
-        if((m_currentNode.GetNeighbour(new Vector2Int(0, 1)) != null && m_currentNode.GetNeighbour(new Vector2Int(0, 1)).GetGridEntities().Count != 0) && m_currentNode.GetNeighbour(new Vector2Int(0, -1)) == null)
+        if ((m_currentNode.GetNeighbour(new Vector2Int(0, 1)) != null && m_currentNode.GetNeighbour(new Vector2Int(0, 1)).GetGridEntities().Count != 0) && m_currentNode.GetNeighbour(new Vector2Int(0, -1)) == null)
         {
             dir = new Vector2(-1 * m_phaseTwoDir, 0);
         }
 
-        if(m_currentNode.GetNeighbour(new Vector2Int(-1 * m_phaseTwoDir, 0)) == null)
+        if (m_currentNode.GetNeighbour(new Vector2Int(-1 * m_phaseTwoDir, 0)) == null)
         {
             m_phaseTwoDir *= -1;
         }
@@ -161,7 +163,7 @@ public class WyrmHead : WyrmSection
         FireBullets();
 
         m_stepTimer--;
-        m_prevPosition = m_currentNode.position.world;
+        m_prevPosition = m_currentNode.position.grid;
         SetMovementDirection(dir);
     }
 
@@ -188,29 +190,27 @@ public class WyrmHead : WyrmSection
 
         int temp = 0;
 
-        if(firingSide == true)
+        if (firingSide == true)
         {
             temp = 1;
         }
 
-        if(m_fireCooldown == 1)
+        if (m_fireCooldown == 1)
             TelegraphBullets(sections, (0 + temp), (2 + temp), (4 + temp));
 
         if (m_fireCooldown <= 0)
         {
-            if(sections[0 + temp].currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && sections[0 + temp].currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
+            if (sections[0 + temp].currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && sections[0 + temp].currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
                 SpawnBullet(m_bulletPrefab, sections[0 + temp].currentNode, new Vector2(1, 0));
 
             if (sections[0 + temp].currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null && sections[0 + temp].currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0)
                 SpawnBullet(m_bulletPrefab, sections[0 + temp].currentNode, new Vector2(-1, 0));
-
 
             if (sections[2 + temp].currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && sections[2 + temp].currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
                 SpawnBullet(m_bulletPrefab, sections[2 + temp].currentNode, new Vector2(1, 0));
 
             if (sections[2 + temp].currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null && sections[2 + temp].currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0)
                 SpawnBullet(m_bulletPrefab, sections[2 + temp].currentNode, new Vector2(-1, 0));
-
 
             if (sections[4 + temp].currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && sections[4 + temp].currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
                 SpawnBullet(m_bulletPrefab, sections[4 + temp].currentNode, new Vector2(1, 0));
@@ -242,7 +242,6 @@ public class WyrmHead : WyrmSection
             if (sections[secOne].currentNode.GetNeighbour(new Vector2Int(-1, (int)(sections[secOne].Position.world.y - sections[secOne + 1].Position.world.y))).GetGridEntities().Count == 0)
                 m_attackNodes.Add(sections[secOne].Position.grid + new Vector2Int(-1, (int)(sections[secOne].Position.world.y - sections[secOne + 1].Position.world.y)));
         }
-        
 
         if (sections[secTwo].currentNode.GetNeighbour(new Vector2Int(1, (int)(sections[secTwo].Position.world.y - sections[secTwo + 1].Position.world.y))) != null)
         {

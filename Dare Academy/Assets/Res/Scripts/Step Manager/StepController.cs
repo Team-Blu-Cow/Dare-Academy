@@ -47,6 +47,12 @@ public class StepController
         if (m_telegraphDrawer != null)
             m_telegraphDrawer.OnStep();
 
+        for(int i = m_entities.Count - 1; i >= 0; i--)
+        {
+            if (m_entities[i] == null)
+                m_entities.RemoveAt(i);
+        }
+
         ResetAnimations();
 
         do

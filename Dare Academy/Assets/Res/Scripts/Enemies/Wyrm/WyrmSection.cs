@@ -42,13 +42,17 @@ public abstract class WyrmSection : GridEntity
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
-    protected override void Start()
+    protected void Awake()
     {
-        base.Start();
         if (m_sectionInfront != null)
         {
             m_sectionInfront.m_sectionBehind = this;
         }
+    }
+
+    protected override void Start()
+    {
+        base.Start();
     }
 
     public override void AnalyseStep()
