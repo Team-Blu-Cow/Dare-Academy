@@ -48,6 +48,7 @@ namespace blu
         // the SaveSlotData structure can be handed to LoadSaveAsync to load the associated file into memory
         public SaveSlotData[] saveSlots { get => m_saveSlots; }
 
+        private bool m_isSaveBeingLoaded = false;
         private string m_applicationPath = null;
         private Encryptor m_encryptor = new Encryptor(Crypto.FileEncryptionKeys.key, Crypto.FileEncryptionKeys.iv);
         private SaveData m_activeSavedata = null;
@@ -64,6 +65,12 @@ namespace blu
 
         // things are happening in async that shouldn't be and i dont want to debug this
         private bool m_initialized = false;
+
+        public bool IsSaveLoading
+        {
+            get => m_isSaveBeingLoaded;
+            set => m_isSaveBeingLoaded = value;
+        }
 
         public bool Initialised => m_initialized;
 
@@ -229,6 +236,7 @@ namespace blu
 
         private bool LoadSaveAsyncImpl(FileIO.SaveSlotData slotData, bool logToConsole = true)
         {
+            m_isSaveBeingLoaded = true;
             while (m_initialized == false)
             {
             }
@@ -291,6 +299,7 @@ namespace blu
 
             if (loadSave)
             {
+                m_isSaveBeingLoaded = true;
                 m_activeSavedata = savedata;
                 m_activeSavedataPath = filepath;
             }
@@ -337,7 +346,7 @@ namespace blu
             if (m_usingDebugFile)
             {
                 Debug.Log("Using Debug Save File");
-
+                m_isSaveBeingLoaded = true;
                 BaseFileLoader<SaveData> fileloader = new DebugFileLoader<SaveData>(m_debugConfig.debugFileLocation);
                 if (fileloader.FileExists())
                 {

@@ -170,10 +170,8 @@ namespace blu
         {
             await AwaitSaveLoad();
 
-            if (ActiveSaveData == null)
+            while (ActiveSaveData == null)
             {
-                Debug.LogWarning("[LevelModule] attempted to read from save file but no file was loaded");
-                return;
             }
 
             EventFlags._FlagData = ActiveSaveData.gameEventFlags;
@@ -192,17 +190,40 @@ namespace blu
             await App.GetModule<IOModule>().SaveAsync();
         }
 
-        public Task<bool> AwaitSaveLoad()
+        public Task AwaitSaveLoad()
         {
             return Task.Run(() => AwaitSaveLoadImpl());
         }
 
-        internal bool AwaitSaveLoadImpl()
+        internal async void AwaitSaveLoadImpl()
         {
+            IOModule io = App.GetModule<IOModule>();
+            bool found = false;
+            if (!io.IsSaveLoading)
+            {
+                io.IsSaveLoading = true;
+                io.LoadSaveSlots();
+                for (int i = 0; i < io.saveSlots.Length; i++)
+                {
+                    if (io.saveSlots[i] != null)
+                    {
+                        found = true;
+                        await io.LoadSaveAsync(io.saveSlots[i]);
+                        break;
+                    }
+                }
+                if (!found)
+                {
+                    await io.CreateNewSave(0, true);
+                }
+            }
+
             blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
             while (levelModule.IsSaveLoaded == false)
-            { }
-            return true;
+            {
+                Debug.Log("awaiting saveLoad");
+            }
+            return;
         }
 
         public Task<bool> AwaitInitialised()
@@ -212,7 +233,10 @@ namespace blu
 
         internal bool AwaitInitialisedImpl()
         {
-            while (!IsInitialised) { }
+            while (!IsInitialised)
+            {
+                Debug.Log("awaiting initialised");
+            }
             return true;
         }
 
