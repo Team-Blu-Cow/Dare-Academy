@@ -6,6 +6,7 @@ using JUtil;
 
 // #TODO #Jack - Clean Up The Movement Code
 
+[System.Obsolete]
 public class WrymBossEnity : GridEntity
 {
     private PlayerEntity m_player;
@@ -29,12 +30,12 @@ public class WrymBossEnity : GridEntity
 
     [Header("Phase Two Variables")]
     [SerializeField] private int m_stepTimer = 40; // How many steps the wyrm stays in this phase
+
     [SerializeField] private bool m_firingPhaseTwo; // If the certain compartment of the wyrm has to fire a bullet this step
     [SerializeField] private GameObject m_bulletPrefab; // Bullet prefab for spawning the bullets
     [SerializeField] private int m_fireCooldown = 3; // The time after firing a bullet until it can fire another
-    [SerializeField] private int m_phaseTwoDirection = 1; // Which way the wyrm is going 
+    [SerializeField] private int m_phaseTwoDirection = 1; // Which way the wyrm is going
     private Vector3 m_prevPosition = new Vector3(0, 0, 0); // Last position
-
 
     private GameObject m_damageEntityPrefab;
 
@@ -44,7 +45,7 @@ public class WrymBossEnity : GridEntity
         base.Start();
         m_player = PlayerEntity.Instance;
         Health = 10;
-        m_damageEntityPrefab = Resources.Load<GameObject>("prefabs/Entities/DamageEntity");       
+        m_damageEntityPrefab = Resources.Load<GameObject>("prefabs/Entities/DamageEntity");
     }
 
     protected override void OnValidate()
@@ -58,14 +59,13 @@ public class WrymBossEnity : GridEntity
         if (m_player == null)
             return;
 
-
         if (!m_head && Health < 5)
         {
             m_headEntity.Health -= (5 - Health);
             Health = 5;
         }
 
-        if(m_headEntity == null) // If the head the body is following is dead
+        if (m_headEntity == null) // If the head the body is following is dead
         {
             Kill(); // Destroy the body
         }
@@ -76,7 +76,7 @@ public class WrymBossEnity : GridEntity
             {
                 Phase1(); // Boss is in phase 1
             }
-            else if (m_stepTimer > 0) // If the timer is greater than 0 
+            else if (m_stepTimer > 0) // If the timer is greater than 0
             {
                 Phase2(); // Boss is in phase 2
             }
@@ -187,10 +187,10 @@ public class WrymBossEnity : GridEntity
             {
                 tempDir = new Vector2Int(-1 * m_phaseTwoDirection, 0); // Change direction to go either left or right depending on its overall direction of movement (e.g. moving from right to left on screen or left to right)
             }
-            
+
             if (m_currentNode.GetNeighbour(new Vector2Int(0, -1 * m_phaseTwoDirection)) == null) // If it can't go up or down
             {
-                if (m_currentNode.GetNeighbour(new Vector2Int(-1 * m_phaseTwoDirection, 0)) != null && m_currentNode.GetNeighbour(new Vector2Int(-1 * m_phaseTwoDirection, 0)).GetGridEntities().Count == 0) // Try to go left or right depending on movement 
+                if (m_currentNode.GetNeighbour(new Vector2Int(-1 * m_phaseTwoDirection, 0)) != null && m_currentNode.GetNeighbour(new Vector2Int(-1 * m_phaseTwoDirection, 0)).GetGridEntities().Count == 0) // Try to go left or right depending on movement
                 {
                     tempDir = new Vector2Int(-1 * m_phaseTwoDirection, 0); // If it can then set the direction
                 }
@@ -205,7 +205,7 @@ public class WrymBossEnity : GridEntity
                     tempDir = new Vector2Int(0, 1 * m_phaseTwoDirection); // Set direction to do so
                 }
             }
-            
+
             if (m_currentNode.GetNeighbour(new Vector2Int(0, -1 * m_phaseTwoDirection)) != null) // If going down or up
             {
                 if (m_currentNode.GetNeighbour(new Vector2Int(0, -1 * m_phaseTwoDirection)).GetGridEntities().Count == 0) // If there are no entities in the square
@@ -213,7 +213,7 @@ public class WrymBossEnity : GridEntity
                     tempDir = new Vector2Int(0, -1 * m_phaseTwoDirection); // Move with the corresponding direction
                 }
             }
-            
+
             // These two if statements follow the same logic but make sure the wyrm does not get stuck when next to a room transition thing
             if (m_currentNode.GetNeighbour(new Vector2Int(1 * m_phaseTwoDirection, 0)) != null && m_prevPosition == m_currentNode.position.world && m_currentNode.GetNeighbour(new Vector2Int(1 * m_phaseTwoDirection, 0)).GetGridEntities().Count == 0)
             {
@@ -223,12 +223,10 @@ public class WrymBossEnity : GridEntity
             {
                 tempDir = new Vector2Int(-1 * m_phaseTwoDirection, 0);
             }
-            
 
             m_prevPosition = m_currentNode.position.world; // Set previous position
             dir = tempDir; // Set direction to be the temporary direction
             m_previousMoves.Insert(0, dir); // Add this direction to the list of previous moves
-           
 
             if (m_previousMoves.Count > m_body.Count) // If the previous moves are larger than the body count
             {
@@ -240,7 +238,7 @@ public class WrymBossEnity : GridEntity
             }
             else // If not
             {
-                for (int i = 0; i < m_body.Count; i++) // Start for loop for amount of entities in the body 
+                for (int i = 0; i < m_body.Count; i++) // Start for loop for amount of entities in the body
                 {
                     if (m_previousMoves.Count > i + 1) // If the previous moves list is greater than the iterator + 1
                     {
@@ -250,7 +248,6 @@ public class WrymBossEnity : GridEntity
                     {
                         m_body[i].SetMovementDirection(m_previousMoves[m_previousMoves.Count - 1]); // Set direction to oldest value in list
                     }
-
                 }
             }
 
@@ -274,7 +271,6 @@ public class WrymBossEnity : GridEntity
             }
         }
 
-
         for (int i = 0; i < m_body.Count; i++) // Loop for body count
         {
             if (m_body[i].m_firingPhaseTwo && m_body[i].m_fireCooldown == 0) // If the body compartment can fire and is meant to fire this step
@@ -297,7 +293,7 @@ public class WrymBossEnity : GridEntity
             }
         }
 
-        if(m_fireCooldown == 1 && m_head) // If fire cooldown is 1, as in the body is meant to fire next step
+        if (m_fireCooldown == 1 && m_head) // If fire cooldown is 1, as in the body is meant to fire next step
         {
             m_attackNodes.Clear(); // Clear attack nodes for the worm
 
@@ -319,7 +315,7 @@ public class WrymBossEnity : GridEntity
             }
             else // If the head isn't firing
             {
-                TelegraphBullets(0,2,4); // Telegraph attacks for the corresponding body compartments
+                TelegraphBullets(0, 2, 4); // Telegraph attacks for the corresponding body compartments
             }
 
             foreach (var node in m_attackNodes) // Loop for amount of attack nodes
@@ -348,7 +344,6 @@ public class WrymBossEnity : GridEntity
             m_fireCooldown = 3; // Set its cooldown to 3
         }
 
-
         m_fireCooldown--; // Tick tock :]
         m_stepTimer--; // Decrease the time left in phase 2
         SetMovementDirection(dir, m_moveSpeed); // Set movement
@@ -356,7 +351,7 @@ public class WrymBossEnity : GridEntity
 
     private void Phase3()
     {
-        if(m_split == true) // If the wyrm has not split yet
+        if (m_split == true) // If the wyrm has not split yet
         {
             m_body[2].m_head = true; // Set the fourth entity of the worm to be a head
 

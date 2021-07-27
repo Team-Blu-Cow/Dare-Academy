@@ -4,6 +4,7 @@ using UnityEngine;
 using blu;
 using JUtil;
 
+[System.Obsolete]
 public class CaterpillerEnemy : GridEntity
 {
     [SerializeField] private GridEntity m_followEntity; // The next compartment or the player that the enemy is going to be following
@@ -94,7 +95,7 @@ public class CaterpillerEnemy : GridEntity
                 {
                     TelegraphBurrow();
                 }
-            }            
+            }
         }
 
         m_dir = new Vector2Int((int)dir.x, (int)dir.y); // Convert direction to integer
@@ -288,7 +289,7 @@ public class CaterpillerEnemy : GridEntity
         }
 
         if (m_currentNode.position.world == newPos)
-        {           
+        {
             isTelegraphBurrow = false;
             isBurrowing = false;
         }
