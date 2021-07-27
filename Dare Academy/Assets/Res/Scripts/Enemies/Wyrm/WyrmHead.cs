@@ -117,44 +117,8 @@ public class WyrmHead : WyrmSection
     {
         if (!m_hasSplit)
         {
-            List<WyrmSection> sections = new List<WyrmSection>();
-
-            WyrmSection current = this;
-            while (current)
-            {
-                sections.Add(current);
-                current = current.SectionBehind;
-            }
-
-            if (sections.Count >= 4)
-            {
-                int newHead = (sections.Count/2);
-
-                // tail will auto disconnect
-
-                // kill script
-                {
-                    GameObject obj  = sections[newHead].gameObject;
-                    GameObject.Destroy(sections[newHead]);
-                    WyrmHead head = obj.AddComponent<WyrmHead>();
-                    head.m_hasSplit = true;
-                    head.m_phase = BossPhase.Phase3;
-
-                    //set health
-                    int h = Health/2;
-                    head.Health = h;
-                    Health = h;
-
-                    // add back to list
-                    sections[newHead] = head;
-                    sections[newHead].SectionBehind = sections[newHead + 1];
-                    sections[newHead + 1].SectionInfront = sections[newHead];
-                }
-            }
-            else
-            {
-                // worm to short
-            }
+            m_hasSplit = true;
+            Split();
         }
 
         Phase1();
@@ -248,5 +212,47 @@ public class WyrmHead : WyrmSection
             obj.GetComponent<DamageEntity>().Countdown = 0;
         }
         m_attackNodes.Clear();
+    }
+
+    private void Split()
+    {
+        List<WyrmSection> sections = new List<WyrmSection>();
+        WyrmSection current = this;
+        while (current)
+        {
+            sections.Add(current);
+            current = current.SectionBehind;
+        }
+
+        if (sections.Count >= 4)
+        {
+            // point wyrm is split at
+            int newHead = (sections.Count/2);
+
+            // tail of front half will auto disconnect
+
+            {
+                // replace body script with head
+                GameObject obj  = sections[newHead].gameObject;
+                GameObject.Destroy(sections[newHead]);
+                WyrmHead head = obj.AddComponent<WyrmHead>();
+                head.m_hasSplit = true;
+                head.m_phase = BossPhase.Phase3;
+
+                //set health
+                int h = Health/2;
+                head.Health = h;
+                Health = h;
+
+                // add back to list and reset references
+                sections[newHead] = head;
+                sections[newHead].SectionBehind = sections[newHead + 1];
+                sections[newHead + 1].SectionInfront = sections[newHead];
+            }
+        }
+        else
+        {
+            Debug.LogWarning("Wyrm was to short to split");
+        }
     }
 }
