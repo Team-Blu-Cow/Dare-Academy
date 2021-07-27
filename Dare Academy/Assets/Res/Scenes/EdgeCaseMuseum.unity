@@ -383,27 +383,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 333985282}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c6cf19c16c507e47b627099ce03dd84, type: 3}
+  m_Script: {fileID: 11500000, guid: 83bad3872335780408333717e420ce60, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_mass: 2
   m_flags:
-    m_flagData: 16
-  m_moveSpeed: 1
-  m_head: 1
-  m_headEntity: {fileID: 333985285}
-  m_split: 1
-  m_body:
-  - {fileID: 1928266206}
-  - {fileID: 417091518}
-  - {fileID: 607107390}
-  - {fileID: 489761355}
-  - {fileID: 510124173}
-  m_stepTimer: 40
-  m_prevPosition: {x: 0, y: 0, z: 0}
-  m_firingPhaseTwo: 0
-  m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
-  m_fireCooldown: 0
+    m_flagData: 0
+  m_sectionInfront: {fileID: 0}
+  ResurfacedThisStep: 0
 --- !u!4 &333985286
 Transform:
   m_ObjectHideFlags: 0
@@ -649,22 +636,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 417091515}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c6cf19c16c507e47b627099ce03dd84, type: 3}
+  m_Script: {fileID: 11500000, guid: 937e605ee365a4245baa1e4bbddd29ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_mass: 2
   m_flags:
-    m_flagData: 16
-  m_moveSpeed: 1
-  m_head: 0
-  m_headEntity: {fileID: 333985285}
-  m_split: 0
-  m_body: []
-  m_stepTimer: 0
-  m_prevPosition: {x: 0, y: 0, z: 0}
-  m_firingPhaseTwo: 0
-  m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
-  m_fireCooldown: 0
+    m_flagData: 1024
+  m_sectionInfront: {fileID: 1928266206}
+  ResurfacedThisStep: 0
 --- !u!4 &417091519
 Transform:
   m_ObjectHideFlags: 0
@@ -708,22 +687,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 489761354}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c6cf19c16c507e47b627099ce03dd84, type: 3}
+  m_Script: {fileID: 11500000, guid: 937e605ee365a4245baa1e4bbddd29ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_mass: 2
   m_flags:
-    m_flagData: 16
-  m_moveSpeed: 1
-  m_head: 0
-  m_headEntity: {fileID: 333985285}
-  m_split: 0
-  m_body: []
-  m_stepTimer: 0
-  m_prevPosition: {x: 0, y: 0, z: 0}
-  m_firingPhaseTwo: 0
-  m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
-  m_fireCooldown: 0
+    m_flagData: 1024
+  m_sectionInfront: {fileID: 607107390}
+  ResurfacedThisStep: 0
 --- !u!114 &489761356
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -837,22 +808,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 510124170}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c6cf19c16c507e47b627099ce03dd84, type: 3}
+  m_Script: {fileID: 11500000, guid: 937e605ee365a4245baa1e4bbddd29ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_mass: 2
   m_flags:
-    m_flagData: 16
-  m_moveSpeed: 1
-  m_head: 0
-  m_headEntity: {fileID: 333985285}
-  m_split: 0
-  m_body: []
-  m_stepTimer: 0
-  m_prevPosition: {x: 0, y: 0, z: 0}
-  m_firingPhaseTwo: 1
-  m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
-  m_fireCooldown: 0
+    m_flagData: 1024
+  m_sectionInfront: {fileID: 489761355}
+  ResurfacedThisStep: 0
 --- !u!4 &510124174
 Transform:
   m_ObjectHideFlags: 0
@@ -1008,22 +971,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 607107389}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c6cf19c16c507e47b627099ce03dd84, type: 3}
+  m_Script: {fileID: 11500000, guid: 937e605ee365a4245baa1e4bbddd29ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_mass: 2
   m_flags:
-    m_flagData: 16
-  m_moveSpeed: 1
-  m_head: 0
-  m_headEntity: {fileID: 333985285}
-  m_split: 0
-  m_body: []
-  m_stepTimer: 0
-  m_prevPosition: {x: 0, y: 0, z: 0}
-  m_firingPhaseTwo: 1
-  m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
-  m_fireCooldown: 0
+    m_flagData: 1024
+  m_sectionInfront: {fileID: 417091518}
+  ResurfacedThisStep: 0
 --- !u!114 &607107391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -16634,22 +16589,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 1928266205}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2c6cf19c16c507e47b627099ce03dd84, type: 3}
+  m_Script: {fileID: 11500000, guid: 937e605ee365a4245baa1e4bbddd29ef, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   m_mass: 2
   m_flags:
-    m_flagData: 16
-  m_moveSpeed: 1
-  m_head: 0
-  m_headEntity: {fileID: 333985285}
-  m_split: 0
-  m_body: []
-  m_stepTimer: 0
-  m_prevPosition: {x: 0, y: 0, z: 0}
-  m_firingPhaseTwo: 1
-  m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
-  m_fireCooldown: 0
+    m_flagData: 1024
+  m_sectionInfront: {fileID: 333985285}
+  ResurfacedThisStep: 0
 --- !u!114 &1928266207
 MonoBehaviour:
   m_ObjectHideFlags: 0

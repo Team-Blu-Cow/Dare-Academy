@@ -5,6 +5,11 @@ using blu;
 using JUtil;
 
 [System.Obsolete]
+
+// WARNING SPAGHETTI CODE AHEAD REDUCE BRAIN SPEED TO COMPREHEND
+// WARNING SPAGHETTI CODE AHEAD REDUCE BRAIN SPEED TO COMPREHEND
+// WARNING SPAGHETTI CODE AHEAD REDUCE BRAIN SPEED TO COMPREHEND
+
 public class CaterpillerEnemy : GridEntity
 {
     [SerializeField] private GridEntity m_followEntity; // The next compartment or the player that the enemy is going to be following

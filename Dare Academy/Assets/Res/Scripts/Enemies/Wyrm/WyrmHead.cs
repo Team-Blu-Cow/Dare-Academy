@@ -17,21 +17,32 @@ public class WyrmHead : WyrmSection
 
     private bool m_hasSplit = false;
 
+    private Vector3 m_prevPosition = Vector3.zero;
+    private int m_phaseTwoDir = 1;
+    private GameObject m_bulletPrefab = null; // Bullet prefab for spawning bullets
+    private int m_fireCooldown = 3;
+    private bool firingSide = false;
+    public int m_stepTimer = 50;
+
     protected override void OnValidate()
     {
         base.OnValidate();
         m_damageEntityPrefab = Resources.Load<GameObject>("prefabs/Entities/DamageEntity");
+        m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet"); // Find bullet prefab
     }
 
     protected override void Start()
     {
         levelModule = App.GetModule<LevelModule>();
         base.Start();
+        Health = 10;
     }
 
     public override void AnalyseStep()
     {
         base.AnalyseStep();
+
+        Debug.Log("Health - " + Health);
 
         if (m_currentNode == null)
         {
@@ -48,16 +59,30 @@ public class WyrmHead : WyrmSection
             return;
         }
 
+
+        if(Health > 5)
+        {
+            m_phase = BossPhase.Phase1;
+        }
+        else if(m_stepTimer > 0)
+        {
+            m_phase = BossPhase.Phase2;
+        }
+        else
+        {
+            m_phase = BossPhase.Phase3;
+        }
+
         switch (m_phase)
         {
             case BossPhase.Phase1:
                 Phase1();
                 break;
-
+        
             case BossPhase.Phase2:
                 Phase2();
                 break;
-
+        
             case BossPhase.Phase3:
                 Phase3();
                 break;
@@ -111,6 +136,33 @@ public class WyrmHead : WyrmSection
 
     private void Phase2()
     {
+        Vector2 dir = new Vector2(0, 1);
+
+        if (m_currentNode.GetNeighbour(new Vector2Int((int)dir.x, (int)dir.y)) == null || m_prevPosition == m_currentNode.position.world)
+        {
+            dir = new Vector2(-1 * m_phaseTwoDir, 0);
+        }        
+
+        if(m_currentNode.GetNeighbour(new Vector2Int(0, -1)) != null && m_currentNode.GetNeighbour(new Vector2Int(0, -1)).GetGridEntities().Count == 0)
+        {
+            dir = new Vector2(0, -1);
+        }
+
+        if((m_currentNode.GetNeighbour(new Vector2Int(0, 1)) != null && m_currentNode.GetNeighbour(new Vector2Int(0, 1)).GetGridEntities().Count != 0) && m_currentNode.GetNeighbour(new Vector2Int(0, -1)) == null)
+        {
+            dir = new Vector2(-1 * m_phaseTwoDir, 0);
+        }
+
+        if(m_currentNode.GetNeighbour(new Vector2Int(-1 * m_phaseTwoDir, 0)) == null)
+        {
+            m_phaseTwoDir *= -1;
+        }
+
+        FireBullets();
+
+        m_stepTimer--;
+        m_prevPosition = m_currentNode.position.world;
+        SetMovementDirection(dir);
     }
 
     private void Phase3()
@@ -122,6 +174,107 @@ public class WyrmHead : WyrmSection
         }
 
         Phase1();
+    }
+
+    private void FireBullets()
+    {
+        List<WyrmSection> sections = new List<WyrmSection>();
+        WyrmSection current = this;
+        while (current)
+        {
+            sections.Add(current);
+            current = current.SectionBehind;
+        }
+
+        int temp = 0;
+
+        if(firingSide == true)
+        {
+            temp = 1;
+        }
+
+        if(m_fireCooldown == 1)
+            TelegraphBullets(sections, (0 + temp), (2 + temp), (4 + temp));
+
+        if (m_fireCooldown <= 0)
+        {
+            if(sections[0 + temp].currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && sections[0 + temp].currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
+                SpawnBullet(m_bulletPrefab, sections[0 + temp].currentNode, new Vector2(1, 0));
+
+            if (sections[0 + temp].currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null && sections[0 + temp].currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0)
+                SpawnBullet(m_bulletPrefab, sections[0 + temp].currentNode, new Vector2(-1, 0));
+
+
+            if (sections[2 + temp].currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && sections[2 + temp].currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
+                SpawnBullet(m_bulletPrefab, sections[2 + temp].currentNode, new Vector2(1, 0));
+
+            if (sections[2 + temp].currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null && sections[2 + temp].currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0)
+                SpawnBullet(m_bulletPrefab, sections[2 + temp].currentNode, new Vector2(-1, 0));
+
+
+            if (sections[4 + temp].currentNode.GetNeighbour(new Vector2Int(1, 0)) != null && sections[4 + temp].currentNode.GetNeighbour(new Vector2Int(1, 0)).GetGridEntities().Count == 0)
+                SpawnBullet(m_bulletPrefab, sections[4 + temp].currentNode, new Vector2(1, 0));
+
+            if (sections[4 + temp].currentNode.GetNeighbour(new Vector2Int(-1, 0)) != null && sections[4 + temp].currentNode.GetNeighbour(new Vector2Int(-1, 0)).GetGridEntities().Count == 0)
+                SpawnBullet(m_bulletPrefab, sections[4 + temp].currentNode, new Vector2(-1, 0));
+
+            m_fireCooldown = 3;
+            firingSide = !firingSide;
+        }
+
+        m_fireCooldown--;
+    }
+
+    private void TelegraphBullets(List<WyrmSection> sections, int secOne, int secTwo, int secThree)
+    {
+        m_attackNodes.Clear(); // Clear attack nodes for the worm
+
+        if (sections[secOne].currentNode.GetNeighbour(new Vector2Int(1, (int)(sections[secOne].Position.world.y - sections[secOne + 1].Position.world.y))) != null) // If the node we are trying to telegraph is not null
+        {
+            if (sections[secOne].currentNode.GetNeighbour(new Vector2Int(1, (int)(sections[secOne].Position.world.y - sections[secOne + 1].Position.world.y))).GetGridEntities().Count == 0) // If there are no entities in this node
+                m_attackNodes.Add(sections[secOne].Position.grid + new Vector2Int(1, (int)(sections[secOne].Position.world.y - sections[secOne + 1].Position.world.y))); // Add this node to attack telegraph list
+        }
+
+        // THe previously commented if statement essentially explains the rest of this code. Attacks are telegraphed on the left and right side of the nodes which are passed into this function via there index in the list. :]
+
+        if (sections[secOne].currentNode.GetNeighbour(new Vector2Int(-1, (int)(sections[secOne].Position.world.y - sections[secOne + 1].Position.world.y))) != null)
+        {
+            if (sections[secOne].currentNode.GetNeighbour(new Vector2Int(-1, (int)(sections[secOne].Position.world.y - sections[secOne + 1].Position.world.y))).GetGridEntities().Count == 0)
+                m_attackNodes.Add(sections[secOne].Position.grid + new Vector2Int(-1, (int)(sections[secOne].Position.world.y - sections[secOne + 1].Position.world.y)));
+        }
+        
+
+        if (sections[secTwo].currentNode.GetNeighbour(new Vector2Int(1, (int)(sections[secTwo].Position.world.y - sections[secTwo + 1].Position.world.y))) != null)
+        {
+            if (sections[secTwo].currentNode.GetNeighbour(new Vector2Int(1, (int)(sections[secTwo].Position.world.y - sections[secTwo + 1].Position.world.y))).GetGridEntities().Count == 0)
+                m_attackNodes.Add(sections[secTwo].Position.grid + new Vector2Int(1, (int)(sections[secTwo].Position.world.y - sections[secTwo + 1].Position.world.y)));
+        }
+
+        if (sections[secTwo].currentNode.GetNeighbour(new Vector2Int(-1, (int)(sections[secTwo].Position.world.y - sections[secTwo + 1].Position.world.y))) != null)
+        {
+            if (sections[secTwo].currentNode.GetNeighbour(new Vector2Int(-1, (int)(sections[secTwo].Position.world.y - sections[secTwo + 1].Position.world.y))).GetGridEntities().Count == 0)
+                m_attackNodes.Add(sections[secTwo].Position.grid + new Vector2Int(-1, (int)(sections[secTwo].Position.world.y - sections[secTwo + 1].Position.world.y)));
+        }
+
+        if (sections[secThree].currentNode.GetNeighbour(new Vector2Int(1, -(int)(sections[secThree].Position.world.y - sections[secThree - 1].Position.world.y))) != null)
+        {
+            if (sections[secThree].currentNode.GetNeighbour(new Vector2Int(1, -(int)(sections[secThree].Position.world.y - sections[secThree - 1].Position.world.y))).GetGridEntities().Count == 0)
+                m_attackNodes.Add(sections[secThree].Position.grid + new Vector2Int(1, -(int)(sections[secThree].Position.world.y - sections[secThree - 1].Position.world.y)));
+        }
+
+        if (sections[secThree].currentNode.GetNeighbour(new Vector2Int(-1, -(int)(sections[secThree].Position.world.y - sections[secThree - 1].Position.world.y))) != null)
+        {
+            if (sections[secThree].currentNode.GetNeighbour(new Vector2Int(-1, -(int)(sections[secThree].Position.world.y - sections[secThree - 1].Position.world.y))).GetGridEntities().Count == 0)
+                m_attackNodes.Add(sections[secThree].Position.grid + new Vector2Int(-1, -(int)(sections[secThree].Position.world.y - sections[secThree - 1].Position.world.y)));
+        }
+
+        foreach (var node in m_attackNodes) // Loop for amount of attack nodes
+        {
+            if (node != null && App.GetModule<LevelModule>().CurrentRoom[node] != null) // If the node is not null
+            {
+                App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(App.GetModule<LevelModule>().CurrentRoom[node], TelegraphDrawer.Type.ATTACK); // Draw attack telegraph
+            }
+        }
     }
 
     protected bool ShouldBurrow()
@@ -242,6 +395,9 @@ public class WyrmHead : WyrmSection
                 //set health
                 int h = Health/2;
                 head.Health = h;
+
+                head.m_stepTimer = 0; // Don't make it go into phase two
+
                 Health = h;
 
                 // add back to list and reset references

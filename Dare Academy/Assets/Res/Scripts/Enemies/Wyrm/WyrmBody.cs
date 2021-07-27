@@ -9,12 +9,19 @@ public class WyrmBody : WyrmSection
     protected override void OnValidate()
     {
         base.OnValidate();
+        Health = 5;
         Flags.SetFlags(flags.alwaysWinConflict, true);
     }
 
     public override void AnalyseStep()
     {
         base.AnalyseStep();
+
+        if(Health < 5)
+        {
+            Health = 5;
+            SectionInfront.Health -= 1;
+        }
 
         if (currentNode == null)
         {
