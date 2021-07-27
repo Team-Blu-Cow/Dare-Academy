@@ -10,13 +10,25 @@ namespace blu
     // for use when saving game to signify which scene should be loaded when opening the game
     public enum LevelID
     {
-        _default = 0, // default value, open first level?
+        _default = 0,
+        crashsite_top = 1,
+        crashsite_bottom = 2,
+        mushroom_start = 3,
+        mushroom_end = 4,
+        misplaced_forest = 5,
     }
 
     public class LevelModule : Module
     {
         private PathfindingMultiGrid m_grid = null;
         private GameEventFlags m_gameEventFlags = new GameEventFlags();
+
+        private bool m_initialised = false;
+
+        public bool IsInitialised
+        {
+            get => m_initialised;
+        }
 
         public SaveData ActiveSaveData
         {
@@ -76,21 +88,9 @@ namespace blu
             SaveGame();
         }
 
-        public async override void Initialize()
+        public override void Initialize()
         {
             SceneManager.sceneLoaded += LevelChanged;
-
-            IOModule ioModule = App.GetModule<IOModule>();
-
-            await ioModule.awaitInitialised;
-
-            if (!ioModule.isSaveLoaded)
-            {
-                Debug.LogWarning("[Level Module] save file not loaded, creating new save");
-                await ioModule.CreateNewSave("new save", true);
-            }
-
-            m_gameEventFlags._FlagData = ActiveSaveData.gameEventFlags;
 
             if (m_playerPrefab == null)
                 m_playerPrefab = Resources.Load<GameObject>("prefabs/Entities/Player");
@@ -166,10 +166,26 @@ namespace blu
 
         // FILE IO
 
+        public async void LoadFromSave()
+        {
+            await AwaitSaveLoad();
+
+            if (ActiveSaveData == null)
+            {
+                Debug.LogWarning("[LevelModule] attempted to read from save file but no file was loaded");
+                return;
+            }
+
+            EventFlags._FlagData = ActiveSaveData.gameEventFlags;
+
+            m_initialised = true;
+        }
+
         public async void SaveGame()
         {
-            App.GetModule<IOModule>().savedata.gameEventFlags = m_gameEventFlags._FlagData;
-            // TODO @matthew - move the await out of here
+            await AwaitSaveLoad();
+            App.GetModule<IOModule>().savedata.gameEventFlags = EventFlags._FlagData;
+            // #TODO #matthew - move the await out of here
             await App.GetModule<IOModule>().SaveAsync();
         }
 
@@ -184,6 +200,79 @@ namespace blu
             while (levelModule.IsSaveLoaded == false)
             { }
             return true;
+        }
+
+        public Task<bool> AwaitInitialised()
+        {
+            return Task.Run(() => AwaitInitialisedImpl());
+        }
+
+        internal bool AwaitInitialisedImpl()
+        {
+            while (!IsInitialised) { }
+            return true;
+        }
+
+        // HELPER FUNCTIONS
+
+        public static string ResolveSceneNameString(LevelID id)
+        {
+            switch (id)
+            {
+                case LevelID._default:
+                    return "Crashsite Top";
+
+                case LevelID.crashsite_top:
+                    return "Crashsite Top";
+
+                case LevelID.crashsite_bottom:
+                    return "Crashsite Bottom";
+
+                case LevelID.mushroom_start:
+                    return "Mushroom Forest Start";
+
+                case LevelID.mushroom_end:
+                    return "Mushroom Forest End";
+
+                case LevelID.misplaced_forest:
+                    return "Misplaced Forest";
+
+                default:
+                    Debug.LogWarning("[LevelModule] could not resolve scene name from LevelId, get @matthew to fix this");
+                    return "Crashsite Top";
+            }
+        }
+
+        public static LevelID ResolveLevelId(int buildIndex)
+        {
+            string sceneName = SceneUtility.GetScenePathByBuildIndex(buildIndex);
+
+            switch (sceneName)
+            {
+                case "Assets/Res/Scenes/Game Scenes/Crashsite Top.unity":
+                    return LevelID.crashsite_top;
+
+                case "Assets/Res/Scenes/Game Scenes/Crashsite Bottom.unity":
+                    return LevelID.crashsite_bottom;
+
+                case "Assets/Res/Scenes/Game Scenes/Mushroom Forest Start.unity":
+                    return LevelID.mushroom_start;
+
+                case "Assets/Res/Scenes/Game Scenes/Mushroom Forest End.unity":
+                    return LevelID.mushroom_end;
+
+                case "Assets/Res/Scenes/Game Scenes/Misplaced Forest.unity":
+                    return LevelID.misplaced_forest;
+
+                default:
+                    Debug.LogWarning("[LevelModule] could not resolve scene name from buildIndex, get @matthew to fix this");
+                    return LevelID._default;
+            }
+        }
+
+        public static LevelID CurrentLevelId()
+        {
+            return ResolveLevelId(SceneManager.GetActiveScene().buildIndex);
         }
     }
 

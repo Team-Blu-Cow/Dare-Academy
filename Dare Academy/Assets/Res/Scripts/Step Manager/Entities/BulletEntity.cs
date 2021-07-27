@@ -51,6 +51,16 @@ public class BulletEntity : GridEntity
         if (m_bulletDirection == Vector2Int.zero)
             Kill();
 
+        if (m_bulletDirection.x > 0)
+            m_bulletDirection.x = 1;
+        else if (m_bulletDirection.x < 0)
+            m_bulletDirection.x = -1;
+
+        if (m_bulletDirection.y > 0)
+            m_bulletDirection.y = 1;
+        else if (m_bulletDirection.y < 0)
+            m_bulletDirection.y = -1;
+
         GridNode nextNode = m_currentNode.GetNeighbour(m_bulletDirection);
         if (nextNode == null)
             Kill();
@@ -78,7 +88,7 @@ public class BulletEntity : GridEntity
 
     public override void RoomChange()
     {
-        CleanUp();
+        OnDeath();
     }
 
     protected void TryReflectBullet()

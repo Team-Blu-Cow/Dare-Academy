@@ -32,7 +32,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
     {
         App.GetModule<LevelModule>().StepController.RoomChangeEvent += DrawMap;
         transform = GetComponent<RectTransform>();
-        player = FindObjectOfType<PlayerEntity>();
+        player = PlayerEntity.Instance;
     }
 
     private void OnEnable()
@@ -55,14 +55,15 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
     {
         if (open)
         {
-            App.CanvasManager.GetCanvasContainer("Map").CloseCanvas();
+            //App.CanvasManager.GetCanvasContainer("Map").CloseCanvas();
+            App.CanvasManager.CloseCanvas();
             App.GetModule<InputModule>().PlayerController.Enable();
             App.GetModule<InputModule>().SystemController.MapControlls.Disable();
             open = false;
         }
         else
         {
-            App.CanvasManager.OpenCanvas("Map");
+            App.CanvasManager.OpenCanvas("Map", true);
             App.GetModule<InputModule>().PlayerController.Disable();
             App.GetModule<InputModule>().SystemController.MapControlls.Enable();
             transform.anchoredPosition = Vector2.zero;

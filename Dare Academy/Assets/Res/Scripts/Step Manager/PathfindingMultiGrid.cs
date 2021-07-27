@@ -99,7 +99,6 @@ public class PathfindingMultiGrid
             thisNode = grids[link.index].GetNodeRelative(node.position, offset * i);
             partner = grids[otherIndex].GetNodeRelative(partner.position, otherOffset * i);
         }
-        
 
         thisNode.overridden = true;
         thisNode.overriddenDir = link.direction;
@@ -128,7 +127,7 @@ public class PathfindingMultiGrid
         transitionNode.Neighbors = new NodeNeighborhood<GridNode>(8);
         transitionNode.roomIndex = link.myRoomIndex;
         transitionNode.lvlTransitionInfo = new LevelTransitionInformation(link);
-        transitionNode.lvlTransitionInfo.offsetIndex = (link.width-1) - i;
+        transitionNode.lvlTransitionInfo.offsetIndex = (link.width - 1) - i;
         transitionNode.lvlTransitionInfo.offsetVector = gridOffset;
         transitionNode.overrideType = link.overrideType;
 
@@ -162,7 +161,7 @@ public class PathfindingMultiGrid
 
         grid.Init();
 
-        // TODO: doing this in two loops is kinda yuck, there is probably a better way of doing this.
+        //#todo: doing this in two loops is kinda yuck, there is probably a better way of doing this.
         for (int x = 0; x < grid.Width; x++)
         {
             for (int y = 0; y < grid.Height; y++)
@@ -215,7 +214,7 @@ public class PathfindingMultiGrid
             bool matching = false;
             bool neighborIsOneway = false;
 
-            // TODO: this next stuff is kinda gross.. there is probably a better way of doing this.
+            //#todo: this next stuff is kinda gross.. there is probably a better way of doing this.
 
             // Search through all neighbour directions to find this nodes opposite (so both
             // neighbour vectors point at each other) and check that both these connections are active.
@@ -359,7 +358,7 @@ public class PathfindingMultiGrid
 
                 for (int i = 0; i < link.width; i++)
                 {
-                    if(
+                    if (
                         !gridInfo[link.grid1.index].NodeExistsAt(gridInfo[link.grid1.index].ToWorld(link.grid1.position) + (grid1Offset * i))
                         || !gridInfo[link.grid2.index].NodeExistsAt(gridInfo[link.grid2.index].ToWorld(link.grid2.position) + (grid2Offset * i))
                         )
@@ -368,7 +367,7 @@ public class PathfindingMultiGrid
                     }
 
                     Gizmos.DrawSphere(
-                        gridInfo[link.grid1.index].ToWorld(link.grid1.position) + (grid1Offset*i),
+                        gridInfo[link.grid1.index].ToWorld(link.grid1.position) + (grid1Offset * i),
                         gridInfo[link.grid1.index].cellSize / 8
                         );
                     Gizmos.DrawSphere(
@@ -391,8 +390,6 @@ public class PathfindingMultiGrid
                         (gridInfo[link.grid2.index].ToWorld(link.grid2.position) + (grid2Offset * i)) + (gizmoDirections[link.grid2.direction] * 0.25f)
                         );
                 }
-
-
             }
         }
 
@@ -419,7 +416,6 @@ public class PathfindingMultiGrid
                         );
                 }
             }
-
         }
 #endif
     }
@@ -616,7 +612,7 @@ public class GridInfo
         Vector3 pos = originPosition;
 
         //if (x >= 0 && y >= 0 && x < width && y < height)
-            pos = new Vector3(originPosition.x + x * cellSize, originPosition.y + y * cellSize, originPosition.z);
+        pos = new Vector3(originPosition.x + x * cellSize, originPosition.y + y * cellSize, originPosition.z);
 
         if (x < 0 || y < 0 || x >= width || y >= height)
             UnityEngine.Debug.LogWarning("node outside of grid");
@@ -702,6 +698,7 @@ public class LevelTransitionInformation
 
     [Header("Node information")]
     [SerializeField] public int myRoomIndex;
+
     [SerializeField] public Vector2Int myNodeIndex;
 
     [Header("Transition Information")]
@@ -723,21 +720,21 @@ public class LevelTransitionInformation
 
     public LevelTransitionInformation(LevelTransitionInformation in_lvlInfo)
     {
-        myRoomIndex         = in_lvlInfo.myRoomIndex;
-        myNodeIndex         = in_lvlInfo.myNodeIndex;
+        myRoomIndex = in_lvlInfo.myRoomIndex;
+        myNodeIndex = in_lvlInfo.myNodeIndex;
 
-        targetSceneName     = in_lvlInfo.targetSceneName;
-        targetRoomIndex     = in_lvlInfo.targetRoomIndex;
-        targetNodeIndex     = in_lvlInfo.targetNodeIndex;
+        targetSceneName = in_lvlInfo.targetSceneName;
+        targetRoomIndex = in_lvlInfo.targetRoomIndex;
+        targetNodeIndex = in_lvlInfo.targetNodeIndex;
 
-        offsetVector        = in_lvlInfo.offsetVector;
-        offsetIndex         = in_lvlInfo.offsetIndex;
-        m_travelDirection   = in_lvlInfo.travelDirection;
+        offsetVector = in_lvlInfo.offsetVector;
+        offsetIndex = in_lvlInfo.offsetIndex;
+        m_travelDirection = in_lvlInfo.travelDirection;
 
-        transitionType      = in_lvlInfo.transitionType;
-        loadType            = in_lvlInfo.loadType;
+        transitionType = in_lvlInfo.transitionType;
+        loadType = in_lvlInfo.loadType;
 
-        overrideType        = in_lvlInfo.overrideType;
+        overrideType = in_lvlInfo.overrideType;
     }
 
     public int travelDirection

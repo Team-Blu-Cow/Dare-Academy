@@ -4,6 +4,4 @@ using UnityEngine.InputSystem;
 public interface IInteractable
 {
     public void OnInteract(InputAction.CallbackContext ctx);
-
-    public bool PlayerInRange(Transform transform);
 }

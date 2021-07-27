@@ -111,8 +111,6 @@ namespace CanvasTool
                                 }
                             }
                         }
-
-                        openCanvases.Push(container);
                     }
                     else
                     {
@@ -131,6 +129,7 @@ namespace CanvasTool
                 if (container != null)
                 {
                     container.OpenCanvas();
+                    openCanvases.Push(container);
                 }
             }
             overlay.canvas.sortingOrder = openCanvases.Count + sortingBoost;

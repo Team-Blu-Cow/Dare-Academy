@@ -12,7 +12,7 @@ namespace blu.FileIO
             {
                 System.IO.DirectoryInfo info = System.IO.Directory.CreateDirectory(dir);
             }
-            return true; // TODO - check return value of System.IO.Directory.CreateDirectory(dir)
+            return true; //#todo - check return value of System.IO.Directory.CreateDirectory(dir)
         }
 
         public static bool DestroyDirectory(string dir)

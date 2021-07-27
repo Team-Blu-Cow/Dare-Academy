@@ -18,9 +18,11 @@ public abstract class GridEntity : MonoBehaviour
     [SerializeField] protected int m_mass = 2;
     protected int m_baseSpeed = 1;
     private int m_speed = 1;
-    protected int m_health = 1;
+    [SerializeField] protected int m_health = 1;
     private int m_stepsTaken = 0;
     private bool m_failedAttemptToSwitchRoom = false;
+
+    private bool m_hasBeenLoaded = false;
 
     protected int m_roomIndex = 0;
 
@@ -83,6 +85,8 @@ public abstract class GridEntity : MonoBehaviour
     // INITIALISATION METHODS *********************************************************************
     protected virtual void Start()
     {
+        m_hasBeenLoaded = false;
+
         m_currentNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(transform.position);
 
         if (m_currentNode == null)
@@ -115,7 +119,8 @@ public abstract class GridEntity : MonoBehaviour
         if (m_animationController == null)
         {
             m_animationController = GetComponent<GridEntityAnimationController>();
-            // TODO @matthew - log warning if failed
+            if (m_animationController == null)
+                Debug.LogWarning($"[GridEntity] [name = {gameObject.name}] failed to get GridEntityAnimationController");
         }
 
         AnalyseStep();
@@ -206,7 +211,9 @@ public abstract class GridEntity : MonoBehaviour
             m_currentNode = m_targetNode;
             m_targetNode = null;
 
-            AddAnimationAction(m_currentNode.position, ActionTypes.MOVE, "walk");
+            AddAnimationAction(m_currentNode.position, ActionTypes.MOVE, "WalkBlend");
+            m_animationController.animator.SetFloat("WalkDirX", m_movementDirection.x);
+            m_animationController.animator.SetFloat("WalkDirY", m_movementDirection.y);
 
             // add ourself to the list of entities currently on the node
             m_currentNode.AddEntity(this);
@@ -272,7 +279,7 @@ public abstract class GridEntity : MonoBehaviour
 
             entity.ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
 
-            entity.AddAnimationAction(ActionTypes.MOVE, "walk");
+            entity.AddAnimationAction(ActionTypes.MOVE, "WalkBlend");
 
             entity.m_speed = 0;
             entity.m_movementDirection = Vector2Int.zero;
@@ -480,13 +487,13 @@ public abstract class GridEntity : MonoBehaviour
             interalFlags.refectBullets_NE |
             interalFlags.refectBullets_NW |
             interalFlags.refectBullets_SE |
-            interalFlags.refectBullets_SW ;
+            interalFlags.refectBullets_SW;
 
         m_internalFlags.SetFlags(fl, false);
 
         if (isDead)
         {
-            // TODO @matthew/@jay - don't remove immediately to allow for death animation
+            //#todo #matthew / #jay - don't remove immediately to allow for death animation
             // kill entity
             OnDeath();
         }
@@ -775,7 +782,7 @@ public abstract class GridEntity : MonoBehaviour
         m_currentNode = m_previousNode;
         AddToCurrentNode();
         ModifyPreviousAction(ActionTypes.PUSHBACK, true);
-        AddAnimationAction(ActionTypes.MOVE, "walk");
+        AddAnimationAction(ActionTypes.MOVE, "WalkBlend");
         m_previousNode = null;
         return true;
     }
@@ -816,7 +823,7 @@ public abstract class GridEntity : MonoBehaviour
 
         for (int i = entities.Count - 1; i >= 0; i--)
         {
-            // TODO @matthew - if entities are moving in the same direction, combine their mass
+            //#todo #matthew - if entities are moving in the same direction, combine their mass
             bool success = entities[i].PushBack(direction, force - entities[i].Mass);
 
             if (!success)
@@ -829,7 +836,7 @@ public abstract class GridEntity : MonoBehaviour
         if (return_value)
         {
             ModifyPreviousAction(ActionTypes.PUSHBACK, true);
-            AddAnimationAction(m_currentNode, ActionTypes.MOVE, "walk");
+            AddAnimationAction(m_currentNode, ActionTypes.MOVE, "WalkBlend");
         }
 
         AddToCurrentNode();
@@ -838,7 +845,7 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual protected void RemovePassThrough(List<GridEntity> winning_objects, List<GridEntity> losing_objects)
     {
-        // TODO @matthew/@jay : this does not respect entities with the isAttack flag yet
+        //#todo #matthew / #jay : this does not respect entities with the isAttack flag yet
         GridNode node = winning_objects[0].m_currentNode;
 
         // if entity is trying to push entity against a wall / edge of grid
@@ -855,7 +862,7 @@ public abstract class GridEntity : MonoBehaviour
                 losing_objects[0].m_speed = 0;
                 losing_objects[0].AddToCurrentNode();
                 losing_objects[0].ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
-                losing_objects[0].AddAnimationAction(ActionTypes.MOVE, "walk");
+                losing_objects[0].AddAnimationAction(ActionTypes.MOVE, "WalkBlend");
 
                 winning_objects[0].RemoveFromCurrentNode();
                 winning_objects[0].m_currentNode = winning_objects[0].m_previousNode;
@@ -865,7 +872,7 @@ public abstract class GridEntity : MonoBehaviour
                 winning_objects[0].m_speed = 0;
                 winning_objects[0].AddToCurrentNode();
                 winning_objects[0].ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
-                winning_objects[0].AddAnimationAction(ActionTypes.MOVE, "walk");
+                winning_objects[0].AddAnimationAction(ActionTypes.MOVE, "WalkBlend");
 
                 return;
             }
@@ -884,7 +891,7 @@ public abstract class GridEntity : MonoBehaviour
         losing_objects[0].m_speed = 0;
         losing_objects[0].m_movementDirection = Vector2Int.zero;
         losing_objects[0].ModifyPreviousAction(ActionTypes.PASSTHROUGH, true);
-        losing_objects[0].AddAnimationAction(ActionTypes.MOVE, "walk");
+        losing_objects[0].AddAnimationAction(ActionTypes.MOVE, "WalkBlend");
     }
 
     // DRAW STEP METHODS **************************************************************************
@@ -1012,8 +1019,11 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void RoomChange()
     {
-        if (m_roomIndex == m_stepController.m_currentRoomIndex || Flags.IsFlagsSet(flags.keepAwake))
+        if (m_roomIndex == m_stepController.m_currentRoomIndex || m_hasBeenLoaded)
         {
+            if (Flags.IsFlagsSet(flags.keepAwake))
+                m_hasBeenLoaded = true;
+
             m_stepController.AddEntity(this);
         }
         else
@@ -1028,6 +1038,9 @@ public abstract class GridEntity : MonoBehaviour
         if (m_flags.IsFlagsSet(flags.destroyOnReset))
         {
             Kill();
+        }
+        else if (m_flags.IsFlagsSet(flags.dontMoveOnReset))
+        {
         }
         else
         {

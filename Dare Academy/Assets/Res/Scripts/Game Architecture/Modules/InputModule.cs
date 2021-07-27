@@ -1,4 +1,6 @@
 using UnityEngine;
+using UnityEngine.InputSystem.LowLevel;
+using UnityEngine.InputSystem;
 
 namespace blu
 {
@@ -12,6 +14,13 @@ namespace blu
 
         private DialogueControls _dialogueControls;
         public DialogueControls DialogueController { get => _dialogueControls; }
+
+        private InputDevice m_LastUsedDevice;
+        public InputDevice LastUsedDevice { get => m_LastUsedDevice; }
+
+        public delegate void LastDeviceChangedDelegate();
+
+        public event LastDeviceChangedDelegate LastDeviceChanged;
 
         public override void Initialize()
         {
@@ -27,6 +36,25 @@ namespace blu
             _dialogueControls = new DialogueControls();
             _systemControls.Enable();
             _playerControls.Enable();
+        }
+
+        private void OnEnable()
+        {
+            InputSystem.onEvent += OnInputDeviceChange;
+        }
+
+        private void OnDisable()
+        {
+            InputSystem.onEvent -= OnInputDeviceChange;
+        }
+
+        private void OnInputDeviceChange(InputEventPtr eventPtr, InputDevice device)
+        {
+            if (m_LastUsedDevice == device)
+                return;
+
+            m_LastUsedDevice = device;
+            LastDeviceChanged?.Invoke();
         }
     }
 }

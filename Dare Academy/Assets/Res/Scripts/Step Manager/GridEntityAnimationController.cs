@@ -34,7 +34,7 @@ public class GridEntityAnimationController : MonoBehaviour
             }
         }
 
-        if(!spriteExists)
+        if (!spriteExists)
         {
             m_sprite = new GameObject("sprite");
             m_sprite.AddComponent<Transform>();
@@ -44,7 +44,7 @@ public class GridEntityAnimationController : MonoBehaviour
             m_sprite.transform.localPosition = Vector3.zero;
         }
 
-        if(m_hasHead)
+        if (m_hasHead)
         {
             Transform[] hts = m_sprite.GetComponentsInChildren<Transform>();
             bool spriteHeadExists = false;
@@ -70,10 +70,16 @@ public class GridEntityAnimationController : MonoBehaviour
         }
     }
 
-    protected void Start()
+    protected virtual void Start()
     {
-        animatorSpeed =  1f/App.GetModule<LevelModule>().StepController.stepTime;
+        animatorSpeed = 1f / App.GetModule<LevelModule>().StepController.stepTime;
         m_animator.speed = animatorSpeed;
+    }
+
+    public void SetAnimationSpeed(float speed)
+    {
+        animatorSpeed = speed;
+        m_animator.speed = speed;
     }
 
     public virtual void PlayAnimation(string animationName, float time, int layer = -1)
