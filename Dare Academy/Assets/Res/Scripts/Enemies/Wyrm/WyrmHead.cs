@@ -35,7 +35,11 @@ public class WyrmHead : WyrmSection
     {
         levelModule = App.GetModule<LevelModule>();
         base.Start();
-        Health = 10;
+
+        if (m_hasSplit == false)
+        {
+            Health = 10;
+        }
     }
 
     public override void AnalyseStep()
@@ -74,8 +78,7 @@ public class WyrmHead : WyrmSection
 
         if(Health <= 0)
         {
-            Destroy(gameObject);
-
+            Kill();
             List<WyrmSection> sections = new List<WyrmSection>();
             WyrmSection current = this;
             while (current)
@@ -86,7 +89,7 @@ public class WyrmHead : WyrmSection
 
             for(int i = (sections.Count - 1); i > 0; i--)
             {
-                Destroy(sections[i].gameObject);
+                sections[i].Kill();
             }
         }
 
