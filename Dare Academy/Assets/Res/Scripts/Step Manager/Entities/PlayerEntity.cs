@@ -86,6 +86,9 @@ public class PlayerEntity : GridEntity
 
         App.GetModule<LevelModule>().LoadFromSave();
 
+        Abilities.Refresh();
+
+        Abilities.Initialise();
         _Instance = this;
     }
 
@@ -101,14 +104,12 @@ public class PlayerEntity : GridEntity
         // #RemoveBeforeRelease
         blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
         await levelModule.AwaitInitialised();
-        levelModule.EventFlags.SetFlags(eventFlags.shoot_unlocked, true);
-        levelModule.EventFlags.SetFlags(eventFlags.dash_unlocked, true);
-        levelModule.EventFlags.SetFlags(eventFlags.block_unlocked, true);
+        //levelModule.EventFlags.SetFlags(eventFlags.shoot_unlocked, true);
+        //levelModule.EventFlags.SetFlags(eventFlags.dash_unlocked, true);
+        //levelModule.EventFlags.SetFlags(eventFlags.block_unlocked, true);
 
         await levelModule.AwaitSaveLoad();
-        Abilities.Refresh();
 
-        Abilities.Initialise();
         m_animationController = GetComponent<GridEntityAnimationController>();
 
         App.GetModule<LevelModule>().ActiveSaveData.levelId = LevelModule.CurrentLevelId();
@@ -161,8 +162,8 @@ public class PlayerEntity : GridEntity
 
         m_input.Player.CancelAbility.performed += CancelAbility;
 
-        m_input.Player.SwapAbilityL.performed += CycleAbilityL;
-        m_input.Player.SwapAbilityR.performed += CycleAbilityR;
+        m_input.Player.SwapAbilityL.performed += CycleAbilityR; // Cycles opposite way for Player Ui carousel // Can mabey change func names to not be weird
+        m_input.Player.SwapAbilityR.performed += CycleAbilityL;
     }
 
     private void OnDisable()
@@ -178,8 +179,8 @@ public class PlayerEntity : GridEntity
 
         m_input.Player.CancelAbility.performed -= CancelAbility;
 
-        m_input.Player.SwapAbilityL.performed -= CycleAbilityL;
-        m_input.Player.SwapAbilityR.performed -= CycleAbilityR;
+        m_input.Player.SwapAbilityL.performed -= CycleAbilityR;
+        m_input.Player.SwapAbilityR.performed -= CycleAbilityL;
     }
 
     protected async void Update()
