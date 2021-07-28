@@ -81,6 +81,40 @@ public class ScriptableEntity : GridEntity
         }
     }
 
+    protected void LateUpdate()
+    {
+        if (m_queuePos >= m_actionQueue.m_actionList.Count)
+            return;
+
+        ScriptedActionQueue.ActionType type = m_actionQueue.m_actionList[m_queuePos].type;
+
+        if (type == ScriptedActionQueue.ActionType.WaitPlayerEnterTrigger || type == ScriptedActionQueue.ActionType.WaitPlayerExitTrigger)
+        {
+            while (true)
+            {
+                if (m_queuePos == m_actionQueue.m_actionList.Count)
+                {
+                    ReplaceWithPrefab();
+                    return;
+                }
+
+                ScriptedActionQueue.ActionWrapper currentAction = m_actionQueue.m_actionList[m_queuePos];
+
+                ProcessActionQueue(out bool runAgain, out bool stepQueue, currentAction);
+
+                if (stepQueue)
+                {
+                    m_queuePos++;
+                }
+
+                if (!runAgain)
+                {
+                    break;
+                }
+            }
+        }
+    }
+
     public override void ResetAnimations()
     {
         base.ResetAnimations();
@@ -91,69 +125,89 @@ public class ScriptableEntity : GridEntity
         await blu.App.GetModule<blu.LevelModule>().AwaitSaveLoad();
         await blu.App.GetModule<blu.LevelModule>().AwaitInitialised();
 
-        bool stepQueue = true;
-        bool runAgain = false;
-
         if (m_actionQueue.m_actionList.Count == 0)
         {
             Debug.LogWarning($"[ScriptableEntity] [name = {gameObject.name}] action queue has no content");
             ReplaceWithPrefab();
         }
 
-    RunAgainLabel:
-
-        if (m_queuePos == m_actionQueue.m_actionList.Count)
+        while (true)
         {
-            ReplaceWithPrefab();
-            return;
+            if (m_queuePos == m_actionQueue.m_actionList.Count)
+            {
+                ReplaceWithPrefab();
+                return;
+            }
+
+            ScriptedActionQueue.ActionWrapper currentAction = m_actionQueue.m_actionList[m_queuePos];
+
+            ProcessActionQueue(out bool runAgain, out bool stepQueue, currentAction);
+
+            if (stepQueue)
+            {
+                m_queuePos++;
+            }
+
+            if (!runAgain)
+            {
+                break;
+            }
         }
+    }
 
-        ScriptedActionQueue.ActionWrapper currentAction = m_actionQueue.m_actionList[m_queuePos];
-
+    protected void ProcessActionQueue(out bool runAgain, out bool stepQueue, ScriptedActionQueue.ActionWrapper currentAction)
+    {
         bool b;
+
         switch (currentAction.type)
         {
             case ScriptedActionQueue.ActionType.None:
                 runAgain = true;
-                break;
+                stepQueue = true;
+                return;
 
             case ScriptedActionQueue.ActionType.Kill:
                 Kill();
-                break;
+                runAgain = false;
+                stepQueue = false;
+                return;
 
             case ScriptedActionQueue.ActionType.Move:
                 MoveAction(currentAction.moveData);
-                break;
+                runAgain = false;
+                stepQueue = true;
+                return;
 
             case ScriptedActionQueue.ActionType.WaitTurns:
                 stepQueue = WaitAction(currentAction);
-                break;
+                runAgain = false;
+                return;
 
             case ScriptedActionQueue.ActionType.WaitPlayerEnterTrigger:
                 b = currentAction.gameObject.GetComponent<ScriptableEntityTrigger>().HasPlayer;
                 stepQueue = b;
                 runAgain = b;
-
-                break;
+                return;
 
             case ScriptedActionQueue.ActionType.WaitPlayerExitTrigger:
                 b = !currentAction.gameObject.GetComponent<ScriptableEntityTrigger>().HasPlayer;
                 stepQueue = b;
                 runAgain = b;
-
-                break;
+                return;
 
             case ScriptedActionQueue.ActionType.SetFlagEntityValue:
 
                 m_flags.SetFlags(currentAction.int32Data, currentAction.boolData);
                 runAgain = true;
-                break;
+                stepQueue = true;
+                return;
 
             case ScriptedActionQueue.ActionType.SetEventFlagValue:
 
                 blu.App.GetModule<blu.LevelModule>().EventFlags.SetFlags(currentAction.int32Data, currentAction.boolData);
                 runAgain = true;
-                break;
+                stepQueue = true;
+                return;
 
             case ScriptedActionQueue.ActionType.Dialogue:
                 if (currentAction.gameObject != null)
@@ -161,43 +215,42 @@ public class ScriptableEntity : GridEntity
                     blu.App.GetModule<blu.DialogueModule>().StartDialogue(currentAction.gameObject);
                 }
                 runAgain = true;
-                break;
+                stepQueue = true;
+                return;
 
             case ScriptedActionQueue.ActionType.AwaitDialogueComplete:
                 runAgain = AwaitDialogueAction();
-                break;
+                stepQueue = true;
+                return;
 
             case ScriptedActionQueue.ActionType.SetCameraPosition:
                 CameraPosAction(currentAction);
                 runAgain = true;
-                break;
+                stepQueue = true;
+                return;
 
             case ScriptedActionQueue.ActionType.SetCameraToPlayer:
                 CameraToPlayerAction();
                 runAgain = true;
-                break;
+                stepQueue = true;
+                return;
 
             case ScriptedActionQueue.ActionType.ExecuteSteps:
                 ExecuteSteps(currentAction);
                 runAgain = true;
-                break;
+                stepQueue = true;
+                return;
 
             case ScriptedActionQueue.ActionType.KillIfEventFlagSet:
                 runAgain = KillIfEventFlagSet(currentAction);
-                break;
+                stepQueue = true;
+                return;
 
             default:
                 Debug.LogWarning($"[ScriptedEntity] [{gameObject.name}] could not resolve action [type = {currentAction.type.ToString()}]");
-                break;
-        }
-        if (stepQueue)
-        {
-            m_queuePos++;
-        }
-        if (runAgain)
-        {
-            runAgain = false;
-            goto RunAgainLabel;
+                runAgain = true;
+                stepQueue = true;
+                return;
         }
     }
 
