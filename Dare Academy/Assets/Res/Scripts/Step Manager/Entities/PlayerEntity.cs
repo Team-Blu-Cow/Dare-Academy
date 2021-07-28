@@ -56,6 +56,9 @@ public class PlayerEntity : GridEntity
     private int m_blockEnergyCost = 3;
 
     // OTHER
+    private int m_pickups;
+
+    public int ShipParts { get => m_pickups; set => m_pickups = value; }
 
     private PlayerControls m_input;
     [SerializeField] private GameObject m_bulletPrefab = null;
@@ -82,19 +85,29 @@ public class PlayerEntity : GridEntity
         m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet");
     }
 
-    protected void Awake()
+    protected async void Awake()
     {
         if (_Instance != null)
         {
             Debug.LogWarning("[PlayerEntity] Instance already exists");
         }
 
-        App.GetModule<LevelModule>().LoadFromSave();
+        _Instance = this;
+
+        LevelModule levelModule = App.GetModule<LevelModule>();
+
+        levelModule.LoadFromSave();
 
         Abilities.Refresh();
-
         Abilities.Initialise();
-        _Instance = this;
+
+        await levelModule.AwaitSaveLoad();
+
+        MaxHealth = levelModule.ActiveSaveData.maxHealth;
+        MaxEnergy = levelModule.ActiveSaveData.maxEnergy;
+
+        Energy = MaxEnergy;
+        Health = MaxHealth;
     }
 
     public void DebugSetNode()
@@ -116,15 +129,9 @@ public class PlayerEntity : GridEntity
 
         App.GetModule<InputModule>().PlayerController.Player.Enable();
 
-        Energy = MaxEnergy;
-        Health = MaxHealth;
-
-        // #RemoveBeforeRelease
         blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
+
         await levelModule.AwaitInitialised();
-        //levelModule.EventFlags.SetFlags(eventFlags.shoot_unlocked, true);
-        //levelModule.EventFlags.SetFlags(eventFlags.dash_unlocked, true);
-        //levelModule.EventFlags.SetFlags(eventFlags.block_unlocked, true);
 
         await levelModule.AwaitSaveLoad();
 
@@ -298,6 +305,9 @@ public class PlayerEntity : GridEntity
         levelModule.ActiveSaveData.m_roomsTraveled.Clear();
         foreach (var pair in m_dictRoomsTraveled)
             levelModule.ActiveSaveData.m_roomsTraveled.Add(new Quest.StringListIntPair(pair.Key, pair.Value));
+
+        levelModule.ActiveSaveData.maxHealth = MaxHealth;
+        levelModule.ActiveSaveData.maxEnergy = MaxEnergy;
     }
 
     protected void SetAbilityAnimationFlag()

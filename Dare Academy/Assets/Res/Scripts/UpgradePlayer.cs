@@ -11,7 +11,7 @@ public class UpgradePlayer : Interface
     {
         Shoot = 1,
         Dash = 2,
-        Block = 4
+        Block = 4,
     }
 
     [SerializeField] private GameObject Dialouge;

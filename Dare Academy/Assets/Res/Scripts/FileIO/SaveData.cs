@@ -17,6 +17,8 @@ namespace blu
         public System.Int32 gameEventFlags = 0;
         public int respawnRoomID = -1;
         public double playtime = 0;
+        public int maxHealth = 3;
+        public int maxEnergy = 3;
 
         public List<Quest.StringListIntPair> m_roomsTraveled = new List<Quest.StringListIntPair>();
 

@@ -47,19 +47,6 @@ public class PlayerUI : MonoBehaviour
     {
         m_player = PlayerEntity.Instance; // Get the player's info
 
-        m_energy = m_player.Energy; // Current energy is max on start
-        m_health = m_player.Health; // Current health is max on start
-
-        for (int i = 0; i < m_player.MaxHealth; i++) // Loop for amount of health
-        {
-            AddHealth(); // Add an icon for the amount of health
-        }
-
-        for (int i = 0; i < m_player.MaxEnergy; i++) // Do same for energy
-        {
-            AddEnergy();
-        }
-
         // Setup each icon
         for (int i = 0; i < m_Icons.Length; i++)
         {
@@ -82,6 +69,19 @@ public class PlayerUI : MonoBehaviour
 
         await App.GetModule<LevelModule>().AwaitInitialised();
         await App.GetModule<LevelModule>().AwaitSaveLoad();
+
+        m_energy = m_player.Energy; // Current energy is max on start
+        m_health = m_player.Health; // Current health is max on start
+
+        for (int i = 0; i < m_player.MaxHealth; i++) // Loop for amount of health
+        {
+            AddHealth(); // Add an icon for the amount of health
+        }
+
+        for (int i = 0; i < m_player.MaxEnergy; i++) // Do same for energy
+        {
+            AddEnergy();
+        }
 
         UpdateUI();
     }
@@ -127,8 +127,6 @@ public class PlayerUI : MonoBehaviour
             UpdateHealthUI(); // Update the health UI
             m_health = m_player.Health; // Update the health variable
         }
-
-        //UpdateUI();
     }
 
     public void UpdateUI()
@@ -349,6 +347,9 @@ public class PlayerUI : MonoBehaviour
 
         for (int i = 0; i < m_player.Health; i++) // For the ones showing how much health the player has
         {
+            if (i >= healthIcons.Count)
+                break;
+
             healthIcons[i].sprite = m_healthSprites[0]; // Set active to true
         }
     }
@@ -362,10 +363,10 @@ public class PlayerUI : MonoBehaviour
 
         for (int i = 0; i < m_energy; i++) // For the ones showing how much energy the player has
         {
-            if (i < energyIcons.Count)
-            {
-                energyIcons[i].sprite = m_energySprites[0]; // Set active to true
-            }
+            if (i >= energyIcons.Count)
+                break;
+
+            energyIcons[i].sprite = m_energySprites[0]; // Set active to true
         }
     }
 
