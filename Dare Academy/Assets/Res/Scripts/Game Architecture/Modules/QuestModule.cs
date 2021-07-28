@@ -33,6 +33,7 @@ namespace blu
                 GameObject popUp = Instantiate(Resources.Load<GameObject>("prefabs/UI prefabs/QuestPopUp"));
                 popUp.GetComponentInChildren<QuestPopUp>().SetTitle(in_quest.name);
                 popUp.GetComponentInChildren<QuestPopUp>().SetBody(in_quest.activeDescription);
+                App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/Systems/sfx_quest_accepted");
             }
 
             _activeQuests.Add(in_quest);
