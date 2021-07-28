@@ -60,7 +60,7 @@ public class PlayerEntity : GridEntity
     private PlayerControls m_input;
     [SerializeField] private GameObject m_bulletPrefab = null;
     private int m_dashDistance = 2;
-
+    private bool m_abilityUsedThisTurn = false;
     private PlayerInput m_playerInput = new PlayerInput();
 
     private Vector2Int m_moveDirection = Vector2Int.zero;
@@ -443,7 +443,10 @@ public class PlayerEntity : GridEntity
 
         Abilities.Refresh();
 
-        Energy++;
+        if (!m_abilityUsedThisTurn)
+            Energy++;
+
+        m_abilityUsedThisTurn = false;
 
         if (Energy > MaxEnergy)
             Energy = MaxEnergy;
@@ -628,6 +631,8 @@ public class PlayerEntity : GridEntity
                 SetAbilityAnimationFlag(0);
                 animationController.StopLuvParticles();
 
+                m_abilityUsedThisTurn = true;
+
                 if (SpawnBullet(m_bulletPrefab, node, m_abilityDirection))
                 {
                     Energy -= m_shootEnergyCost;
@@ -644,6 +649,7 @@ public class PlayerEntity : GridEntity
         {
             if (m_abilityDirection != Vector2.zero)
             {
+                m_abilityUsedThisTurn = true;
                 Energy -= m_dashEnergyCost;
                 return true;
             }
@@ -661,6 +667,7 @@ public class PlayerEntity : GridEntity
 
                 AddAnimationAction(ActionTypes.STATIC_ACTION, "Head Shield Fire", 1);
                 SetAbilityAnimationFlag(0);
+                m_abilityUsedThisTurn = true;
 
                 System.Func<Vector2Int, interalFlags, bool> BlockCheckDirectionAndSetFlag = (vec, flag) =>
                 {
