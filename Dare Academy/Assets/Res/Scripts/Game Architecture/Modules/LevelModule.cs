@@ -32,8 +32,8 @@ namespace blu
 
         public SaveData ActiveSaveData
         {
-            get { return blu.App.GetModule<IOModule>().savedata; }
-            set { blu.App.GetModule<IOModule>().savedata = value; }
+            get { return blu.App.GetModule<IOModule>().ActiveSaveData; }
+            set { blu.App.GetModule<IOModule>().ActiveSaveData = value; }
         }
 
         public bool IsSaveLoaded
@@ -185,7 +185,7 @@ namespace blu
         {
             await AwaitSaveLoad();
             App.GetModule<QuestModule>().WriteToFile();
-            App.GetModule<IOModule>().savedata.gameEventFlags = EventFlags._FlagData;
+            App.GetModule<IOModule>().ActiveSaveData.gameEventFlags = EventFlags._FlagData;
             // #TODO #matthew - move the await out of here
             await App.GetModule<IOModule>().SaveAsync();
         }
@@ -198,25 +198,28 @@ namespace blu
         internal async void AwaitSaveLoadImpl()
         {
             IOModule io = App.GetModule<IOModule>();
-            bool found = false;
-            if (!io.IsSaveLoading)
+            await io.AwaitInitialised();
+
+            if (!io.IsSaveLoading && !io.IsSaveLoaded)
             {
-                io.IsSaveLoading = true;
-                io.LoadSaveSlots();
-                for (int i = 0; i < io.saveSlots.Length; i++)
+                bool found = false;
+                for (int i = 0; i < io.SaveSlots.Length; i++)
                 {
-                    if (io.saveSlots[i] != null)
+                    if (io.SaveSlots[i] != null)
                     {
                         found = true;
-                        await io.LoadSaveAsync(io.saveSlots[i]);
+                        await io.LoadSaveAsync(io.SaveSlots[i]);
                         break;
                     }
                 }
+
                 if (!found)
                 {
                     await io.CreateNewSave(0, true);
                 }
             }
+
+            await io.AwaitSaveLoaded();
 
             blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
             while (levelModule.IsSaveLoaded == false)
