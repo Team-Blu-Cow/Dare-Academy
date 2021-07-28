@@ -58,6 +58,12 @@ namespace blu
             }
         }
 
+        public void ToMainMenu()
+        {
+            blu.App.GetModule<AudioModule>().StopAllMusicEvents(true);
+            blu.App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/Systems/sfx_return_main_menu");
+        }
+
         public void SetParameter(MusicParameter in_parameter, float in_value)
         {
             if (blu.App.GetModule<AudioModule>().GetCurrentSong() == null)

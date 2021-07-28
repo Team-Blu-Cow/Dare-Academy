@@ -413,6 +413,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Jukebox
       objectReference: {fileID: 0}
+    - target: {fileID: 677772103269060808, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+      propertyPath: StartSong
+      value: event:/Music/Mushroom Forest/Undergrowth
+      objectReference: {fileID: 0}
     - target: {fileID: 677772103269060811, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
       propertyPath: m_RootOrder
       value: 7
@@ -31038,6 +31042,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a753e3d70ee54854292db70f5c4b71a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debug_SpawnPlayer: 1
   m_stepTime: 0.2
   m_defaultPlayerSpawnIndex: 0
   m_defaultPlayerPosition: {x: 0, y: 0}
@@ -32988,6 +32993,7 @@ MonoBehaviour:
     layer: 0
     transition: 0
     showInEditor: 0
+  openCanvases: []
   refrenenceResolution: {x: 1600, y: 900}
 --- !u!1 &4184360680793878540
 GameObject:

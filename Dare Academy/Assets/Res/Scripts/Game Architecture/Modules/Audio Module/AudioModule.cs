@@ -156,7 +156,9 @@ namespace blu
             NewMusicEvent("event:/Music/Main Menu/Main Theme");
             NewMusicEvent("event:/Music/Mushroom Forest/Boyfriends Helmet");
             NewMusicEvent("event:/Music/Mushroom Forest/Undergrowth");
-
+            NewAudioEvent("event:/SFX/Player/sfx_ability_select");
+            NewAudioEvent("event:/SFX/Systems/sfx_quest_accepted");
+            NewAudioEvent("event:/SFX/Systems/sfx_return_main_menu");
             // put any new mono event in here
         }
     }

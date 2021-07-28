@@ -164,6 +164,8 @@ public class PlayerEntity : GridEntity
             Debug.LogWarning("[PlayerEntity.Start] failed to draw MiniMap");
         }
 
+        App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/Player/sfx_ability_select");
+
         UpdateSaveFile();
     }
 
@@ -276,7 +278,7 @@ public class PlayerEntity : GridEntity
             }
             else
             {
-                // failed to dash, no enough energy
+                // failed to block, no enough energy
                 // #TODO #sound #adam - sound effect here
                 m_abilityDirection = Vector2Int.zero;
             }
@@ -386,6 +388,17 @@ public class PlayerEntity : GridEntity
     protected void ToggleAbilityMode(InputAction.CallbackContext context)
     {
         m_abilityMode = !m_abilityMode;
+        if (m_abilityMode)
+        {
+            App.GetModule<AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 1);
+            App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 1);
+        }
+        else
+        {
+            App.GetModule<AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 0);
+            App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
+        }
+
         ToggleAnimationState();
         //SetAbilityAnimationFlag();
     }
@@ -393,6 +406,8 @@ public class PlayerEntity : GridEntity
     protected void EnterAbilityMode(InputAction.CallbackContext context)
     {
         m_abilityMode = true;
+        App.GetModule<AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 1);
+        App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 1);
         //SetAbilityAnimationFlag();
         ToggleAnimationState();
     }
@@ -400,6 +415,9 @@ public class PlayerEntity : GridEntity
     protected void ExitAbilityMode(InputAction.CallbackContext context)
     {
         m_abilityMode = false;
+
+        App.GetModule<AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 0);
+        App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
         //ToggleAnimationState();
         animationController.DisableVignette();
 
