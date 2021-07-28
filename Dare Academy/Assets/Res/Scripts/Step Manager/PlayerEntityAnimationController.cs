@@ -85,23 +85,26 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
     {
         m_abilityState = abilityState;
 
-        switch(m_abilityState)
+        if (m_abilityMode)
         {
-            case 1: // shoot
-                StartLuvParticles();
-                break;
+            switch (m_abilityState)
+            {
+                case 1: // shoot
+                    StartLuvParticles();
+                    break;
 
-            case 2: // dash
-                StopLuvParticles();
-                break;
+                case 2: // dash
+                    StopLuvParticles();
+                    break;
 
-            case 3: // shield
-                StopLuvParticles();
-                break;
+                case 3: // shield
+                    StopLuvParticles();
+                    break;
 
-            default:
-                StopLuvParticles();
-                break;
+                default:
+                    StopLuvParticles();
+                    break;
+            }
         }
 
         LeanTween.value(gameObject, m_vignetteColour, m_abilityColours[abilityState], m_lerpTime)
