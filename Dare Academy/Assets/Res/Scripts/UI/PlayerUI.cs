@@ -81,9 +81,7 @@ public class PlayerUI : MonoBehaviour
         await App.GetModule<LevelModule>().AwaitInitialised();
         await App.GetModule<LevelModule>().AwaitSaveLoad();
 
-        CheckAbilitiesUnlocked();
-        SetStartingPosition();
-        UpdateSelected();
+        UpdateUI();
     }
 
     private void OnValidate()
@@ -172,6 +170,7 @@ public class PlayerUI : MonoBehaviour
                 }
 
                 break;
+
             default:
                 //uhhh ohhh wtf are you doing
                 break;

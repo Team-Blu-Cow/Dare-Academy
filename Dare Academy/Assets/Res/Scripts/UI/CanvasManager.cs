@@ -18,7 +18,7 @@ namespace CanvasTool
         [SerializeField] public List<CanvasContainer> startingCanvas = new List<CanvasContainer>();
 
         // Stack of open canvases
-        private List<CanvasContainer> openCanvases = new List<CanvasContainer>();
+        public List<CanvasContainer> openCanvases = new List<CanvasContainer>();
 
         public CanvasContainer topCanvas => openCanvases.Count > 0 ? openCanvases[openCanvases.Count - 1] : null;
 
