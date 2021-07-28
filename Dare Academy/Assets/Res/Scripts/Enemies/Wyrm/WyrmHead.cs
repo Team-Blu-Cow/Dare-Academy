@@ -72,6 +72,24 @@ public class WyrmHead : WyrmSection
             m_phase = BossPhase.Phase3;
         }
 
+        if(Health <= 0)
+        {
+            Destroy(gameObject);
+
+            List<WyrmSection> sections = new List<WyrmSection>();
+            WyrmSection current = this;
+            while (current)
+            {
+                sections.Add(current);
+                current = current.SectionBehind;
+            }
+
+            for(int i = (sections.Count - 1); i > 0; i--)
+            {
+                Destroy(sections[i].gameObject);
+            }
+        }
+
         switch (m_phase)
         {
             case BossPhase.Phase1:
