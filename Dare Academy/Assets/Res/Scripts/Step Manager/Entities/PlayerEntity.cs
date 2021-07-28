@@ -207,7 +207,9 @@ public class PlayerEntity : GridEntity
         // m_abilityDirection = Vector2Int.zero;
 
         await App.GetModule<LevelModule>().AwaitSaveLoad();
-        App.GetModule<LevelModule>().ActiveSaveData.playtime += Time.deltaTime;
+
+        if (App.GetModule<LevelModule>().ActiveSaveData != null)
+            App.GetModule<LevelModule>().ActiveSaveData.playtime += Time.deltaTime;
 
         if (!LevelManager.Instance.AllowPlayerMovement)
             return;
@@ -410,11 +412,11 @@ public class PlayerEntity : GridEntity
     {
         switch (m_abilities.GetActiveAbility())
         {
-            case AbilityEnum.None:  return 0;
+            case AbilityEnum.None: return 0;
             case AbilityEnum.Shoot: return 1;
-            case AbilityEnum.Dash:  return 2;
+            case AbilityEnum.Dash: return 2;
             case AbilityEnum.Block: return 3;
-            default:                return 0;
+            default: return 0;
         }
     }
 
