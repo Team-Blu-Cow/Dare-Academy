@@ -41,7 +41,7 @@ public class PlayerUI : MonoBehaviour
 
     private int numOfAbilitiesUnlocked = 0; // Tracks the amount of abilities the player has unlocked
 
-    private void Start()
+    private async void Start()
     {
         m_player = PlayerEntity.Instance; // Get the player's info
 
@@ -72,16 +72,18 @@ public class PlayerUI : MonoBehaviour
         m_Icons[(int)IconIndex.Gun].position,
         m_Icons[(int)IconIndex.Block].position };
 
-        CheckAbilitiesUnlocked();
-        SetStartingPosition();
-
-        UpdateSelected();
-
         InputModule input = App.GetModule<InputModule>();
         input.LastDeviceChanged += DeviceChanged;
 
         input.PlayerController.Player.SwapAbilityL.performed += ChangeAbilityL;
         input.PlayerController.Player.SwapAbilityR.performed += ChangeAbilityR;
+
+        await App.GetModule<LevelModule>().AwaitInitialised();
+        await App.GetModule<LevelModule>().AwaitSaveLoad();
+
+        CheckAbilitiesUnlocked();
+        SetStartingPosition();
+        UpdateSelected();
     }
 
     private void OnValidate()
@@ -120,12 +122,14 @@ public class PlayerUI : MonoBehaviour
             m_health = m_player.Health; // Update the health variable
         }
 
-        if (numOfAbilitiesUnlocked == 0) // If the number of abilities has not been set yet
-        {
-            ///#todo #Sandy call this function when player unlocks new ability !!!!!!!!!!!!!!!!!!
-            CheckAbilitiesUnlocked(); // Find the amount of abilities unlocked
-            SetStartingPosition();
-        }
+        //UpdateUI();
+    }
+
+    public void UpdateUI()
+    {
+        CheckAbilitiesUnlocked(); // Find the amount of abilities unlocked
+        SetStartingPosition();
+        UpdateSelected();
     }
 
     private void SetStartingPosition()
@@ -138,9 +142,18 @@ public class PlayerUI : MonoBehaviour
 
         switch (numOfAbilitiesUnlocked)
         {
+            case 0:
+                m_Icons[(int)IconIndex.Dash].GO.SetActive(false);
+                m_Icons[(int)IconIndex.Block].GO.SetActive(false);
+                m_Icons[(int)IconIndex.Gun].GO.SetActive(false);
+                transform.GetChild(2).GetChild(3).gameObject.SetActive(false);
+
+                break;
+
             case 1:
                 m_Icons[(int)IconIndex.Dash].GO.SetActive(false);
                 m_Icons[(int)IconIndex.Block].GO.SetActive(false);
+
                 transform.GetChild(2).GetChild(3).gameObject.SetActive(false);
                 break;
 
@@ -148,7 +161,19 @@ public class PlayerUI : MonoBehaviour
                 m_Icons[(int)IconIndex.Dash].GO.SetActive(false);
                 break;
 
+            case 3:
+                if (m_player.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Block)
+                {
+                    m_Icons[(int)IconIndex.Dash].GO.transform.localPosition = m_iconPositions[(int)IconIndex.Block];
+                    m_Icons[(int)IconIndex.Dash].index = 2;
+
+                    m_Icons[(int)IconIndex.Gun].GO.transform.localPosition = m_iconPositions[(int)IconIndex.Dash];
+                    m_Icons[(int)IconIndex.Gun].index = 0;
+                }
+
+                break;
             default:
+                //uhhh ohhh wtf are you doing
                 break;
         }
     }
@@ -238,13 +263,13 @@ public class PlayerUI : MonoBehaviour
                 {
                     if (m_Icons[i].index == 2)
                     {
-                        LeanTween.move(m_Icons[i].GO, m_iconPositions[(int)IconIndex.Gun], transitionSpeed);
+                        LeanTween.moveLocal(m_Icons[i].GO, m_iconPositions[(int)IconIndex.Gun], transitionSpeed);
                         LeanTween.scale(m_Icons[i].GO, new Vector3(1.5f, 1.5f, 1.5f), transitionSpeed);
                         m_Icons[i].index--;
                     }
                     else
                     {
-                        LeanTween.move(m_Icons[i].GO, m_iconPositions[(int)IconIndex.Block], transitionSpeed);
+                        LeanTween.moveLocal(m_Icons[i].GO, m_iconPositions[(int)IconIndex.Block], transitionSpeed);
                         LeanTween.scale(m_Icons[i].GO, new Vector3(1, 1, 1), transitionSpeed);
                         m_Icons[i].GO.transform.SetAsFirstSibling();
 

@@ -71,6 +71,11 @@ public class PlayerEntity : GridEntity
 
     public Dictionary<string, List<int>> m_dictRoomsTraveled = new Dictionary<string, List<int>>();
 
+    public PlayerEntityAnimationController animationController
+    {
+        get { return ((PlayerEntityAnimationController)m_animationController); }
+    }
+
     protected override void OnValidate()
     {
         base.OnValidate();
@@ -86,7 +91,23 @@ public class PlayerEntity : GridEntity
 
         App.GetModule<LevelModule>().LoadFromSave();
 
+        Abilities.Refresh();
+
+        Abilities.Initialise();
         _Instance = this;
+    }
+
+    public void DebugSetNode()
+    {
+        m_currentNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(transform.position);
+
+        if (m_currentNode == null)
+        {
+            m_roomIndex = -1;
+            return;
+        }
+
+        m_roomIndex = m_currentNode.roomIndex;
     }
 
     protected override async void Start()
@@ -101,14 +122,12 @@ public class PlayerEntity : GridEntity
         // #RemoveBeforeRelease
         blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
         await levelModule.AwaitInitialised();
-        levelModule.EventFlags.SetFlags(eventFlags.shoot_unlocked, true);
-        levelModule.EventFlags.SetFlags(eventFlags.dash_unlocked, true);
-        levelModule.EventFlags.SetFlags(eventFlags.block_unlocked, true);
+        //levelModule.EventFlags.SetFlags(eventFlags.shoot_unlocked, true);
+        //levelModule.EventFlags.SetFlags(eventFlags.dash_unlocked, true);
+        //levelModule.EventFlags.SetFlags(eventFlags.block_unlocked, true);
 
         await levelModule.AwaitSaveLoad();
-        Abilities.Refresh();
 
-        Abilities.Initialise();
         m_animationController = GetComponent<GridEntityAnimationController>();
 
         App.GetModule<LevelModule>().ActiveSaveData.levelId = LevelModule.CurrentLevelId();
@@ -161,8 +180,8 @@ public class PlayerEntity : GridEntity
 
         m_input.Player.CancelAbility.performed += CancelAbility;
 
-        m_input.Player.SwapAbilityL.performed += CycleAbilityL;
-        m_input.Player.SwapAbilityR.performed += CycleAbilityR;
+        m_input.Player.SwapAbilityL.performed += CycleAbilityR; // Cycles opposite way for Player Ui carousel // Can mabey change func names to not be weird
+        m_input.Player.SwapAbilityR.performed += CycleAbilityL;
     }
 
     private void OnDisable()
@@ -178,8 +197,8 @@ public class PlayerEntity : GridEntity
 
         m_input.Player.CancelAbility.performed -= CancelAbility;
 
-        m_input.Player.SwapAbilityL.performed -= CycleAbilityL;
-        m_input.Player.SwapAbilityR.performed -= CycleAbilityR;
+        m_input.Player.SwapAbilityL.performed -= CycleAbilityR;
+        m_input.Player.SwapAbilityR.performed -= CycleAbilityL;
     }
 
     protected async void Update()
@@ -293,6 +312,7 @@ public class PlayerEntity : GridEntity
         }
 
         //m_animationController.animator.SetInteger("AbilityState", animationFlag);
+        animationController.SetAbilityState(animationFlag);
     }
 
     protected void SetAbilityAnimationFlag(int animationFlag)
@@ -354,34 +374,65 @@ public class PlayerEntity : GridEntity
     protected void ToggleAbilityMode(InputAction.CallbackContext context)
     {
         m_abilityMode = !m_abilityMode;
-
-        SetAbilityAnimationFlag();
+        ToggleAnimationState();
+        //SetAbilityAnimationFlag();
     }
 
     protected void EnterAbilityMode(InputAction.CallbackContext context)
     {
         m_abilityMode = true;
-        SetAbilityAnimationFlag();
+        //SetAbilityAnimationFlag();
+        ToggleAnimationState();
     }
 
-    protected void ExitAbilityMode(InputAction.CallbackContext context) => m_abilityMode = false;
+    protected void ExitAbilityMode(InputAction.CallbackContext context)
+    {
+        m_abilityMode = false;
+        //ToggleAnimationState();
+        animationController.DisableVignette();
+
+        if (m_abilityDirection == Vector2Int.zero)
+            animationController.SetAbilityState(0);
+    }
 
     protected void CancelAbility(InputAction.CallbackContext context)
     {
         m_abilityMode = false;
+        //ToggleAnimationState();
+    }
+
+    protected void ToggleAnimationState()
+    {
+        ((PlayerEntityAnimationController)m_animationController).SetAbilityMode(m_abilityMode, GetAbilityStateInt());
+    }
+
+    private int GetAbilityStateInt()
+    {
+        switch (m_abilities.GetActiveAbility())
+        {
+            case AbilityEnum.None:  return 0;
+            case AbilityEnum.Shoot: return 1;
+            case AbilityEnum.Dash:  return 2;
+            case AbilityEnum.Block: return 3;
+            default:                return 0;
+        }
     }
 
     protected void CycleAbilityR(InputAction.CallbackContext context)
     {
         m_abilities.SetActiveAbility(m_abilities.RightAbility());
 
-        SetAbilityAnimationFlag();
+        animationController.SetAbilityState(GetAbilityStateInt());
+
+        //SetAbilityAnimationFlag();
     }
 
     protected void CycleAbilityL(InputAction.CallbackContext context)
     {
         m_abilities.SetActiveAbility(m_abilities.LeftAbility());
-        SetAbilityAnimationFlag();
+
+        animationController.SetAbilityState(GetAbilityStateInt());
+        //SetAbilityAnimationFlag();
     }
 
     public override void EndStep()
@@ -554,6 +605,7 @@ public class PlayerEntity : GridEntity
         {
             if (m_abilityDirection != Vector2.zero)
             {
+                //m_abilityDirection = m_playerInput.DirectionFour(true);
                 GridNode node;
                 if (m_previousNode != null)
                 {
@@ -572,6 +624,7 @@ public class PlayerEntity : GridEntity
 
                 AddAnimationAction(ActionTypes.STATIC_ACTION, "Head Gun Fire", 1);
                 SetAbilityAnimationFlag(0);
+                animationController.StopLuvParticles();
 
                 if (SpawnBullet(m_bulletPrefab, node, m_abilityDirection))
                 {

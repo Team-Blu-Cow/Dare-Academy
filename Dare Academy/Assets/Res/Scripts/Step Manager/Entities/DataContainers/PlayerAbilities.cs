@@ -25,15 +25,15 @@ public class PlayerAbilities
         else
             Lock(AbilityEnum.Shoot);
 
-        if (levelModule.EventFlags.IsFlagsSet(eventFlags.dash_unlocked))
-            Unlock(AbilityEnum.Dash);
-        else
-            Lock(AbilityEnum.Dash);
-
         if (levelModule.EventFlags.IsFlagsSet(eventFlags.block_unlocked))
             Unlock(AbilityEnum.Block);
         else
             Lock(AbilityEnum.Block);
+
+        if (levelModule.EventFlags.IsFlagsSet(eventFlags.dash_unlocked))
+            Unlock(AbilityEnum.Dash);
+        else
+            Lock(AbilityEnum.Dash);
 
         WriteToSaveData();
     }
@@ -108,13 +108,14 @@ public class PlayerAbilities
         {
             Unlock(AbilityEnum.Shoot);
         }
-        if (levelModule.EventFlags.IsFlagsSet(eventFlags.dash_unlocked))
-        {
-            Unlock(AbilityEnum.Dash);
-        }
         if (levelModule.EventFlags.IsFlagsSet(eventFlags.block_unlocked))
         {
             Unlock(AbilityEnum.Block);
+        }
+
+        if (levelModule.EventFlags.IsFlagsSet(eventFlags.dash_unlocked))
+        {
+            Unlock(AbilityEnum.Dash);
         }
 
         if (m_avalibleAbilities.Count > 0)

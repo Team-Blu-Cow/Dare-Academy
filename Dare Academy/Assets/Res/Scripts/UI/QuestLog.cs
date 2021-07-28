@@ -107,7 +107,6 @@ public class QuestLog : MonoBehaviour, IPointerDownHandler
             toggle.isOn = quest.showMarker;
 
             int localInt = i;
-
             toggle.onValueChanged.AddListener(delegate { ToggleMarker(localInt); });
 
             i++;
@@ -115,8 +114,28 @@ public class QuestLog : MonoBehaviour, IPointerDownHandler
 
         if (m_instantiatedQuests.Count > 0)
         {
+            for (int j = 0; j < m_instantiatedQuests.Count; j++)
+            {
+                Toggle toggle = m_instantiatedQuests[j].GetComponentInChildren<Toggle>();
+
+                Navigation nav = toggle.navigation;
+                nav.mode = Navigation.Mode.Explicit;
+
+                if (j + 1 < m_instantiatedQuests.Count)
+                    nav.selectOnDown = m_instantiatedQuests[j + 1].GetComponentInChildren<Toggle>();
+                else
+                    nav.selectOnDown = m_instantiatedQuests[0].GetComponentInChildren<Toggle>();
+
+                if (j - 1 > 0)
+                    nav.selectOnUp = m_instantiatedQuests[j - 1].GetComponentInChildren<Toggle>();
+                else
+                    nav.selectOnUp = m_instantiatedQuests[m_instantiatedQuests.Count - 1].GetComponentInChildren<Toggle>();
+
+                toggle.navigation = nav;
+            }
+
             gameObject.SetActive(true);
-            FindObjectOfType<EventSystem>().SetSelectedGameObject(m_instantiatedQuests[m_selectedIndex].GetComponentInChildren<Toggle>().gameObject);
+            EventSystem.current.SetSelectedGameObject(m_instantiatedQuests[m_selectedIndex].GetComponentInChildren<Toggle>().gameObject);
         }
     }
 
