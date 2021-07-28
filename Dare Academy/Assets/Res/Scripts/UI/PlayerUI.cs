@@ -31,11 +31,13 @@ public class PlayerUI : MonoBehaviour
     private int m_energy; // Energy the player has
     private int m_health; // Health the player has
 
-    private List<GameObject> energyIcons = new List<GameObject>(); // Images for the amount of energy the player has
-    private List<GameObject> healthIcons = new List<GameObject>(); // Images for the amount of health the player has
+    private List<Image> energyIcons = new List<Image>(); // Images for the amount of energy the player has
+    private List<Image> healthIcons = new List<Image>(); // Images for the amount of health the player has
 
     private Icon[] m_Icons = new Icon[3];
-    private Sprite[] controllIcons = new Sprite[4];
+    private Sprite[] m_controlSprites = new Sprite[4];
+    private Sprite[] m_healthSprites = new Sprite[2];
+    private Sprite[] m_energySprites = new Sprite[2];
 
     private Vector2[] m_iconPositions;
 
@@ -87,10 +89,16 @@ public class PlayerUI : MonoBehaviour
     private void OnValidate()
     {
         // Add button swaps sprites
-        controllIcons[0] = Resources.Load<Sprite>("GFX/ButtonImages/1Button");
-        controllIcons[1] = Resources.Load<Sprite>("GFX/ButtonImages/3Button");
-        controllIcons[2] = Resources.Load<Sprite>("GFX/ButtonImages/LBButton");
-        controllIcons[3] = Resources.Load<Sprite>("GFX/ButtonImages/RBButton");
+        m_controlSprites[0] = Resources.Load<Sprite>("GFX/ButtonImages/1Button");
+        m_controlSprites[1] = Resources.Load<Sprite>("GFX/ButtonImages/3Button");
+        m_controlSprites[2] = Resources.Load<Sprite>("GFX/ButtonImages/LBButton");
+        m_controlSprites[3] = Resources.Load<Sprite>("GFX/ButtonImages/RBButton");
+
+        m_healthSprites[0] = Resources.Load<Sprite>("GFX/HeartFull");
+        m_healthSprites[1] = Resources.Load<Sprite>("GFX/HeartEmpty");
+
+        m_energySprites[0] = Resources.Load<Sprite>("GFX/EnergyFull");
+        m_energySprites[1] = Resources.Load<Sprite>("GFX/EnergyEmpty");
     }
 
     private void OnDisable()
@@ -184,13 +192,13 @@ public class PlayerUI : MonoBehaviour
         switch (App.GetModule<InputModule>().LastUsedDevice.displayName)
         {
             case "Keyboard":
-                temp.GetComponentsInChildren<Image>()[0].sprite = controllIcons[0];
-                temp.GetComponentsInChildren<Image>()[1].sprite = controllIcons[1];
+                temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[0];
+                temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[1];
                 break;
 
             case "Xbox Controller":
-                temp.GetComponentsInChildren<Image>()[0].sprite = controllIcons[2];
-                temp.GetComponentsInChildren<Image>()[1].sprite = controllIcons[3];
+                temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[2];
+                temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[3];
                 break;
         }
     }
@@ -336,12 +344,12 @@ public class PlayerUI : MonoBehaviour
     {
         for (int i = 0; i < healthIcons.Count; i++) // For all the health images
         {
-            healthIcons[i].SetActive(false); // Set active to false
+            healthIcons[i].sprite = m_healthSprites[1]; // Set active to false
         }
 
         for (int i = 0; i < m_player.Health; i++) // For the ones showing how much health the player has
         {
-            healthIcons[i].SetActive(true); // Set active to true
+            healthIcons[i].sprite = m_healthSprites[0]; // Set active to true
         }
     }
 
@@ -349,14 +357,14 @@ public class PlayerUI : MonoBehaviour
     {
         for (int i = 0; i < energyIcons.Count; i++) // For all the energy images
         {
-            energyIcons[i].SetActive(false); // Set active to false
+            energyIcons[i].sprite = m_energySprites[1]; // Set active to false
         }
 
         for (int i = 0; i < m_energy; i++) // For the ones showing how much energy the player has
         {
             if (i < energyIcons.Count)
             {
-                energyIcons[i].SetActive(true); // Set active to true
+                energyIcons[i].sprite = m_energySprites[0]; // Set active to true
             }
         }
     }
@@ -367,8 +375,10 @@ public class PlayerUI : MonoBehaviour
         newHealth.transform.SetParent(gameObject.transform.GetChild(0)); // Set parent
 
         newHealth.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1); // Set scale
-        newHealth.GetComponent<Image>().sprite = Resources.Load<Sprite>("GFX/HeartFull"); // Set color
-        healthIcons.Add(newHealth); // Add new game object to array of objects
+        Image image = newHealth.GetComponent<Image>();
+        image.sprite = m_healthSprites[0]; // Set color
+
+        healthIcons.Add(image); // Add new game object to array of objects
     }
 
     public void AddEnergy()
@@ -377,7 +387,9 @@ public class PlayerUI : MonoBehaviour
         newEnergy.transform.SetParent(gameObject.transform.GetChild(1)); // Set parent
 
         newEnergy.GetComponent<RectTransform>().localScale = new Vector3(0.6f, 0.6f, 0.6f); // Set scale
-        newEnergy.GetComponent<Image>().color = new Color(0.0f, 1.0f, 1.0f, 1.0f); // Set color
-        energyIcons.Add(newEnergy); // Add new game object to array of objects
+        Image image = newEnergy.GetComponent<Image>();
+        image.sprite = m_energySprites[0]; // Set color
+
+        energyIcons.Add(image); // Add new game object to array of objects
     }
 }
