@@ -94,6 +94,8 @@ public class RespawnStationEntity : GridEntity, IInteractable
             m_currentRespawnStation = this;
 
             m_currentRespawnStation.GetComponent<SpriteRenderer>().color = Color.black;
+
+            m_player.Health = m_player.MaxHealth;
         }
     }
 

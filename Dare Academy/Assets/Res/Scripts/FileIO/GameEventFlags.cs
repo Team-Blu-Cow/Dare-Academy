@@ -11,10 +11,10 @@ public class GameEventFlags : BitFlags_32
         first_enemy_encounter_complete = 0x0000_0010,
         hidden_room_enemy_hint_complete = 0x0000_0020,
         scream_cutscene_complete = 0x0000_0040,
-        Flag_08 = 0x0000_0080,
+        B_and_B_fight_complete = 0x0000_0080,
 
-        Flag_09 = 0x0000_0100,
-        Flag_10 = 0x0000_0200,
+        B_and_B_dialogue_complete = 0x0000_0100,
+        respawn_intro_dialogue = 0x0000_0200,
         Flag_11 = 0x0000_0400,
         Flag_12 = 0x0000_0800,
         Flag_13 = 0x0000_1000,
