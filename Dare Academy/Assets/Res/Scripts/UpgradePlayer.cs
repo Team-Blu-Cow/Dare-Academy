@@ -14,6 +14,7 @@ public class UpgradePlayer : Interface
         Block = 4
     }
 
+    [SerializeField] private GameObject Dialouge;
     [SerializeField] private UpgradeType upgradeType;
 
     public override void OnInteract(InputAction.CallbackContext ctx)
@@ -23,8 +24,26 @@ public class UpgradePlayer : Interface
             App.GetModule<LevelModule>().EventFlags.SetFlags((Int32)upgradeType, true);
             PlayerEntity.Instance.Abilities.Refresh();
 
-            FindObjectOfType<PlayerUI>().UpdateUI();
+            switch (upgradeType)
+            {
+                case UpgradeType.Shoot:
+                    App.GetModule<DialogueModule>().StartDialogue(Dialouge);
+                    PlayerEntity.Instance.Abilities.SetActiveAbility(PlayerAbilities.AbilityEnum.Shoot);
+                    break;
 
+                case UpgradeType.Dash:
+                    App.GetModule<DialogueModule>().StartDialogue(Dialouge);
+                    break;
+
+                case UpgradeType.Block:
+                    App.GetModule<DialogueModule>().StartDialogue(Dialouge);
+                    break;
+
+                default:
+                    break;
+            }
+
+            FindObjectOfType<PlayerUI>().UpdateUI();
             Destroy(gameObject);
         }
     }

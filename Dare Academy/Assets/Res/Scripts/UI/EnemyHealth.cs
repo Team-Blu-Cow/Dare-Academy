@@ -13,6 +13,9 @@ public class EnemyHealth : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
+        if (m_entity == null)
+            m_entity = GetComponentInParent<GridEntity>();
+
         m_storedHealth = m_entity.Health;
     }
 
@@ -52,6 +55,14 @@ public class EnemyHealth : MonoBehaviour
     {
         if (m_storedHealth > m_entity.Health)
         {
+            if (m_hearts.Count == 0)
+            {
+                for (int i = 0; i < m_entity.Health + (m_storedHealth - m_entity.Health); i++)
+                {
+                    AddHeart();
+                }
+            }
+
             for (int i = 0; i < m_storedHealth - m_entity.Health; i++)
                 OnHit();
 
@@ -61,14 +72,6 @@ public class EnemyHealth : MonoBehaviour
 
     private void OnHit()
     {
-        if (m_hearts.Count == 0)
-        {
-            for (int i = 0; i < m_entity.Health; i++)
-            {
-                AddHeart();
-            }
-        }
-
         //Remove sprite
         GameObject temp = m_hearts[m_hearts.Count - 1];
         m_hearts.RemoveAt(m_hearts.Count - 1);

@@ -17,8 +17,8 @@ public class AddQuest : Interface
         {
             if (m_quest)
             {
-                if (App.GetModule<QuestModule>().AddQuest(m_quest))
-                    m_questPopup.ShowQuestPopup();
+                App.GetModule<QuestModule>().AddQuest(m_quest, true);
+                //m_questPopup.ShowQuestPopup();
             }
             else
             {
