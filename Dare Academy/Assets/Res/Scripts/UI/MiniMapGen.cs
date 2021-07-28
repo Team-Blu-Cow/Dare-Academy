@@ -269,7 +269,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
 
                             var angle = (sceneLink.travelDirection + 2) * 45;
                             float width = (sceneLink.width / 2.0f) - 0.5f;
-                            pos = OffsetLink(pos, angle, width);
+                            pos = OffsetLink(pos, angle, width) - new Vector2(currentRoom.OriginPosition.x, currentRoom.OriginPosition.y);
 
                             CreateQuestMarker(currentRoom, quest, pos);
                         }
@@ -452,7 +452,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
     private void MoveStart(InputAction.CallbackContext ctx)
     {
         m_movePos = ctx.ReadValue<Vector2>();
-        m_movePos.y *= -1;
+        m_movePos *= -1;
     }
 
     private void MoveEnd(InputAction.CallbackContext ctx)
