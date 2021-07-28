@@ -11,6 +11,8 @@ public class QuestLog : MonoBehaviour, IPointerDownHandler
 {
     private List<GameObject> m_instantiatedQuests = new List<GameObject>();
     private bool m_paused = false;
+    public bool Open { get { return m_paused; } set { m_paused = value; } }
+
     private int m_selectedIndex = 0;
 
     // Start is called before the first frame update

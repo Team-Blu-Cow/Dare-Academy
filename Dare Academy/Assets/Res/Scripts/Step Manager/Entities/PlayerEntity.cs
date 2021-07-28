@@ -410,11 +410,11 @@ public class PlayerEntity : GridEntity
     {
         switch (m_abilities.GetActiveAbility())
         {
-            case AbilityEnum.None:  return 0;
+            case AbilityEnum.None: return 0;
             case AbilityEnum.Shoot: return 1;
-            case AbilityEnum.Dash:  return 2;
+            case AbilityEnum.Dash: return 2;
             case AbilityEnum.Block: return 3;
-            default:                return 0;
+            default: return 0;
         }
     }
 

@@ -133,6 +133,7 @@ public class LevelManager : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(null);
 
             App.GetModule<InputModule>().PlayerController.Player.Enable();
+            App.GetModule<InputModule>().SystemController.UI.Map.Enable();
 
             if (App.GetModule<AudioModule>().GetCurrentSong() != null)
                 App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
@@ -143,9 +144,24 @@ public class LevelManager : MonoBehaviour
         {
             App.CanvasManager.OpenCanvas("Options Menu", true);
             EventSystem.current.SetSelectedGameObject(App.CanvasManager.GetCanvasContainer("Options Menu").gameObject.transform.GetChild(1).GetChild(0).GetChild(2).gameObject);
+
             if (App.GetModule<AudioModule>().GetCurrentSong() != null)
                 App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 1);
+
             App.GetModule<InputModule>().PlayerController.Player.Disable();
+            App.GetModule<InputModule>().SystemController.UI.Map.Disable();
+
+            CanvasTool.CanvasContainer mapCanvas = App.CanvasManager.GetCanvasContainer("Map");
+            if (App.CanvasManager.openCanvases.Contains(mapCanvas))
+            {
+                mapCanvas.CloseCanvas();
+                mapCanvas.gameObject.GetComponentInChildren<MiniMapGen>().Open = false;
+
+                if (mapCanvas.gameObject.transform.GetChild(2).TryGetComponent(out QuestLog questLog))
+                    questLog.Open = false;
+
+                App.CanvasManager.openCanvases.Remove(mapCanvas);
+            }
             paused = true;
         }
     }
@@ -158,6 +174,8 @@ public class LevelManager : MonoBehaviour
             {
                 paused = false;
                 App.GetModule<InputModule>().PlayerController.Player.Enable();
+                App.GetModule<InputModule>().SystemController.UI.Map.Enable();
+
                 if (App.GetModule<AudioModule>().GetCurrentSong() != null)
                     App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
 

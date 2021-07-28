@@ -22,6 +22,8 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
     private PlayerEntity player;
 
     private bool open = false;
+    public bool Open { get { return open; } set { open = value; } }
+
 #pragma warning disable CS0108 // Member hides inherited member; missing new keyword
     private RectTransform transform;
 #pragma warning restore CS0108 // Member hides inherited member; missing new keyword

@@ -52,6 +52,7 @@ public class SaveSlots : MonoBehaviour
             await io.SaveAsync();
         }
 
+        io.DiscardSaveData();
         io.LoadSaveSlots();
 
         for (int i = 0; i < m_slots.Length; i++)
