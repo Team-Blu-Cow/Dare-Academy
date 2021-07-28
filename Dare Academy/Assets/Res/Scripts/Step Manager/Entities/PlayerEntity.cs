@@ -207,7 +207,9 @@ public class PlayerEntity : GridEntity
         // m_abilityDirection = Vector2Int.zero;
 
         await App.GetModule<LevelModule>().AwaitSaveLoad();
-        App.GetModule<LevelModule>().ActiveSaveData.playtime += Time.deltaTime;
+
+        if (App.GetModule<LevelModule>().ActiveSaveData != null)
+            App.GetModule<LevelModule>().ActiveSaveData.playtime += Time.deltaTime;
 
         if (!LevelManager.Instance.AllowPlayerMovement)
             return;
