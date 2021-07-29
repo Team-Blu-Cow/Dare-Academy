@@ -66,7 +66,6 @@ public class ButtonSelector : MonoBehaviour
         }
         else
         {
-            //#todo #jack #adam some shit brokey
             Debug.LogWarning("m_seleced is null");
         }
     }
