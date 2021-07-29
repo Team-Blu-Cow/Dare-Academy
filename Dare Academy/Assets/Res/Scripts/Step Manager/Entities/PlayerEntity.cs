@@ -51,9 +51,9 @@ public class PlayerEntity : GridEntity
     public int Energy { get => m_currentEnergy; set => m_currentEnergy = value; }
     public int MaxEnergy { get => m_maxEnergy; set => m_maxEnergy = value; }
 
-    private int m_dashEnergyCost = 3;
-    private int m_shootEnergyCost = 3;
-    private int m_blockEnergyCost = 3;
+    public int m_dashEnergyCost = 3;
+    public int m_shootEnergyCost = 3;
+    public int m_blockEnergyCost = 3;
 
     // OTHER
     private int m_pickups;
@@ -67,7 +67,7 @@ public class PlayerEntity : GridEntity
     private PlayerInput m_playerInput = new PlayerInput();
 
     private Vector2Int m_moveDirection = Vector2Int.zero;
-    [SerializeField] private Vector2Int m_abilityDirection = Vector2Int.zero;
+    [SerializeField] public Vector2Int m_abilityDirection = Vector2Int.zero;
 
     [SerializeField] private int m_overlayRadius = 3;
     [SerializeField] private bool m_overlayToggle;
@@ -82,7 +82,7 @@ public class PlayerEntity : GridEntity
     protected override void OnValidate()
     {
         base.OnValidate();
-        m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet");
+        m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/PlayerLuvBullet");
     }
 
     protected async void Awake()
@@ -236,6 +236,8 @@ public class PlayerEntity : GridEntity
 
             if (direction != Vector2Int.zero)
             {
+                animationController.SetAbilityState(GetAbilityStateInt());
+
                 float headX = 0;
                 float headY = 0;
                 if (Mathf.Abs(direction.x) > Mathf.Abs(direction.y))
@@ -438,7 +440,8 @@ public class PlayerEntity : GridEntity
 
     protected void CancelAbility(InputAction.CallbackContext context)
     {
-        m_abilityMode = false;
+        m_abilityDirection = Vector2Int.zero;
+        animationController.SetAbilityState(GetAbilityStateInt());
         //ToggleAnimationState();
     }
 
@@ -665,10 +668,9 @@ public class PlayerEntity : GridEntity
                     // player didn't move
                     node = m_currentNode;
                 }
-
-                AddAnimationAction(ActionTypes.STATIC_ACTION, "Head Gun Fire", 1);
                 SetAbilityAnimationFlag(0);
                 animationController.StopLuvParticles();
+                animationController.MuzzleFlash(m_abilityDirection);
 
                 m_abilityUsedThisTurn = true;
 
