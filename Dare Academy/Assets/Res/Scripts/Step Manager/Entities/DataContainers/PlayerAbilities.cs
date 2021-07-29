@@ -102,8 +102,6 @@ public class PlayerAbilities
 
         await levelModule.AwaitSaveLoad();
 
-        await levelModule.AwaitInitialised();
-
         if (levelModule.EventFlags.IsFlagsSet(eventFlags.shoot_unlocked))
         {
             Unlock(AbilityEnum.Shoot);

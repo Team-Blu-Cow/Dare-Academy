@@ -94,11 +94,11 @@ public class PlayerEntity : GridEntity
 
         _Instance = this;
 
+
         LevelModule levelModule = App.GetModule<LevelModule>();
 
         levelModule.LoadFromSave();
 
-        Abilities.Refresh();
         Abilities.Initialise();
 
         await levelModule.AwaitSaveLoad();

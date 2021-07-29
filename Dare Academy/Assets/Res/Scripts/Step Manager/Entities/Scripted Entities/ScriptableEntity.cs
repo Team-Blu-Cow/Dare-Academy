@@ -246,6 +246,11 @@ public class ScriptableEntity : GridEntity
                 stepQueue = true;
                 return;
 
+            case ScriptedActionQueue.ActionType.KillIfEventFlagNotSet:
+                runAgain = KillIfEventFlagNotSet(currentAction);
+                stepQueue = true;
+                return;
+
             default:
                 Debug.LogWarning($"[ScriptedEntity] [{gameObject.name}] could not resolve action [type = {currentAction.type.ToString()}]");
                 runAgain = true;
@@ -396,6 +401,33 @@ public class ScriptableEntity : GridEntity
             for (int i = 0; i < 31; i++)
             {
                 if (blu.App.GetModule<blu.LevelModule>().EventFlags.IsFlagsSet(data.int32Data & (1 << i)))
+                {
+                    Kill();
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    protected bool KillIfEventFlagNotSet(ScriptedActionQueue.ActionWrapper data)
+    {
+        if (data.boolData)
+        {
+            // all
+            if (!blu.App.GetModule<blu.LevelModule>().EventFlags.IsFlagsSet(data.int32Data))
+            {
+                Kill();
+                return false;
+            }
+        }
+        else
+        {
+            // any
+            for (int i = 0; i < 31; i++)
+            {
+                if (!blu.App.GetModule<blu.LevelModule>().EventFlags.IsFlagsSet(data.int32Data & (1 << i)))
                 {
                     Kill();
                     return false;
