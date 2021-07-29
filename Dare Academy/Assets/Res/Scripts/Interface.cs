@@ -6,7 +6,7 @@ using blu;
 
 public abstract class Interface : MonoBehaviour
 {
-    private PlayerEntity m_player;
+    protected PlayerEntity m_player;
     protected bool m_playerInRange = false;
 
     private Sprite[] m_interactImages = new Sprite[2];

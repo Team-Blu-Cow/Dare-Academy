@@ -261,7 +261,6 @@ namespace blu
         {
             while (!IsInitialised)
             {
-                Debug.Log("awaiting initialised");
             }
             return true;
         }

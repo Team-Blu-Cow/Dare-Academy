@@ -56,7 +56,7 @@ public class ScriptableEntityEditor : Editor
         if (actionFoldout)
         {
             ScriptedActionQueue actionQueue = actionQueueProperty.objectReferenceValue as ScriptedActionQueue;
-            if(DisplayActionQueue(ref actionQueue))
+            if (DisplayActionQueue(ref actionQueue))
             {
                 EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
             }
@@ -168,6 +168,10 @@ public class ScriptableEntityEditor : Editor
                     break;
 
                 case ScriptedActionQueue.ActionType.KillIfEventFlagSet:
+                    KillIfEventFlagSet(ref queue.m_actionList[i].int32Data, ref queue.m_actionList[i].boolData);
+                    break;
+
+                case ScriptedActionQueue.ActionType.KillIfEventFlagNotSet:
                     KillIfEventFlagSet(ref queue.m_actionList[i].int32Data, ref queue.m_actionList[i].boolData);
                     break;
 
