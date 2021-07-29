@@ -16,7 +16,7 @@ public class GameEventFlags : BitFlags_32
         B_and_B_dialogue_complete = 0x0000_0100,
         respawn_intro_dialogue = 0x0000_0200,
         health_pickup_1 = 0x0000_0400,
-        Flag_12 = 0x0000_0800,
+        energy_pickup_1 = 0x0000_0800,
         Flag_13 = 0x0000_1000,
         Flag_14 = 0x0000_2000,
         Flag_15 = 0x0000_4000,
