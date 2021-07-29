@@ -102,6 +102,10 @@ public class PlayerEntity : GridEntity
 
         await levelModule.AwaitSaveLoad();
 
+        IOModule io = App.GetModule<IOModule>();
+
+        while (levelModule.ActiveSaveData == null) { }
+
         MaxHealth = levelModule.ActiveSaveData.maxHealth;
         MaxEnergy = levelModule.ActiveSaveData.maxEnergy;
 
