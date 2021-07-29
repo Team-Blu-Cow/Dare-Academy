@@ -17,6 +17,7 @@ public class PlayerPickup : Interface
     [SerializeField] private GameEventFlags.Flags m_flagToFlip;
 
     private PlayerUI m_playerUI;
+    private ShipParts m_shipParts;
 
     public override void OnInteract(InputAction.CallbackContext ctx)
     {
@@ -43,6 +44,8 @@ public class PlayerPickup : Interface
                 case Type.ShipPart:
 
                     m_player.ShipParts++;
+                    App.GetModule<LevelModule>().ActiveSaveData.partsCollected++;
+                    m_shipParts.UpdateUI();
 
                     break;
 
@@ -67,5 +70,6 @@ public class PlayerPickup : Interface
         base.OnValidate();
 
         m_playerUI = FindObjectOfType<PlayerUI>();
+        m_shipParts = FindObjectOfType<ShipParts>();
     }
 }

@@ -94,7 +94,6 @@ public class PlayerEntity : GridEntity
 
         _Instance = this;
 
-
         LevelModule levelModule = App.GetModule<LevelModule>();
 
         levelModule.LoadFromSave();
@@ -128,6 +127,7 @@ public class PlayerEntity : GridEntity
         base.Start();
 
         App.GetModule<InputModule>().PlayerController.Player.Enable();
+        App.GetModule<InputModule>().SystemController.UI.Map.Enable();
 
         blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
 
