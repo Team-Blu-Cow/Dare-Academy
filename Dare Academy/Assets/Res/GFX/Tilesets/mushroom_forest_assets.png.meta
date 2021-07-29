@@ -1,7 +1,47 @@
 fileFormatVersion: 2
 guid: 14f816c579d60e04fb78c4b38889737e
 TextureImporter:
+<<<<<<< Updated upstream
   internalIDToNameTable: []
+=======
+  internalIDToNameTable:
+  - first:
+      213: -1402085729059030809
+    second: mushroom_forest_assets_0
+  - first:
+      213: -1224894691835332261
+    second: mushroom_forest_assets_1
+  - first:
+      213: -8046123886500273154
+    second: mushroom_forest_assets_2
+  - first:
+      213: -6667481827846981296
+    second: mushroom_forest_assets_3
+  - first:
+      213: -7490008015322333755
+    second: mushroom_forest_assets_4
+  - first:
+      213: 6094068720225572887
+    second: mushroom_forest_assets_5
+  - first:
+      213: 8503190451527970190
+    second: mushroom_forest_assets_6
+  - first:
+      213: 3999319148470633620
+    second: mushroom_forest_assets_7
+  - first:
+      213: -4525595201608837305
+    second: mushroom_forest_assets_8
+  - first:
+      213: -2676637753172940444
+    second: mushroom_forest_assets_9
+  - first:
+      213: 2010814168299539365
+    second: mushroom_forest_assets_10
+  - first:
+      213: -1184667217463676221
+    second: mushroom_forest_assets_11
+>>>>>>> Stashed changes
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -32,7 +72,11 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
+<<<<<<< Updated upstream
     filterMode: 1
+=======
+    filterMode: 0
+>>>>>>> Stashed changes
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -89,7 +133,515 @@ TextureImporter:
     forceMaximumCompressionQuality_BC6H_BC7: 0
   spriteSheet:
     serializedVersion: 2
+<<<<<<< Updated upstream
     sprites: []
+=======
+    sprites:
+    - serializedVersion: 2
+      name: mushroom_forest_assets_64
+      rect:
+        serializedVersion: 2
+        x: 400
+        y: 2000
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dd760ab120d7eb0e0800000000000000
+      internalID: -2252225315631765539
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_68
+      rect:
+        serializedVersion: 2
+        x: 1200
+        y: 2000
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 60b52e2530b6a0640800000000000000
+      internalID: 5046963994441702150
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_73
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 2002
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1befe378a9b91ed40800000000000000
+      internalID: 5611937698676670129
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_77
+      rect:
+        serializedVersion: 2
+        x: 3000
+        y: 2000
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 78c8406a06343e2e0800000000000000
+      internalID: -2097758919043281785
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_133
+      rect:
+        serializedVersion: 2
+        x: 1400
+        y: 1200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e08b8a14f3db62a70800000000000000
+      internalID: 8801930601124378638
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_137
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 1200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 9be1aefd227e47dd0800000000000000
+      internalID: -2489110557057474887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_141
+      rect:
+        serializedVersion: 2
+        x: 3000
+        y: 1200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d25c30a8f3f0752e0800000000000000
+      internalID: -2137222732591151827
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_145
+      rect:
+        serializedVersion: 2
+        x: 600
+        y: 1000
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 035c870fd93adbd80800000000000000
+      internalID: -8233244645023759056
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_216
+      rect:
+        serializedVersion: 2
+        x: 1400
+        y: 200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e4fbe3ce7443b5b30800000000000000
+      internalID: 4277069754629275470
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_219
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7b314e5daf2810f50800000000000000
+      internalID: 6845896922421793719
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_223
+      rect:
+        serializedVersion: 2
+        x: 3000
+        y: 200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 33ca39eb342fd4550800000000000000
+      internalID: 6146835439204674611
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_226
+      rect:
+        serializedVersion: 2
+        x: 400
+        y: 0
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 837a798c56b3f2930800000000000000
+      internalID: 4120577492410410808
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_0
+      rect:
+        serializedVersion: 2
+        x: 113
+        y: 1992
+        width: 745
+        height: 819
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7e8bace357aca8ce0800000000000000
+      internalID: -1402085729059030809
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_1
+      rect:
+        serializedVersion: 2
+        x: 1015
+        y: 1980
+        width: 706
+        height: 798
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b59b4ed74cc400fe0800000000000000
+      internalID: -1224894691835332261
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_2
+      rect:
+        serializedVersion: 2
+        x: 2085
+        y: 1989
+        width: 608
+        height: 756
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: ef3ad5694fc665090800000000000000
+      internalID: -8046123886500273154
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_3
+      rect:
+        serializedVersion: 2
+        x: 2791
+        y: 1989
+        width: 608
+        height: 750
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 059fec87a985873a0800000000000000
+      internalID: -6667481827846981296
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_4
+      rect:
+        serializedVersion: 2
+        x: 154
+        y: 994
+        width: 842
+        height: 907
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5cd32e1d4652e0890800000000000000
+      internalID: -7490008015322333755
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_5
+      rect:
+        serializedVersion: 2
+        x: 1255
+        y: 1188
+        width: 630
+        height: 721
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7185dd9963b729450800000000000000
+      internalID: 6094068720225572887
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_6
+      rect:
+        serializedVersion: 2
+        x: 2045
+        y: 1213
+        width: 621
+        height: 698
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: e8d61d0f9a6610670800000000000000
+      internalID: 8503190451527970190
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_7
+      rect:
+        serializedVersion: 2
+        x: 2784
+        y: 1190
+        width: 600
+        height: 751
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4948204839f608730800000000000000
+      internalID: 3999319148470633620
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_8
+      rect:
+        serializedVersion: 2
+        x: 52
+        y: 0
+        width: 838
+        height: 897
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 74794ea442bd131c0800000000000000
+      internalID: -4525595201608837305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_9
+      rect:
+        serializedVersion: 2
+        x: 1004
+        y: 195
+        width: 831
+        height: 864
+      alignment: 9
+      pivot: {x: 0.5, y: 0.2}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4692ab9152caadad0800000000000000
+      internalID: -2676637753172940444
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_10
+      rect:
+        serializedVersion: 2
+        x: 1861
+        y: 197
+        width: 685
+        height: 845
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 5ab01d215d8d7eb10800000000000000
+      internalID: 2010814168299539365
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: mushroom_forest_assets_11
+      rect:
+        serializedVersion: 2
+        x: 2676
+        y: 183
+        width: 681
+        height: 862
+      alignment: 9
+      pivot: {x: 0.5, y: 0.3}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 3c2f60e31773f8fe0800000000000000
+      internalID: -1184667217463676221
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+>>>>>>> Stashed changes
     outline: []
     physicsShape: []
     bones: []
