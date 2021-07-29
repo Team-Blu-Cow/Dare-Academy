@@ -174,7 +174,8 @@ namespace blu
                         m_levelManager.StepController.m_targetRoomIndex = m_lvlTransitionInfo.targetRoomIndex;
                     }
 
-                    Instantiate(m_playerPrefab, pos, Quaternion.identity);
+                    GameObject player = Instantiate(m_playerPrefab, pos, Quaternion.identity);
+                    player.GetComponent<PlayerEntity>().LoadingFromOtherScene = true;
                 }
         }
 

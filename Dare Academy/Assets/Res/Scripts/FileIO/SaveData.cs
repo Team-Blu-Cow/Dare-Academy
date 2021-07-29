@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using blu.FileIO;
+using UnityEngine;
 
 namespace blu
 {
@@ -15,7 +16,11 @@ namespace blu
         public int saveSlot = 0;
         public LevelID levelId = LevelID._default;
         public System.Int32 gameEventFlags = 0;
+
+        public bool useRespawnData = false;
         public int respawnRoomID = -1;
+        public Vector2Int respawnLocation = Vector2Int.zero;
+
         public double playtime = 0;
         public int maxHealth = 3;
         public int maxEnergy = 3;
