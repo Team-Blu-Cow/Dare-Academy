@@ -286,7 +286,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -330,7 +330,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -535,8 +535,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Change Ability
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f9b22dcf16d69b349aa2d46ed696c6c8, type: 2}
-  m_sharedMaterial: {fileID: 5436375289317368290, guid: f9b22dcf16d69b349aa2d46ed696c6c8, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1287,10 +1287,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 190498006}
-        m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 5
+      - m_Target: {fileID: 615750958}
+        m_TargetAssemblyTypeName: blu.Jukebox, Assembly-CSharp
+        m_MethodName: SceneSwitch
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1328,7 +1328,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -1360,7 +1360,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -1598,7 +1598,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -1642,7 +1642,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -1654,6 +1654,67 @@ MonoBehaviour:
             m_StringArgument: event:/SFX/UI/Pointer Enter
             m_BoolArgument: 0
           m_CallState: 2
+--- !u!1001 &171223535
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 677772103269060806, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+      propertyPath: m_Name
+      value: Jukebox
+      objectReference: {fileID: 0}
+    - target: {fileID: 677772103269060808, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+      propertyPath: StartSong
+      value: event:/Music/Main Menu/Main Theme
+      objectReference: {fileID: 0}
+    - target: {fileID: 677772103269060811, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 677772103269060811, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 677772103269060811, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 677772103269060811, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 677772103269060811, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 677772103269060811, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 677772103269060811, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 677772103269060811, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 677772103269060811, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 677772103269060811, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 677772103269060811, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
 --- !u!1 &184490413
 GameObject:
   m_ObjectHideFlags: 0
@@ -1666,6 +1727,7 @@ GameObject:
   - component: {fileID: 184490417}
   - component: {fileID: 184490416}
   - component: {fileID: 184490415}
+  - component: {fileID: 184490418}
   m_Layer: 0
   m_Name: Delete2 (Button)
   m_TagString: Untagged
@@ -1787,49 +1849,79 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
---- !u!1 &190498005
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 190498007}
-  - component: {fileID: 190498006}
-  m_Layer: 0
-  m_Name: AudioPlayer
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &190498006
+--- !u!114 &184490418
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 190498005}
+  m_GameObject: {fileID: 184490413}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7d97247cfbc8c8243a2abb3fbe8aca0a, type: 3}
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!4 &190498007
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 190498005}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1480.8705, y: 747.0215, z: -115.22186}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1670458573}
+          m_TargetAssemblyTypeName: MainMenuSelector, Assembly-CSharp
+          m_MethodName: HoverEnter
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 184490413}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 615750957}
+          m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
+          m_MethodName: Play
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: event:/SFX/UI/Pointer Enter
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1670458573}
+          m_TargetAssemblyTypeName: MainMenuSelector, Assembly-CSharp
+          m_MethodName: HoverExit
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 9
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 615750957}
+          m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
+          m_MethodName: Play
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: event:/SFX/UI/Pointer Enter
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &216262631
 GameObject:
   m_ObjectHideFlags: 0
@@ -2141,7 +2233,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -2173,7 +2265,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -2989,7 +3081,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -3021,7 +3113,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -4165,7 +4257,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -4197,7 +4289,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -4594,7 +4686,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -4626,7 +4718,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -4772,6 +4864,28 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 604537513}
   m_CullTransparentMesh: 1
+--- !u!114 &615750957 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1271887671677475566, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+  m_PrefabInstance: {fileID: 171223535}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d97247cfbc8c8243a2abb3fbe8aca0a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &615750958 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 677772103269060808, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+  m_PrefabInstance: {fileID: 171223535}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 46ef523c32fe4a242add856d0908d440, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &622469267
 GameObject:
   m_ObjectHideFlags: 0
@@ -4965,8 +5079,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Scroll wheel
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f9b22dcf16d69b349aa2d46ed696c6c8, type: 2}
-  m_sharedMaterial: {fileID: 5436375289317368290, guid: f9b22dcf16d69b349aa2d46ed696c6c8, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -5447,7 +5561,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -5491,7 +5605,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -5690,7 +5804,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -5734,7 +5848,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -6228,7 +6342,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -6272,7 +6386,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -6657,8 +6771,8 @@ MonoBehaviour:
     image: {fileID: 1459370901}
     textMeshPro: {fileID: 1406268548}
     gameObject: {fileID: 1459370898}
-    text: Controlls
-    name: Controlls
+    text: Controls
+    name: Controls
     open: 1
     closeAll: 0
     stack: 0
@@ -7099,8 +7213,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: X/Square
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f9b22dcf16d69b349aa2d46ed696c6c8, type: 2}
-  m_sharedMaterial: {fileID: 5436375289317368290, guid: f9b22dcf16d69b349aa2d46ed696c6c8, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7222,6 +7336,7 @@ GameObject:
   - component: {fileID: 940295618}
   - component: {fileID: 940295617}
   - component: {fileID: 940295616}
+  - component: {fileID: 940295619}
   m_Layer: 0
   m_Name: Delete4 (Button)
   m_TagString: Untagged
@@ -7343,6 +7458,79 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &940295619
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 940295614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1670458573}
+          m_TargetAssemblyTypeName: MainMenuSelector, Assembly-CSharp
+          m_MethodName: HoverEnter
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 940295614}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 615750957}
+          m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
+          m_MethodName: Play
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: event:/SFX/UI/Pointer Enter
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1670458573}
+          m_TargetAssemblyTypeName: MainMenuSelector, Assembly-CSharp
+          m_MethodName: HoverExit
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 9
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 615750957}
+          m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
+          m_MethodName: Play
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: event:/SFX/UI/Pointer Enter
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &967221433
 GameObject:
   m_ObjectHideFlags: 0
@@ -7683,10 +7871,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 190498006}
-        m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 5
+      - m_Target: {fileID: 615750958}
+        m_TargetAssemblyTypeName: blu.Jukebox, Assembly-CSharp
+        m_MethodName: SceneSwitch
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -7724,7 +7912,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -7756,7 +7944,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -7827,8 +8015,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: WASD/Arrow Keys
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f9b22dcf16d69b349aa2d46ed696c6c8, type: 2}
-  m_sharedMaterial: {fileID: 5436375289317368290, guid: f9b22dcf16d69b349aa2d46ed696c6c8, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -7978,7 +8166,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -8010,7 +8198,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -8346,10 +8534,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 190498006}
-        m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 5
+      - m_Target: {fileID: 615750958}
+        m_TargetAssemblyTypeName: blu.Jukebox, Assembly-CSharp
+        m_MethodName: SceneSwitch
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -8387,7 +8575,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -8419,7 +8607,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -9883,6 +10071,7 @@ GameObject:
   - component: {fileID: 1160112862}
   - component: {fileID: 1160112861}
   - component: {fileID: 1160112860}
+  - component: {fileID: 1160112863}
   m_Layer: 0
   m_Name: Delete3 (Button)
   m_TagString: Untagged
@@ -10004,6 +10193,79 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1160112863
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1160112858}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1670458573}
+          m_TargetAssemblyTypeName: MainMenuSelector, Assembly-CSharp
+          m_MethodName: HoverEnter
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1160112858}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 615750957}
+          m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
+          m_MethodName: Play
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: event:/SFX/UI/Pointer Enter
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1670458573}
+          m_TargetAssemblyTypeName: MainMenuSelector, Assembly-CSharp
+          m_MethodName: HoverExit
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 9
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 615750957}
+          m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
+          m_MethodName: Play
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: event:/SFX/UI/Pointer Enter
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1163525921
 GameObject:
   m_ObjectHideFlags: 0
@@ -10080,7 +10342,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -10112,7 +10374,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -10239,8 +10501,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Ability Mode
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f9b22dcf16d69b349aa2d46ed696c6c8, type: 2}
-  m_sharedMaterial: {fileID: 5436375289317368290, guid: f9b22dcf16d69b349aa2d46ed696c6c8, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -10508,8 +10770,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: D-Pad/Left Joystick
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: f9b22dcf16d69b349aa2d46ed696c6c8, type: 2}
-  m_sharedMaterial: {fileID: 5436375289317368290, guid: f9b22dcf16d69b349aa2d46ed696c6c8, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -10851,8 +11113,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Move
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
+  m_sharedMaterial: {fileID: 2180264, guid: 2e498d1c8094910479dc3e1b768306a4, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -11308,10 +11570,10 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 190498006}
-        m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
-        m_MethodName: Play
-        m_Mode: 5
+      - m_Target: {fileID: 615750958}
+        m_TargetAssemblyTypeName: blu.Jukebox, Assembly-CSharp
+        m_MethodName: SceneSwitch
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -11349,7 +11611,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -11381,7 +11643,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -11843,7 +12105,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Controlls
+  m_text: Controls
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: f9b22dcf16d69b349aa2d46ed696c6c8, type: 2}
   m_sharedMaterial: {fileID: 5436375289317368290, guid: f9b22dcf16d69b349aa2d46ed696c6c8, type: 2}
@@ -12701,7 +12963,7 @@ GameObject:
   - component: {fileID: 1459370901}
   - component: {fileID: 1459370903}
   m_Layer: 0
-  m_Name: Controlls (Button)
+  m_Name: Controls (Button)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -12838,7 +13100,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -12882,7 +13144,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -13169,7 +13431,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -13201,7 +13463,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -13349,7 +13611,7 @@ MonoBehaviour:
     desc: 
     layer: 0
     transition: 0
-    showInEditor: 0
+    showInEditor: 1
   - gameObject: {fileID: 509968587}
     canvas: {fileID: 509968592}
     canvasScaler: {fileID: 509968591}
@@ -13755,6 +14017,7 @@ GameObject:
   - component: {fileID: 1648660471}
   - component: {fileID: 1648660470}
   - component: {fileID: 1648660469}
+  - component: {fileID: 1648660472}
   m_Layer: 0
   m_Name: Delete1 (Button)
   m_TagString: Untagged
@@ -13876,6 +14139,79 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+--- !u!114 &1648660472
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1648660467}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d0b148fe25e99eb48b9724523833bab1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Delegates:
+  - eventID: 0
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1670458573}
+          m_TargetAssemblyTypeName: MainMenuSelector, Assembly-CSharp
+          m_MethodName: HoverEnter
+          m_Mode: 2
+          m_Arguments:
+            m_ObjectArgument: {fileID: 1648660467}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+        - m_Target: {fileID: 615750957}
+          m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
+          m_MethodName: Play
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: event:/SFX/UI/Pointer Enter
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 1
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 1670458573}
+          m_TargetAssemblyTypeName: MainMenuSelector, Assembly-CSharp
+          m_MethodName: HoverExit
+          m_Mode: 1
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: 
+            m_BoolArgument: 0
+          m_CallState: 2
+  - eventID: 9
+    callback:
+      m_PersistentCalls:
+        m_Calls:
+        - m_Target: {fileID: 615750957}
+          m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
+          m_MethodName: Play
+          m_Mode: 5
+          m_Arguments:
+            m_ObjectArgument: {fileID: 0}
+            m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+            m_IntArgument: 0
+            m_FloatArgument: 0
+            m_StringArgument: event:/SFX/UI/Pointer Enter
+            m_BoolArgument: 0
+          m_CallState: 2
 --- !u!1 &1652167549
 GameObject:
   m_ObjectHideFlags: 0
@@ -14189,7 +14525,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -14221,7 +14557,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -14958,7 +15294,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -14990,7 +15326,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -15265,7 +15601,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -15297,7 +15633,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -15373,7 +15709,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -15417,7 +15753,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -16416,7 +16752,7 @@ MonoBehaviour:
             m_StringArgument: 
             m_BoolArgument: 0
           m_CallState: 2
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
@@ -16448,7 +16784,7 @@ MonoBehaviour:
     callback:
       m_PersistentCalls:
         m_Calls:
-        - m_Target: {fileID: 190498006}
+        - m_Target: {fileID: 615750957}
           m_TargetAssemblyTypeName: AudioOneShotPlayer, Assembly-CSharp
           m_MethodName: Play
           m_Mode: 5
