@@ -44,6 +44,8 @@ public class SaveSlots : MonoBehaviour
 
     public async void OnOpen()
     {
+        App.GetModule<LevelModule>().FlushSaveData();
+
         await io.AwaitInitialised();
 
         if (io.IsSaveLoaded)

@@ -58,7 +58,7 @@ namespace blu
             }
         }
 
-        public void ToMainMenu()
+        public void SceneSwitch()
         {
             blu.App.GetModule<AudioModule>().StopAllMusicEvents(true);
             blu.App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/Systems/sfx_return_main_menu");
