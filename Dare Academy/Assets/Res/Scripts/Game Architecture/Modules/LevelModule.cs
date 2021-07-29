@@ -185,9 +185,28 @@ namespace blu
 
         // FILE IO
 
-        public async void LoadFromSave()
+        public void LoadFromSave()
         {
-            await AwaitSaveLoad();
+            IOModule io = App.GetModule<IOModule>();
+
+            if (!io.IsSaveLoading && !io.IsSaveLoaded)
+            {
+                bool found = false;
+                for (int i = 0; i < io.SaveSlots.Length; i++)
+                {
+                    if (io.SaveSlots[i] != null)
+                    {
+                        found = true;
+                        io.LoadSaveAsync(io.SaveSlots[i]);
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    io.CreateNewSave(0, true);
+                }
+            }
 
             while (ActiveSaveData == null)
             {
@@ -220,38 +239,39 @@ namespace blu
             return Task.Run(() => AwaitSaveLoadImpl());
         }
 
-        internal async void AwaitSaveLoadImpl()
+        internal void AwaitSaveLoadImpl()
         {
-            IOModule io = App.GetModule<IOModule>();
-            await io.AwaitInitialised();
+            while (!IsSaveLoaded)
+            { }
 
-            if (!io.IsSaveLoading && !io.IsSaveLoaded)
-            {
-                bool found = false;
-                for (int i = 0; i < io.SaveSlots.Length; i++)
-                {
-                    if (io.SaveSlots[i] != null)
-                    {
-                        found = true;
-                        await io.LoadSaveAsync(io.SaveSlots[i]);
-                        break;
-                    }
-                }
-
-                if (!found)
-                {
-                    await io.CreateNewSave(0, true);
-                }
-            }
-
-            await io.AwaitSaveLoaded();
-
-            blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
-            while (levelModule.IsSaveLoaded == false)
-            {
-                Debug.Log("awaiting saveLoad");
-            }
             return;
+            // if (!io.IsSaveLoading && !io.IsSaveLoaded)
+            // {
+            //     bool found = false;
+            //     for (int i = 0; i < io.SaveSlots.Length; i++)
+            //     {
+            //         if (io.SaveSlots[i] != null)
+            //         {
+            //             found = true;
+            //             await io.LoadSaveAsync(io.SaveSlots[i]);
+            //             break;
+            //         }
+            //     }
+            //
+            //     if (!found)
+            //     {
+            //         await io.CreateNewSave(0, true);
+            //     }
+            // }
+            //
+            // await io.AwaitSaveLoaded();
+            //
+            // blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
+            // while (levelModule.IsSaveLoaded == false)
+            // {
+            //     Debug.Log("awaiting saveLoad");
+            // }
+            // return;
         }
 
         public Task<bool> AwaitInitialised()

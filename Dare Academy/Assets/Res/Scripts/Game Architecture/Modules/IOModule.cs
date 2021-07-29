@@ -55,7 +55,7 @@ namespace blu
 
         public Task<bool> SaveAsync() => Task.Run(() => SaveAsyncImpl());
 
-        public async override void Initialize()
+        public override void Initialize()
         {
             Initialised = false;
             IsSaveLoading = false;
@@ -64,7 +64,7 @@ namespace blu
             ApplicationPath = Application.persistentDataPath;
 
             SaveSlots = new SaveSlotData[MaxSaveFiles];
-            await Task.Run(() => { return LoadSaveSlots(); });
+            LoadSaveSlots();
 
             Initialised = true;
         }
@@ -182,7 +182,7 @@ namespace blu
                 return false;
 
             IsSaveLoading = true;
-            while (Initialised == false)
+            while (!Initialised)
             {
             }
 
