@@ -9,7 +9,7 @@ public class SaveSlots : MonoBehaviour
     private GameObject[] m_slots = new GameObject[IOModule.MaxSaveFiles];
     private IOModule io;
 
-    private async void Start()
+    private void Start()
     {
         io = App.GetModule<IOModule>();
 
@@ -25,7 +25,8 @@ public class SaveSlots : MonoBehaviour
             }
         }
 
-        await io.AwaitInitialised();
+        io.LoadSaveSlots();
+
         for (int i = 0; i < IOModule.MaxSaveFiles; i++)
         {
             string name;
@@ -46,7 +47,6 @@ public class SaveSlots : MonoBehaviour
     {
         App.GetModule<LevelModule>().FlushSaveData();
         App.GetModule<LevelModule>().lvlTransitionInfo = null;
-        await io.AwaitInitialised();
 
         if (io.IsSaveLoaded)
         {

@@ -132,6 +132,8 @@ public class PlayerEntity : GridEntity
         {
             Vector3 pos = levelModule.MetaGrid.Grid(levelModule.ActiveSaveData.respawnRoomID)[levelModule.ActiveSaveData.respawnLocation].position.world;
             gameObject.transform.position = pos;
+
+            App.CameraController.Init(pos);
         }
 
         base.Start();
@@ -771,5 +773,6 @@ public class PlayerEntity : GridEntity
         levelModule.ActiveSaveData.respawnRoomID = RoomIndex;
         levelModule.ActiveSaveData.respawnLocation = Position.grid;
         levelModule.ActiveSaveData.levelId = LevelModule.CurrentLevelId();
+        levelModule.SaveGame();
     }
 }
