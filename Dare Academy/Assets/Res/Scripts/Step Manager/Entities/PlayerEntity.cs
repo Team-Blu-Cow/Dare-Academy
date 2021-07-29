@@ -91,8 +91,6 @@ public class PlayerEntity : GridEntity
 
         App.GetModule<LevelModule>().LoadFromSave();
 
-        Abilities.Refresh();
-
         Abilities.Initialise();
         _Instance = this;
     }
