@@ -384,7 +384,11 @@ public class PlayerEntity : GridEntity
         else
         {
             App.GetModule<AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 0);
-            App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
+
+            if (!App.GetModule<LevelModule>().LevelManager.paused)
+            {
+                App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
+            }
         }
 
         ToggleAnimationState();
@@ -405,7 +409,10 @@ public class PlayerEntity : GridEntity
         m_abilityMode = false;
 
         App.GetModule<AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 0);
-        App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
+        if (!App.GetModule<LevelModule>().LevelManager.paused)
+        {
+            App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
+        }
         //ToggleAnimationState();
         animationController.DisableVignette();
 
