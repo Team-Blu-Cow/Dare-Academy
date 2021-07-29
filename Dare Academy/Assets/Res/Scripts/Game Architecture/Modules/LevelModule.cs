@@ -23,12 +23,8 @@ namespace blu
         private PathfindingMultiGrid m_grid = null;
         private GameEventFlags m_gameEventFlags = new GameEventFlags();
 
-        private bool m_initialised = false;
-
-        public bool IsInitialised
-        {
-            get => m_initialised;
-        }
+        public bool Initialised
+        { get; private set; }
 
         public SaveData ActiveSaveData
         {
@@ -201,7 +197,13 @@ namespace blu
 
             App.GetModule<QuestModule>().LoadFromFile();
 
-            m_initialised = true;
+            Initialised = true;
+        }
+
+        public void FlushSaveData()
+        {
+            Initialised = false;
+            EventFlags._FlagData = 0;
         }
 
         public async void SaveGame()
@@ -259,7 +261,7 @@ namespace blu
 
         internal bool AwaitInitialisedImpl()
         {
-            while (!IsInitialised)
+            while (!Initialised)
             {
             }
             return true;
