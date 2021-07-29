@@ -197,7 +197,7 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         int index = direction.RotationToIndex(90);
 
         //Instantiate(m_LuvMuzzleFlashPrefab, m_muzzlePositions[index].position, Quaternion.identity);
-        GameObject muzzleFlash = Instantiate(m_LuvMuzzleFlashPrefab, m_muzzlePositions[index]);
+        Instantiate(m_LuvMuzzleFlashPrefab, m_muzzlePositions[index]);
     }
 
     protected override void Update()
