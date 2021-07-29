@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using JUtil;
 using flags = GridEntityFlags.Flags;
 
 public class BulletEntity : GridEntity
@@ -10,12 +11,49 @@ public class BulletEntity : GridEntity
 
     private bool m_passthrough = false;
 
+    [SerializeField] private Transform m_particleTail;
+    [SerializeField] private GameObject m_ExplosionPrefab;
+
     protected override void Start()
     {
         base.Start();
         m_flags.SetFlags(flags.isAttack, true);
         m_health = 1;
-        m_animationController = GetComponent<GridEntityAnimationController>();
+        if(m_animationController == null)
+            m_animationController = GetComponent<GridEntityAnimationController>();
+
+
+        m_animationController.animator.SetFloat("DirX", m_bulletDirection.x);
+        m_animationController.animator.SetFloat("DirY", m_bulletDirection.y);
+
+        if (m_particleTail != null)
+            SetTailDirection();
+
+    }
+
+    private void SetTailDirection()
+    {
+        int index = m_bulletDirection.RotationToIndex(90);
+
+        switch (index)
+        {
+            case 0: // north
+                transform.Rotate(new Vector3(0, 0, 180));
+                break;
+
+            case 1: // east
+                transform.Rotate(new Vector3(0, 0, 90));
+                break;
+
+            case 2: // south
+                transform.Rotate(new Vector3(0, 0, 0));
+                break;
+
+            case 3: // west
+                transform.Rotate(new Vector3(0, 0, 270));
+                break;
+        }
+
     }
 
     public override bool CheckForConflict()
@@ -119,5 +157,16 @@ public class BulletEntity : GridEntity
 
         // Vector2 rayVec = new Vector2(m_bulletDirection.x, m_bulletDirection.y);
         Gizmos.DrawWireSphere(transform.position, 1);
+    }
+
+    public override void OnDeath()
+    {
+        if (m_ExplosionPrefab != null)
+        {
+            Vector3 pos = Vector3.Lerp(transform.position, transform.position + new Vector3(m_bulletDirection.x,(m_bulletDirection.y*1.2f)-0.75f,0),0.65f);
+
+            Instantiate(m_ExplosionPrefab, pos, Quaternion.identity);
+        }
+        base.OnDeath();
     }
 }
