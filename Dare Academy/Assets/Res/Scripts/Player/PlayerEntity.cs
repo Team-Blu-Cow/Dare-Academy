@@ -277,6 +277,7 @@ public class PlayerEntity : GridEntity
                 m_abilityDirection = m_playerInput.DirectionFour(true);
                 SetMovementDirection(m_abilityDirection, m_dashDistance);
                 m_abilityDirection = Vector2Int.zero;
+                animationController.CreateDashAfterImages();
                 ExecuteStep();
             }
             else

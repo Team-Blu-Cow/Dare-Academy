@@ -29252,6 +29252,7 @@ GameObject:
   - component: {fileID: 8082888017905408955}
   - component: {fileID: 584699614941837169}
   - component: {fileID: 4397814353638757389}
+  - component: {fileID: 2084987207}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -29300,7 +29301,7 @@ MonoBehaviour:
   m_dashEnergyCost: 3
   m_shootEnergyCost: 3
   m_blockEnergyCost: 3
-  m_bulletPrefab: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
+  m_bulletPrefab: {fileID: 456181785455378373, guid: bdf1968a6eec2a14693ddc663196025a, type: 3}
   m_abilityDirection: {x: 0, y: 0}
   m_overlayRadius: 3
   m_overlayToggle: 0
@@ -29330,6 +29331,8 @@ MonoBehaviour:
   m_chromaticIntensityVal: 1
   m_lensIntensityVal: 0.2
   m_lerpTime: 0.1
+  m_distanceBetweenImages: 0.1
+  m_imageActiveTime: 0.2
   m_muzzlePositions:
   - {fileID: 2656111874729308782}
   - {fileID: 9142143140671586103}
@@ -29413,6 +29416,18 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &2084987207
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8411778651980417408}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d44e80b5c6899e24b9308e610f80db69, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8411778651999712004
 GameObject:
   m_ObjectHideFlags: 0

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using JUtil;
+using blu;
 
 public class PlayerEntityAnimationController : GridEntityAnimationController
 {
@@ -16,8 +17,9 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
     [SerializeField, HideInInspector] private ParticleSystem m_luvGunParticles;
 
-    [SerializeField, HideInInspector] private Color[] m_abilityColours;
-
+    [Header("Vignette Settings")]
+    [SerializeField] private Color[] m_abilityColours;
+    
     [SerializeField] private float m_vignetteIntensityVal = 0.4f;
     private float m_currentVignetteIntensityVal = 0;
     private Color m_vignetteColour;
@@ -30,8 +32,13 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
     [SerializeField] private float m_lerpTime = 0.1f;
 
-    private bool m_abilityMode;
-    private int m_abilityState;
+    [Header("Dash Settings")]
+    [SerializeField] private float m_distanceBetweenImages;
+    [SerializeField] private float m_imageActiveTime;
+    private Vector3 m_lastImagePos;
+
+    bool m_abilityMode;
+    int m_abilityState;
 
     [SerializeField, HideInInspector] private Transform[] m_muzzlePositions;
 
@@ -167,6 +174,36 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         {
             m_luvGunParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
             blu.App.GetModule<blu.AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 0);
+        }
+    }
+
+    public void CreateDashAfterImages()
+    {
+        StartCoroutine(DrawDash());
+    }
+
+    public void CreateAfterImage()
+    {
+        GameObject afterImage =  PlayerAfterEffectPool.Instance.GetFromPool();
+        afterImage.transform.position = transform.position + (Vector3.up * 0.01f);
+        afterImage.GetComponent<PlayerEntityAfterEffect>().m_activeTime = m_imageActiveTime;
+        m_lastImagePos = transform.position;
+    }
+
+    IEnumerator DrawDash()
+    {
+        CreateAfterImage();
+
+        float dashTimeLeft = App.GetModule<LevelModule>().StepController.stepTime;
+
+        while (dashTimeLeft > 0)
+        {
+            dashTimeLeft -= Time.deltaTime;
+
+            if (Vector3.Distance(transform.position, m_lastImagePos) > m_distanceBetweenImages)
+                CreateAfterImage();
+
+            yield return null;
         }
     }
 
