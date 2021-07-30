@@ -30,8 +30,8 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
     [SerializeField] private float m_lerpTime = 0.1f;
 
-    bool m_abilityMode;
-    int m_abilityState;
+    private bool m_abilityMode;
+    private int m_abilityState;
 
     [SerializeField, HideInInspector] private Transform[] m_muzzlePositions;
 
@@ -60,10 +60,10 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         m_ppVolume.profile.TryGet<ChromaticAberration>(out m_ppChromaticAberration);
         m_ppVolume.profile.TryGet<LensDistortion>(out m_ppLensDistortion);
 
-        if(m_playerEntity == null)
+        if (m_playerEntity == null)
             m_playerEntity = GetComponent<PlayerEntity>();
 
-        if(m_LuvMuzzleFlashPrefab == null)
+        if (m_LuvMuzzleFlashPrefab == null)
             m_LuvMuzzleFlashPrefab = Resources.Load<GameObject>("prefabs/GFX/LuvGunMuzzleFlash");
 
         StopLuvParticles();
@@ -114,7 +114,7 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
                 }
                 else
                 {
-                    if(m_abilityMode)
+                    if (m_abilityMode)
                         StartLuvParticles();
                 }
                 break;
@@ -132,7 +132,7 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
                 break;
         }
 
-        if(m_playerEntity.Energy < m_playerEntity.m_shootEnergyCost || m_playerEntity.m_abilityDirection == Vector2Int.zero)
+        if (m_playerEntity.Energy < m_playerEntity.m_shootEnergyCost || m_playerEntity.m_abilityDirection == Vector2Int.zero)
         {
             StopLuvParticles();
             // #jay #TODO put sputter effect here
@@ -151,7 +151,11 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
             return;
 
         if (!m_luvGunParticles.isPlaying)
+        {
             m_luvGunParticles.Play();
+
+            blu.App.GetModule<blu.AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 1);
+        }
     }
 
     public void StopLuvParticles()
@@ -162,6 +166,7 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         if (m_luvGunParticles.isPlaying)
         {
             m_luvGunParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            blu.App.GetModule<blu.AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 0);
         }
     }
 
@@ -211,5 +216,4 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
         base.Update();
     }
-
 }

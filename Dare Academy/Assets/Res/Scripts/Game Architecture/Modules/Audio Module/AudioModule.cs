@@ -160,6 +160,7 @@ namespace blu
             NewAudioEvent("event:/SFX/Systems/sfx_quest_accepted");
             NewAudioEvent("event:/SFX/Systems/sfx_return_main_menu");
             NewAudioEvent("event:/SFX/Player/sfx_footstep", 15);
+            NewAudioEvent("event:/SFX/Player/sfx_shoot", 15);
             // put any new mono event in here
         }
     }

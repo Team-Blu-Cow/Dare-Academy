@@ -64,6 +64,16 @@ namespace blu
             blu.App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/Systems/sfx_return_main_menu");
         }
 
+        public void CombatStarted()
+        {
+            SetParameter(MusicParameter.InCombat, 1);
+        }
+
+        public void CombatEnded()
+        {
+            SetParameter(MusicParameter.InCombat, 0);
+        }
+
         public void SetParameter(MusicParameter in_parameter, float in_value)
         {
             if (blu.App.GetModule<AudioModule>().GetCurrentSong() == null)

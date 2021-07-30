@@ -50,6 +50,8 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private TelegraphDrawer m_telegraphDrawer;
 
     [SerializeField] private PathfindingMultiGrid m_grid = null;
+
+    private GameObject _treeSounds;
     public bool paused { get; private set; }
 
     public StepController StepController
@@ -71,6 +73,7 @@ public class LevelManager : MonoBehaviour
     private void OnValidate()
     {
         m_telegraphDrawer.OnValidate();
+        _treeSounds = GameObject.Find("Tree sounds");
     }
 
     private void OnEnable()
@@ -138,6 +141,9 @@ public class LevelManager : MonoBehaviour
             if (App.GetModule<AudioModule>().GetCurrentSong() != null)
                 App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
 
+            if (_treeSounds)
+                _treeSounds.SetActive(true);
+
             paused = false;
         }
         else
@@ -149,6 +155,9 @@ public class LevelManager : MonoBehaviour
 
             if (App.GetModule<AudioModule>().GetCurrentSong() != null)
                 App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 1);
+
+            if (_treeSounds)
+                _treeSounds.SetActive(false);
 
             App.GetModule<InputModule>().PlayerController.Player.Disable();
             App.GetModule<InputModule>().SystemController.UI.Map.Disable();
@@ -182,6 +191,9 @@ public class LevelManager : MonoBehaviour
 
                 EventSystem.current.SetSelectedGameObject(null);
             }
+
+            if (_treeSounds)
+                _treeSounds.SetActive(true);
 
             App.CanvasManager.CloseCanvas();
             EventSystem.current.SetSelectedGameObject(App.CanvasManager.GetCanvasContainer("Options Menu").gameObject.transform.GetChild(1).GetChild(0).GetChild(2).gameObject);
