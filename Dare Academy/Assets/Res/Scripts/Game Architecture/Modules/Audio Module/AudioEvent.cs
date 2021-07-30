@@ -57,10 +57,10 @@ public class AudioEvent
                     _instances.Peek().start();
                     return;
                 }
-                _instances.Peek().stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
-                _instances.Peek().start();
-                var cycle = _instances.Dequeue();
-                _instances.Enqueue(cycle);
+                //_instances.Peek().stop(FMOD.Studio.STOP_MODE.IMMEDIATE);
+                //_instances.Peek().start();
+                //var cycle = _instances.Dequeue();
+                //_instances.Enqueue(cycle);
             }
         }
     }
