@@ -328,6 +328,9 @@ public class PlayerEntity : GridEntity
 
         levelModule.ActiveSaveData.maxHealth = MaxHealth;
         levelModule.ActiveSaveData.maxEnergy = MaxEnergy;
+
+        levelModule.ActiveSaveData.currentHealth = Health;
+        levelModule.ActiveSaveData.currentEnergy = Energy;
     }
 
     protected void SetAbilityAnimationFlag()
@@ -646,6 +649,8 @@ public class PlayerEntity : GridEntity
     {
         GameObject temp = Resources.Load<GameObject>("prefabs/UI prefabs/DeathScreenCanvas");
         Instantiate(temp).transform.parent = Camera.main.transform;
+        Health = MaxHealth;
+        Energy = MaxEnergy;
     }
 
     protected override void OnDrawGizmos()
