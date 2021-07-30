@@ -20,6 +20,8 @@ namespace blu
 
     public class LevelModule : Module
     {
+        private IOModule io;
+
         private PathfindingMultiGrid m_grid = null;
         private GameEventFlags m_gameEventFlags = new GameEventFlags();
 
@@ -28,8 +30,8 @@ namespace blu
 
         public SaveData ActiveSaveData
         {
-            get { return blu.App.GetModule<IOModule>().ActiveSaveData; }
-            set { blu.App.GetModule<IOModule>().ActiveSaveData = value; }
+            get { return io.ActiveSaveData; }
+            set { io.ActiveSaveData = value; }
         }
 
         public bool IsSaveLoaded
@@ -86,6 +88,8 @@ namespace blu
 
         public override void Initialize()
         {
+            io = App.GetModule<IOModule>();
+
             SceneManager.sceneLoaded += LevelChanged;
 
             if (m_playerPrefab == null)
@@ -174,7 +178,8 @@ namespace blu
                         m_levelManager.StepController.m_targetRoomIndex = m_lvlTransitionInfo.targetRoomIndex;
                     }
 
-                    Instantiate(m_playerPrefab, pos, Quaternion.identity);
+                    GameObject player = Instantiate(m_playerPrefab, pos, Quaternion.identity);
+                    player.GetComponent<PlayerEntity>().LoadingFromOtherScene = true;
                 }
         }
 
@@ -185,9 +190,26 @@ namespace blu
 
         // FILE IO
 
-        public async void LoadFromSave()
+        public void LoadFromSave()
         {
-            await AwaitSaveLoad();
+            if (!io.IsSaveLoading && !io.IsSaveLoaded)
+            {
+                bool found = false;
+                for (int i = 0; i < io.SaveSlots.Length; i++)
+                {
+                    if (io.SaveSlots[i] != null)
+                    {
+                        found = true;
+                        io.LoadSaveAsync(io.SaveSlots[i]);
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    io.CreateNewSave(0, true);
+                }
+            }
 
             while (ActiveSaveData == null)
             {
@@ -210,9 +232,9 @@ namespace blu
         {
             await AwaitSaveLoad();
             App.GetModule<QuestModule>().WriteToFile();
-            App.GetModule<IOModule>().ActiveSaveData.gameEventFlags = EventFlags._FlagData;
+            io.ActiveSaveData.gameEventFlags = EventFlags._FlagData;
             // #TODO #matthew - move the await out of here
-            await App.GetModule<IOModule>().SaveAsync();
+            await io.SaveAsync();
         }
 
         public Task AwaitSaveLoad()
@@ -220,38 +242,39 @@ namespace blu
             return Task.Run(() => AwaitSaveLoadImpl());
         }
 
-        internal async void AwaitSaveLoadImpl()
+        internal void AwaitSaveLoadImpl()
         {
-            IOModule io = App.GetModule<IOModule>();
-            await io.AwaitInitialised();
+            while (!IsSaveLoaded)
+            { }
 
-            if (!io.IsSaveLoading && !io.IsSaveLoaded)
-            {
-                bool found = false;
-                for (int i = 0; i < io.SaveSlots.Length; i++)
-                {
-                    if (io.SaveSlots[i] != null)
-                    {
-                        found = true;
-                        await io.LoadSaveAsync(io.SaveSlots[i]);
-                        break;
-                    }
-                }
-
-                if (!found)
-                {
-                    await io.CreateNewSave(0, true);
-                }
-            }
-
-            await io.AwaitSaveLoaded();
-
-            blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
-            while (levelModule.IsSaveLoaded == false)
-            {
-                Debug.Log("awaiting saveLoad");
-            }
             return;
+            // if (!io.IsSaveLoading && !io.IsSaveLoaded)
+            // {
+            //     bool found = false;
+            //     for (int i = 0; i < io.SaveSlots.Length; i++)
+            //     {
+            //         if (io.SaveSlots[i] != null)
+            //         {
+            //             found = true;
+            //             await io.LoadSaveAsync(io.SaveSlots[i]);
+            //             break;
+            //         }
+            //     }
+            //
+            //     if (!found)
+            //     {
+            //         await io.CreateNewSave(0, true);
+            //     }
+            // }
+            //
+            // await io.AwaitSaveLoaded();
+            //
+            // blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
+            // while (levelModule.IsSaveLoaded == false)
+            // {
+            //     Debug.Log("awaiting saveLoad");
+            // }
+            // return;
         }
 
         public Task<bool> AwaitInitialised()

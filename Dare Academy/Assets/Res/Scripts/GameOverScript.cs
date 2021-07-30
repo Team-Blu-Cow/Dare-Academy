@@ -21,7 +21,9 @@ public class GameOverScript : MonoBehaviour
     {
         if (_destroySelf)
         {
-            _playerRef.GetComponent<SortingGroup>().name = "Midground";
+            blu.App.CameraController.KeepPlayerInFrame(true);
+            blu.App.GetModule<blu.InputModule>().PlayerController.Enable();
+            _playerRef.GetComponent<SortingGroup>().sortingLayerName = "Midground";
             Destroy(_prefab.gameObject);
         }
         else if (_killPlayer)
@@ -36,9 +38,9 @@ public class GameOverScript : MonoBehaviour
 
     private void KillPlayerAndResetPosition()
     {
-        blu.App.GetModule<blu.InputModule>().PlayerController.Enable();
         if (!_playerRef.MoveToRespawnLocation())
         {
+            blu.App.GetModule<blu.InputModule>().PlayerController.Enable();
             Debug.LogWarning("Player failed to respawn, reloading scene");
             blu.App.GetModule<blu.SceneModule>().SwitchScene(SceneManager.GetActiveScene().name, blu.TransitionType.Fade);
         }

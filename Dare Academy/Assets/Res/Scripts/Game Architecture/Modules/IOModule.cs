@@ -32,17 +32,7 @@ namespace blu
         public bool IsSaveLoaded
         { get { return ActiveSaveData != null; } }
 
-        public bool Initialised
-        { get; private set; }
-
-        public Task AwaitInitialised() => Task.Run(() => AwaitInitialisedImpl());
-
         public Task AwaitSaveLoaded() => Task.Run(() => AwaitSaveLoadedImpl());
-
-        private void AwaitInitialisedImpl()
-        {
-            while (!Initialised) { }
-        }
 
         private void AwaitSaveLoadedImpl()
         {
@@ -55,18 +45,15 @@ namespace blu
 
         public Task<bool> SaveAsync() => Task.Run(() => SaveAsyncImpl());
 
-        public async override void Initialize()
+        public override void Initialize()
         {
-            Initialised = false;
             IsSaveLoading = false;
 
             Debug.Log("[App]: Initializing IO module");
             ApplicationPath = Application.persistentDataPath;
 
             SaveSlots = new SaveSlotData[MaxSaveFiles];
-            await Task.Run(() => { return LoadSaveSlots(); });
-
-            Initialised = true;
+            LoadSaveSlots();
         }
 
         public void DiscardSaveData()
@@ -182,9 +169,6 @@ namespace blu
                 return false;
 
             IsSaveLoading = true;
-            while (Initialised == false)
-            {
-            }
 
             DiscardSaveData();
 

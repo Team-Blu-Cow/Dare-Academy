@@ -84,6 +84,8 @@ public class PlayerUI : MonoBehaviour
         }
 
         UpdateUI();
+        UpdateHealthUI();
+        UpdateEnergyUI();
     }
 
     private void OnValidate()
@@ -248,13 +250,15 @@ public class PlayerUI : MonoBehaviour
 
     private void CheckAbilitiesUnlocked()
     {
-        numOfAbilitiesUnlocked = 0; // Number of abilities equal 0
+        
 
         foreach (PlayerAbilities.AbilityEnum ability in (PlayerAbilities.AbilityEnum[])Enum.GetValues(typeof(PlayerAbilities.AbilityEnum)))
         {
             if (m_player.Abilities.IsUnlocked(ability))
                 numOfAbilitiesUnlocked++;
         }
+        // #jay #matthew #adam #jack #TODO set this back to how it was
+        numOfAbilitiesUnlocked = 3; // Number of abilities equal 0
     }
 
     private void MoveIconPositions(bool left)

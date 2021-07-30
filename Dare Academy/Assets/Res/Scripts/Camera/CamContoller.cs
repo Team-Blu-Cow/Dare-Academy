@@ -16,8 +16,12 @@ namespace blu
         private Grid<GridNode> _currentRoom;
         [SerializeField] [Range(0, 10)] private float _tolerance = 1.5f;
 
+        private LevelModule levelModule;
+
         private void Start()
         {
+            levelModule = App.GetModule<LevelModule>();
+
             _player = PlayerEntity.Instance;
             if (_player != null)
                 GetComponent<FMODUnity.StudioListener>().attenuationObject = _player.gameObject;
@@ -25,13 +29,18 @@ namespace blu
                 Debug.LogWarning("[CameraController]: could not find player");
 
             _Cam = GetComponent<Camera>();
-            App.GetModule<LevelModule>().StepController.RoomChangeEvent += MoveToCurrentRoom;
+            levelModule.StepController.RoomChangeEvent += MoveToCurrentRoom;
             MoveToCurrentRoom();
         }
 
         private void OnDestroy()
         {
-            App.GetModule<LevelModule>().StepController.RoomChangeEvent -= MoveToCurrentRoom;
+            levelModule.StepController.RoomChangeEvent -= MoveToCurrentRoom;
+        }
+
+        public void Init(Vector3 in_pos)
+        {
+            _virtualCam.ForceCameraPosition(in_pos, Quaternion.identity);
         }
 
         public void KeepPlayerInFrame(bool in_bool = true)
@@ -47,8 +56,8 @@ namespace blu
         public void MoveToCurrentRoom()
         {
             Vector3 TargetPosition;
-            Grid<GridNode> TargetGrid = App.GetModule<LevelModule>().CurrentRoom;
-            _tolerance = App.GetModule<LevelModule>().MetaGrid.gridInfo[App.GetModule<LevelModule>().StepController.m_currentRoomIndex].cameraPadding;
+            Grid<GridNode> TargetGrid = levelModule.CurrentRoom;
+            _tolerance = levelModule.MetaGrid.gridInfo[levelModule.StepController.m_currentRoomIndex].cameraPadding;
             TargetPosition = TargetGrid.OriginPosition;
             TargetPosition.y += TargetGrid.Height / 2;
             TargetPosition.x += TargetGrid.Width / 2;
@@ -59,7 +68,7 @@ namespace blu
         public void MoveToRoomByIndex(int in_index)
         {
             Vector3 TargetPosition;
-            Grid<GridNode> TargetGrid = App.GetModule<LevelModule>().Grid(in_index);
+            Grid<GridNode> TargetGrid = levelModule.Grid(in_index);
             TargetPosition = TargetGrid.OriginPosition;
             TargetPosition.y += TargetGrid.Height / 2;
             TargetPosition.x += TargetGrid.Width / 2;
@@ -97,19 +106,19 @@ namespace blu
                 float xFollow = 0;
                 float yFollow = 0;
 
-                if (_Cam.OrthographicBounds().extents.y * 2 > App.GetModule<LevelModule>().CurrentRoom.Height)
-                    yFollow = App.GetModule<LevelModule>().CurrentRoom.OriginPosition.y + App.GetModule<LevelModule>().CurrentRoom.Height / 2;
+                if (_Cam.OrthographicBounds().extents.y * 2 > levelModule.CurrentRoom.Height)
+                    yFollow = levelModule.CurrentRoom.OriginPosition.y + levelModule.CurrentRoom.Height / 2;
                 else
                     yFollow = Mathf.Clamp(_player.transform.position.y,
-                    App.GetModule<LevelModule>().CurrentRoom.OriginPosition.y + (_Cam.OrthographicBounds().extents.y - _tolerance),
-                    App.GetModule<LevelModule>().CurrentRoom.OriginPosition.y + App.GetModule<LevelModule>().CurrentRoom.Height - (_Cam.OrthographicBounds().extents.y) + _tolerance);
+                    levelModule.CurrentRoom.OriginPosition.y + (_Cam.OrthographicBounds().extents.y - _tolerance),
+                    levelModule.CurrentRoom.OriginPosition.y + levelModule.CurrentRoom.Height - (_Cam.OrthographicBounds().extents.y) + _tolerance);
 
-                if (_Cam.OrthographicBounds().extents.x * 2 > App.GetModule<LevelModule>().CurrentRoom.Width)
-                    xFollow = App.GetModule<LevelModule>().CurrentRoom.OriginPosition.x + App.GetModule<LevelModule>().CurrentRoom.Width / 2;
+                if (_Cam.OrthographicBounds().extents.x * 2 > levelModule.CurrentRoom.Width)
+                    xFollow = levelModule.CurrentRoom.OriginPosition.x + levelModule.CurrentRoom.Width / 2;
                 else
                     xFollow = Mathf.Clamp(_player.transform.position.x,
-                    App.GetModule<LevelModule>().CurrentRoom.OriginPosition.x + (_Cam.OrthographicBounds().extents.x - _tolerance),
-                    App.GetModule<LevelModule>().CurrentRoom.OriginPosition.x + App.GetModule<LevelModule>().CurrentRoom.Width - (_Cam.OrthographicBounds().extents.x) + _tolerance);
+                    levelModule.CurrentRoom.OriginPosition.x + (_Cam.OrthographicBounds().extents.x - _tolerance),
+                    levelModule.CurrentRoom.OriginPosition.x + levelModule.CurrentRoom.Width - (_Cam.OrthographicBounds().extents.x) + _tolerance);
 
                 _virtualCam.Follow.position = new Vector3(xFollow, yFollow, 0);
             }

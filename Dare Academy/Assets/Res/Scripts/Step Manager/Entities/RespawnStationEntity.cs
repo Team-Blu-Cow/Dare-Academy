@@ -29,7 +29,7 @@ public class RespawnStationEntity : GridEntity, IInteractable
         m_player = PlayerEntity.Instance;
     }
 
-    private void OnValidate()
+    protected override void OnValidate()
     {
         m_interactImages[0] = Resources.Load<Sprite>("GFX/ButtonImages/EButton");
         m_interactImages[1] = Resources.Load<Sprite>("GFX/ButtonImages/AButton");
@@ -89,13 +89,17 @@ public class RespawnStationEntity : GridEntity, IInteractable
             if (m_currentRespawnStation != null)
                 m_currentRespawnStation.GetComponent<SpriteRenderer>().color = Color.white;
 
+            m_player.Health = m_player.MaxHealth;
+            PlayerEntity.Instance.StoreHeathEnergy();
+            PlayerEntity.Instance.StoreRespawnLoaction();
+            App.GetModule<LevelModule>().SaveGame();
+
             blu.App.GetModule<blu.LevelModule>().ActiveSaveData.respawnRoomID = this.RoomIndex;
 
             m_currentRespawnStation = this;
 
             m_currentRespawnStation.GetComponent<SpriteRenderer>().color = Color.black;
 
-            m_player.Health = m_player.MaxHealth;
         }
     }
 
@@ -122,6 +126,12 @@ public class RespawnStationEntity : GridEntity, IInteractable
     {
         if (m_playerInRange)
         {
+            if (App.GetModule<InputModule>().LastUsedDevice == null)
+            {
+                m_player.m_interactToolTip.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[0];
+                return;
+            }
+
             switch (App.GetModule<InputModule>().LastUsedDevice.displayName)
             {
                 case "Keyboard":

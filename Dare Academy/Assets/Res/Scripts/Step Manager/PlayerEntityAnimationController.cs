@@ -3,17 +3,20 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
+using JUtil;
 
 public class PlayerEntityAnimationController : GridEntityAnimationController
 {
+    private PlayerEntity m_playerEntity;
+
     private Volume m_ppVolume;
     private Vignette m_ppVignette;
     private ChromaticAberration m_ppChromaticAberration;
     private LensDistortion m_ppLensDistortion;
 
-    [SerializeField] private ParticleSystem m_luvGunParticles;
+    [SerializeField, HideInInspector] private ParticleSystem m_luvGunParticles;
 
-    [SerializeField] private Color[] m_abilityColours;
+    [SerializeField, HideInInspector] private Color[] m_abilityColours;
 
     [SerializeField] private float m_vignetteIntensityVal = 0.4f;
     private float m_currentVignetteIntensityVal = 0;
@@ -30,9 +33,17 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
     bool m_abilityMode;
     int m_abilityState;
 
+    [SerializeField, HideInInspector] private Transform[] m_muzzlePositions;
+
+    [SerializeField, HideInInspector] private GameObject m_LuvMuzzleFlashPrefab;
+
     protected override void OnValidate()
     {
         base.OnValidate();
+
+        m_playerEntity = GetComponent<PlayerEntity>();
+
+        m_LuvMuzzleFlashPrefab = Resources.Load<GameObject>("prefabs/GFX/LuvGunMuzzleFlash");
 
         //m_ppVolume = FindObjectOfType<Volume>();
         //m_ppVolume.profile.TryGet<Vignette>(out m_ppVignette);
@@ -48,6 +59,12 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         m_ppVolume.profile.TryGet<Vignette>(out m_ppVignette);
         m_ppVolume.profile.TryGet<ChromaticAberration>(out m_ppChromaticAberration);
         m_ppVolume.profile.TryGet<LensDistortion>(out m_ppLensDistortion);
+
+        if(m_playerEntity == null)
+            m_playerEntity = GetComponent<PlayerEntity>();
+
+        if(m_LuvMuzzleFlashPrefab == null)
+            m_LuvMuzzleFlashPrefab = Resources.Load<GameObject>("prefabs/GFX/LuvGunMuzzleFlash");
 
         StopLuvParticles();
     }
@@ -85,26 +102,40 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
     {
         m_abilityState = abilityState;
 
-        if (m_abilityMode)
+        switch (m_abilityState)
         {
-            switch (m_abilityState)
-            {
-                case 1: // shoot
-                    StartLuvParticles();
-                    break;
-
-                case 2: // dash
+            case 1: // shoot
+                if (m_playerEntity.m_abilityDirection == Vector2Int.zero)
                     StopLuvParticles();
-                    break;
-
-                case 3: // shield
+                else if (m_playerEntity.Energy < m_playerEntity.m_shootEnergyCost)
+                {
                     StopLuvParticles();
-                    break;
+                    // #jay #TODO put sputter effect here
+                }
+                else
+                {
+                    if(m_abilityMode)
+                        StartLuvParticles();
+                }
+                break;
 
-                default:
-                    StopLuvParticles();
-                    break;
-            }
+            case 2: // dash
+                StopLuvParticles();
+                break;
+
+            case 3: // shield
+                StopLuvParticles();
+                break;
+
+            default:
+                StopLuvParticles();
+                break;
+        }
+
+        if(m_playerEntity.Energy < m_playerEntity.m_shootEnergyCost || m_playerEntity.m_abilityDirection == Vector2Int.zero)
+        {
+            StopLuvParticles();
+            // #jay #TODO put sputter effect here
         }
 
         LeanTween.value(gameObject, m_vignetteColour, m_abilityColours[abilityState], m_lerpTime)
@@ -129,7 +160,9 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
             return;
 
         if (m_luvGunParticles.isPlaying)
+        {
             m_luvGunParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+        }
     }
 
     public void Tween(float tweenVal, float targetVal, float time, System.Action<float> setMethod)
@@ -157,6 +190,14 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         {
             m_currentLensIntensityVal = value;
         });
+    }
+
+    public void MuzzleFlash(Vector2Int direction)
+    {
+        int index = direction.RotationToIndex(90);
+
+        //Instantiate(m_LuvMuzzleFlashPrefab, m_muzzlePositions[index].position, Quaternion.identity);
+        Instantiate(m_LuvMuzzleFlashPrefab, m_muzzlePositions[index]);
     }
 
     protected override void Update()
