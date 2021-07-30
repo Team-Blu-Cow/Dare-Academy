@@ -328,6 +328,9 @@ public class PlayerEntity : GridEntity
 
         levelModule.ActiveSaveData.maxHealth = MaxHealth;
         levelModule.ActiveSaveData.maxEnergy = MaxEnergy;
+
+        levelModule.ActiveSaveData.currentHealth = Health;
+        levelModule.ActiveSaveData.currentEnergy = Energy;
     }
 
     protected void SetAbilityAnimationFlag()
@@ -405,6 +408,9 @@ public class PlayerEntity : GridEntity
 
     protected void ToggleAbilityMode(InputAction.CallbackContext context)
     {
+        if (!m_abilityMode && !LevelManager.Instance.AllowPlayerMovement)
+            return;
+
         m_abilityMode = !m_abilityMode;
         if (m_abilityMode)
         {
@@ -424,6 +430,9 @@ public class PlayerEntity : GridEntity
 
     protected void EnterAbilityMode(InputAction.CallbackContext context)
     {
+        if (!LevelManager.Instance.AllowPlayerMovement)
+            return;
+
         m_abilityMode = true;
         audioModule.GetCurrentSong().SetParameter("Muffled", 1);
         //SetAbilityAnimationFlag();
@@ -646,6 +655,8 @@ public class PlayerEntity : GridEntity
     {
         GameObject temp = Resources.Load<GameObject>("prefabs/UI prefabs/DeathScreenCanvas");
         Instantiate(temp).transform.parent = Camera.main.transform;
+        Health = MaxHealth;
+        Energy = MaxEnergy;
     }
 
     protected override void OnDrawGizmos()
