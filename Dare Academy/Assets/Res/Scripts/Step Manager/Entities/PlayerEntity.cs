@@ -22,6 +22,9 @@ public class PlayerEntity : GridEntity
     [SerializeField] private bool m_abilityMode = false;
     public GameObject m_interactToolTip;
 
+    public bool LoadingFromOtherScene
+    { get; set; }
+
     // if the scene switch has been triggered but the entity has not been destroyed
     private bool m_sceneHasSwitched = false;
 
@@ -85,7 +88,7 @@ public class PlayerEntity : GridEntity
         m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/PlayerLuvBullet");
     }
 
-    protected async void Awake()
+    protected void Awake()
     {
         if (_Instance != null)
         {
@@ -100,17 +103,13 @@ public class PlayerEntity : GridEntity
 
         Abilities.Initialise();
 
-        await levelModule.AwaitSaveLoad();
-
-        IOModule io = App.GetModule<IOModule>();
-
         while (levelModule.ActiveSaveData == null) { }
 
         MaxHealth = levelModule.ActiveSaveData.maxHealth;
         MaxEnergy = levelModule.ActiveSaveData.maxEnergy;
 
-        Energy = MaxEnergy;
-        Health = MaxHealth;
+        Health = levelModule.ActiveSaveData.currentHealth;
+        Energy = levelModule.ActiveSaveData.currentEnergy;
     }
 
     public void DebugSetNode()
@@ -126,22 +125,27 @@ public class PlayerEntity : GridEntity
         m_roomIndex = m_currentNode.roomIndex;
     }
 
-    protected override async void Start()
+    protected override void Start()
     {
+        blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
+        if (levelModule.ActiveSaveData.useRespawnData && !LoadingFromOtherScene)
+        {
+            Vector3 pos = levelModule.MetaGrid.Grid(levelModule.ActiveSaveData.respawnRoomID)[levelModule.ActiveSaveData.respawnLocation].position.world;
+            gameObject.transform.position = pos;
+
+            App.CameraController.Init(pos);
+        }
+
         base.Start();
+        levelModule.StepController.m_targetRoomIndex = RoomIndex;
+        levelModule.StepController.CheckForRoomChange();
 
         App.GetModule<InputModule>().PlayerController.Player.Enable();
         App.GetModule<InputModule>().SystemController.UI.Map.Enable();
 
-        blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
-
-        await levelModule.AwaitInitialised();
-
-        await levelModule.AwaitSaveLoad();
-
         m_animationController = GetComponent<GridEntityAnimationController>();
 
-        App.GetModule<LevelModule>().ActiveSaveData.levelId = LevelModule.CurrentLevelId();
+        StoreRespawnLoaction();
 
         foreach (Quest.StringListIntPair pair in App.GetModule<LevelModule>().ActiveSaveData.m_roomsTraveled)
         {
@@ -500,6 +504,8 @@ public class PlayerEntity : GridEntity
         {
             if (m_currentNode.overrideType == NodeOverrideType.SceneConnection)
             {
+                StoreHeathEnergy();
+
                 m_sceneHasSwitched = true;
                 App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
 
@@ -516,6 +522,8 @@ public class PlayerEntity : GridEntity
 
             if (m_currentNode.overrideType == NodeOverrideType.LostWoodsConnection)
             {
+                StoreHeathEnergy();
+
                 m_sceneHasSwitched = true;
                 // check lost woods count
                 if (!App.GetModule<LevelModule>().persistantSceneData._switching)
@@ -761,5 +769,22 @@ public class PlayerEntity : GridEntity
         Vector3 size = GetComponent<BoxCollider2D>().bounds.extents;
         Vector3 offset = size + transform.GetChild(0).GetChild(0).position;
         m_interactToolTip.transform.position = offset;
+    }
+
+    public void StoreHeathEnergy()
+    {
+        LevelModule levelModule = App.GetModule<LevelModule>();
+        levelModule.ActiveSaveData.currentHealth = Health;
+        levelModule.ActiveSaveData.currentEnergy = Energy;
+    }
+
+    public void StoreRespawnLoaction()
+    {
+        LevelModule levelModule = App.GetModule<LevelModule>();
+
+        levelModule.ActiveSaveData.useRespawnData = true;
+        levelModule.ActiveSaveData.respawnRoomID = RoomIndex;
+        levelModule.ActiveSaveData.respawnLocation = Position.grid;
+        levelModule.ActiveSaveData.levelId = LevelModule.CurrentLevelId();
     }
 }

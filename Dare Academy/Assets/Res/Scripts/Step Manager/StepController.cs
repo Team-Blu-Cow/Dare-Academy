@@ -190,6 +190,12 @@ public class StepController
         }
     }
 
+    public void ForceRoomChangeEvent()
+    {
+        m_currentRoomIndex = m_targetRoomIndex;
+        RoomChangeEvent?.Invoke();
+    }
+
     // HELPER METHODS *****************************************************************************
     public void AddEntity(GridEntity entity)
     {

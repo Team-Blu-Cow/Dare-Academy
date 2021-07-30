@@ -34,6 +34,11 @@ namespace blu
             App.GetModule<LevelModule>().StepController.RoomChangeEvent -= MoveToCurrentRoom;
         }
 
+        public void Init(Vector3 in_pos)
+        {
+            _virtualCam.ForceCameraPosition(in_pos, Quaternion.identity);
+        }
+
         public void KeepPlayerInFrame(bool in_bool = true)
         {
             _keepPlayerInFrame = in_bool;
