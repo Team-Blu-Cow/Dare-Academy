@@ -16,6 +16,14 @@ using System.Threading.Tasks;
 
 public class PlayerEntity : GridEntity
 {
+    // benchmarking shows calling App.GetModule<> 200 times will cost us 1ms
+    // caching this will negate this issue, due to how often its called in here we are caching all the modules
+
+    private LevelModule levelModule;
+    private SceneModule sceneModule;
+    private AudioModule audioModule;
+    private InputModule inputModule;
+
     // ABILITIES
 
     [SerializeField] private PlayerAbilities m_abilities = new PlayerAbilities();
@@ -97,7 +105,10 @@ public class PlayerEntity : GridEntity
 
         _Instance = this;
 
-        LevelModule levelModule = App.GetModule<LevelModule>();
+        levelModule = App.GetModule<LevelModule>();
+        sceneModule = App.GetModule<SceneModule>();
+        audioModule = App.GetModule<AudioModule>();
+        inputModule = App.GetModule<InputModule>();
 
         levelModule.LoadFromSave();
 
@@ -114,7 +125,7 @@ public class PlayerEntity : GridEntity
 
     public void DebugSetNode()
     {
-        m_currentNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(transform.position);
+        m_currentNode = levelModule.MetaGrid.GetNodeFromWorld(transform.position);
 
         if (m_currentNode == null)
         {
@@ -127,7 +138,6 @@ public class PlayerEntity : GridEntity
 
     protected override void Start()
     {
-        blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
         if (levelModule.ActiveSaveData.useRespawnData && !LoadingFromOtherScene)
         {
             Vector3 pos = levelModule.MetaGrid.Grid(levelModule.ActiveSaveData.respawnRoomID)[levelModule.ActiveSaveData.respawnLocation].position.world;
@@ -140,14 +150,14 @@ public class PlayerEntity : GridEntity
         levelModule.StepController.m_targetRoomIndex = RoomIndex;
         levelModule.StepController.CheckForRoomChange();
 
-        App.GetModule<InputModule>().PlayerController.Player.Enable();
-        App.GetModule<InputModule>().SystemController.UI.Map.Enable();
+        inputModule.PlayerController.Player.Enable();
+        inputModule.SystemController.UI.Map.Enable();
 
         m_animationController = GetComponent<GridEntityAnimationController>();
 
         StoreRespawnLoaction();
 
-        foreach (Quest.StringListIntPair pair in App.GetModule<LevelModule>().ActiveSaveData.m_roomsTraveled)
+        foreach (Quest.StringListIntPair pair in levelModule.ActiveSaveData.m_roomsTraveled)
         {
             if (!m_dictRoomsTraveled.ContainsKey(pair.key))
                 m_dictRoomsTraveled.Add(pair.key, pair.value);
@@ -172,7 +182,7 @@ public class PlayerEntity : GridEntity
             Debug.LogWarning("[PlayerEntity.Start] failed to draw MiniMap");
         }
 
-        App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/Player/sfx_ability_select");
+        audioModule.PlayAudioEvent("event:/SFX/Player/sfx_ability_select");
 
         UpdateSaveFile();
     }
@@ -184,7 +194,7 @@ public class PlayerEntity : GridEntity
 
     private void OnEnable()
     {
-        m_input = App.GetModule<InputModule>().PlayerController;
+        m_input = inputModule.PlayerController;
 
         m_playerInput.Init();
 
@@ -223,10 +233,10 @@ public class PlayerEntity : GridEntity
         m_moveDirection = Vector2Int.zero;
         // m_abilityDirection = Vector2Int.zero;
 
-        await App.GetModule<LevelModule>().AwaitSaveLoad();
+        await levelModule.AwaitSaveLoad();
 
-        if (App.GetModule<LevelModule>().ActiveSaveData != null)
-            App.GetModule<LevelModule>().ActiveSaveData.playtime += Time.deltaTime;
+        if (levelModule.ActiveSaveData != null)
+            levelModule.ActiveSaveData.playtime += Time.deltaTime;
 
         if (!LevelManager.Instance.AllowPlayerMovement)
             return;
@@ -307,13 +317,11 @@ public class PlayerEntity : GridEntity
 
     public void ExecuteStep()
     {
-        App.GetModule<LevelModule>().StepController.ExecuteStep();
+        levelModule.StepController.ExecuteStep();
     }
 
     protected void UpdateSaveFile()
     {
-        LevelModule levelModule = App.GetModule<LevelModule>();
-
         levelModule.ActiveSaveData.m_roomsTraveled.Clear();
         foreach (var pair in m_dictRoomsTraveled)
             levelModule.ActiveSaveData.m_roomsTraveled.Add(new Quest.StringListIntPair(pair.Key, pair.Value));
@@ -358,7 +366,7 @@ public class PlayerEntity : GridEntity
     {
         m_overlayToggle = !m_overlayToggle;
 
-        Grid<GridNode> currentGrid = App.GetModule<LevelModule>().CurrentRoom;
+        Grid<GridNode> currentGrid = levelModule.CurrentRoom;
 
         GridNodePosition startOffset = m_currentNode.position;
         int xx = startOffset.grid.x - m_overlayRadius;
@@ -385,7 +393,7 @@ public class PlayerEntity : GridEntity
 
                         dist = ((m_overlayRadius - dist) / (m_overlayRadius)) / 2;
 
-                        App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.MOVE, dist);
+                        levelModule.telegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.MOVE, dist);
                     }
                 }
                 yy++;
@@ -400,16 +408,16 @@ public class PlayerEntity : GridEntity
         m_abilityMode = !m_abilityMode;
         if (m_abilityMode)
         {
-            App.GetModule<AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 1);
-            App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 1);
+            audioModule.GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 1);
+            audioModule.GetCurrentSong().SetParameter("Muffled", 1);
         }
         else
         {
-            App.GetModule<AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 0);
+            audioModule.GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 0);
 
-            if (!App.GetModule<LevelModule>().LevelManager.paused)
+            if (!levelModule.LevelManager.paused)
             {
-                App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
+                audioModule.GetCurrentSong().SetParameter("Muffled", 0);
             }
         }
 
@@ -420,8 +428,8 @@ public class PlayerEntity : GridEntity
     protected void EnterAbilityMode(InputAction.CallbackContext context)
     {
         m_abilityMode = true;
-        App.GetModule<AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 1);
-        App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 1);
+        audioModule.GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 1);
+        audioModule.GetCurrentSong().SetParameter("Muffled", 1);
         //SetAbilityAnimationFlag();
         ToggleAnimationState();
     }
@@ -430,10 +438,10 @@ public class PlayerEntity : GridEntity
     {
         m_abilityMode = false;
 
-        App.GetModule<AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 0);
-        if (!App.GetModule<LevelModule>().LevelManager.paused)
+        audioModule.GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 0);
+        if (!levelModule.LevelManager.paused)
         {
-            App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
+            audioModule.GetCurrentSong().SetParameter("Muffled", 0);
         }
         //ToggleAnimationState();
         animationController.DisableVignette();
@@ -505,15 +513,13 @@ public class PlayerEntity : GridEntity
             if (m_currentNode.overrideType == NodeOverrideType.SceneConnection)
             {
                 StoreHeathEnergy();
+                levelModule.SaveGame();
 
                 m_sceneHasSwitched = true;
-                App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-
-                // save game
-                App.GetModule<LevelModule>().SaveGame();
+                levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
 
                 // transition to a new scene
-                App.GetModule<SceneModule>().SwitchScene(
+                sceneModule.SwitchScene(
                     m_currentNode.lvlTransitionInfo.targetSceneName,
                     m_currentNode.lvlTransitionInfo.transitionType,
                     m_currentNode.lvlTransitionInfo.loadType
@@ -523,39 +529,40 @@ public class PlayerEntity : GridEntity
             if (m_currentNode.overrideType == NodeOverrideType.LostWoodsConnection)
             {
                 StoreHeathEnergy();
+                levelModule.SaveGame();
 
                 m_sceneHasSwitched = true;
                 // check lost woods count
-                if (!App.GetModule<LevelModule>().persistantSceneData._switching)
+                if (!levelModule.persistantSceneData._switching)
                 {
-                    App.GetModule<LevelModule>().persistantSceneData._switching = true;
+                    levelModule.persistantSceneData._switching = true;
 
-                    if (App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter == 0 && LastDirection == Vector2Int.down)
+                    if (levelModule.persistantSceneData._MisplacedForestCounter == 0 && LastDirection == Vector2Int.down)
                     {
                         m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(2, 4);
                         m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
                         m_currentNode.lvlTransitionInfo.targetRoomIndex = 8;
 
-                        App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-                        Destroy(App.GetModule<LevelModule>().persistantSceneData._soundEmitter);
-                        App.GetModule<LevelModule>().persistantSceneData = new MisplacedForestPersistantSceneData();
+                        levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+                        Destroy(levelModule.persistantSceneData._soundEmitter);
+                        levelModule.persistantSceneData = new MisplacedForestPersistantSceneData();
 
-                        App.GetModule<SceneModule>().SwitchScene(
+                        sceneModule.SwitchScene(
                             m_currentNode.lvlTransitionInfo.targetSceneName,
                             m_currentNode.lvlTransitionInfo.transitionType,
                             m_currentNode.lvlTransitionInfo.loadType
                             );
                     }
-                    else if (App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter >= 3)
+                    else if (levelModule.persistantSceneData._MisplacedForestCounter >= 3)
                     {
                         m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(0, 3);
                         m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
                         m_currentNode.lvlTransitionInfo.targetRoomIndex = 3;
-                        App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-                        Destroy(App.GetModule<LevelModule>().persistantSceneData._soundEmitter);
-                        App.GetModule<LevelModule>().persistantSceneData = new MisplacedForestPersistantSceneData();
+                        levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+                        Destroy(levelModule.persistantSceneData._soundEmitter);
+                        levelModule.persistantSceneData = new MisplacedForestPersistantSceneData();
 
-                        App.GetModule<SceneModule>().SwitchScene(
+                        sceneModule.SwitchScene(
                         m_currentNode.lvlTransitionInfo.targetSceneName,
                         m_currentNode.lvlTransitionInfo.transitionType,
                         m_currentNode.lvlTransitionInfo.loadType
@@ -563,19 +570,19 @@ public class PlayerEntity : GridEntity
                     }
                     else
                     {
-                        App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-                        if (LastDirection == App.GetModule<LevelModule>().persistantSceneData._direction)
+                        levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+                        if (LastDirection == levelModule.persistantSceneData._direction)
                         {
-                            App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter++;
-                            Debug.Log(App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter);
+                            levelModule.persistantSceneData._MisplacedForestCounter++;
+                            Debug.Log(levelModule.persistantSceneData._MisplacedForestCounter);
                         }
                         else
                         {
-                            App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter = 0;
-                            Debug.Log(App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter);
+                            levelModule.persistantSceneData._MisplacedForestCounter = 0;
+                            Debug.Log(levelModule.persistantSceneData._MisplacedForestCounter);
                         }
 
-                        App.GetModule<SceneModule>().SwitchScene(
+                        sceneModule.SwitchScene(
                         m_currentNode.lvlTransitionInfo.targetSceneName,
                         m_currentNode.lvlTransitionInfo.transitionType,
                         m_currentNode.lvlTransitionInfo.loadType
@@ -773,15 +780,12 @@ public class PlayerEntity : GridEntity
 
     public void StoreHeathEnergy()
     {
-        LevelModule levelModule = App.GetModule<LevelModule>();
         levelModule.ActiveSaveData.currentHealth = Health;
         levelModule.ActiveSaveData.currentEnergy = Energy;
     }
 
     public void StoreRespawnLoaction()
     {
-        LevelModule levelModule = App.GetModule<LevelModule>();
-
         levelModule.ActiveSaveData.useRespawnData = true;
         levelModule.ActiveSaveData.respawnRoomID = RoomIndex;
         levelModule.ActiveSaveData.respawnLocation = Position.grid;
