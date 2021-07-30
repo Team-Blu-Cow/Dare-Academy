@@ -111,7 +111,7 @@ public class LevelManager : MonoBehaviour
             if (m_forceStepTimer > m_forceStepTime)
             {
                 m_forceStepTimer = 0;
-                if (m_stepController.ExecuteStep())
+                if (App.GetModule<LevelModule>().ExecuteStep())
                 {
                     ForceStepsCount--;
                 }
@@ -122,7 +122,7 @@ public class LevelManager : MonoBehaviour
     private void Step(InputAction.CallbackContext context)
     {
         if (AllowPlayerMovement)
-            m_stepController.ExecuteStep();
+            App.GetModule<LevelModule>().ExecuteStep();
     }
 
     public void PauseGame(InputAction.CallbackContext ctx)

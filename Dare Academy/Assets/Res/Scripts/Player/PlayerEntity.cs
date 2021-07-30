@@ -318,7 +318,7 @@ public class PlayerEntity : GridEntity
 
     public void ExecuteStep()
     {
-        levelModule.StepController.ExecuteStep();
+        levelModule.ExecuteStep();
     }
 
     protected void UpdateSaveFile()
