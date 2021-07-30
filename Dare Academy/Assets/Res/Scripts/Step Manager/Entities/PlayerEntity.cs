@@ -408,6 +408,9 @@ public class PlayerEntity : GridEntity
 
     protected void ToggleAbilityMode(InputAction.CallbackContext context)
     {
+        if (!m_abilityMode && !LevelManager.Instance.AllowPlayerMovement)
+            return;
+
         m_abilityMode = !m_abilityMode;
         if (m_abilityMode)
         {
@@ -430,6 +433,9 @@ public class PlayerEntity : GridEntity
 
     protected void EnterAbilityMode(InputAction.CallbackContext context)
     {
+        if (!LevelManager.Instance.AllowPlayerMovement)
+            return;
+
         m_abilityMode = true;
         audioModule.GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 1);
         audioModule.GetCurrentSong().SetParameter("Muffled", 1);
