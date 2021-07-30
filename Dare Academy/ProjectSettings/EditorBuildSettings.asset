@@ -8,30 +8,30 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Res/Scenes/MainMenu.unity
     guid: 03a8be33a1c3daa429b736c2ed5bd434
-  - enabled: 1
-    path: Assets/Res/Scenes/Level01.unity
-    guid: e76ca80703f63a84d9898322dc56fa97
-  - enabled: 1
-    path: Assets/Res/Scenes/Level02.unity
-    guid: e973229e8e1c15646ac6c64ab52f600c
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Res/Scenes/Credits.unity
     guid: fa06395eb37baa3449fd5fd20cd48fa3
-  - enabled: 1
-    path: Assets/Res/Scenes/SampleScene.unity
-    guid: 2cda990e2423bbf4892e6590ba056729
-  - enabled: 1
-    path: Assets/Res/Scenes/StepManagerTestScene.unity
-    guid: 61233b9c2b625f342ad4c2c4870361e3
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Res/Scenes/Game Scenes/Mushroom Forest End.unity
     guid: a8aec8bff85f8c04cacd530410ba9350
   - enabled: 1
     path: Assets/Res/Scenes/Game Scenes/Crashsite Bottom.unity
     guid: 45dedd8677a16694daebeb97df428109
-  - enabled: 1
-    path: Assets/Res/Scenes/StepManagerStepScene2.unity
-    guid: 68294c932147ccf41819402ca5ae9c72
+  - enabled: 0
+    path: 
+    guid: 00000000000000000000000000000000
   - enabled: 1
     path: Assets/Res/Scenes/Game Scenes/Misplaced Forest.unity
     guid: 701f0700c8ed8a941a049362b7a3c0a2
@@ -41,5 +41,8 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Res/Scenes/Game Scenes/Mushroom Forest Start.unity
     guid: 58c499a80037674488795abbbae7eda7
+  - enabled: 1
+    path: Assets/Res/Scenes/Thanks For Playing.unity
+    guid: 65abb5f4d2395bc49b0e0fbda165cdbb
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: 2a352d7c63e206a4db90627ec38a8ee3, type: 2}

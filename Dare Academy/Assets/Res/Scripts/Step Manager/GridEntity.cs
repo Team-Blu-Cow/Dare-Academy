@@ -78,7 +78,7 @@ public abstract class GridEntity : MonoBehaviour
     protected List<GridEnityAction> m_actionList;
     protected Coroutine m_animationCoroutine;
 
-    protected GridEntityAnimationController m_animationController;
+    [SerializeField, HideInInspector] protected GridEntityAnimationController m_animationController;
 
     // INITIALISATION METHODS *********************************************************************
     protected virtual void Start()

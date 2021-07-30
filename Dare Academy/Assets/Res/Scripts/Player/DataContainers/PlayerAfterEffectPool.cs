@@ -22,6 +22,7 @@ public class PlayerAfterEffectPool : MonoBehaviour
     {
         Instance = this;
         m_afterImageContainer = new GameObject("PlayerAfterImageContainer");
+        m_afterImagePrefab = Resources.Load<GameObject>("prefabs/GFX/PlayerDashAfterEffect");
         GrowPool();
     }
 
