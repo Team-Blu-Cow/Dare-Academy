@@ -108,8 +108,8 @@ public class PlayerEntity : GridEntity
         MaxHealth = levelModule.ActiveSaveData.maxHealth;
         MaxEnergy = levelModule.ActiveSaveData.maxEnergy;
 
-        Energy = MaxEnergy;
-        Health = MaxHealth;
+        Health = levelModule.ActiveSaveData.currentHealth;
+        Energy = levelModule.ActiveSaveData.currentEnergy;
     }
 
     public void DebugSetNode()
@@ -501,6 +501,8 @@ public class PlayerEntity : GridEntity
         {
             if (m_currentNode.overrideType == NodeOverrideType.SceneConnection)
             {
+                StoreHeathEnergy();
+
                 m_sceneHasSwitched = true;
                 App.GetModule<LevelModule>().lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
 
@@ -517,6 +519,8 @@ public class PlayerEntity : GridEntity
 
             if (m_currentNode.overrideType == NodeOverrideType.LostWoodsConnection)
             {
+                StoreHeathEnergy();
+
                 m_sceneHasSwitched = true;
                 // check lost woods count
                 if (!App.GetModule<LevelModule>().persistantSceneData._switching)
@@ -765,6 +769,13 @@ public class PlayerEntity : GridEntity
         m_interactToolTip.transform.position = offset;
     }
 
+    public void StoreHeathEnergy()
+    {
+        LevelModule levelModule = App.GetModule<LevelModule>();
+        levelModule.ActiveSaveData.currentHealth = Health;
+        levelModule.ActiveSaveData.currentEnergy = Energy;
+    }
+
     public void StoreRespawnLoaction()
     {
         LevelModule levelModule = App.GetModule<LevelModule>();
@@ -773,6 +784,5 @@ public class PlayerEntity : GridEntity
         levelModule.ActiveSaveData.respawnRoomID = RoomIndex;
         levelModule.ActiveSaveData.respawnLocation = Position.grid;
         levelModule.ActiveSaveData.levelId = LevelModule.CurrentLevelId();
-        levelModule.SaveGame();
     }
 }

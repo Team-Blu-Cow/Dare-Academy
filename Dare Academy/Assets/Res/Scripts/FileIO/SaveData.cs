@@ -24,6 +24,9 @@ namespace blu
         public double playtime = 0;
         public int maxHealth = 3;
         public int maxEnergy = 3;
+        public int currentHealth = 3;
+        public int currentEnergy = 3;
+
         public int partsCollected = 0;
 
         public List<Quest.StringListIntPair> m_roomsTraveled = new List<Quest.StringListIntPair>();

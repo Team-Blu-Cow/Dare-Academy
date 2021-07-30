@@ -89,7 +89,10 @@ public class RespawnStationEntity : GridEntity, IInteractable
             if (m_currentRespawnStation != null)
                 m_currentRespawnStation.GetComponent<SpriteRenderer>().color = Color.white;
 
+            m_player.Health = m_player.MaxHealth;
+            PlayerEntity.Instance.StoreHeathEnergy();
             PlayerEntity.Instance.StoreRespawnLoaction();
+            App.GetModule<LevelModule>().SaveGame();
 
             blu.App.GetModule<blu.LevelModule>().ActiveSaveData.respawnRoomID = this.RoomIndex;
 
@@ -97,7 +100,6 @@ public class RespawnStationEntity : GridEntity, IInteractable
 
             m_currentRespawnStation.GetComponent<SpriteRenderer>().color = Color.black;
 
-            m_player.Health = m_player.MaxHealth;
         }
     }
 
@@ -124,7 +126,7 @@ public class RespawnStationEntity : GridEntity, IInteractable
     {
         if (m_playerInRange)
         {
-            if(App.GetModule<InputModule>().LastUsedDevice == null)
+            if (App.GetModule<InputModule>().LastUsedDevice == null)
             {
                 m_player.m_interactToolTip.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[0];
                 return;
