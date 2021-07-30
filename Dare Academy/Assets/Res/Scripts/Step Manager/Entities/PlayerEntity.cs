@@ -414,13 +414,10 @@ public class PlayerEntity : GridEntity
         m_abilityMode = !m_abilityMode;
         if (m_abilityMode)
         {
-            audioModule.GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 1);
             audioModule.GetCurrentSong().SetParameter("Muffled", 1);
         }
         else
         {
-            audioModule.GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 0);
-
             if (!levelModule.LevelManager.paused)
             {
                 audioModule.GetCurrentSong().SetParameter("Muffled", 0);
@@ -437,7 +434,6 @@ public class PlayerEntity : GridEntity
             return;
 
         m_abilityMode = true;
-        audioModule.GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 1);
         audioModule.GetCurrentSong().SetParameter("Muffled", 1);
         //SetAbilityAnimationFlag();
         ToggleAnimationState();
@@ -447,7 +443,6 @@ public class PlayerEntity : GridEntity
     {
         m_abilityMode = false;
 
-        audioModule.GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 0);
         if (!levelModule.LevelManager.paused)
         {
             audioModule.GetCurrentSong().SetParameter("Muffled", 0);
@@ -503,6 +498,11 @@ public class PlayerEntity : GridEntity
     public override void EndStep()
     {
         base.EndStep();
+
+        if (m_currentNode != m_previousNode && m_previousNode != null)
+        {
+            audioModule.PlayAudioEvent("event:/SFX/Player/sfx_footstep");
+        }
 
         Abilities.Refresh();
 
@@ -697,6 +697,7 @@ public class PlayerEntity : GridEntity
                 SetAbilityAnimationFlag(0);
                 animationController.StopLuvParticles();
                 animationController.MuzzleFlash(m_abilityDirection);
+                audioModule.PlayAudioEvent("event:/SFX/Player/sfx_shoot");
 
                 m_abilityUsedThisTurn = true;
 

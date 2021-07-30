@@ -82,14 +82,20 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
         transform.anchoredPosition = Vector3.zero;
         CloseMap();
 
-        DrawRooms(currentRoom);
+        if (SceneManager.GetActiveScene().name != "Misplaced Forest")
+        {
+            DrawRooms(currentRoom);
 
-        DrawLinks(currentRoom);
+            DrawLinks(currentRoom);
 
-        DrawQuestMarker(currentRoom);
+            DrawQuestMarker(currentRoom);
 
-        DrawSceneLinks(currentRoom);
-
+            DrawSceneLinks(currentRoom);
+        }
+        else
+        {
+            //Tell player to fuck off no map for u
+        }
         FindBounds(currentRoom);
     }
 

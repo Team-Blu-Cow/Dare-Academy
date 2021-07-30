@@ -56,6 +56,7 @@ public class QuestLog : MonoBehaviour, IPointerDownHandler
 
             SetContent(m_instantiatedQuests[m_selectedIndex], activeQuests[m_selectedIndex].activeDescription);
 
+            Canvas.ForceUpdateCanvases();
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
         }
     }
@@ -154,13 +155,13 @@ public class QuestLog : MonoBehaviour, IPointerDownHandler
 
     private void SetContent(GameObject target, string content)
     {
-        target.GetComponentsInChildren<TextMeshProUGUI>()[2].text = content;
+        target.GetComponentsInChildren<TextMeshProUGUI>()[1].text = content;
         target.GetComponent<VerticalLayoutGroup>().spacing = 20;
     }
 
     private void ClearContent(GameObject target)
     {
-        target.GetComponentsInChildren<TextMeshProUGUI>()[2].text = "";
+        target.GetComponentsInChildren<TextMeshProUGUI>()[1].text = "";
         target.GetComponent<VerticalLayoutGroup>().spacing = 0;
     }
 
@@ -182,6 +183,8 @@ public class QuestLog : MonoBehaviour, IPointerDownHandler
             }
 
             SetContent(m_instantiatedQuests[m_selectedIndex], App.GetModule<QuestModule>().ActiveQuests[m_selectedIndex].activeDescription);
+
+            Canvas.ForceUpdateCanvases();
             LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform);
         }
     }
