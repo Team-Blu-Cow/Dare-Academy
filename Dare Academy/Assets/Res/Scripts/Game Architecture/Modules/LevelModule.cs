@@ -20,6 +20,8 @@ namespace blu
 
     public class LevelModule : Module
     {
+        private IOModule io;
+
         private PathfindingMultiGrid m_grid = null;
         private GameEventFlags m_gameEventFlags = new GameEventFlags();
 
@@ -28,8 +30,8 @@ namespace blu
 
         public SaveData ActiveSaveData
         {
-            get { return blu.App.GetModule<IOModule>().ActiveSaveData; }
-            set { blu.App.GetModule<IOModule>().ActiveSaveData = value; }
+            get { return io.ActiveSaveData; }
+            set { io.ActiveSaveData = value; }
         }
 
         public bool IsSaveLoaded
@@ -86,6 +88,8 @@ namespace blu
 
         public override void Initialize()
         {
+            io = App.GetModule<IOModule>();
+
             SceneManager.sceneLoaded += LevelChanged;
 
             if (m_playerPrefab == null)
@@ -188,8 +192,6 @@ namespace blu
 
         public void LoadFromSave()
         {
-            IOModule io = App.GetModule<IOModule>();
-
             if (!io.IsSaveLoading && !io.IsSaveLoaded)
             {
                 bool found = false;
@@ -230,9 +232,9 @@ namespace blu
         {
             await AwaitSaveLoad();
             App.GetModule<QuestModule>().WriteToFile();
-            App.GetModule<IOModule>().ActiveSaveData.gameEventFlags = EventFlags._FlagData;
+            io.ActiveSaveData.gameEventFlags = EventFlags._FlagData;
             // #TODO #matthew - move the await out of here
-            await App.GetModule<IOModule>().SaveAsync();
+            await io.SaveAsync();
         }
 
         public Task AwaitSaveLoad()
