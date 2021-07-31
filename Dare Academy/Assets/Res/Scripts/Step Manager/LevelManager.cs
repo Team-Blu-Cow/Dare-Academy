@@ -141,6 +141,7 @@ public class LevelManager : MonoBehaviour
             if (App.GetModule<AudioModule>().GetCurrentSong() != null)
                 App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
 
+            App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/UI/sfx_unpause");
             if (_treeSounds)
                 _treeSounds.SetActive(true);
 
@@ -156,6 +157,7 @@ public class LevelManager : MonoBehaviour
             if (App.GetModule<AudioModule>().GetCurrentSong() != null)
                 App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 1);
 
+            App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/UI/sfx_pause");
             if (_treeSounds)
                 _treeSounds.SetActive(false);
 
