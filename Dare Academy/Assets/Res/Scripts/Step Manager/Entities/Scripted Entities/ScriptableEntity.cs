@@ -13,9 +13,9 @@ public class ScriptableEntity : GridEntity
 
     public int m_queuePos = 0;
 
-    private SpriteRenderer sr;
+    [SerializeField, HideInInspector] private SpriteRenderer sr;
 
-    private Animator anim;
+    [SerializeField, HideInInspector] private Animator anim;
 
     private bool m_awaitingDialogueComplete = false;
     private bool m_hasBeenReplaced = false;

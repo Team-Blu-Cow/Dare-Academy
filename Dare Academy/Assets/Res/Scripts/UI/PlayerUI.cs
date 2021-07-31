@@ -35,9 +35,9 @@ public class PlayerUI : MonoBehaviour
     private List<Image> healthIcons = new List<Image>(); // Images for the amount of health the player has
 
     private Icon[] m_Icons = new Icon[3];
-    private Sprite[] m_controlSprites = new Sprite[4];
-    private Sprite[] m_healthSprites = new Sprite[2];
-    private Sprite[] m_energySprites = new Sprite[2];
+    [SerializeField, HideInInspector] private Sprite[] m_controlSprites = new Sprite[4];
+    [SerializeField, HideInInspector] private Sprite[] m_healthSprites = new Sprite[2];
+    [SerializeField, HideInInspector] private Sprite[] m_energySprites = new Sprite[2];
 
     private Vector2[] m_iconPositions;
 
