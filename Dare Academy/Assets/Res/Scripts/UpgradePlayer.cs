@@ -38,7 +38,7 @@ public class UpgradePlayer : Interface
 
                     popUpController.m_head = "Gun";
                     popUpController.m_body = new List<string>() { "Press a to fire", "Testing fire" };
-                    popUpController.m_playerControlled = false;
+                    popUpController.m_playerControlled = true;
                     break;
 
                 case UpgradeType.Dash:

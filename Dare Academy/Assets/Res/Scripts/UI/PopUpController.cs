@@ -110,14 +110,18 @@ public class PopUpController : MonoBehaviour
     private void StartTimeline()
     {
         m_playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
+
+        App.GetModule<InputModule>().SystemController.UI.Enable();
+
         if (m_playerControlled)
             StopControls();
-
     }
 
     private void StopTimeline()
     {
         m_playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(0);
+        App.GetModule<InputModule>().SystemController.UI.Disable();
+
         if (m_playerControlled)
             StartControls();
     }
@@ -126,14 +130,11 @@ public class PopUpController : MonoBehaviour
     {
         App.GetModule<InputModule>().DialogueController.Dialogue.Disable();
         App.GetModule<InputModule>().PlayerController.Player.Enable();
-        App.GetModule<InputModule>().SystemController.UI.Enable();
     }
 
     private void StartControls()
     {
         App.GetModule<InputModule>().DialogueController.Dialogue.Enable();
         App.GetModule<InputModule>().PlayerController.Player.Disable();
-        App.GetModule<InputModule>().SystemController.UI.Disable();
-
     }
 }
