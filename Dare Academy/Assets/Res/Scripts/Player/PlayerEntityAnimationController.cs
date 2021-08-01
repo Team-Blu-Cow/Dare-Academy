@@ -19,7 +19,7 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
     [Header("Vignette Settings")]
     [SerializeField] private Color[] m_abilityColours;
-    
+
     [SerializeField] private float m_vignetteIntensityVal = 0.4f;
     private float m_currentVignetteIntensityVal = 0;
     private Color m_vignetteColour;
@@ -34,11 +34,12 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
     [Header("Dash Settings")]
     [SerializeField] private float m_distanceBetweenImages;
+
     [SerializeField] private float m_imageActiveTime;
     private Vector3 m_lastImagePos;
 
-    bool m_abilityMode;
-    int m_abilityState;
+    private bool m_abilityMode;
+    private int m_abilityState;
 
     [SerializeField, HideInInspector] private Transform[] m_muzzlePositions;
 
@@ -184,14 +185,15 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
     public void CreateAfterImage()
     {
-        GameObject afterImage =  PlayerAfterEffectPool.Instance.GetFromPool();
+        GameObject afterImage = PlayerAfterEffectPool.Instance.GetFromPool();
         afterImage.transform.position = transform.position + (Vector3.up * 0.01f);
         afterImage.GetComponent<PlayerEntityAfterEffect>().m_activeTime = m_imageActiveTime;
         m_lastImagePos = transform.position;
     }
 
-    IEnumerator DrawDash()
+    private IEnumerator DrawDash()
     {
+        App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/Player/sfx_dash");
         CreateAfterImage();
 
         float dashTimeLeft = App.GetModule<LevelModule>().StepController.stepTime;

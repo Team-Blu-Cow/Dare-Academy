@@ -110,12 +110,9 @@ public class PopUpController : MonoBehaviour
     private void StartTimeline()
     {
         m_playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
-<<<<<<< Updated upstream
-        App.GetModule<InputModule>().DialogueController.Dialogue.Disable();
-=======
         if (m_playerControlled)
             StopControls();
->>>>>>> Stashed changes
+
     }
 
     private void StopTimeline()
@@ -135,10 +132,8 @@ public class PopUpController : MonoBehaviour
     private void StartControls()
     {
         App.GetModule<InputModule>().DialogueController.Dialogue.Enable();
-<<<<<<< Updated upstream
-=======
         App.GetModule<InputModule>().PlayerController.Player.Disable();
         App.GetModule<InputModule>().SystemController.UI.Disable();
->>>>>>> Stashed changes
+
     }
 }
