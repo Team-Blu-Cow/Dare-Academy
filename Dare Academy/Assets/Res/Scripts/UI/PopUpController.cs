@@ -11,39 +11,53 @@ public class PopUpController : MonoBehaviour
 {
     private PlayableDirector m_playableDirector;
 
-    [SerializeField] private string m_head;
-    [SerializeField] private List<string> m_body;
+    public string m_head;
+    public List<string> m_body;
+
+    public bool m_playerControlled = false;
 
     private bool m_nextDialogue = false;
-
-    private void OnValidate()
-    {
-        m_playableDirector = GetComponentInParent<PlayableDirector>();
-    }
-
-    // Start is called before the first frame update
-    private void Start()
-    {
-    }
-
-    // Update is called once per frame
-    private void Update()
-    {
-    }
+    private bool m_started = false;
 
     private void OnEnable()
     {
-        Transform textTransform = transform.parent.GetChild(0);
+        m_playableDirector = GetComponentInParent<PlayableDirector>();
 
+        App.GetModule<InputModule>().DialogueController.Dialogue.Skip.performed += SkipDialogue;
+
+        m_playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(0);
+    }
+
+    private void Start()
+    {
+        Transform textTransform = transform.parent.GetChild(1);
         textTransform.GetComponentsInChildren<TextMeshProUGUI>()[0].text = m_head;
         textTransform.GetComponentsInChildren<TextMeshProUGUI>()[1].text = m_body[0];
 
-        App.GetModule<InputModule>().DialogueController.Dialogue.Skip.performed += SkipDialogue;
+        if (m_playerControlled)
+        {
+            GetComponentInChildren<Image>().enabled = true; //show black screen
+        }
+        else
+        {
+            GetComponentInChildren<Image>().enabled = false; //hide black screen
+        }
+    }
+
+    private void Update()
+    {
+        if (!App.GetModule<DialogueModule>().DialogueActive && !m_started)
+        {
+            m_playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
+            m_started = true;
+        }
     }
 
     private void OnDisable()
     {
         App.GetModule<InputModule>().DialogueController.Dialogue.Skip.performed -= SkipDialogue;
+
+        Destroy(transform.parent.gameObject);
     }
 
     public void StartPopUp()
@@ -58,17 +72,24 @@ public class PopUpController : MonoBehaviour
         int i = 1;
         while (i < m_body.Count)
         {
-            yield return StartCoroutine(WaitForKeyDown());
+            if (m_playerControlled)
+                yield return StartCoroutine(WaitForKeyDown());
+            else
+                yield return new WaitForSeconds(2);
 
-            transform.parent.GetChild(0).GetComponentsInChildren<TextMeshProUGUI>()[1].text = m_body[i];
+            transform.parent.GetChild(1).GetComponentsInChildren<TextMeshProUGUI>()[1].text = m_body[i];
 
             Canvas.ForceUpdateCanvases();
-            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform.parent.GetChild(0));
+            LayoutRebuilder.ForceRebuildLayoutImmediate((RectTransform)transform.parent.GetChild(1));
 
             i++;
         }
 
-        yield return StartCoroutine(WaitForKeyDown());
+        if (m_playerControlled)
+            yield return StartCoroutine(WaitForKeyDown());
+        else
+            yield return new WaitForSeconds(2);
+
         StartTimeline();
     }
 
@@ -82,18 +103,42 @@ public class PopUpController : MonoBehaviour
 
     private void SkipDialogue(InputAction.CallbackContext ctx)
     {
-        m_nextDialogue = true;
+        if (!App.GetModule<DialogueModule>().DialogueActive)
+            m_nextDialogue = true;
     }
 
     private void StartTimeline()
     {
         m_playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
+<<<<<<< Updated upstream
         App.GetModule<InputModule>().DialogueController.Dialogue.Disable();
+=======
+        if (m_playerControlled)
+            StopControls();
+>>>>>>> Stashed changes
     }
 
     private void StopTimeline()
     {
         m_playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(0);
+        if (m_playerControlled)
+            StartControls();
+    }
+
+    private void StopControls()
+    {
+        App.GetModule<InputModule>().DialogueController.Dialogue.Disable();
+        App.GetModule<InputModule>().PlayerController.Player.Enable();
+        App.GetModule<InputModule>().SystemController.UI.Enable();
+    }
+
+    private void StartControls()
+    {
         App.GetModule<InputModule>().DialogueController.Dialogue.Enable();
+<<<<<<< Updated upstream
+=======
+        App.GetModule<InputModule>().PlayerController.Player.Disable();
+        App.GetModule<InputModule>().SystemController.UI.Disable();
+>>>>>>> Stashed changes
     }
 }
