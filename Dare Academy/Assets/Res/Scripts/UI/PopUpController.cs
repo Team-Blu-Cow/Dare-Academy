@@ -33,15 +33,6 @@ public class PopUpController : MonoBehaviour
         Transform textTransform = transform.parent.GetChild(1);
         textTransform.GetComponentsInChildren<TextMeshProUGUI>()[0].text = m_head;
         textTransform.GetComponentsInChildren<TextMeshProUGUI>()[1].text = m_body[0];
-
-        if (m_playerControlled)
-        {
-            GetComponentInChildren<Image>().enabled = true; //show black screen
-        }
-        else
-        {
-            GetComponentInChildren<Image>().enabled = false; //hide black screen
-        }
     }
 
     private void Update()
@@ -50,6 +41,15 @@ public class PopUpController : MonoBehaviour
         {
             m_playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
             m_started = true;
+
+            if (m_playerControlled)
+            {
+                GetComponentInChildren<Image>().enabled = true; //show black screen
+            }
+            else
+            {
+                GetComponentInChildren<Image>().enabled = false; //hide black screen
+            }
         }
     }
 
