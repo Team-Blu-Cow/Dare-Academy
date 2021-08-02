@@ -1,8 +1,4 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using System;
-using System.Threading.Tasks;
 
 public class ScriptableEntity : GridEntity
 {
@@ -12,6 +8,8 @@ public class ScriptableEntity : GridEntity
     [SerializeField] private int m_flagValue = 0; // so custom editor can access this
 
     public int m_queuePos = 0;
+
+    private bool m_dialogueHasStarted = false;
 
     [SerializeField, HideInInspector] private SpriteRenderer sr;
 
@@ -370,11 +368,27 @@ public class ScriptableEntity : GridEntity
 
     protected bool AwaitDialogueAction()
     {
-        if (blu.App.GetModule<blu.DialogueModule>().DialogueActive)
+        bool active  = blu.App.GetModule<blu.DialogueModule>().DialogueActive;
+
+        if (!m_dialogueHasStarted)
+        {
+            if (active)
+            {
+                m_dialogueHasStarted = true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        if (active)
         {
             m_awaitingDialogueComplete = true;
+            m_dialogueHasStarted = false;
             return false;
         }
+
         return true;
     }
 

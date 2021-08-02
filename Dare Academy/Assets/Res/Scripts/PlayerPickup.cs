@@ -25,9 +25,18 @@ public class PlayerPickup : Interface
         {
             App.GetModule<LevelModule>().EventFlags.SetFlags(m_flagToFlip, true);
 
+            GameObject popup = Instantiate(Resources.Load<GameObject>("prefabs/UI prefabs/PopUp"));
+
+            PopUpController popUpController = popup.GetComponentInChildren<PopUpController>();
+
+            popUpController.m_playerControlled = false;
+
             switch (m_type)
             {
                 case Type.Health:
+
+                    popUpController.m_head = "Health";
+                    popUpController.m_body = new List<string>() { "Your health has now increased" };
 
                     m_player.MaxHealth++;
                     m_player.Health++;
@@ -36,12 +45,18 @@ public class PlayerPickup : Interface
 
                 case Type.Energy:
 
+                    popUpController.m_head = "Energy";
+                    popUpController.m_body = new List<string>() { "Your energy has now increased" };
+
                     m_player.MaxEnergy++;
                     m_player.Energy++;
                     m_playerUI.AddEnergy();
                     break;
 
                 case Type.ShipPart:
+
+                    popUpController.m_head = "ShipPart";
+                    popUpController.m_body = new List<string>() { "You find a new part of your ship" };
 
                     m_player.ShipParts++;
                     App.GetModule<LevelModule>().ActiveSaveData.partsCollected++;

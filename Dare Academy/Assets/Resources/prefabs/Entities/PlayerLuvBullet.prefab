@@ -24118,6 +24118,10 @@ PrefabInstance:
       propertyPath: m_ExplosionPrefab
       value: 
       objectReference: {fileID: 1904530733861568840, guid: 0efe72a8faebce0419d2963ed344267c, type: 3}
+    - target: {fileID: 3960181673745965514, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
+      propertyPath: m_flags.m_flagData
+      value: 146
+      objectReference: {fileID: 0}
     - target: {fileID: 4362875381499240983, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
       propertyPath: m_RootOrder
       value: 0

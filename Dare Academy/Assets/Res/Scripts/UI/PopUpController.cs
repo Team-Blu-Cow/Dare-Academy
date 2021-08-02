@@ -45,6 +45,7 @@ public class PopUpController : MonoBehaviour
             if (m_playerControlled)
             {
                 GetComponentInChildren<Image>().enabled = true; //show black screen
+                StartControls();
             }
             else
             {
@@ -121,9 +122,6 @@ public class PopUpController : MonoBehaviour
     {
         m_playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(0);
         App.GetModule<InputModule>().SystemController.UI.Disable();
-
-        if (m_playerControlled)
-            StartControls();
     }
 
     private void StopControls()
