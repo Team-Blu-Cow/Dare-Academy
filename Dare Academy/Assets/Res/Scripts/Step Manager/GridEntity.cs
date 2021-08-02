@@ -1207,6 +1207,74 @@ public abstract class GridEntity : MonoBehaviour
         return false;
     }
 
+    protected bool SpawnBullet(out GameObject bullet, GameObject prefab, GridNode sourceNode, Vector2 direction, int damage = 1)
+    {
+        if (direction == null)
+        {
+            bullet = null;
+            return false;
+        }
+
+        Vector2Int dir = new Vector2Int((int)direction.x, (int)direction.y);
+        return SpawnBullet(out bullet, prefab, sourceNode, dir, damage);
+    }
+
+    protected bool SpawnBullet(out GameObject bullet, GameObject prefab, GridNode sourceNode, Vector2Int direction, int damage = 1)
+    {
+        if (sourceNode == null)
+        {
+            bullet = null;
+            return false;
+        }
+
+        if (direction == null)
+        {
+            bullet = null;
+            return false;
+        }
+
+        if (prefab)
+        {
+            GridNode spawnNode = sourceNode.GetNeighbour(direction); ;
+
+            if (spawnNode == null)
+            {
+                bullet = null;
+                return false;
+            }
+
+            List<GridEntity> entities = spawnNode.GetGridEntities();
+            if (entities.Count > 0)
+            {
+                foreach (GridEntity entity in entities)
+                {
+                    entity.Health -= damage;
+                }
+
+                bullet = null;
+                return true;
+            }
+
+            Vector3 spawnPosition = spawnNode.position.world;
+
+            bullet = GameObject.Instantiate(prefab, spawnPosition, Quaternion.identity);
+            if (bullet)
+            {
+                BulletEntity bulletEntity = bullet.GetComponent<BulletEntity>();
+
+                if (bulletEntity)
+                {
+                    bulletEntity.m_damage = damage;
+                    bulletEntity.m_bulletDirection = direction;
+                    return true;
+                }
+            }
+        }
+
+        bullet = null;
+        return false;
+    }
+
     public bool ShouldReflectBullet(Vector2Int incomingDirection)
     {
         if (m_flags.IsFlagsSet(flags.refectAllBullets))

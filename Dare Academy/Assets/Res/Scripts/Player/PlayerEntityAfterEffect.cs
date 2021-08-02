@@ -14,7 +14,7 @@ public class PlayerEntityAfterEffect : MonoBehaviour
     [SerializeField] private SpriteRenderer m_srcBodyRenderer;
     [SerializeField] private SpriteRenderer m_srcLegsRenderer;
 
-    private Color m_colour;
+    public Color m_colour;
 
     [SerializeField] public float m_activeTime = 0.1f;
     private float m_timeActivated;
@@ -25,7 +25,15 @@ public class PlayerEntityAfterEffect : MonoBehaviour
 
     private void OnEnable()
     {
-        m_playerTransform = PlayerEntity.Instance.transform;
+        PlayerEntity player =  PlayerEntity.Instance;
+
+        if (player == null)
+            return;
+
+        m_playerTransform = player.transform;
+
+        if (m_playerTransform == null)
+            return;
 
         GetPlayerSpriteRenderers();
 
@@ -73,7 +81,7 @@ public class PlayerEntityAfterEffect : MonoBehaviour
     {
         m_alpha *= m_alphaMultiplier;
 
-        m_colour = new Color(1f, 1f, 1f, m_alpha);
+        m_colour = new Color(m_colour.r, m_colour.g, m_colour.b, m_alpha);
 
         m_headRenderer.color = m_colour;
         m_bodyRenderer.color = m_colour;

@@ -37,7 +37,7 @@ namespace blu.FileIO
         {
             try
             {
-                _muted = PlayerPrefs.GetInt("AudioMuted", 1) == 1;
+                _muted = PlayerPrefs.GetInt("AudioMuted", 0) == 1;
             }
             catch (System.Exception ex)
             { Debug.LogWarning(ex); }
@@ -220,7 +220,7 @@ namespace blu.FileIO
         {
             _currentResolution.refreshRate = PlayerPrefs.GetInt("RefreshRate", 60);
             _currentResolution.width = PlayerPrefs.GetInt("ScreenWidth", 1600);
-            _currentResolution.height = PlayerPrefs.GetInt("ScreenHeight", 800);
+            _currentResolution.height = PlayerPrefs.GetInt("ScreenHeight", 900);
             _fullscreen = PlayerPrefs.GetInt("Fullscreen", 0) == 1;
 
             Application.targetFrameRate = _currentResolution.refreshRate;

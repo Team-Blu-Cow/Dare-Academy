@@ -19270,6 +19270,7 @@ GameObject:
   - component: {fileID: 4662660343085614032}
   - component: {fileID: 5530128159474719663}
   - component: {fileID: 3709393979096455767}
+  - component: {fileID: 6948016634198151691}
   m_Layer: 0
   m_Name: luv gun particles
   m_TagString: Untagged
@@ -24077,6 +24078,23 @@ SortingGroup:
   m_SortingLayerID: 1532050139
   m_SortingLayer: 3
   m_SortingOrder: 0
+--- !u!114 &6948016634198151691
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8185100298040790202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bda0dfb2f7007a4faf3e82012a82282, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particles:
+  - {fileID: 4377621340122269194}
+  - {fileID: 46262008614155206}
+  - {fileID: 5553965673321433816}
+  - {fileID: 2607010893629041349}
 --- !u!1001 &980566978312284207
 PrefabInstance:
   m_ObjectHideFlags: 0

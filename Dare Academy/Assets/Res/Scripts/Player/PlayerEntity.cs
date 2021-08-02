@@ -138,7 +138,7 @@ public class PlayerEntity : GridEntity
 
     protected override void Start()
     {
-        if (levelModule.ActiveSaveData.useRespawnData && !LoadingFromOtherScene)
+        if (levelModule.LevelManager.debug_SpawnPlayer && levelModule.ActiveSaveData.useRespawnData && !LoadingFromOtherScene)
         {
             Vector3 pos = levelModule.MetaGrid.Grid(levelModule.ActiveSaveData.respawnRoomID)[levelModule.ActiveSaveData.respawnLocation].position.world;
             gameObject.transform.position = pos;
@@ -274,10 +274,12 @@ public class PlayerEntity : GridEntity
         {
             if (Dash())
             {
+                // #adam #sound #sfx
+                animationController.StopDashChargeParticles();
                 m_abilityDirection = m_playerInput.DirectionFour(true);
                 SetMovementDirection(m_abilityDirection, m_dashDistance);
+                animationController.StartDashEffect(m_abilityDirection);
                 m_abilityDirection = Vector2Int.zero;
-                animationController.CreateDashAfterImages();
                 ExecuteStep();
             }
             else
@@ -701,10 +703,13 @@ public class PlayerEntity : GridEntity
                 audioModule.PlayAudioEvent("event:/SFX/Player/sfx_shoot");
 
                 m_abilityUsedThisTurn = true;
+                GameObject bullet;
 
-                if (SpawnBullet(m_bulletPrefab, node, m_abilityDirection))
+                if (SpawnBullet(out bullet, m_bulletPrefab, node, m_abilityDirection))
                 {
                     Energy -= m_shootEnergyCost;
+                    if (bullet != null)
+                        animationController.SetBulletColour(bullet);
                 }
             }
         }

@@ -9,7 +9,7 @@ public abstract class Interface : MonoBehaviour
     protected PlayerEntity m_player;
     protected bool m_playerInRange = false;
 
-    [SerializeField]
+    [SerializeField, HideInInspector]
     private Sprite[] m_interactImages = new Sprite[2];
 
     private InputModule m_inputModule;

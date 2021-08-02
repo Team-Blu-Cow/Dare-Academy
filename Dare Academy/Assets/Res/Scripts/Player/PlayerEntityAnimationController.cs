@@ -16,10 +16,15 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
     private LensDistortion m_ppLensDistortion;
 
     [SerializeField, HideInInspector] private ParticleSystem m_luvGunParticles;
+    [SerializeField, HideInInspector] private ParticleSystem[] m_luvGunSubParticles;
+
+    [SerializeField, HideInInspector] private ParticleSystem m_dashChargeParticles;
+    [SerializeField, HideInInspector] private ParticleSystem[] m_dashChargeSubParticles;
+    [SerializeField, HideInInspector] private GameObject m_dashBurstPrefab;
 
     [Header("Vignette Settings")]
-    [SerializeField] private Color[] m_abilityColours;
 
+    [SerializeField] public Color[] m_abilityColours;
     [SerializeField] private float m_vignetteIntensityVal = 0.4f;
     private float m_currentVignetteIntensityVal = 0;
     private Color m_vignetteColour;
@@ -52,6 +57,7 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         m_playerEntity = GetComponent<PlayerEntity>();
 
         m_LuvMuzzleFlashPrefab = Resources.Load<GameObject>("prefabs/GFX/LuvGunMuzzleFlash");
+        m_dashBurstPrefab = Resources.Load<GameObject>("prefabs/GFX/DashBurstFX");
 
         //m_ppVolume = FindObjectOfType<Volume>();
         //m_ppVolume.profile.TryGet<Vignette>(out m_ppVignette);
@@ -73,8 +79,26 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
         if (m_LuvMuzzleFlashPrefab == null)
             m_LuvMuzzleFlashPrefab = Resources.Load<GameObject>("prefabs/GFX/LuvGunMuzzleFlash");
-
+        SetParticleColours();
         StopLuvParticles();
+        StopDashChargeParticles();
+    }
+
+    public void SetParticleColours()
+    {
+        foreach(var p in m_luvGunSubParticles)
+        {
+            ParticleSystem.MainModule settings = p.main;
+
+            settings.startColor = m_abilityColours[1];
+        }
+
+        foreach(var p in m_dashChargeSubParticles)
+        {
+            ParticleSystem.MainModule settings = p.main;
+
+            settings.startColor = m_abilityColours[2];
+        }
     }
 
     public void ResetFaceDirection()
@@ -113,6 +137,7 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         switch (m_abilityState)
         {
             case 1: // shoot
+                StopDashChargeParticles();
                 if (m_playerEntity.m_abilityDirection == Vector2Int.zero)
                     StopLuvParticles();
                 else if (m_playerEntity.Energy < m_playerEntity.m_shootEnergyCost)
@@ -129,14 +154,27 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
             case 2: // dash
                 StopLuvParticles();
+                if (m_playerEntity.m_abilityDirection == Vector2Int.zero)
+                    StopDashChargeParticles();
+                else if (m_playerEntity.Energy < m_playerEntity.m_shootEnergyCost)
+                {
+                    StopDashChargeParticles();
+                }
+                else
+                {
+                    if (m_abilityMode)
+                        StartDashChargeParticles();
+                }
                 break;
 
             case 3: // shield
                 StopLuvParticles();
+                StopDashChargeParticles();
                 break;
 
             default:
                 StopLuvParticles();
+                StopDashChargeParticles();
                 break;
         }
 
@@ -178,9 +216,75 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         }
     }
 
-    public void CreateDashAfterImages()
+    public void StartDashChargeParticles()
     {
+        if (m_dashChargeParticles == null)
+            return;
+
+        if (!m_dashChargeParticles.isPlaying)
+        {
+            m_dashChargeParticles.Play();
+            // #adam #sound #sfx  
+            //blu.App.GetModule<blu.AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 1);
+        }
+    }
+
+    public void StopDashChargeParticles()
+    {
+        if (m_dashChargeParticles == null)
+            return;
+
+        if (m_dashChargeParticles.isPlaying)
+        {
+            m_dashChargeParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
+            // #adam #sound #sfx  
+            //blu.App.GetModule<blu.AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 0);
+        }
+    }
+
+    public void StartDashEffect(Vector2Int direction)
+    {
+        DashBurst(direction);
         StartCoroutine(DrawDash());
+    }
+
+    public void DashBurst(Vector2Int direction)
+    {
+        int index = (-direction).RotationToIndex(90);
+
+        //Instantiate(m_LuvMuzzleFlashPrefab, m_muzzlePositions[index].position, Quaternion.identity);
+        GameObject flashObj = Instantiate(m_dashBurstPrefab,m_muzzlePositions[index]);
+
+        flashObj.GetComponent<ParticleSystem>().Stop();
+
+        switch (index)
+        {
+            case 0: // north
+                flashObj.transform.Rotate(new Vector3(0, 0, 180));
+                break;
+
+            case 1: // east
+                flashObj.transform.Rotate(new Vector3(0, 0, 90));
+                break;
+
+            case 2: // south
+                flashObj.transform.Rotate(new Vector3(0, 0, 0));
+                break;
+
+            case 3: // west
+                flashObj.transform.Rotate(new Vector3(0, 0, 270));
+                break;
+        }
+
+        ParticleSystem[] particles = flashObj.GetComponentsInChildren<ParticleSystem>();
+
+        foreach (var p in particles)
+        {
+            ParticleSystem.MainModule settings = p.main;
+            settings.startColor = m_abilityColours[2];
+        }
+
+        flashObj.GetComponent<ParticleSystem>().Play();
     }
 
     public void CreateAfterImage()
@@ -188,6 +292,7 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         GameObject afterImage = PlayerAfterEffectPool.Instance.GetFromPool();
         afterImage.transform.position = transform.position + (Vector3.up * 0.01f);
         afterImage.GetComponent<PlayerEntityAfterEffect>().m_activeTime = m_imageActiveTime;
+        afterImage.GetComponent<PlayerEntityAfterEffect>().m_colour = m_abilityColours[2];
         m_lastImagePos = transform.position;
     }
 
@@ -241,7 +346,14 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         int index = direction.RotationToIndex(90);
 
         //Instantiate(m_LuvMuzzleFlashPrefab, m_muzzlePositions[index].position, Quaternion.identity);
-        Instantiate(m_LuvMuzzleFlashPrefab, m_muzzlePositions[index]);
+        GameObject flashObj = Instantiate(m_LuvMuzzleFlashPrefab, m_muzzlePositions[index]);
+        ParticleSystem[] particles = flashObj.GetComponentsInChildren<ParticleSystem>();
+
+        foreach(var p in particles)
+        {
+            ParticleSystem.MainModule settings = p.main;
+            settings.startColor = m_abilityColours[1];
+        }
     }
 
     protected override void Update()
@@ -254,5 +366,19 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         m_ppLensDistortion.intensity.value = m_currentLensIntensityVal;
 
         base.Update();
+    }
+
+
+    public void SetBulletColour(GameObject bullet)
+    {
+        LuvBulletParticleList particleObj = bullet.GetComponentInChildren<LuvBulletParticleList>();
+
+        ParticleSystem[] particles = particleObj.particles;
+
+        foreach (var p in particles)
+        {
+            ParticleSystem.MainModule settings = p.main;
+            settings.startColor = m_abilityColours[1];
+        }
     }
 }
