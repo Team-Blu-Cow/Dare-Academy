@@ -115,8 +115,8 @@ namespace blu
 
         public bool LoadFromFile()
         {
-            _activeQuests = new List<Quest>();
-            _completedQuests = new List<Quest>();
+            _activeQuests.Clear();
+            _completedQuests.Clear();
 
             LevelModule levelModule = App.GetModule<LevelModule>();
 
