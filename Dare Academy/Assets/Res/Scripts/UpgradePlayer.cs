@@ -1,3 +1,5 @@
+#define PLAYERENTITY_HOLD_FOR_ABILITY_MODE
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -37,8 +39,35 @@ public class UpgradePlayer : Interface
                     PopUpController popUpController = popup.GetComponentInChildren<PopUpController>();
 
                     popUpController.m_head = "Gun";
-                    popUpController.m_body = new List<string>() { "Press a to fire", "Testing fire" };
                     popUpController.m_playerControlled = true;
+
+                    string key = "";
+
+                    switch (App.GetModule<InputModule>().LastUsedDevice.displayName)
+                    {
+                        case "Keyboard":
+                            key = "'Space'";
+                            break;
+
+                        case "Mouse":
+                            key = "'Space'";
+                            break;
+
+                        case "Xbox Controller":
+                            key = "'X'";
+                            break;
+
+                        case "Wireless Controller":
+                            key = "'Square'";
+                            break;
+                    }
+
+#if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
+                    popUpController.m_body = new List<string>() { "Hold " + key + " to enter ability mode", "When in ability mode use a direction to use the ability", "Your next step the ability will be used" };
+#else
+                    popUpController.m_body = new List<string>() { "Press " + key + " to toggle ability mode ", "When in ability mode use a direction to use the ability", "Your next step the ability will be used"};
+#endif
+
                     break;
 
                 case UpgradeType.Dash:
