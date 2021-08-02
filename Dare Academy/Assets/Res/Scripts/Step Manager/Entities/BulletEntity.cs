@@ -63,6 +63,18 @@ public class BulletEntity : GridEntity
 
     public override void ResolvePassThroughStep()
     {
+        if (CheckForPassThrough())
+        {
+            if (m_currentNode != null && m_previousNode != null)
+            {
+                m_passthrough = true;
+                RemoveFromCurrentNode();
+                m_currentNode = m_previousNode;
+                AddToCurrentNode();
+
+                TryReflectBullet();
+            }
+        }
     }
 
     public override void ResolveMoveStep()
