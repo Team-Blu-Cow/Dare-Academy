@@ -203,6 +203,12 @@ public class ScriptableEntityEditor : Editor
                 }
             }
 
+            if (GUILayout.Button("X", GUILayout.Width(24f)))
+            {
+                dirty = true;
+                queue.m_actionList.RemoveAt(i);
+            }
+
             EditorGUILayout.EndHorizontal();
         }
 
