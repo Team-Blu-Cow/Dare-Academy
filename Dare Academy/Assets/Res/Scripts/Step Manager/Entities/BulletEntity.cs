@@ -19,16 +19,14 @@ public class BulletEntity : GridEntity
         base.Start();
         m_flags.SetFlags(flags.isAttack, true);
         m_health = 1;
-        if(m_animationController == null)
+        if (m_animationController == null)
             m_animationController = GetComponent<GridEntityAnimationController>();
-
 
         m_animationController.animator.SetFloat("DirX", m_bulletDirection.x);
         m_animationController.animator.SetFloat("DirY", m_bulletDirection.y);
 
         if (m_particleTail != null)
             SetTailDirection();
-
     }
 
     private void SetTailDirection()
@@ -53,7 +51,6 @@ public class BulletEntity : GridEntity
                 transform.Rotate(new Vector3(0, 0, 270));
                 break;
         }
-
     }
 
     public override bool CheckForConflict()
@@ -66,18 +63,6 @@ public class BulletEntity : GridEntity
 
     public override void ResolvePassThroughStep()
     {
-        if (CheckForPassThrough())
-        {
-            if (m_currentNode != null && m_previousNode != null)
-            {
-                m_passthrough = true;
-                RemoveFromCurrentNode();
-                m_currentNode = m_previousNode;
-                AddToCurrentNode();
-
-                TryReflectBullet();
-            }
-        }
     }
 
     public override void ResolveMoveStep()
@@ -110,7 +95,7 @@ public class BulletEntity : GridEntity
     {
         TryReflectBullet();
 
-        List<GridEntity> entities =  GetEntitiesOnNode(m_currentNode);
+        List<GridEntity> entities = GetEntitiesOnNode(m_currentNode);
         foreach (GridEntity entity in entities)
         {
             entity.Health -= m_damage;
@@ -163,7 +148,7 @@ public class BulletEntity : GridEntity
     {
         if (m_ExplosionPrefab != null)
         {
-            Vector3 pos = Vector3.Lerp(transform.position, transform.position + new Vector3(m_bulletDirection.x,(m_bulletDirection.y*1.2f)-0.75f,0),0.65f);
+            Vector3 pos = Vector3.Lerp(transform.position, transform.position + new Vector3(m_bulletDirection.x, (m_bulletDirection.y * 1.2f) - 0.75f, 0), 0.65f);
 
             Instantiate(m_ExplosionPrefab, pos, Quaternion.identity);
         }

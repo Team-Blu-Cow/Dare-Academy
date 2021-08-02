@@ -33417,10 +33417,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 220901923}
     m_Modifications:
-    - target: {fileID: -4435254147680224146, guid: fc5df5ac0b919d845ac807f04037f84a, type: 3}
-      propertyPath: m_health
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 4135038511520751627, guid: fc5df5ac0b919d845ac807f04037f84a, type: 3}
       propertyPath: m_Name
       value: MeleePathfinder
@@ -42287,10 +42283,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 220901923}
     m_Modifications:
-    - target: {fileID: -4508494937722311944, guid: 3e43bf78bf8bdf448830a4be0d8cb0e2, type: 3}
-      propertyPath: m_health
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2461854753550817600, guid: 3e43bf78bf8bdf448830a4be0d8cb0e2, type: 3}
       propertyPath: m_Name
       value: 8Directional
@@ -43191,10 +43183,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 220901923}
     m_Modifications:
-    - target: {fileID: -4435254147680224146, guid: fc5df5ac0b919d845ac807f04037f84a, type: 3}
-      propertyPath: m_health
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 4135038511520751627, guid: fc5df5ac0b919d845ac807f04037f84a, type: 3}
       propertyPath: m_Name
       value: MeleePathfinder (1)
