@@ -8351,6 +8351,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Jukebox
       objectReference: {fileID: 0}
+    - target: {fileID: 677772103269060808, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
+      propertyPath: StartSong
+      value: NONE
+      objectReference: {fileID: 0}
     - target: {fileID: 677772103269060811, guid: fb24aa2b0f039da4b8b2705c9d6bb894, type: 3}
       propertyPath: m_RootOrder
       value: 8
