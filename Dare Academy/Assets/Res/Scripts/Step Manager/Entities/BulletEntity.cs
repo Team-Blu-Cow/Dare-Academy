@@ -68,13 +68,14 @@ public class BulletEntity : GridEntity
 
         List<GridEntity> entities = m_previousNode.GetGridEntities();
 
-        // return if there are no entities
-        if (entities == null || entities.Count < 1)
+        if (entities == null)
             return;
 
         // check for entities that have passed through this entity
-        foreach (GridEntity entity in entities)
+        for (int i = entities.Count - 1; i >= 0; i--)
         {
+            GridEntity entity = entities[i];
+
             if (entity.Flags.IsFlagsSet(flags.isAttack))
                 continue;
 
@@ -87,6 +88,19 @@ public class BulletEntity : GridEntity
         }
 
         return;
+
+        /*if (CheckForPassThrough())
+        {
+            if (m_currentNode != null && m_previousNode != null)
+            {
+                m_passthrough = true;
+                RemoveFromCurrentNode();
+                m_currentNode = m_previousNode;
+                AddToCurrentNode();
+
+                TryReflectBullet();
+            }
+        }*/
     }
 
     public override void ResolveMoveStep()
