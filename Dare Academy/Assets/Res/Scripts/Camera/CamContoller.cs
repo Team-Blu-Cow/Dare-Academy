@@ -4,9 +4,6 @@ using UnityEngine;
 using blu;
 using JUtil.Grids;
 
-// #matthew STOP CACHING SHIT, ITS SO FUCKING ANNOYING
-// THIS ISNT EVEN YOUR FUCKING CODE
-
 namespace blu
 {
     public class CamContoller : MonoBehaviour

@@ -36,6 +36,11 @@ public class MortarEnemy : GridEntity
 
     public override void AnalyseStep()
     {
+        if(Health <= 0)
+        {
+            Kill();
+        }
+
         m_cooldown--;
 
         m_animationController.animator.SetBool("isAsleep", !PlayerInFiringRange());

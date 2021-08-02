@@ -7,7 +7,7 @@ using blu;
 
 public class AddQuest : Interface
 {
-    private ShowQuestUI m_questPopup;
+    [SerializeField] private ShowQuestUI m_questPopup;
 
     [SerializeField] private Quest m_quest;
 

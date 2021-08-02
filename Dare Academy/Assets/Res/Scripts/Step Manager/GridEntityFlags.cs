@@ -18,6 +18,7 @@ public class GridEntityFlags : BitFlags_32
         alwaysWinConflict   = 0b00000000000000000000010000000000,
         keepAwake           = 0b00000000000000000000100000000000,
         dontMoveOnReset     = 0b00000000000000000001000000000000,
+        isHostile           = 0b00000000000000000010000000000000,
     }
 
     public void SetFlags(Flags flags, bool value)

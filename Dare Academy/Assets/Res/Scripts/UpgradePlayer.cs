@@ -17,6 +17,8 @@ public class UpgradePlayer : Interface
     [SerializeField] private GameObject Dialouge;
     [SerializeField] private UpgradeType upgradeType;
 
+    private bool m_showPopUp;
+
     public override void OnInteract(InputAction.CallbackContext ctx)
     {
         if (m_playerInRange)
@@ -29,6 +31,14 @@ public class UpgradePlayer : Interface
                 case UpgradeType.Shoot:
                     App.GetModule<DialogueModule>().StartDialogue(Dialouge);
                     PlayerEntity.Instance.Abilities.SetActiveAbility(PlayerAbilities.AbilityEnum.Shoot);
+
+                    GameObject popup = Instantiate(Resources.Load<GameObject>("prefabs/UI prefabs/PopUp"));
+
+                    PopUpController popUpController = popup.GetComponentInChildren<PopUpController>();
+
+                    popUpController.m_head = "Gun";
+                    popUpController.m_body = new List<string>() { "Press a to fire", "Testing fire" };
+                    popUpController.m_playerControlled = true;
                     break;
 
                 case UpgradeType.Dash:

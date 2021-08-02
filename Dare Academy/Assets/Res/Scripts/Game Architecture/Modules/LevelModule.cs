@@ -39,6 +39,9 @@ namespace blu
             get => ActiveSaveData != null;
         }
 
+        public bool InCombat
+        { get; private set; }
+
         public GameEventFlags EventFlags
         {
             get { return m_gameEventFlags; }
@@ -186,6 +189,29 @@ namespace blu
         public void AddEntityToCurrentRoom(GridEntity entity)
         {
             m_levelManager.AddEntityToStepController(entity);
+        }
+
+        public bool ExecuteStep()
+        {
+            if (StepController._ExecuteStep(out bool combat))
+            {
+                if (combat != InCombat)
+                {
+                    InCombat = combat;
+                    if (combat)
+                    {
+                        App.Jukebox.CombatStarted();
+                    }
+                    else
+                    {
+                        App.Jukebox.CombatEnded();
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
         }
 
         // FILE IO

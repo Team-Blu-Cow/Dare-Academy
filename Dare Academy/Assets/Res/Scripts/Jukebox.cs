@@ -23,8 +23,13 @@ namespace blu
             {
                 if (StartSong == "NONE")
                     Stop();
-                else
+                else if (StartSong == "event:/Music/Main Menu/Main Theme")
                     Play(StartSong);
+                else
+                {
+                    Play(StartSong);
+                    SetParameter(MusicParameter.Muffled, 0);
+                }
             }
         }
 

@@ -16,8 +16,8 @@ public class PlayerPickup : Interface
     [SerializeField] private Type m_type;
     [SerializeField] private GameEventFlags.Flags m_flagToFlip;
 
-    private PlayerUI m_playerUI;
-    private ShipParts m_shipParts;
+    [SerializeField] private PlayerUI m_playerUI;
+    [SerializeField] private ShipParts m_shipParts;
 
     public override void OnInteract(InputAction.CallbackContext ctx)
     {
