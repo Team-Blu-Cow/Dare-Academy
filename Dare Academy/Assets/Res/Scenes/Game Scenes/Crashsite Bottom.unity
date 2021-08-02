@@ -33572,6 +33572,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Energy Cave
       objectReference: {fileID: 0}
+    - target: {fileID: 2348295014711111698, guid: db5cc7267483c9a4a8bec160689937c8, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 107e976826c46cf4b93ee1ae20db9c06, type: 3}
     - target: {fileID: 2348295014711111699, guid: db5cc7267483c9a4a8bec160689937c8, type: 3}
       propertyPath: m_type
       value: 1
@@ -43048,9 +43052,37 @@ PrefabInstance:
       propertyPath: m_Name
       value: Health PIckup
       objectReference: {fileID: 0}
+    - target: {fileID: 2348295014711111698, guid: db5cc7267483c9a4a8bec160689937c8, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 95a88e8483b558f4b8a2e1683df4cd16, type: 3}
+    - target: {fileID: 2348295014711111700, guid: db5cc7267483c9a4a8bec160689937c8, type: 3}
+      propertyPath: m_Size.x
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2348295014711111700, guid: db5cc7267483c9a4a8bec160689937c8, type: 3}
+      propertyPath: m_Size.y
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 2348295014711111700, guid: db5cc7267483c9a4a8bec160689937c8, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.x
+      value: 3.54
+      objectReference: {fileID: 0}
+    - target: {fileID: 2348295014711111700, guid: db5cc7267483c9a4a8bec160689937c8, type: 3}
+      propertyPath: m_SpriteTilingProperty.oldSize.y
+      value: 3.54
+      objectReference: {fileID: 0}
     - target: {fileID: 2348295014711111701, guid: db5cc7267483c9a4a8bec160689937c8, type: 3}
       propertyPath: m_RootOrder
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 2348295014711111701, guid: db5cc7267483c9a4a8bec160689937c8, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.3
+      objectReference: {fileID: 0}
+    - target: {fileID: 2348295014711111701, guid: db5cc7267483c9a4a8bec160689937c8, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.3
       objectReference: {fileID: 0}
     - target: {fileID: 2348295014711111701, guid: db5cc7267483c9a4a8bec160689937c8, type: 3}
       propertyPath: m_LocalPosition.x
