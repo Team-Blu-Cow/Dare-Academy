@@ -115,6 +115,9 @@ namespace blu
 
         public bool LoadFromFile()
         {
+            _activeQuests.Clear();
+            _completedQuests.Clear();
+
             LevelModule levelModule = App.GetModule<LevelModule>();
 
             List<StrippedQuest> active = levelModule.ActiveSaveData.activeQuests;
