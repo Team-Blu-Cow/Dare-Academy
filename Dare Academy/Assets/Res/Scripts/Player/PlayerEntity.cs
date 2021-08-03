@@ -497,6 +497,103 @@ public class PlayerEntity : GridEntity
         //SetAbilityAnimationFlag();
     }
 
+    public void MoveToNewScene()
+    {
+        StoreHeathEnergy();
+        levelModule.SaveGame();
+
+        m_sceneHasSwitched = true;
+        levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+
+        // transition to a new scene
+        sceneModule.SwitchScene(
+            m_currentNode.lvlTransitionInfo.targetSceneName,
+            m_currentNode.lvlTransitionInfo.transitionType,
+            m_currentNode.lvlTransitionInfo.loadType
+            );
+    }
+
+    public void LostWoodsTransition()
+    {
+        StoreHeathEnergy();
+        levelModule.SaveGame();
+
+        m_sceneHasSwitched = true;
+        // check lost woods count
+        if (!levelModule.persistantSceneData._switching)
+        {
+            levelModule.persistantSceneData._switching = true;
+
+            if (levelModule.persistantSceneData._MisplacedForestCounter == 0 && LastDirection == Vector2Int.down)
+            {
+                m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(2, 4);
+                m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
+                m_currentNode.lvlTransitionInfo.targetRoomIndex = 8;
+
+                levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+                Destroy(levelModule.persistantSceneData._soundEmitter);
+                levelModule.persistantSceneData = new MisplacedForestPersistantSceneData();
+
+                sceneModule.SwitchScene(
+                    m_currentNode.lvlTransitionInfo.targetSceneName,
+                    m_currentNode.lvlTransitionInfo.transitionType,
+                    m_currentNode.lvlTransitionInfo.loadType
+                    );
+            }
+            else if (levelModule.persistantSceneData._MisplacedForestCounter >= 3)
+            {
+                m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(0, 3);
+                m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
+                m_currentNode.lvlTransitionInfo.targetRoomIndex = 3;
+                levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+                Destroy(levelModule.persistantSceneData._soundEmitter);
+                levelModule.persistantSceneData = new MisplacedForestPersistantSceneData();
+
+                sceneModule.SwitchScene(
+                m_currentNode.lvlTransitionInfo.targetSceneName,
+                m_currentNode.lvlTransitionInfo.transitionType,
+                m_currentNode.lvlTransitionInfo.loadType
+                );
+            }
+            else
+            {
+                levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+                if (LastDirection == levelModule.persistantSceneData._direction)
+                {
+                    levelModule.persistantSceneData._MisplacedForestCounter++;
+                    Debug.Log(levelModule.persistantSceneData._MisplacedForestCounter);
+                }
+                else
+                {
+                    levelModule.persistantSceneData._MisplacedForestCounter = 0;
+                    Debug.Log(levelModule.persistantSceneData._MisplacedForestCounter);
+                }
+
+                sceneModule.SwitchScene(
+                m_currentNode.lvlTransitionInfo.targetSceneName,
+                m_currentNode.lvlTransitionInfo.transitionType,
+                m_currentNode.lvlTransitionInfo.loadType
+                );
+            }
+        }
+    }
+
+    public void CheckSceneTransitions()
+    {
+        if (m_currentNode.overridden)
+        {
+            if (m_currentNode.overrideType == NodeOverrideType.SceneConnection)
+            {
+                MoveToNewScene();
+            }
+
+            if (m_currentNode.overrideType == NodeOverrideType.LostWoodsConnection)
+            {
+                LostWoodsTransition();
+            }
+        }
+    }
+
     public override void EndStep()
     {
         base.EndStep();
@@ -519,89 +616,7 @@ public class PlayerEntity : GridEntity
         if (Energy < 0)
             Energy = 0;
 
-        if (m_currentNode.overridden)
-        {
-            if (m_currentNode.overrideType == NodeOverrideType.SceneConnection)
-            {
-                StoreHeathEnergy();
-                levelModule.SaveGame();
-
-                m_sceneHasSwitched = true;
-                levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-
-                // transition to a new scene
-                sceneModule.SwitchScene(
-                    m_currentNode.lvlTransitionInfo.targetSceneName,
-                    m_currentNode.lvlTransitionInfo.transitionType,
-                    m_currentNode.lvlTransitionInfo.loadType
-                    );
-            }
-
-            if (m_currentNode.overrideType == NodeOverrideType.LostWoodsConnection)
-            {
-                StoreHeathEnergy();
-                levelModule.SaveGame();
-
-                m_sceneHasSwitched = true;
-                // check lost woods count
-                if (!levelModule.persistantSceneData._switching)
-                {
-                    levelModule.persistantSceneData._switching = true;
-
-                    if (levelModule.persistantSceneData._MisplacedForestCounter == 0 && LastDirection == Vector2Int.down)
-                    {
-                        m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(2, 4);
-                        m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
-                        m_currentNode.lvlTransitionInfo.targetRoomIndex = 8;
-
-                        levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-                        Destroy(levelModule.persistantSceneData._soundEmitter);
-                        levelModule.persistantSceneData = new MisplacedForestPersistantSceneData();
-
-                        sceneModule.SwitchScene(
-                            m_currentNode.lvlTransitionInfo.targetSceneName,
-                            m_currentNode.lvlTransitionInfo.transitionType,
-                            m_currentNode.lvlTransitionInfo.loadType
-                            );
-                    }
-                    else if (levelModule.persistantSceneData._MisplacedForestCounter >= 3)
-                    {
-                        m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(0, 3);
-                        m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
-                        m_currentNode.lvlTransitionInfo.targetRoomIndex = 3;
-                        levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-                        Destroy(levelModule.persistantSceneData._soundEmitter);
-                        levelModule.persistantSceneData = new MisplacedForestPersistantSceneData();
-
-                        sceneModule.SwitchScene(
-                        m_currentNode.lvlTransitionInfo.targetSceneName,
-                        m_currentNode.lvlTransitionInfo.transitionType,
-                        m_currentNode.lvlTransitionInfo.loadType
-                        );
-                    }
-                    else
-                    {
-                        levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-                        if (LastDirection == levelModule.persistantSceneData._direction)
-                        {
-                            levelModule.persistantSceneData._MisplacedForestCounter++;
-                            Debug.Log(levelModule.persistantSceneData._MisplacedForestCounter);
-                        }
-                        else
-                        {
-                            levelModule.persistantSceneData._MisplacedForestCounter = 0;
-                            Debug.Log(levelModule.persistantSceneData._MisplacedForestCounter);
-                        }
-
-                        sceneModule.SwitchScene(
-                        m_currentNode.lvlTransitionInfo.targetSceneName,
-                        m_currentNode.lvlTransitionInfo.transitionType,
-                        m_currentNode.lvlTransitionInfo.loadType
-                        );
-                    }
-                }
-            }
-        }
+        CheckSceneTransitions();
 
         if (m_currentNode != null)
         {

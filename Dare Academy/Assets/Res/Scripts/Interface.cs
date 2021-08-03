@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using blu;
 
@@ -14,11 +15,21 @@ public abstract class Interface : MonoBehaviour
 
     private InputModule m_inputModule;
 
+    private GameObject m_interact;
+
     public abstract void OnInteract(InputAction.CallbackContext ctx);
 
     public virtual void Start()
     {
         m_player = PlayerEntity.Instance;
+
+        m_interact = new GameObject("Interact");
+        m_interact.transform.SetParent(transform);
+        m_interact.transform.localPosition = new Vector3(0, 1, 0);
+        m_interact.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+
+        SpriteRenderer sprite = m_interact.AddComponent<SpriteRenderer>();
+        sprite.sortingLayerName = "World Space UI";
     }
 
     private void OnEnable()
@@ -49,19 +60,19 @@ public abstract class Interface : MonoBehaviour
             switch (m_inputModule.LastUsedDevice.displayName)
             {
                 case "Keyboard":
-                    m_player.m_interactToolTip.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[0];
+                    m_interact.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[0];
                     break;
 
                 case "Mouse":
-                    m_player.m_interactToolTip.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[0];
+                    m_interact.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[0];
                     break;
 
                 case "Xbox Controller":
-                    m_player.m_interactToolTip.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[1];
+                    m_interact.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[1];
                     break;
 
                 case "Wireless Controller":
-                    m_player.m_interactToolTip.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[1];
+                    m_interact.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[1];
                     break;
 
                 default:
@@ -76,7 +87,7 @@ public abstract class Interface : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            m_player.m_interactToolTip.SetActive(true);
+            m_interact.SetActive(true);
             m_playerInRange = true;
             DeviceChanged();
         }
@@ -86,7 +97,7 @@ public abstract class Interface : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            m_player.m_interactToolTip.SetActive(false);
+            m_interact.SetActive(false);
             m_playerInRange = false;
         }
     }
