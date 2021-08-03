@@ -16,6 +16,7 @@ public class MeleePathfinder : GridEntity
     [SerializeField] private GameObject m_attackPrefab;
     [SerializeField] private GridNode m_attackNode;
 
+    public bool showPath = false;
     public enum State
     {
         MOVE,
@@ -90,7 +91,15 @@ public class MeleePathfinder : GridEntity
         Vector3 dir = Vector3.zero;
 
         if (m_path.Length > 1)
-            dir = m_path[1] - m_path[0];
+            dir = m_path[0] - m_currentNode.position.world;
+
+        if(Mathf.Abs(dir.x) > 0 && Mathf.Abs(dir.y) > 0)
+        {
+            if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
+                dir = new Vector3(Mathf.Sign(dir.x), 0, 0);
+            else
+                dir = new Vector3(0, Mathf.Sign(dir.y), 0);
+        }
 
         m_dir = new Vector2Int((int)dir.x, (int)dir.y);
 
@@ -107,5 +116,11 @@ public class MeleePathfinder : GridEntity
 
             ent.Init(m_attackNode);
         }
+    }
+
+    public void OnDrawGizmos()
+    {
+        if (showPath)
+            JUtil.JUtils.DrawPath(m_path, Position.world);
     }
 }
