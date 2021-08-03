@@ -7,7 +7,9 @@ public class MeleeAttackEntity : GridEntity
 {
     public int m_damage = 1;
 
-    public void Init(GridNode node)
+    public GameObject m_vfxPrefab;
+
+    public void Init(GridNode node, GameObject prefab = null)
     {
         m_currentNode = node;
 
@@ -30,15 +32,23 @@ public class MeleeAttackEntity : GridEntity
         {
             m_stepController.AddEntity(this);
         }
+
+        if(prefab != null)
+        {
+            m_vfxPrefab = prefab;
+        }
     }
 
     public override void DamageStep()
     {
-        foreach(var e in m_currentNode.GetGridEntities())
+        Instantiate(m_vfxPrefab, transform);
+
+        foreach (var e in m_currentNode.GetGridEntities())
         {
             if(e.Flags.IsFlagsSet(GridEntityFlags.Flags.isKillable))
             {
                 e.Health -= m_damage;
+                
             }
         }
     }

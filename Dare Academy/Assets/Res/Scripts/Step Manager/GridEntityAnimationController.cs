@@ -19,6 +19,8 @@ public class GridEntityAnimationController : MonoBehaviour
     float m_xScale = 1;
     float animatorSpeed;
 
+    [SerializeField, HideInInspector] public bool m_overwriteAnimSpeed = true;
+
     protected virtual void OnValidate()
     {
         m_animator = GetComponent<Animator>();
@@ -72,8 +74,11 @@ public class GridEntityAnimationController : MonoBehaviour
 
     protected virtual void Start()
     {
-        animatorSpeed = 1f / App.GetModule<LevelModule>().StepController.stepTime;
-        m_animator.speed = animatorSpeed;
+        if (m_overwriteAnimSpeed)
+        {
+            animatorSpeed = 1f / App.GetModule<LevelModule>().StepController.stepTime;
+            m_animator.speed = animatorSpeed;
+        }
     }
 
     public void SetAnimationSpeed(float speed)

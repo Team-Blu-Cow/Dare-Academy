@@ -16,6 +16,8 @@ public class MeleePathfinder : GridEntity
     [SerializeField] private GameObject m_attackPrefab;
     [SerializeField] private GridNode m_attackNode;
 
+    [SerializeField] private GameObject m_attackVFXPrefab;
+
     public bool showPath = false;
     public enum State
     {
@@ -46,6 +48,7 @@ public class MeleePathfinder : GridEntity
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true);
         m_player = PlayerEntity.Instance;
         m_animationController.animator.speed = 1;
+        m_animationController.m_overwriteAnimSpeed = false;
     }
 
     public override void AnalyseStep()
@@ -133,7 +136,7 @@ public class MeleePathfinder : GridEntity
 
             MeleeAttackEntity ent = gobj.GetComponent<MeleeAttackEntity>();
 
-            ent.Init(m_attackNode);
+            ent.Init(m_attackNode, m_attackVFXPrefab);
         }
     }
 
