@@ -228,12 +228,13 @@ public class PlayerEntity : GridEntity
         m_input.Player.SwapAbilityR.performed -= CycleAbilityL;
     }
 
-    protected async void Update()
+    protected void Update()
     {
         m_moveDirection = Vector2Int.zero;
         // m_abilityDirection = Vector2Int.zero;
 
-        await levelModule.AwaitSaveLoad();
+        if (!levelModule.IsSaveLoaded)
+            return;
 
         if (levelModule.ActiveSaveData != null)
             levelModule.ActiveSaveData.playtime += Time.deltaTime;
@@ -246,7 +247,16 @@ public class PlayerEntity : GridEntity
 
         if (m_abilityMode)
         {
-            Vector2Int direction = m_playerInput.DirectionEight(true);
+            Vector2Int direction;// = m_playerInput.DirectionEight(true);
+
+            if (Abilities.GetActiveAbility() == AbilityEnum.Block)
+            {
+                direction = m_playerInput.DirectionEight(true);
+            }
+            else
+            {
+                direction = m_playerInput.DirectionFour(true);
+            }
 
             if (direction != Vector2Int.zero)
             {
@@ -275,7 +285,6 @@ public class PlayerEntity : GridEntity
             if (Dash())
             {
                 animationController.StopDashChargeParticles();
-                m_abilityDirection = m_playerInput.DirectionFour(true);
                 SetMovementDirection(m_abilityDirection, m_dashDistance);
                 animationController.StartDashEffect(m_abilityDirection);
                 m_abilityDirection = Vector2Int.zero;
@@ -482,6 +491,7 @@ public class PlayerEntity : GridEntity
 
     protected void CycleAbilityR(InputAction.CallbackContext context)
     {
+        m_abilityDirection = Vector2Int.zero;
         m_abilities.SetActiveAbility(m_abilities.RightAbility());
 
         animationController.SetAbilityState(GetAbilityStateInt());
@@ -491,6 +501,7 @@ public class PlayerEntity : GridEntity
 
     protected void CycleAbilityL(InputAction.CallbackContext context)
     {
+        m_abilityDirection = Vector2Int.zero;
         m_abilities.SetActiveAbility(m_abilities.LeftAbility());
 
         animationController.SetAbilityState(GetAbilityStateInt());
@@ -641,9 +652,16 @@ public class PlayerEntity : GridEntity
 
     public override void AttackStep()
     {
-        if (!m_abilityMode && m_abilities.GetActiveAbility() == AbilityEnum.Shoot)
+        if (!m_abilityMode && m_abilities.GetActiveAbility() == AbilityEnum.Shoot && m_abilityDirection != Vector2Int.zero)
         {
-            Shoot();
+            if (Shoot())
+            {
+                // success
+            }
+            else
+            {
+                audioModule.PlayAudioEvent("event:/SFX/Player/sfx_ability_fail");
+            }
         }
     }
 
@@ -689,7 +707,7 @@ public class PlayerEntity : GridEntity
 
     // HELPER METHODS
 
-    private void Shoot()
+    private bool Shoot()
     {
         if (Energy >= m_shootEnergyCost)
         {
@@ -724,11 +742,15 @@ public class PlayerEntity : GridEntity
                     Energy -= m_shootEnergyCost;
                     if (bullet != null)
                         animationController.SetBulletColour(bullet);
+
+                    m_abilityDirection = Vector2Int.zero;
+                    return true;
                 }
             }
         }
 
         m_abilityDirection = Vector2Int.zero;
+        return false;
     }
 
     private bool Dash()
