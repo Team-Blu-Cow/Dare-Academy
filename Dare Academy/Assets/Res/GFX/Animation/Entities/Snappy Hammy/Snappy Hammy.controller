@@ -11,7 +11,7 @@ AnimatorStateMachine:
   m_ChildStates:
   - serializedVersion: 1
     m_State: {fileID: 7427834510313436665}
-    m_Position: {x: 310, y: 120, z: 0}
+    m_Position: {x: 300, y: 130, z: 0}
   - serializedVersion: 1
     m_State: {fileID: 8546172864851445840}
     m_Position: {x: 560, y: 170, z: 0}
@@ -21,7 +21,7 @@ AnimatorStateMachine:
   m_ChildStateMachines:
   - serializedVersion: 1
     m_StateMachine: {fileID: 3572169808660890501}
-    m_Position: {x: 340, y: 260, z: 0}
+    m_Position: {x: 330, y: 230, z: 0}
   m_AnyStateTransitions: []
   m_EntryTransitions: []
   m_StateMachineTransitions:
@@ -161,32 +161,6 @@ AnimatorStateTransition:
   m_InterruptionSource: 0
   m_OrderedInterruption: 1
   m_CanTransitionToSelf: 1
---- !u!114 &-1629863211226036814
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ccee29295f1a6ff448928468eefc1b43, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  OnEnterEvents: []
-  OnUpdateEvents:
-  - m_enabled: 1
-    m_normalizedTime: 0.803
-    m_ForceCallOnExit: 1
-    m_repeatOnLoop: 0
-    m_FunctionName: EndAttackAnimation
-    m_parameterType: 5
-    m_boolParameter: 0
-    m_floatParameter: 0
-    m_intParameter: 0
-    m_stringParameter: 
-    m_objectParameter: {fileID: 11500000, guid: 38a9e433c62d0d2418d7d9de57cc342d, type: 3}
-  OnExitEvents: []
 --- !u!1101 &-731813410735066446
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -197,6 +171,9 @@ AnimatorStateTransition:
   m_Conditions:
   - m_ConditionMode: 1
     m_ConditionEvent: IsAttacking
+    m_EventTreshold: 0
+  - m_ConditionMode: 2
+    m_ConditionEvent: HasAttacked
     m_EventTreshold: 0
   m_DstStateMachine: {fileID: 3572169808660890501}
   m_DstState: {fileID: 0}
@@ -240,19 +217,19 @@ AnimatorController:
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: IsAttacking
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   - m_Name: HasAttacked
     m_Type: 4
     m_DefaultFloat: 0
     m_DefaultInt: 0
     m_DefaultBool: 0
-    m_Controller: {fileID: 0}
+    m_Controller: {fileID: 9100000}
   m_AnimatorLayers:
   - serializedVersion: 5
     m_Name: Base Layer
@@ -293,6 +270,32 @@ AnimatorState:
   m_MirrorParameter: 
   m_CycleOffsetParameter: 
   m_TimeParameter: 
+--- !u!114 &1285597352801668229
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ccee29295f1a6ff448928468eefc1b43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  OnEnterEvents: []
+  OnUpdateEvents:
+  - m_enabled: 1
+    m_normalizedTime: 0.801
+    m_ForceCallOnExit: 1
+    m_repeatOnLoop: 0
+    m_FunctionName: EndAttackAnimation
+    m_parameterType: 5
+    m_boolParameter: 0
+    m_floatParameter: 0
+    m_intParameter: 0
+    m_stringParameter: 
+    m_objectParameter: {fileID: 11500000, guid: 38a9e433c62d0d2418d7d9de57cc342d, type: 3}
+  OnExitEvents: []
 --- !u!1101 &2332047961085813657
 AnimatorStateTransition:
   m_ObjectHideFlags: 1
@@ -408,7 +411,7 @@ AnimatorState:
   m_Transitions:
   - {fileID: -2835810906851806744}
   m_StateMachineBehaviours:
-  - {fileID: -1629863211226036814}
+  - {fileID: 1285597352801668229}
   m_Position: {x: 50, y: 50, z: 0}
   m_IKOnFeet: 0
   m_WriteDefaultValues: 1
