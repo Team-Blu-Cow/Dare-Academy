@@ -18,8 +18,8 @@ public class GameEventFlags : BitFlags_32
         health_pickup_1 = 0x0000_0400,
         energy_pickup_1 = 0x0000_0800,
         blarb_ship_part = 0x0000_1000,
-        Flag_14 = 0x0000_2000,
-        Flag_15 = 0x0000_4000,
+        lost_words_energy_pickup = 0x0000_2000,
+        mir_ship_health_pickup = 0x0000_4000,
         Flag_16 = 0x0000_8000,
 
         Flag_17 = 0x0001_0000,

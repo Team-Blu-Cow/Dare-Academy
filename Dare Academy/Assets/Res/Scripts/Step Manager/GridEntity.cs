@@ -1164,47 +1164,7 @@ public abstract class GridEntity : MonoBehaviour
 
     protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2Int direction, int damage = 1)
     {
-        if (sourceNode == null)
-            return false;
-
-        if (direction == null)
-            return false;
-
-        if (prefab)
-        {
-            GridNode spawnNode = sourceNode.GetNeighbour(direction); ;
-
-            if (spawnNode == null)
-                return false;
-
-            List<GridEntity> entities = spawnNode.GetGridEntities();
-            if (entities.Count > 0)
-            {
-                foreach (GridEntity entity in entities)
-                {
-                    entity.Health -= damage;
-                }
-
-                return true;
-            }
-
-            Vector3 spawnPosition = spawnNode.position.world;
-
-            GameObject obj = GameObject.Instantiate(prefab, spawnPosition, Quaternion.identity);
-            if (obj)
-            {
-                BulletEntity bullet = obj.GetComponent<BulletEntity>();
-
-                if (bullet)
-                {
-                    bullet.m_damage = damage;
-                    bullet.m_bulletDirection = direction;
-                    return true;
-                }
-            }
-        }
-
-        return false;
+        return SpawnBullet(out GameObject bullet, prefab, sourceNode, direction, damage);
     }
 
     protected bool SpawnBullet(out GameObject bullet, GameObject prefab, GridNode sourceNode, Vector2 direction, int damage = 1)
@@ -1261,6 +1221,7 @@ public abstract class GridEntity : MonoBehaviour
                     }
                 }
             }
+            Vector3 spawnPosition = spawnNode.position.world;
 
             if (entities.Count > 0)
             {
@@ -1269,11 +1230,17 @@ public abstract class GridEntity : MonoBehaviour
                     entity.Health -= damage;
                 }
 
+                if (prefab.TryGetComponent(out BulletEntity bulletEntity))
+                {
+                    if (bulletEntity.ExplosionPrefab != null)
+                    {
+                        BulletEntity.DeathExplosion(bulletEntity.ExplosionPrefab, spawnPosition);
+                    }
+                }
+
                 bullet = null;
                 return true;
             }
-
-            Vector3 spawnPosition = spawnNode.position.world;
 
             bullet = GameObject.Instantiate(prefab, spawnPosition, Quaternion.identity);
             if (bullet)
