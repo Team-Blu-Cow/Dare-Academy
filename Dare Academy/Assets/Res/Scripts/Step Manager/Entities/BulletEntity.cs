@@ -14,6 +14,8 @@ public class BulletEntity : GridEntity
     [SerializeField] private Transform m_particleTail;
     [SerializeField] private GameObject m_ExplosionPrefab;
 
+    public GameObject ExplosionPrefab => m_ExplosionPrefab;
+
     protected override void Start()
     {
         base.Start();
@@ -184,12 +186,16 @@ public class BulletEntity : GridEntity
 
     public override void OnDeath()
     {
-        if (m_ExplosionPrefab != null)
-        {
-            Vector3 pos = Vector3.Lerp(transform.position, transform.position + new Vector3(m_bulletDirection.x, (m_bulletDirection.y * 1.2f) - 0.75f, 0), 0.65f);
-
-            Instantiate(m_ExplosionPrefab, pos, Quaternion.identity);
-        }
+        Vector3 pos = Vector3.Lerp(transform.position, transform.position + new Vector3(m_bulletDirection.x, (m_bulletDirection.y * 1.2f) - 0.75f, 0), 0.65f);
+        DeathExplosion(m_ExplosionPrefab, pos);
         base.OnDeath();
+    }
+
+    public static void DeathExplosion(GameObject prefab, Vector3 position)
+    {
+        if (prefab != null)
+        {
+            Instantiate(prefab, position, Quaternion.identity);
+        }
     }
 }
