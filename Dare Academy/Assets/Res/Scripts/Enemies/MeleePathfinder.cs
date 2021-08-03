@@ -18,18 +18,13 @@ public class MeleePathfinder : GridEntity
 
     [SerializeField] private GameObject m_attackVFXPrefab;
 
+    private Vector3 m_attackVfxSpawnPos;
+
     public bool showPath = false;
     public enum State
     {
         MOVE,
         ATTACK
-    }
-
-    public enum AnimationState : int 
-    { 
-        IDLE,
-        IDLE_ATTACKING,
-        MOVE
     }
 
 
@@ -96,6 +91,7 @@ public class MeleePathfinder : GridEntity
                         m_state = State.ATTACK;
                         m_attackNode = node;
                         App.GetModule<LevelModule>().telegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.ATTACK);
+                        m_animationController.SetDirection(-v.x, 1);
                         return;
                     }
                 }
@@ -136,6 +132,8 @@ public class MeleePathfinder : GridEntity
 
             MeleeAttackEntity ent = gobj.GetComponent<MeleeAttackEntity>();
 
+            m_attackVfxSpawnPos = m_attackNode.position.world + new Vector3(0, 0.4f, 0);
+
             ent.Init(m_attackNode, m_attackVFXPrefab);
         }
     }
@@ -171,6 +169,7 @@ public class MeleePathfinder : GridEntity
     public void EndAttackAnimation()
     {
         m_animationController.animator.SetBool("HasAttacked", false);
+        Instantiate(m_attackVFXPrefab, m_attackVfxSpawnPos, Quaternion.identity);
     }
 
     public void Tween(float tweenVal, float targetVal, float time, System.Action<float> setMethod)

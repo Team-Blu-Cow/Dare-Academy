@@ -41,14 +41,13 @@ public class MeleeAttackEntity : GridEntity
 
     public override void DamageStep()
     {
-        Instantiate(m_vfxPrefab, transform);
+        //Instantiate(m_vfxPrefab, m_currentNode.position.world + new Vector3(0, 0.25f, 1), Quaternion.identity);
 
         foreach (var e in m_currentNode.GetGridEntities())
         {
             if(e.Flags.IsFlagsSet(GridEntityFlags.Flags.isKillable))
             {
                 e.Health -= m_damage;
-                
             }
         }
     }
