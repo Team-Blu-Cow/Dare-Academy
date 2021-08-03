@@ -23,6 +23,14 @@ public class MeleePathfinder : GridEntity
         ATTACK
     }
 
+    public enum AnimationState : int 
+    { 
+        IDLE,
+        IDLE_ATTACKING,
+        MOVE
+    }
+
+
     [SerializeField] private State m_state;
 
     protected override void OnValidate()
@@ -37,10 +45,13 @@ public class MeleePathfinder : GridEntity
         m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true);
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true);
         m_player = PlayerEntity.Instance;
+        m_animationController.animator.speed = 1;
     }
 
     public override void AnalyseStep()
     {
+        m_animationController.animator.speed = 1;
+
         if (m_player == null)
             return;
 
@@ -54,7 +65,13 @@ public class MeleePathfinder : GridEntity
             case State.MOVE:
                 MoveState();
                 break;
+
+            case State.ATTACK:
+                m_animationController.animator.SetBool("IsAttacking", true);
+                m_animationController.animator.SetBool("IsMoving", false);
+                break;
         }
+
     }
 
     private void DecideState()
@@ -104,6 +121,8 @@ public class MeleePathfinder : GridEntity
         m_dir = new Vector2Int((int)dir.x, (int)dir.y);
 
         SetMovementDirection(m_dir, moveSpeed);
+
+        m_animationController.SetDirection(-m_dir.x, 1);
     }
 
     public override void AttackStep()
@@ -122,5 +141,38 @@ public class MeleePathfinder : GridEntity
     {
         if (showPath)
             JUtil.JUtils.DrawPath(m_path, Position.world);
+    }
+
+    public override void DrawStep()
+    {
+        m_animationController.animator.speed = 1;
+
+        switch (m_state)
+        {
+            case State.MOVE:
+                m_animationController.animator.SetBool("IsMoving", true);
+                m_animationController.animator.SetBool("IsAttacking", false);
+                m_animationController.animator.SetBool("HasAttacked", false);
+                LeanTween.move(gameObject, m_currentNode.position.world, m_stepController.stepTime)
+                    .setOnComplete(() => { m_animationController.animator.SetBool("IsMoving", false); });
+                break;
+
+            case State.ATTACK:
+                m_animationController.animator.SetBool("IsAttacking", false);
+                m_animationController.animator.SetBool("HasAttacked", true);
+                m_animationController.animator.SetBool("IsMoving", false);
+                break;
+        }
+    }
+
+    public void EndAttackAnimation()
+    {
+        m_animationController.animator.SetBool("HasAttacked", false);
+    }
+
+    public void Tween(float tweenVal, float targetVal, float time, System.Action<float> setMethod)
+    {
+        LeanTween.value(tweenVal, targetVal, time)
+            .setOnUpdate(setMethod);
     }
 }
