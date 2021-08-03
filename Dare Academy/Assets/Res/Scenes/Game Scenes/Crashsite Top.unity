@@ -20545,7 +20545,7 @@ MonoBehaviour:
   m_flags:
     m_flagData: 1044
   m_animationController: {fileID: 361344318}
-  m_flagToFlip: 8192
+  m_flagToFlip: 32768
 --- !u!1001 &369279471
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -71967,7 +71967,7 @@ MonoBehaviour:
   m_flags:
     m_flagData: 1044
   m_animationController: {fileID: 1339388273}
-  m_flagToFlip: 8192
+  m_flagToFlip: 32768
 --- !u!1 &1360725754
 GameObject:
   m_ObjectHideFlags: 0
@@ -75102,7 +75102,7 @@ MonoBehaviour:
   m_flags:
     m_flagData: 1044
   m_animationController: {fileID: 1864814244}
-  m_flagToFlip: 8192
+  m_flagToFlip: 32768
 --- !u!1 &1871761446
 GameObject:
   m_ObjectHideFlags: 0
@@ -75341,7 +75341,7 @@ MonoBehaviour:
   m_flags:
     m_flagData: 1044
   m_animationController: {fileID: 1955958825}
-  m_flagToFlip: 8192
+  m_flagToFlip: 32768
 --- !u!1001 &1959429591
 PrefabInstance:
   m_ObjectHideFlags: 0
