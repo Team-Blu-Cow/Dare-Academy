@@ -73,6 +73,9 @@ public class MortarEnemy : GridEntity
             {
                 if (node != null && node != currentNode)
                 {
+                    if (node.position.grid.x == int.MaxValue)
+                        continue;
+
                     GameObject obj = Instantiate(m_damageEntityPrefab, node.position.world, Quaternion.identity);
                     obj.GetComponent<MortarShot>().m_landTime = m_mortarShotFallTime;
                 }
