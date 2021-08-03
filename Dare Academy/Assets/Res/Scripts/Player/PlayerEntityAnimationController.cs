@@ -23,8 +23,8 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
     [SerializeField, HideInInspector] private GameObject m_dashBurstPrefab;
 
     [Header("Vignette Settings")]
-
     [SerializeField] public Color[] m_abilityColours;
+
     [SerializeField] private float m_vignetteIntensityVal = 0.4f;
     private float m_currentVignetteIntensityVal = 0;
     private Color m_vignetteColour;
@@ -86,14 +86,14 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
     public void SetParticleColours()
     {
-        foreach(var p in m_luvGunSubParticles)
+        foreach (var p in m_luvGunSubParticles)
         {
             ParticleSystem.MainModule settings = p.main;
 
             settings.startColor = m_abilityColours[1];
         }
 
-        foreach(var p in m_dashChargeSubParticles)
+        foreach (var p in m_dashChargeSubParticles)
         {
             ParticleSystem.MainModule settings = p.main;
 
@@ -224,8 +224,7 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         if (!m_dashChargeParticles.isPlaying)
         {
             m_dashChargeParticles.Play();
-            // #adam #sound #sfx  
-            //blu.App.GetModule<blu.AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 1);
+            blu.App.GetModule<blu.AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_dash_chrage").SetParameter("selecting", 1);
         }
     }
 
@@ -237,8 +236,7 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         if (m_dashChargeParticles.isPlaying)
         {
             m_dashChargeParticles.Stop(true, ParticleSystemStopBehavior.StopEmittingAndClear);
-            // #adam #sound #sfx  
-            //blu.App.GetModule<blu.AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_ability_select").SetParameter("selecting", 0);
+            blu.App.GetModule<blu.AudioModule>().GetAudioEvent("event:/SFX/Player/sfx_dash_chrage").SetParameter("selecting", 0);
         }
     }
 
@@ -253,7 +251,9 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         int index = (-direction).RotationToIndex(90);
 
         //Instantiate(m_LuvMuzzleFlashPrefab, m_muzzlePositions[index].position, Quaternion.identity);
-        GameObject flashObj = Instantiate(m_dashBurstPrefab,m_muzzlePositions[index]);
+        blu.App.GetModule<blu.AudioModule>().PlayAudioEvent("event:/SFX/Player/sfx_dash_release");
+
+        GameObject flashObj = Instantiate(m_dashBurstPrefab, m_muzzlePositions[index]);
 
         flashObj.GetComponent<ParticleSystem>().Stop();
 
@@ -349,7 +349,7 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         GameObject flashObj = Instantiate(m_LuvMuzzleFlashPrefab, m_muzzlePositions[index]);
         ParticleSystem[] particles = flashObj.GetComponentsInChildren<ParticleSystem>();
 
-        foreach(var p in particles)
+        foreach (var p in particles)
         {
             ParticleSystem.MainModule settings = p.main;
             settings.startColor = m_abilityColours[1];
@@ -367,7 +367,6 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
         base.Update();
     }
-
 
     public void SetBulletColour(GameObject bullet)
     {
