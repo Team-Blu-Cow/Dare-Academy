@@ -654,14 +654,8 @@ public class PlayerEntity : GridEntity
     {
         if (!m_abilityMode && m_abilities.GetActiveAbility() == AbilityEnum.Shoot && m_abilityDirection != Vector2Int.zero)
         {
-            if (Shoot())
-            {
-                // success
-            }
-            else
-            {
-                audioModule.PlayAudioEvent("event:/SFX/Player/sfx_ability_fail");
-            }
+            Shoot();
+            m_abilityDirection = Vector2Int.zero;
         }
     }
 
@@ -707,13 +701,12 @@ public class PlayerEntity : GridEntity
 
     // HELPER METHODS
 
-    private bool Shoot()
+    private void Shoot()
     {
         if (Energy >= m_shootEnergyCost)
         {
             if (m_abilityDirection != Vector2.zero)
             {
-                //m_abilityDirection = m_playerInput.DirectionFour(true);
                 GridNode node;
                 if (m_previousNode != null)
                 {
@@ -731,26 +724,33 @@ public class PlayerEntity : GridEntity
                 }
                 SetAbilityAnimationFlag(0);
                 animationController.StopLuvParticles();
-                animationController.MuzzleFlash(m_abilityDirection);
-                audioModule.PlayAudioEvent("event:/SFX/Player/sfx_shoot");
 
                 m_abilityUsedThisTurn = true;
                 GameObject bullet;
 
                 if (SpawnBullet(out bullet, m_bulletPrefab, node, m_abilityDirection))
                 {
+                    animationController.MuzzleFlash(m_abilityDirection);
+                    audioModule.PlayAudioEvent("event:/SFX/Player/sfx_shoot");
+
                     Energy -= m_shootEnergyCost;
                     if (bullet != null)
                         animationController.SetBulletColour(bullet);
 
-                    m_abilityDirection = Vector2Int.zero;
-                    return true;
+                    return;
+                }
+                else
+                {
+                    audioModule.PlayAudioEvent("event:/SFX/Player/sfx_ability_fail");
+                    return;
                 }
             }
         }
-
-        m_abilityDirection = Vector2Int.zero;
-        return false;
+        else
+        {
+            audioModule.PlayAudioEvent("event:/SFX/Player/sfx_ability_fail");
+            return;
+        }
     }
 
     private bool Dash()
