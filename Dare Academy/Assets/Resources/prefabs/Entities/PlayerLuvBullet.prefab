@@ -4813,6 +4813,29 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &157663115069875272
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 456181785455378373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/SFX/bullets/sfx_bullet_impact
+  PlayEvent: 2
+  StopEvent: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 0
+  OverrideMaxDistance: 0
 --- !u!1 &1118615691811291367
 GameObject:
   m_ObjectHideFlags: 0
@@ -24164,6 +24187,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
+--- !u!1 &456181785455378373 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 850901680950745066, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
+  m_PrefabInstance: {fileID: 980566978312284207}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &393754753512186313 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 643251290633079270, guid: 32ba9827d273001458f57d876b93e8dd, type: 3}
