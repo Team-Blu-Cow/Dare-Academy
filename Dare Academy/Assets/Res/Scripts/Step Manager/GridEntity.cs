@@ -125,6 +125,7 @@ public abstract class GridEntity : MonoBehaviour
     private void OnDestroy()
     {
         m_stepController.RoomChangeEvent -= RoomChange;
+        RemoveFromCurrentNode();
     }
 
     protected virtual void OnValidate()

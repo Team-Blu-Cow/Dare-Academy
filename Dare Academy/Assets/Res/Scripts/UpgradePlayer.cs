@@ -63,9 +63,9 @@ public class UpgradePlayer : Interface
                     }
 
 #if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
-                    popUpController.m_body = new List<string>() { "Hold " + key + " to enter ability mode", "When in ability mode use a direction to use the ability", "Your next step the ability will be used" };
+                    popUpController.m_body = new List<string>() { "Hold " + key + " to enter ability mode", "When in ability mode use the direction controls to use the ability", "The next step the ability will be used" };
 #else
-                    popUpController.m_body = new List<string>() { "Press " + key + " to toggle ability mode ", "When in ability mode use a direction to use the ability", "Your next step the ability will be used"};
+                    popUpController.m_body = new List<string>() { "Press " + key + " to toggle ability mode ", "When in ability mode use the direction controls to use the ability", "The next step the ability will be used"};
 #endif
 
                     break;
