@@ -1244,6 +1244,24 @@ public abstract class GridEntity : MonoBehaviour
             }
 
             List<GridEntity> entities = spawnNode.GetGridEntities();
+
+            for (int i = entities.Count - 1; i >= 0; i--)
+            {
+                if (entities[i].TryGetComponent<GridEntity>(out GridEntity other))
+                {
+                    if (other is BulletEntity)
+                    {
+                        bullet = null;
+                        return false;
+                    }
+
+                    if (other.Flags.IsFlagsSet(flags.isAttack))
+                    {
+                        entities.RemoveAt(i);
+                    }
+                }
+            }
+
             if (entities.Count > 0)
             {
                 foreach (GridEntity entity in entities)

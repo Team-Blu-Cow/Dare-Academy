@@ -123,6 +123,8 @@ namespace blu
 
         private IEnumerator LoadLevel(string in_scene, float in_delay = 0f, bool test = false)
         {
+            App.GetModule<InputModule>().PlayerController.Disable();
+
             yield return new WaitForSeconds(in_delay); // allow for animation to trigger
 
             AsyncOperation sceneLoad = SceneManager.LoadSceneAsync(in_scene); // begin async scene swap after intro if any
@@ -175,6 +177,8 @@ namespace blu
             _transitionAnimator = null;
 
             switching = false;
+
+            App.GetModule<InputModule>().PlayerController.Enable();
 
             yield break;
         }

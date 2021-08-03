@@ -228,12 +228,13 @@ public class PlayerEntity : GridEntity
         m_input.Player.SwapAbilityR.performed -= CycleAbilityL;
     }
 
-    protected async void Update()
+    protected void Update()
     {
         m_moveDirection = Vector2Int.zero;
         // m_abilityDirection = Vector2Int.zero;
 
-        await levelModule.AwaitSaveLoad();
+        if (!levelModule.IsSaveLoaded)
+            return;
 
         if (levelModule.ActiveSaveData != null)
             levelModule.ActiveSaveData.playtime += Time.deltaTime;
@@ -246,7 +247,16 @@ public class PlayerEntity : GridEntity
 
         if (m_abilityMode)
         {
-            Vector2Int direction = m_playerInput.DirectionEight(true);
+            Vector2Int direction;// = m_playerInput.DirectionEight(true);
+
+            if (Abilities.GetActiveAbility() == AbilityEnum.Block)
+            {
+                direction = m_playerInput.DirectionEight(true);
+            }
+            else
+            {
+                direction = m_playerInput.DirectionFour(true);
+            }
 
             if (direction != Vector2Int.zero)
             {
@@ -274,9 +284,7 @@ public class PlayerEntity : GridEntity
         {
             if (Dash())
             {
-                // #adam #sound #sfx
                 animationController.StopDashChargeParticles();
-                m_abilityDirection = m_playerInput.DirectionFour(true);
                 SetMovementDirection(m_abilityDirection, m_dashDistance);
                 animationController.StartDashEffect(m_abilityDirection);
                 m_abilityDirection = Vector2Int.zero;
@@ -285,7 +293,7 @@ public class PlayerEntity : GridEntity
             else
             {
                 // failed to dash, no enough energy
-                // #TODO #sound #adam - sound effect here
+                blu.App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/Player/sfx_ability_fail");
                 m_abilityDirection = Vector2Int.zero;
             }
         }
@@ -302,7 +310,7 @@ public class PlayerEntity : GridEntity
             else
             {
                 // failed to block, no enough energy
-                // #TODO #sound #adam - sound effect here
+                blu.App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/Player/sfx_ability_fail");
                 m_abilityDirection = Vector2Int.zero;
             }
         }
@@ -483,6 +491,7 @@ public class PlayerEntity : GridEntity
 
     protected void CycleAbilityR(InputAction.CallbackContext context)
     {
+        m_abilityDirection = Vector2Int.zero;
         m_abilities.SetActiveAbility(m_abilities.RightAbility());
 
         animationController.SetAbilityState(GetAbilityStateInt());
@@ -492,10 +501,108 @@ public class PlayerEntity : GridEntity
 
     protected void CycleAbilityL(InputAction.CallbackContext context)
     {
+        m_abilityDirection = Vector2Int.zero;
         m_abilities.SetActiveAbility(m_abilities.LeftAbility());
 
         animationController.SetAbilityState(GetAbilityStateInt());
         //SetAbilityAnimationFlag();
+    }
+
+    public void MoveToNewScene()
+    {
+        StoreHeathEnergy();
+        levelModule.SaveGame();
+
+        m_sceneHasSwitched = true;
+        levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+
+        // transition to a new scene
+        sceneModule.SwitchScene(
+            m_currentNode.lvlTransitionInfo.targetSceneName,
+            m_currentNode.lvlTransitionInfo.transitionType,
+            m_currentNode.lvlTransitionInfo.loadType
+            );
+    }
+
+    public void LostWoodsTransition()
+    {
+        StoreHeathEnergy();
+        levelModule.SaveGame();
+
+        m_sceneHasSwitched = true;
+        // check lost woods count
+        if (!levelModule.persistantSceneData._switching)
+        {
+            levelModule.persistantSceneData._switching = true;
+
+            if (levelModule.persistantSceneData._MisplacedForestCounter == 0 && LastDirection == Vector2Int.down)
+            {
+                m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(2, 4);
+                m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
+                m_currentNode.lvlTransitionInfo.targetRoomIndex = 8;
+
+                levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+                Destroy(levelModule.persistantSceneData._soundEmitter);
+                levelModule.persistantSceneData = new MisplacedForestPersistantSceneData();
+
+                sceneModule.SwitchScene(
+                    m_currentNode.lvlTransitionInfo.targetSceneName,
+                    m_currentNode.lvlTransitionInfo.transitionType,
+                    m_currentNode.lvlTransitionInfo.loadType
+                    );
+            }
+            else if (levelModule.persistantSceneData._MisplacedForestCounter >= 3)
+            {
+                m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(0, 3);
+                m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
+                m_currentNode.lvlTransitionInfo.targetRoomIndex = 3;
+                levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+                Destroy(levelModule.persistantSceneData._soundEmitter);
+                levelModule.persistantSceneData = new MisplacedForestPersistantSceneData();
+
+                sceneModule.SwitchScene(
+                m_currentNode.lvlTransitionInfo.targetSceneName,
+                m_currentNode.lvlTransitionInfo.transitionType,
+                m_currentNode.lvlTransitionInfo.loadType
+                );
+            }
+            else
+            {
+                levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
+                if (LastDirection == levelModule.persistantSceneData._direction)
+                {
+                    levelModule.persistantSceneData._MisplacedForestCounter++;
+                    Debug.Log(levelModule.persistantSceneData._MisplacedForestCounter);
+                }
+                else
+                {
+                    levelModule.persistantSceneData._MisplacedForestCounter = 0;
+                    Debug.Log(levelModule.persistantSceneData._MisplacedForestCounter);
+                }
+
+                sceneModule.SwitchScene(
+                m_currentNode.lvlTransitionInfo.targetSceneName,
+                m_currentNode.lvlTransitionInfo.transitionType,
+                m_currentNode.lvlTransitionInfo.loadType
+                );
+            }
+        }
+    }
+
+    public void CheckSceneTransitions()
+    {
+        if (m_currentNode.overridden)
+        {
+            if (m_currentNode.overrideType == NodeOverrideType.SceneConnection)
+            {
+                MoveToNewScene();
+            }
+
+            if (m_currentNode.overrideType == NodeOverrideType.LostWoodsConnection)
+            {
+                LostWoodsTransition();
+            }
+        }
     }
 
     public override void EndStep()
@@ -520,89 +627,7 @@ public class PlayerEntity : GridEntity
         if (Energy < 0)
             Energy = 0;
 
-        if (m_currentNode.overridden)
-        {
-            if (m_currentNode.overrideType == NodeOverrideType.SceneConnection)
-            {
-                StoreHeathEnergy();
-                levelModule.SaveGame();
-
-                m_sceneHasSwitched = true;
-                levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-
-                // transition to a new scene
-                sceneModule.SwitchScene(
-                    m_currentNode.lvlTransitionInfo.targetSceneName,
-                    m_currentNode.lvlTransitionInfo.transitionType,
-                    m_currentNode.lvlTransitionInfo.loadType
-                    );
-            }
-
-            if (m_currentNode.overrideType == NodeOverrideType.LostWoodsConnection)
-            {
-                StoreHeathEnergy();
-                levelModule.SaveGame();
-
-                m_sceneHasSwitched = true;
-                // check lost woods count
-                if (!levelModule.persistantSceneData._switching)
-                {
-                    levelModule.persistantSceneData._switching = true;
-
-                    if (levelModule.persistantSceneData._MisplacedForestCounter == 0 && LastDirection == Vector2Int.down)
-                    {
-                        m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(2, 4);
-                        m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
-                        m_currentNode.lvlTransitionInfo.targetRoomIndex = 8;
-
-                        levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-                        Destroy(levelModule.persistantSceneData._soundEmitter);
-                        levelModule.persistantSceneData = new MisplacedForestPersistantSceneData();
-
-                        sceneModule.SwitchScene(
-                            m_currentNode.lvlTransitionInfo.targetSceneName,
-                            m_currentNode.lvlTransitionInfo.transitionType,
-                            m_currentNode.lvlTransitionInfo.loadType
-                            );
-                    }
-                    else if (levelModule.persistantSceneData._MisplacedForestCounter >= 3)
-                    {
-                        m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(0, 3);
-                        m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
-                        m_currentNode.lvlTransitionInfo.targetRoomIndex = 3;
-                        levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-                        Destroy(levelModule.persistantSceneData._soundEmitter);
-                        levelModule.persistantSceneData = new MisplacedForestPersistantSceneData();
-
-                        sceneModule.SwitchScene(
-                        m_currentNode.lvlTransitionInfo.targetSceneName,
-                        m_currentNode.lvlTransitionInfo.transitionType,
-                        m_currentNode.lvlTransitionInfo.loadType
-                        );
-                    }
-                    else
-                    {
-                        levelModule.lvlTransitionInfo = m_currentNode.lvlTransitionInfo;
-                        if (LastDirection == levelModule.persistantSceneData._direction)
-                        {
-                            levelModule.persistantSceneData._MisplacedForestCounter++;
-                            Debug.Log(levelModule.persistantSceneData._MisplacedForestCounter);
-                        }
-                        else
-                        {
-                            levelModule.persistantSceneData._MisplacedForestCounter = 0;
-                            Debug.Log(levelModule.persistantSceneData._MisplacedForestCounter);
-                        }
-
-                        sceneModule.SwitchScene(
-                        m_currentNode.lvlTransitionInfo.targetSceneName,
-                        m_currentNode.lvlTransitionInfo.transitionType,
-                        m_currentNode.lvlTransitionInfo.loadType
-                        );
-                    }
-                }
-            }
-        }
+        CheckSceneTransitions();
 
         if (m_currentNode != null)
         {
@@ -627,9 +652,10 @@ public class PlayerEntity : GridEntity
 
     public override void AttackStep()
     {
-        if (!m_abilityMode && m_abilities.GetActiveAbility() == AbilityEnum.Shoot)
+        if (!m_abilityMode && m_abilities.GetActiveAbility() == AbilityEnum.Shoot && m_abilityDirection != Vector2Int.zero)
         {
             Shoot();
+            m_abilityDirection = Vector2Int.zero;
         }
     }
 
@@ -681,7 +707,6 @@ public class PlayerEntity : GridEntity
         {
             if (m_abilityDirection != Vector2.zero)
             {
-                //m_abilityDirection = m_playerInput.DirectionFour(true);
                 GridNode node;
                 if (m_previousNode != null)
                 {
@@ -699,22 +724,33 @@ public class PlayerEntity : GridEntity
                 }
                 SetAbilityAnimationFlag(0);
                 animationController.StopLuvParticles();
-                animationController.MuzzleFlash(m_abilityDirection);
-                audioModule.PlayAudioEvent("event:/SFX/Player/sfx_shoot");
 
                 m_abilityUsedThisTurn = true;
                 GameObject bullet;
 
                 if (SpawnBullet(out bullet, m_bulletPrefab, node, m_abilityDirection))
                 {
+                    animationController.MuzzleFlash(m_abilityDirection);
+                    audioModule.PlayAudioEvent("event:/SFX/Player/sfx_shoot");
+
                     Energy -= m_shootEnergyCost;
                     if (bullet != null)
                         animationController.SetBulletColour(bullet);
+
+                    return;
+                }
+                else
+                {
+                    audioModule.PlayAudioEvent("event:/SFX/Player/sfx_ability_fail");
+                    return;
                 }
             }
         }
-
-        m_abilityDirection = Vector2Int.zero;
+        else
+        {
+            audioModule.PlayAudioEvent("event:/SFX/Player/sfx_ability_fail");
+            return;
+        }
     }
 
     private bool Dash()
