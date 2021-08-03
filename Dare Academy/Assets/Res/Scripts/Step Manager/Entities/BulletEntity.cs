@@ -133,6 +133,11 @@ public class BulletEntity : GridEntity
 
     public override void DamageStep()
     {
+        if (m_previousNode == null)
+        {
+            return;
+        }
+
         TryReflectBullet();
 
         List<GridEntity> entities = GetEntitiesOnNode(m_currentNode);
