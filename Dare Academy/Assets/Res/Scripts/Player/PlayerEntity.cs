@@ -183,6 +183,7 @@ public class PlayerEntity : GridEntity
         }
 
         audioModule.PlayAudioEvent("event:/SFX/Player/sfx_ability_select");
+        audioModule.PlayAudioEvent("event:/SFX/Player/sfx_dash_chrage");
 
         UpdateSaveFile();
     }

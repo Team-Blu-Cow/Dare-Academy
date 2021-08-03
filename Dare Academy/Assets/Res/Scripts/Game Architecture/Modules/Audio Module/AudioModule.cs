@@ -157,6 +157,8 @@ namespace blu
             NewMusicEvent("event:/Music/Mushroom Forest/Boyfriends Helmet");
             NewMusicEvent("event:/Music/Mushroom Forest/Undergrowth");
             NewAudioEvent("event:/SFX/Player/sfx_ability_select");
+            NewAudioEvent("event:/SFX/Player/sfx_dash_chrage");
+            NewAudioEvent("event:/SFX/Player/sfx_dash_release");
             NewAudioEvent("event:/SFX/Player/sfx_ability_fail");
             NewAudioEvent("event:/SFX/Systems/sfx_quest_accepted");
             NewAudioEvent("event:/SFX/Systems/sfx_return_main_menu");
