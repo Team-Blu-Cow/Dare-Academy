@@ -51,6 +51,11 @@ public class ResolutionDropdown : MonoBehaviour
         }
     }
 
+    public void Hide()
+    {
+        _dropdown.Hide();
+    }
+
     public void HandleInput(int in_value)
     {
         Resolution newResolution = listResolutions[in_value];

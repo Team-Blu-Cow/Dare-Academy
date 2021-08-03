@@ -372,9 +372,12 @@ namespace DialogueEditor
 
             if (Skip)
             {
+                blu.App.GetModule<blu.AudioModule>().PlayAudioEvent("event:/SFX/Systems/dialogue/sfx_dialogue_blip");
                 DialogueText.maxVisibleCharacters = m_targetScrollTextCount;
                 Skip = false;
                 SetState(eState.TransitioningOptionsOn);
+
+                blu.App.GetModule<blu.AudioModule>().PlayAudioEvent("event:/SFX/UI/Pointer Enter");
                 return;
             }
 
@@ -384,7 +387,7 @@ namespace DialogueEditor
 
                 DialogueText.maxVisibleCharacters = m_scrollIndex;
                 m_scrollIndex++;
-
+                blu.App.GetModule<blu.AudioModule>().PlayAudioEvent("event:/SFX/Systems/dialogue/sfx_dialogue_blip");
                 // Finished?
                 if (m_scrollIndex >= m_targetScrollTextCount)
                 {

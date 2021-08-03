@@ -18,8 +18,8 @@ public class MortarEnemy : GridEntity
     [SerializeField] private int m_fireRate = 2;
     private int m_cooldown = 0;
 
-    private GameObject m_damageEntityPrefab;
-    private GameObject m_shotUpPrefab;
+    [SerializeField, HideInInspector] private GameObject m_damageEntityPrefab;
+    [SerializeField, HideInInspector] private GameObject m_shotUpPrefab;
 
     protected override void OnValidate()
     {
@@ -36,6 +36,11 @@ public class MortarEnemy : GridEntity
 
     public override void AnalyseStep()
     {
+        if (Health <= 0)
+        {
+            Kill();
+        }
+
         m_cooldown--;
 
         m_animationController.animator.SetBool("isAsleep", !PlayerInFiringRange());
@@ -68,6 +73,9 @@ public class MortarEnemy : GridEntity
             {
                 if (node != null && node != currentNode)
                 {
+                    if (node.position.grid.x == int.MaxValue)
+                        continue;
+
                     GameObject obj = Instantiate(m_damageEntityPrefab, node.position.world, Quaternion.identity);
                     obj.GetComponent<MortarShot>().m_landTime = m_mortarShotFallTime;
                 }

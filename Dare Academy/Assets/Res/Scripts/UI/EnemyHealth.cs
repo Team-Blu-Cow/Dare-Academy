@@ -13,12 +13,10 @@ public class EnemyHealth : MonoBehaviour
     // Start is called before the first frame update
     private void Start()
     {
-        m_storedHealth = m_entity.Health;
+        if (m_entity == null)
+            m_entity = GetComponentInParent<GridEntity>();
 
-        for (int i = 0; i < m_entity.Health; i++)
-        {
-            AddHeart();
-        }
+        m_storedHealth = m_entity.Health;
     }
 
     private void OnValidate()
@@ -32,23 +30,23 @@ public class EnemyHealth : MonoBehaviour
         GameObject tempGo = new GameObject("Health");
 
         tempGo.transform.SetParent(transform);
-        tempGo.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+        tempGo.transform.localScale = Vector3.one * 0.1f;
 
         SpriteRenderer spriteRenderer = tempGo.AddComponent<SpriteRenderer>();
-        spriteRenderer.sprite = Resources.Load<Sprite>("GFX/HeartFull"); ;
+        spriteRenderer.sprite = Resources.Load<Sprite>("GFX/HeartFull");
         spriteRenderer.sortingLayerName = "World Space UI";
 
         if (m_hearts.Count <= 0)
             // Shuffle to the side
-            tempGo.transform.localPosition = new Vector3(0.3f, 1.2f, 0);
+            tempGo.transform.localPosition = new Vector3(0.2f, 1.2f, 0);
         else
-            tempGo.transform.localPosition = new Vector3(m_hearts[m_hearts.Count - 1].transform.localPosition.x + 0.6f, 1.2f, 0);
+            tempGo.transform.localPosition = new Vector3(m_hearts[m_hearts.Count - 1].transform.localPosition.x + 0.4f, 1.2f, 0);
 
         m_hearts.Add(tempGo);
 
         foreach (var heart in m_hearts)
         {
-            heart.transform.localPosition = heart.transform.localPosition - new Vector3(0.3f, 0, 0);
+            heart.transform.localPosition = heart.transform.localPosition - new Vector3(0.2f, 0, 0);
         }
     }
 
@@ -57,6 +55,14 @@ public class EnemyHealth : MonoBehaviour
     {
         if (m_storedHealth > m_entity.Health)
         {
+            if (m_hearts.Count == 0)
+            {
+                for (int i = 0; i < m_entity.Health + (m_storedHealth - m_entity.Health); i++)
+                {
+                    AddHeart();
+                }
+            }
+
             for (int i = 0; i < m_storedHealth - m_entity.Health; i++)
                 OnHit();
 
@@ -67,14 +73,6 @@ public class EnemyHealth : MonoBehaviour
     private void OnHit()
     {
         //Remove sprite
-        GameObject temp = m_hearts[m_hearts.Count - 1];
-        m_hearts.RemoveAt(m_hearts.Count - 1);
-        Destroy(temp);
-
-        //Move across
-        foreach (var heart in m_hearts)
-        {
-            heart.transform.localPosition = heart.transform.localPosition + new Vector3(0.3f, 0, 0);
-        }
+        m_hearts[m_entity.Health].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("GFX/HeartEmpty");
     }
 }

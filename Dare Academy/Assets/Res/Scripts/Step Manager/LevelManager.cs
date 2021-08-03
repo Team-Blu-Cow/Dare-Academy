@@ -40,6 +40,7 @@ public class LevelManager : MonoBehaviour
         get { return m_forceStepsCount == 0; }
     }
 
+    public bool debug_SpawnPlayer = true;
     [SerializeField] private float m_stepTime = 0.2f;
     [SerializeField] public int m_defaultPlayerSpawnIndex;
     [SerializeField] public Vector2Int m_defaultPlayerPosition;
@@ -49,7 +50,9 @@ public class LevelManager : MonoBehaviour
     [SerializeField] private TelegraphDrawer m_telegraphDrawer;
 
     [SerializeField] private PathfindingMultiGrid m_grid = null;
-    private bool paused = false;
+
+    private GameObject _treeSounds;
+    public bool paused { get; private set; }
 
     public StepController StepController
     { get { return m_stepController; } }
@@ -70,6 +73,7 @@ public class LevelManager : MonoBehaviour
     private void OnValidate()
     {
         m_telegraphDrawer.OnValidate();
+        _treeSounds = GameObject.Find("Tree sounds");
     }
 
     private void OnEnable()
@@ -107,7 +111,7 @@ public class LevelManager : MonoBehaviour
             if (m_forceStepTimer > m_forceStepTime)
             {
                 m_forceStepTimer = 0;
-                if (m_stepController.ExecuteStep())
+                if (App.GetModule<LevelModule>().ExecuteStep())
                 {
                     ForceStepsCount--;
                 }
@@ -118,7 +122,7 @@ public class LevelManager : MonoBehaviour
     private void Step(InputAction.CallbackContext context)
     {
         if (AllowPlayerMovement)
-            m_stepController.ExecuteStep();
+            App.GetModule<LevelModule>().ExecuteStep();
     }
 
     public void PauseGame(InputAction.CallbackContext ctx)
@@ -129,21 +133,52 @@ public class LevelManager : MonoBehaviour
                 App.CanvasManager.CloseCanvas();
             App.CanvasManager.CloseCanvas();
 
+            EventSystem.current.SetSelectedGameObject(null);
+
             App.GetModule<InputModule>().PlayerController.Player.Enable();
+            App.GetModule<InputModule>().SystemController.UI.Map.Enable();
 
             if (App.GetModule<AudioModule>().GetCurrentSong() != null)
                 App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
+
+            ResolutionDropdown dropDown = FindObjectOfType<ResolutionDropdown>();
+            if (dropDown)
+                dropDown.Hide();
+
+            App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/UI/sfx_unpause");
+            if (_treeSounds)
+                _treeSounds.SetActive(true);
 
             paused = false;
         }
         else
         {
+            paused = true;
+
             App.CanvasManager.OpenCanvas("Options Menu", true);
-            EventSystem.current.SetSelectedGameObject(App.CanvasManager.GetCanvasContainer("Options Menu").gameObject.transform.GetChild(1).GetChild(1).gameObject);
+            EventSystem.current.SetSelectedGameObject(App.CanvasManager.GetCanvasContainer("Options Menu").gameObject.transform.GetChild(1).GetChild(0).GetChild(0).gameObject);
+
             if (App.GetModule<AudioModule>().GetCurrentSong() != null)
                 App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 1);
+
+            App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/UI/sfx_pause");
+            if (_treeSounds)
+                _treeSounds.SetActive(false);
+
             App.GetModule<InputModule>().PlayerController.Player.Disable();
-            paused = true;
+            App.GetModule<InputModule>().SystemController.UI.Map.Disable();
+
+            CanvasTool.CanvasContainer mapCanvas = App.CanvasManager.GetCanvasContainer("Map");
+            if (App.CanvasManager.openCanvases.Contains(mapCanvas))
+            {
+                mapCanvas.CloseCanvas();
+                mapCanvas.gameObject.GetComponentInChildren<MiniMapGen>().Open = false;
+
+                if (mapCanvas.gameObject.transform.GetChild(2).TryGetComponent(out QuestLog questLog))
+                    questLog.Open = false;
+
+                App.CanvasManager.openCanvases.Remove(mapCanvas);
+            }
         }
     }
 
@@ -155,12 +190,23 @@ public class LevelManager : MonoBehaviour
             {
                 paused = false;
                 App.GetModule<InputModule>().PlayerController.Player.Enable();
+                App.GetModule<InputModule>().SystemController.UI.Map.Enable();
+
                 if (App.GetModule<AudioModule>().GetCurrentSong() != null)
                     App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
+
+                EventSystem.current.SetSelectedGameObject(null);
             }
 
+            ResolutionDropdown dropDown = FindObjectOfType<ResolutionDropdown>();
+            if (dropDown)
+                dropDown.Hide();
+
+            if (_treeSounds)
+                _treeSounds.SetActive(true);
+
             App.CanvasManager.CloseCanvas();
-            EventSystem.current.SetSelectedGameObject(App.CanvasManager.GetCanvasContainer("Options Menu").gameObject.transform.GetChild(1).GetChild(1).gameObject);
+            EventSystem.current.SetSelectedGameObject(App.CanvasManager.GetCanvasContainer("Options Menu").gameObject.transform.GetChild(1).GetChild(0).GetChild(2).gameObject);
         }
     }
 

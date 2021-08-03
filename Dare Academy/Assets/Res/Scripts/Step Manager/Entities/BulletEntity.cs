@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using JUtil;
 using flags = GridEntityFlags.Flags;
 
 public class BulletEntity : GridEntity
@@ -10,12 +11,48 @@ public class BulletEntity : GridEntity
 
     private bool m_passthrough = false;
 
+    [SerializeField] private Transform m_particleTail;
+    [SerializeField] private GameObject m_ExplosionPrefab;
+
+    public GameObject ExplosionPrefab => m_ExplosionPrefab;
+
     protected override void Start()
     {
         base.Start();
         m_flags.SetFlags(flags.isAttack, true);
         m_health = 1;
-        m_animationController = GetComponent<GridEntityAnimationController>();
+        if (m_animationController == null)
+            m_animationController = GetComponent<GridEntityAnimationController>();
+
+        m_animationController.animator.SetFloat("DirX", m_bulletDirection.x);
+        m_animationController.animator.SetFloat("DirY", m_bulletDirection.y);
+
+        if (m_particleTail != null)
+            SetTailDirection();
+    }
+
+    private void SetTailDirection()
+    {
+        int index = m_bulletDirection.RotationToIndex(90);
+
+        switch (index)
+        {
+            case 0: // north
+                transform.Rotate(new Vector3(0, 0, 180));
+                break;
+
+            case 1: // east
+                transform.Rotate(new Vector3(0, 0, 90));
+                break;
+
+            case 2: // south
+                transform.Rotate(new Vector3(0, 0, 0));
+                break;
+
+            case 3: // west
+                transform.Rotate(new Vector3(0, 0, 270));
+                break;
+        }
     }
 
     public override bool CheckForConflict()
@@ -28,7 +65,33 @@ public class BulletEntity : GridEntity
 
     public override void ResolvePassThroughStep()
     {
-        if (CheckForPassThrough())
+        if (m_previousNode == null)
+            return;
+
+        List<GridEntity> entities = m_previousNode.GetGridEntities();
+
+        if (entities == null)
+            return;
+
+        // check for entities that have passed through this entity
+        for (int i = entities.Count - 1; i >= 0; i--)
+        {
+            GridEntity entity = entities[i];
+
+            if (entity.Flags.IsFlagsSet(flags.isAttack))
+                continue;
+
+            if (entity.Direction == -Direction)
+            {
+                RemoveFromCurrentNode();
+                m_currentNode = m_previousNode;
+                AddToCurrentNode();
+            }
+        }
+
+        return;
+
+        /*if (CheckForPassThrough())
         {
             if (m_currentNode != null && m_previousNode != null)
             {
@@ -39,7 +102,7 @@ public class BulletEntity : GridEntity
 
                 TryReflectBullet();
             }
-        }
+        }*/
     }
 
     public override void ResolveMoveStep()
@@ -70,9 +133,14 @@ public class BulletEntity : GridEntity
 
     public override void DamageStep()
     {
+        if (m_previousNode == null)
+        {
+            return;
+        }
+
         TryReflectBullet();
 
-        List<GridEntity> entities =  GetEntitiesOnNode(m_currentNode);
+        List<GridEntity> entities = GetEntitiesOnNode(m_currentNode);
         foreach (GridEntity entity in entities)
         {
             entity.Health -= m_damage;
@@ -119,5 +187,20 @@ public class BulletEntity : GridEntity
 
         // Vector2 rayVec = new Vector2(m_bulletDirection.x, m_bulletDirection.y);
         Gizmos.DrawWireSphere(transform.position, 1);
+    }
+
+    public override void OnDeath()
+    {
+        Vector3 pos = Vector3.Lerp(transform.position, transform.position + new Vector3(m_bulletDirection.x, (m_bulletDirection.y * 1.2f) - 0.75f, 0), 0.65f);
+        DeathExplosion(m_ExplosionPrefab, pos);
+        base.OnDeath();
+    }
+
+    public static void DeathExplosion(GameObject prefab, Vector3 position)
+    {
+        if (prefab != null)
+        {
+            Instantiate(prefab, position, Quaternion.identity);
+        }
     }
 }

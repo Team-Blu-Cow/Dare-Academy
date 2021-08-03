@@ -47,7 +47,6 @@ public class ArcherEntity : GridEntity
     protected override void Start()
     {
         base.Start(); // Run base start function
-        m_health = 5; // Set health
         m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true); // Set flag for killable to true
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true); // Set flag for if solid to true
         player = PlayerEntity.Instance;

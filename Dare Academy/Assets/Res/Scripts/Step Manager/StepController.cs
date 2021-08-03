@@ -37,17 +37,15 @@ public class StepController
     }
 
     // STEP METHODS *******************************************************************************
-    public bool ExecuteStep()
+    public bool _ExecuteStep(out bool InCombat)
     {
+        InCombat = false;
+
         if (m_timer < m_stepTime)
             return false;
 
-        m_timer = 0;
 
-        if (m_telegraphDrawer != null)
-            m_telegraphDrawer.OnStep();
-
-        for(int i = m_entities.Count - 1; i >= 0; i--)
+        for (int i = m_entities.Count - 1; i >= 0; i--)
         {
             if (m_entities[i] == null)
                 m_entities.RemoveAt(i);
@@ -73,6 +71,8 @@ public class StepController
         CheckForRoomChange();
 
         AnalyseStep();
+
+        InCombat = CheckForHostileFlag();
 
         return true;
     }
@@ -188,6 +188,25 @@ public class StepController
 
             RoomChangeEvent?.Invoke();
         }
+    }
+
+    public void ForceRoomChangeEvent()
+    {
+        m_currentRoomIndex = m_targetRoomIndex;
+        RoomChangeEvent?.Invoke();
+    }
+
+    private bool CheckForHostileFlag()
+    {
+        foreach (var entity in m_entities)
+        {
+            if (entity.Flags.IsFlagsSet(GridEntityFlags.Flags.isHostile))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // HELPER METHODS *****************************************************************************

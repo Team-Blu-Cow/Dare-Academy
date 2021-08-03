@@ -20,26 +20,27 @@ namespace blu
 
     public class LevelModule : Module
     {
+        private IOModule io;
+
         private PathfindingMultiGrid m_grid = null;
         private GameEventFlags m_gameEventFlags = new GameEventFlags();
 
-        private bool m_initialised = false;
-
-        public bool IsInitialised
-        {
-            get => m_initialised;
-        }
+        public bool Initialised
+        { get; private set; }
 
         public SaveData ActiveSaveData
         {
-            get { return blu.App.GetModule<IOModule>().savedata; }
-            set { blu.App.GetModule<IOModule>().savedata = value; }
+            get { return io.ActiveSaveData; }
+            set { io.ActiveSaveData = value; }
         }
 
         public bool IsSaveLoaded
         {
             get => ActiveSaveData != null;
         }
+
+        public bool InCombat
+        { get; private set; }
 
         public GameEventFlags EventFlags
         {
@@ -90,6 +91,8 @@ namespace blu
 
         public override void Initialize()
         {
+            io = App.GetModule<IOModule>();
+
             SceneManager.sceneLoaded += LevelChanged;
 
             if (m_playerPrefab == null)
@@ -119,44 +122,68 @@ namespace blu
             if (m_playerPrefab == null)
                 m_playerPrefab = Resources.Load<GameObject>("prefabs/Entities/Player");
 
-            if (m_lvlTransitionInfo == null)
-            {
-                Vector3 pos = m_grid.Grid(m_levelManager.m_defaultPlayerSpawnIndex)[m_levelManager.m_defaultPlayerPosition].position.world;
-
-                m_levelManager.StepController.m_currentRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
-                m_levelManager.StepController.m_targetRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
-
-                Instantiate(m_playerPrefab, pos, Quaternion.identity);
-            }
+            if (m_levelManager.debug_SpawnPlayer == true)
+                SpawnPlayer();
             else
-            {
-                Vector2Int nodePos = m_lvlTransitionInfo.targetNodeIndex + ((-m_lvlTransitionInfo.offsetVector) * m_lvlTransitionInfo.offsetIndex);
+                FindPlayer();
 
-                GridNode node = m_grid.Grid(m_lvlTransitionInfo.targetRoomIndex)[nodePos];
+            //m_levelManager.StepController.InitialAnalyse();
+        }
 
-                if (node == null)
+        public void FindPlayer()
+        {
+            PlayerEntity playerEnt = FindObjectOfType<PlayerEntity>();
+            if (playerEnt == null)
+                SpawnPlayer();
+
+            playerEnt.DebugSetNode();
+
+            m_levelManager.StepController.m_currentRoomIndex = playerEnt.RoomIndex;
+            m_levelManager.StepController.m_targetRoomIndex = playerEnt.RoomIndex;
+        }
+
+        public void SpawnPlayer()
+        {
+            if (m_levelManager.debug_SpawnPlayer == true)
+
+                if (m_lvlTransitionInfo == null)
                 {
-                    node = m_grid.Grid(m_lvlTransitionInfo.targetRoomIndex)[m_lvlTransitionInfo.targetNodeIndex];
-                }
+                    Vector3 pos = m_grid.Grid(m_levelManager.m_defaultPlayerSpawnIndex)[m_levelManager.m_defaultPlayerPosition].position.world;
 
-                Vector3 pos;
-
-                if (node == null)
-                {
-                    pos = m_grid.Grid(m_levelManager.m_defaultPlayerSpawnIndex)[m_levelManager.m_defaultPlayerPosition].position.world;
                     m_levelManager.StepController.m_currentRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
                     m_levelManager.StepController.m_targetRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
+
+                    Instantiate(m_playerPrefab, pos, Quaternion.identity);
                 }
                 else
                 {
-                    pos = node.position.world;
-                    m_levelManager.StepController.m_currentRoomIndex = m_lvlTransitionInfo.targetRoomIndex;
-                    m_levelManager.StepController.m_targetRoomIndex = m_lvlTransitionInfo.targetRoomIndex;
-                }
+                    Vector2Int nodePos = m_lvlTransitionInfo.targetNodeIndex + ((-m_lvlTransitionInfo.offsetVector) * m_lvlTransitionInfo.offsetIndex);
 
-                Instantiate(m_playerPrefab, pos, Quaternion.identity);
-            }
-            //m_levelManager.StepController.InitialAnalyse();
+                    GridNode node = m_grid.Grid(m_lvlTransitionInfo.targetRoomIndex)[nodePos];
+
+                    if (node == null)
+                    {
+                        node = m_grid.Grid(m_lvlTransitionInfo.targetRoomIndex)[m_lvlTransitionInfo.targetNodeIndex];
+                    }
+
+                    Vector3 pos;
+
+                    if (node == null)
+                    {
+                        pos = m_grid.Grid(m_levelManager.m_defaultPlayerSpawnIndex)[m_levelManager.m_defaultPlayerPosition].position.world;
+                        m_levelManager.StepController.m_currentRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
+                        m_levelManager.StepController.m_targetRoomIndex = m_levelManager.m_defaultPlayerSpawnIndex;
+                    }
+                    else
+                    {
+                        pos = node.position.world;
+                        m_levelManager.StepController.m_currentRoomIndex = m_lvlTransitionInfo.targetRoomIndex;
+                        m_levelManager.StepController.m_targetRoomIndex = m_lvlTransitionInfo.targetRoomIndex;
+                    }
+
+                    GameObject player = Instantiate(m_playerPrefab, pos, Quaternion.identity);
+                    player.GetComponent<PlayerEntity>().LoadingFromOtherScene = true;
+                }
         }
 
         public void AddEntityToCurrentRoom(GridEntity entity)
@@ -164,45 +191,116 @@ namespace blu
             m_levelManager.AddEntityToStepController(entity);
         }
 
+        public bool ExecuteStep()
+        {
+            if (StepController._ExecuteStep(out bool combat))
+            {
+                if (combat != InCombat)
+                {
+                    InCombat = combat;
+                    if (combat)
+                    {
+                        App.Jukebox.CombatStarted();
+                    }
+                    else
+                    {
+                        App.Jukebox.CombatEnded();
+                    }
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
         // FILE IO
 
-        public async void LoadFromSave()
+        public void LoadFromSave()
         {
-            await AwaitSaveLoad();
-
-            if (ActiveSaveData == null)
+            if (!io.IsSaveLoading && !io.IsSaveLoaded)
             {
-                Debug.LogWarning("[LevelModule] attempted to read from save file but no file was loaded");
-                return;
+                bool found = false;
+                for (int i = 0; i < io.SaveSlots.Length; i++)
+                {
+                    if (io.SaveSlots[i] != null)
+                    {
+                        found = true;
+                        io.LoadSaveAsync(io.SaveSlots[i]);
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    io.CreateNewSave(0, true);
+                }
+            }
+
+            while (ActiveSaveData == null)
+            {
             }
 
             EventFlags._FlagData = ActiveSaveData.gameEventFlags;
 
             App.GetModule<QuestModule>().LoadFromFile();
 
-            m_initialised = true;
+            Initialised = true;
+        }
+
+        public void FlushSaveData()
+        {
+            Initialised = false;
+            EventFlags._FlagData = 0;
         }
 
         public async void SaveGame()
         {
             await AwaitSaveLoad();
             App.GetModule<QuestModule>().WriteToFile();
-            App.GetModule<IOModule>().savedata.gameEventFlags = EventFlags._FlagData;
+            io.ActiveSaveData.gameEventFlags = EventFlags._FlagData;
             // #TODO #matthew - move the await out of here
-            await App.GetModule<IOModule>().SaveAsync();
+            await io.SaveAsync();
         }
 
-        public Task<bool> AwaitSaveLoad()
+        public Task AwaitSaveLoad()
         {
             return Task.Run(() => AwaitSaveLoadImpl());
         }
 
-        internal bool AwaitSaveLoadImpl()
+        internal void AwaitSaveLoadImpl()
         {
-            blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
-            while (levelModule.IsSaveLoaded == false)
+            while (!IsSaveLoaded)
             { }
-            return true;
+
+            return;
+            // if (!io.IsSaveLoading && !io.IsSaveLoaded)
+            // {
+            //     bool found = false;
+            //     for (int i = 0; i < io.SaveSlots.Length; i++)
+            //     {
+            //         if (io.SaveSlots[i] != null)
+            //         {
+            //             found = true;
+            //             await io.LoadSaveAsync(io.SaveSlots[i]);
+            //             break;
+            //         }
+            //     }
+            //
+            //     if (!found)
+            //     {
+            //         await io.CreateNewSave(0, true);
+            //     }
+            // }
+            //
+            // await io.AwaitSaveLoaded();
+            //
+            // blu.LevelModule levelModule = blu.App.GetModule<blu.LevelModule>();
+            // while (levelModule.IsSaveLoaded == false)
+            // {
+            //     Debug.Log("awaiting saveLoad");
+            // }
+            // return;
         }
 
         public Task<bool> AwaitInitialised()
@@ -212,7 +310,9 @@ namespace blu
 
         internal bool AwaitInitialisedImpl()
         {
-            while (!IsInitialised) { }
+            while (!Initialised)
+            {
+            }
             return true;
         }
 

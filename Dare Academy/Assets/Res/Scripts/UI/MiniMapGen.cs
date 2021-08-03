@@ -22,6 +22,8 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
     private PlayerEntity player;
 
     private bool open = false;
+    public bool Open { get { return open; } set { open = value; } }
+
 #pragma warning disable CS0108 // Member hides inherited member; missing new keyword
     private RectTransform transform;
 #pragma warning restore CS0108 // Member hides inherited member; missing new keyword
@@ -80,14 +82,20 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
         transform.anchoredPosition = Vector3.zero;
         CloseMap();
 
-        DrawRooms(currentRoom);
+        if (SceneManager.GetActiveScene().name != "Misplaced Forest")
+        {
+            DrawRooms(currentRoom);
 
-        DrawLinks(currentRoom);
+            DrawLinks(currentRoom);
 
-        DrawQuestMarker(currentRoom);
+            DrawQuestMarker(currentRoom);
 
-        DrawSceneLinks(currentRoom);
-
+            DrawSceneLinks(currentRoom);
+        }
+        else
+        {
+            //Tell player to fuck off no map for u
+        }
         FindBounds(currentRoom);
     }
 
@@ -269,7 +277,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
 
                             var angle = (sceneLink.travelDirection + 2) * 45;
                             float width = (sceneLink.width / 2.0f) - 0.5f;
-                            pos = OffsetLink(pos, angle, width);
+                            pos = OffsetLink(pos, angle, width) - new Vector2(currentRoom.OriginPosition.x, currentRoom.OriginPosition.y);
 
                             CreateQuestMarker(currentRoom, quest, pos);
                         }
@@ -452,7 +460,7 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
     private void MoveStart(InputAction.CallbackContext ctx)
     {
         m_movePos = ctx.ReadValue<Vector2>();
-        m_movePos.y *= -1;
+        m_movePos *= -1;
     }
 
     private void MoveEnd(InputAction.CallbackContext ctx)

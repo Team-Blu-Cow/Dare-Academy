@@ -78,7 +78,7 @@ public abstract class GridEntity : MonoBehaviour
     protected List<GridEnityAction> m_actionList;
     protected Coroutine m_animationCoroutine;
 
-    protected GridEntityAnimationController m_animationController;
+    [SerializeField, HideInInspector] protected GridEntityAnimationController m_animationController;
 
     // INITIALISATION METHODS *********************************************************************
     protected virtual void Start()
@@ -125,6 +125,7 @@ public abstract class GridEntity : MonoBehaviour
     private void OnDestroy()
     {
         m_stepController.RoomChangeEvent -= RoomChange;
+        RemoveFromCurrentNode();
     }
 
     protected virtual void OnValidate()
@@ -1164,20 +1165,65 @@ public abstract class GridEntity : MonoBehaviour
 
     protected bool SpawnBullet(GameObject prefab, GridNode sourceNode, Vector2Int direction, int damage = 1)
     {
-        if (sourceNode == null)
+        return SpawnBullet(out GameObject bullet, prefab, sourceNode, direction, damage);
+    }
+
+    protected bool SpawnBullet(out GameObject bullet, GameObject prefab, GridNode sourceNode, Vector2 direction, int damage = 1)
+    {
+        if (direction == null)
+        {
+            bullet = null;
             return false;
+        }
+
+        Vector2Int dir = new Vector2Int((int)direction.x, (int)direction.y);
+        return SpawnBullet(out bullet, prefab, sourceNode, dir, damage);
+    }
+
+    protected bool SpawnBullet(out GameObject bullet, GameObject prefab, GridNode sourceNode, Vector2Int direction, int damage = 1)
+    {
+        if (sourceNode == null)
+        {
+            bullet = null;
+            return false;
+        }
 
         if (direction == null)
+        {
+            bullet = null;
             return false;
+        }
 
         if (prefab)
         {
             GridNode spawnNode = sourceNode.GetNeighbour(direction); ;
 
             if (spawnNode == null)
+            {
+                bullet = null;
                 return false;
+            }
 
             List<GridEntity> entities = spawnNode.GetGridEntities();
+
+            for (int i = entities.Count - 1; i >= 0; i--)
+            {
+                if (entities[i].TryGetComponent<GridEntity>(out GridEntity other))
+                {
+                    if (other is BulletEntity)
+                    {
+                        bullet = null;
+                        return false;
+                    }
+
+                    if (other.Flags.IsFlagsSet(flags.isAttack))
+                    {
+                        entities.RemoveAt(i);
+                    }
+                }
+            }
+            Vector3 spawnPosition = spawnNode.position.world;
+
             if (entities.Count > 0)
             {
                 foreach (GridEntity entity in entities)
@@ -1185,25 +1231,33 @@ public abstract class GridEntity : MonoBehaviour
                     entity.Health -= damage;
                 }
 
+                if (prefab.TryGetComponent(out BulletEntity bulletEntity))
+                {
+                    if (bulletEntity.ExplosionPrefab != null)
+                    {
+                        BulletEntity.DeathExplosion(bulletEntity.ExplosionPrefab, spawnPosition);
+                    }
+                }
+
+                bullet = null;
                 return true;
             }
 
-            Vector3 spawnPosition = spawnNode.position.world;
-
-            GameObject obj = GameObject.Instantiate(prefab, spawnPosition, Quaternion.identity);
-            if (obj)
+            bullet = GameObject.Instantiate(prefab, spawnPosition, Quaternion.identity);
+            if (bullet)
             {
-                BulletEntity bullet = obj.GetComponent<BulletEntity>();
+                BulletEntity bulletEntity = bullet.GetComponent<BulletEntity>();
 
-                if (bullet)
+                if (bulletEntity)
                 {
-                    bullet.m_damage = damage;
-                    bullet.m_bulletDirection = direction;
+                    bulletEntity.m_damage = damage;
+                    bulletEntity.m_bulletDirection = direction;
                     return true;
                 }
             }
         }
 
+        bullet = null;
         return false;
     }
 

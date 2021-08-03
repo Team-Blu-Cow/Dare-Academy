@@ -11,18 +11,16 @@ namespace blu
         public List<Quest> ActiveQuests { get => _activeQuests; }
         public List<Quest> CompletedQuests { get => _completedQuests; }
 
-        public bool AddQuest(Quest in_quest)
+        public bool AddQuest(Quest in_quest, bool in_popUp = false)
         {
             if (in_quest == null)
                 return false;
 
             foreach (var quest in _activeQuests)
-            {                
+            {
                 if (quest.name == in_quest.name)
                     return false;
             }
-
-
 
             foreach (var quest in _completedQuests)
             {
@@ -30,12 +28,16 @@ namespace blu
                     return false;
             }
 
-			GameObject popUp = Instantiate(Resources.Load<GameObject>("prefabs/UI prefabs/QuestPopUp"));
-			popUp.GetComponentInChildren<QuestPopUp>().SetTitle(in_quest.name);
-			popUp.GetComponentInChildren<QuestPopUp>().SetBody(in_quest.activeDescription);
-			_activeQuests.Add(in_quest);
-			return true;
+            if (in_popUp)
+            {
+                GameObject popUp = Instantiate(Resources.Load<GameObject>("prefabs/UI prefabs/QuestPopUp"));
+                popUp.GetComponentInChildren<QuestPopUp>().SetTitle(in_quest.name);
+                popUp.GetComponentInChildren<QuestPopUp>().SetBody(in_quest.activeDescription);
+                App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/Systems/sfx_quest_accepted");
+            }
 
+            _activeQuests.Add(in_quest);
+            return true;
         }
 
         public bool SetRequiermentsComplete(Quest in_quest, string in_req)
@@ -113,6 +115,9 @@ namespace blu
 
         public bool LoadFromFile()
         {
+            _activeQuests.Clear();
+            _completedQuests.Clear();
+
             LevelModule levelModule = App.GetModule<LevelModule>();
 
             List<StrippedQuest> active = levelModule.ActiveSaveData.activeQuests;

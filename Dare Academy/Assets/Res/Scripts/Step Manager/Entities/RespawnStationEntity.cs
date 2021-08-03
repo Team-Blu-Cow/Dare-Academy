@@ -16,6 +16,8 @@ public class RespawnStationEntity : GridEntity, IInteractable
 
     private Sprite[] m_interactImages = new Sprite[2];
 
+    private GameObject m_interact;
+
     static public RespawnStationEntity CurrentRespawnStation
     {
         get { return m_currentRespawnStation; }
@@ -27,9 +29,17 @@ public class RespawnStationEntity : GridEntity, IInteractable
         base.Start();
 
         m_player = PlayerEntity.Instance;
+
+        m_interact = new GameObject("Interact");
+        m_interact.transform.SetParent(transform);
+        m_interact.transform.localPosition = new Vector3(0, 1, 0);
+        m_interact.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+
+        SpriteRenderer sprite = m_interact.AddComponent<SpriteRenderer>();
+        sprite.sortingLayerName = "World Space UI";
     }
 
-    private void OnValidate()
+    protected override void OnValidate()
     {
         m_interactImages[0] = Resources.Load<Sprite>("GFX/ButtonImages/EButton");
         m_interactImages[1] = Resources.Load<Sprite>("GFX/ButtonImages/AButton");
@@ -89,6 +99,11 @@ public class RespawnStationEntity : GridEntity, IInteractable
             if (m_currentRespawnStation != null)
                 m_currentRespawnStation.GetComponent<SpriteRenderer>().color = Color.white;
 
+            m_player.Health = m_player.MaxHealth;
+            PlayerEntity.Instance.StoreHeathEnergy();
+            PlayerEntity.Instance.StoreRespawnLoaction();
+            App.GetModule<LevelModule>().SaveGame();
+
             blu.App.GetModule<blu.LevelModule>().ActiveSaveData.respawnRoomID = this.RoomIndex;
 
             m_currentRespawnStation = this;
@@ -101,7 +116,7 @@ public class RespawnStationEntity : GridEntity, IInteractable
     {
         if (collision.CompareTag("Player"))
         {
-            m_player.m_interactToolTip.SetActive(true);
+            m_interact.SetActive(true);
             m_playerInRange = true;
             DeviceChanged();
         }
@@ -111,7 +126,7 @@ public class RespawnStationEntity : GridEntity, IInteractable
     {
         if (collision.CompareTag("Player"))
         {
-            m_player.m_interactToolTip.SetActive(false);
+            m_interact.SetActive(false);
             m_playerInRange = false;
         }
     }
@@ -120,14 +135,20 @@ public class RespawnStationEntity : GridEntity, IInteractable
     {
         if (m_playerInRange)
         {
+            if (App.GetModule<InputModule>().LastUsedDevice == null)
+            {
+                m_interact.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[0];
+                return;
+            }
+
             switch (App.GetModule<InputModule>().LastUsedDevice.displayName)
             {
                 case "Keyboard":
-                    m_player.m_interactToolTip.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[0];
+                    m_interact.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[0];
                     break;
 
                 case "Xbox Controller":
-                    m_player.m_interactToolTip.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[1];
+                    m_interact.GetComponentInChildren<SpriteRenderer>().sprite = m_interactImages[1];
                     break;
 
                 default:

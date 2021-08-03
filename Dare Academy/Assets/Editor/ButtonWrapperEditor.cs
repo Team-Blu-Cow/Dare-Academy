@@ -75,8 +75,11 @@ public class ButtonWrapperEditor : Editor
                     {
                         Indent();
                         GUILayout.Label("Sprite", GUILayout.Width(100));
-                        Sprite sprite = button.image.sprite;
-                        button.image.sprite = (Sprite)EditorGUILayout.ObjectField(sprite, typeof(Sprite), true);
+                        if (button.image != null)
+                        {
+                            Sprite sprite = button.image.sprite;
+                            button.image.sprite = (Sprite)EditorGUILayout.ObjectField(sprite, typeof(Sprite), true);
+                        }
                     }
 
                     using (var VerticalScope = new GUILayout.VerticalScope())

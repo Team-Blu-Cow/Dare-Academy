@@ -56,7 +56,7 @@ public class ScriptableEntityEditor : Editor
         if (actionFoldout)
         {
             ScriptedActionQueue actionQueue = actionQueueProperty.objectReferenceValue as ScriptedActionQueue;
-            if(DisplayActionQueue(ref actionQueue))
+            if (DisplayActionQueue(ref actionQueue))
             {
                 EditorSceneManager.MarkSceneDirty(EditorSceneManager.GetActiveScene());
             }
@@ -171,6 +171,10 @@ public class ScriptableEntityEditor : Editor
                     KillIfEventFlagSet(ref queue.m_actionList[i].int32Data, ref queue.m_actionList[i].boolData);
                     break;
 
+                case ScriptedActionQueue.ActionType.KillIfEventFlagNotSet:
+                    KillIfEventFlagSet(ref queue.m_actionList[i].int32Data, ref queue.m_actionList[i].boolData);
+                    break;
+
                 default:
                     break;
             }
@@ -197,6 +201,12 @@ public class ScriptableEntityEditor : Editor
                     queue.m_actionList[i] = queue.m_actionList[i + 1];
                     queue.m_actionList[i + 1] = temp;
                 }
+            }
+
+            if (GUILayout.Button("X", GUILayout.Width(24f)))
+            {
+                dirty = true;
+                queue.m_actionList.RemoveAt(i);
             }
 
             EditorGUILayout.EndHorizontal();

@@ -7,116 +7,64 @@ using System;
 
 namespace blu
 {
-    // All data that should be written to disk should be stored within SaveData
-    // Everything in here must be tagged with System.Serializable
-    public class SaveData : IFileFormat
-    {
-        public string FileExtension()
-        {
-            if (UnityEngine.Application.isEditor)
-            { return "uwu-debug"; }
-            else
-            { return "uwu"; }
-        }
-
-        public int saveSlot = 0;
-        public LevelID levelId = LevelID._default;
-        public System.Int32 gameEventFlags = 0;
-        public int respawnRoomID = -1;
-        public double playtime = 0;
-
-        public List<Quest.StringListIntPair> m_roomsTraveled = new List<Quest.StringListIntPair>();
-
-        public List<StrippedQuest> activeQuests = new List<StrippedQuest>();
-        public List<StrippedQuest> completedQuests = new List<StrippedQuest>();
-    }
-
     public class IOModule : Module
     {
-        // the current save file that has been loaded from disk
-        public SaveData savedata { get { return m_activeSavedata; } set { m_activeSavedata = value; } }
-
-        // check if a valid save file has been loaded
-        public bool isSaveLoaded { get => savedata != null; }
+        public SaveData ActiveSaveData
+        { get; set; }
 
         public const int MaxSaveFiles = 4;
 
-        // if save slots are currently loaded
-        public bool isSaveSlotsLoaded { get => m_saveSlotsLoaded; }
+        public SaveSlotData[] SaveSlots
+        { get; private set; }
 
-        // a list of every save slot available to the player
-        // the SaveSlotData structure can be handed to LoadSaveAsync to load the associated file into memory
-        public SaveSlotData[] saveSlots { get => m_saveSlots; }
+        public string ApplicationPath
+        { get; private set; }
 
-        private string m_applicationPath = null;
-        private Encryptor m_encryptor = new Encryptor(Crypto.FileEncryptionKeys.key, Crypto.FileEncryptionKeys.iv);
-        private SaveData m_activeSavedata = null;
         private string m_activeSavedataPath = null;
-        private SaveSlotData[] m_saveSlots = new SaveSlotData[MaxSaveFiles];
-        private int m_runtimeIdCounter = 0;
         private const string m_kSaveGameDir = "SavedGames/";
-        private bool m_saveSlotsLoaded = false;
-        private DebugSaveConfigFile m_debugConfig = null;
-        private bool m_usingDebugFile = false;
-        private bool m_allowDebugSaving = false;
-        //#todo #matthew add this to the debug options
-        // private bool m_allowFileLoading = true;
 
-        // things are happening in async that shouldn't be and i dont want to debug this
-        private bool m_initialized = false;
+        public bool IsSaveLoading
+        { get; private set; }
 
-        public bool Initialised => m_initialized;
+        public bool IsSaving
+        { get; private set; }
 
-        public Task<bool> awaitInitialised => Task.Run(() => awaitInitialisedImpl());
+        public bool IsSaveLoaded
+        { get { return ActiveSaveData != null; } }
 
-        private bool awaitInitialisedImpl()
+        public Task AwaitSaveLoaded() => Task.Run(() => AwaitSaveLoadedImpl());
+
+        private void AwaitSaveLoadedImpl()
         {
-            while (!Initialised)
-            { }
-            return true;
+            while (!IsSaveLoaded) { }
         }
 
-        // load a save file into memory
         public Task<bool> LoadSaveAsync(FileIO.SaveSlotData slotData, bool logToConsole = true) => Task.Run(() => LoadSaveAsyncImpl(slotData, logToConsole));
 
-        // load file in a coroutine
-        // if you are using this method to load files, ensure you check the isSaveLoaded flag when accessing data
-        public IEnumerator LoadSaveEnumerator(FileIO.SaveSlotData slotData, bool logToConsole = true)
-        { yield return LoadSaveAsync(slotData, logToConsole); }
-
-        // creates a new save file
         public Task<bool> CreateNewSave(int slot, bool loadSave) => Task.Run(() => CreateNewSaveImpl(slot, loadSave));
 
-        // write the current contents of saveData to disk
         public Task<bool> SaveAsync() => Task.Run(() => SaveAsyncImpl());
 
-        public async override void Initialize()
+        public override void Initialize()
         {
+            IsSaveLoading = false;
+
             Debug.Log("[App]: Initializing IO module");
-            m_applicationPath = Application.persistentDataPath;
+            ApplicationPath = Application.persistentDataPath;
 
-            Task<bool> taskLoadSaves = Task.Run(() => { return LoadSaveSlots(); });
-            Task<DebugSaveConfigFile> taskDebugConfig = Task.Run(() => { return LoadDebugConfig(); });
-
-            m_debugConfig = await taskDebugConfig;
-            await taskLoadSaves;
-
-            ProccessDebugConfig();
-
-            m_initialized = true;
+            SaveSlots = new SaveSlotData[MaxSaveFiles];
+            LoadSaveSlots();
         }
 
-        public bool DiscardSaveData()
+        public void DiscardSaveData()
         {
-            m_activeSavedata = null;
+            ActiveSaveData = null;
             m_activeSavedataPath = null;
-
-            return true;
         }
 
         private List<string> GetAllFilesOfType<T>(string directory = "") where T : IFileFormat, new()
         {
-            string dir = m_applicationPath + "/" + directory;
+            string dir = ApplicationPath + "/" + directory;
 
             string[] files = FileLoaderStaticUtility.GetFilesInDirectory(dir);
             List<string> ret = new List<string>();
@@ -137,29 +85,19 @@ namespace blu
             return ret;
         }
 
-        private bool CreateFileLoader<T>(out BaseFileLoader<T> fileloader, string path) where T : class, IFileFormat
+        private BaseFileLoader<T> CreateFileLoader<T>(string path) where T : class, IFileFormat
         {
-            if (UnityEngine.Application.isEditor)
-            { fileloader = new DebugFileLoader<T>(path); }
-            else
-            { fileloader = new EncryptedFileLoader<T>(path, m_encryptor); }
-
-            if (fileloader != null)
-            { return true; }
-            else
-            { return false; }
+            return new DebugFileLoader<T>(path);
         }
 
         public bool LoadSaveSlots()
         {
-            m_saveSlotsLoaded = false;
-
-            for (int i = saveSlots.Length - 1; i >= 0; i--)
+            for (int i = SaveSlots.Length - 1; i >= 0; i--)
             {
-                saveSlots[i] = null;
+                SaveSlots[i] = null;
             }
 
-            FileLoaderStaticUtility.CreateDirectory(m_applicationPath + "/" + m_kSaveGameDir);
+            FileLoaderStaticUtility.CreateDirectory(ApplicationPath + "/" + m_kSaveGameDir);
 
             try
             {
@@ -174,9 +112,8 @@ namespace blu
                 {
                     FileIO.SaveSlotData data = new FileIO.SaveSlotData();
                     data.m_filepath = files[i];
-                    data.m_runtimeID = m_runtimeIdCounter++;
 
-                    CreateFileLoader<SaveData>(out BaseFileLoader<SaveData> fileloader, data.m_filepath);
+                    BaseFileLoader<SaveData> fileloader = CreateFileLoader<SaveData>(data.m_filepath);
                     SaveData savedata = fileloader.ReadData();
 
                     data.levelId = savedata.levelId;
@@ -192,12 +129,12 @@ namespace blu
 
                     while (true)
                     {
-                        if (slot >= m_saveSlots.Length)
+                        if (slot >= SaveSlots.Length)
                             slot = 0;
 
-                        if (m_saveSlots[slot] == null)
+                        if (SaveSlots[slot] == null)
                         {
-                            m_saveSlots[slot] = data;
+                            SaveSlots[slot] = data;
                             break;
                         }
 
@@ -223,56 +160,41 @@ namespace blu
                 return false;
             }
 
-            m_saveSlotsLoaded = true;
             return true;
         }
 
         private bool LoadSaveAsyncImpl(FileIO.SaveSlotData slotData, bool logToConsole = true)
         {
-            while (m_initialized == false)
-            {
-            }
+            if (IsSaveLoading)
+                return false;
+
+            IsSaveLoading = true;
 
             DiscardSaveData();
 
-            if (m_usingDebugFile)
-            {
-                m_activeSavedataPath = m_debugConfig.debugFileLocation;
-            }
-            else
-            {
-                m_activeSavedataPath = slotData.m_filepath;
-            }
-            m_activeSavedata = null;
+            m_activeSavedataPath = slotData.m_filepath;
+            ActiveSaveData = null;
 
-            CreateFileLoader<SaveData>(out BaseFileLoader<SaveData> fileloader, m_activeSavedataPath);
-
+            BaseFileLoader<SaveData> fileloader = CreateFileLoader<SaveData>(m_activeSavedataPath);
             SaveData savedata = fileloader.ReadData();
 
             if (savedata == null)
             {
                 m_activeSavedataPath = null;
+                IsSaveLoading = false;
                 return false;
             }
-            m_activeSavedata = savedata;
+            ActiveSaveData = savedata;
 
             if (logToConsole)
             { Debug.Log($"Save file loaded: [File = {m_activeSavedataPath}]"); }
 
+            IsSaveLoading = false;
             return true;
         }
 
-        private bool CreateNewSaveImpl(int slot, bool loadSave)
+        internal bool CreateNewSaveImpl(int slot, bool loadSave)
         {
-            // check for duplicate
-            // for (int i = 0; i < saveSlots.Count; i++)
-            // {
-            //     if (saveSlots[i].m_displayName == displayName)
-            //     {
-            //         return false;
-            //     }
-            // }
-
             System.DateTime epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
             int cur_time = (int)(System.DateTime.UtcNow - epochStart).TotalSeconds;
 
@@ -280,8 +202,8 @@ namespace blu
             savedata.saveSlot = slot;
 
             string filename = m_kSaveGameDir + cur_time.ToString();
-            string filepath = m_applicationPath + "/" + filename + "." + savedata.FileExtension();
-            CreateFileLoader<SaveData>(out BaseFileLoader<SaveData> fileloader, filepath);
+            string filepath = ApplicationPath + "/" + filename + "." + savedata.FileExtension();
+            BaseFileLoader<SaveData> fileloader = CreateFileLoader<SaveData>(filepath);
 
             if (fileloader.FileExists())
             { return false; }
@@ -291,7 +213,7 @@ namespace blu
 
             if (loadSave)
             {
-                m_activeSavedata = savedata;
+                ActiveSaveData = savedata;
                 m_activeSavedataPath = filepath;
             }
 
@@ -300,60 +222,20 @@ namespace blu
 
         private bool SaveAsyncImpl()
         {
-            if (m_usingDebugFile && !m_allowDebugSaving)
-            { return false; }
+            if (IsSaving)
+                return false;
 
-            if (m_activeSavedataPath != null && m_activeSavedata != null)
+            IsSaving = true;
+            bool success = false;
+
+            if (m_activeSavedataPath != null && ActiveSaveData != null)
             {
-                CreateFileLoader<SaveData>(out BaseFileLoader<SaveData> fileloader, m_activeSavedataPath);
-                return fileloader.WriteData(m_activeSavedata);
+                BaseFileLoader<SaveData> fileloader = CreateFileLoader<SaveData>(m_activeSavedataPath);
+                success = fileloader.WriteData(ActiveSaveData);
             }
-            return false;
-        }
 
-        private DebugSaveConfigFile LoadDebugConfig()
-        {
-            if (!Application.isEditor)
-            { return null; }
-
-            BaseFileLoader<DebugSaveConfigFile> fileloader = new DebugFileLoader<DebugSaveConfigFile>(m_applicationPath + FileIO.DebugSaveConfigFile.path);
-            if (fileloader.FileExists())
-            {
-                return fileloader.ReadData();
-            }
-            return null;
-        }
-
-        private void ProccessDebugConfig()
-        {
-            if (!Application.isEditor)
-            { return; }
-
-            if (m_debugConfig == null)
-            { return; }
-
-            m_usingDebugFile = m_debugConfig.enable;
-            m_allowDebugSaving = m_debugConfig.allowSaving;
-            if (m_usingDebugFile)
-            {
-                Debug.Log("Using Debug Save File");
-
-                BaseFileLoader<SaveData> fileloader = new DebugFileLoader<SaveData>(m_debugConfig.debugFileLocation);
-                if (fileloader.FileExists())
-                {
-                    if (m_debugConfig.loadOnStart)
-                    {
-                        m_activeSavedata = fileloader.ReadData();
-                        m_activeSavedataPath = m_debugConfig.debugFileLocation;
-                        Debug.Log($"Save file loaded: [File = {m_activeSavedataPath}]");
-                    }
-                }
-                else
-                {
-                    m_usingDebugFile = false;
-                    Debug.LogWarning("Could not find Debug Save File");
-                }
-            }
+            IsSaving = false;
+            return success;
         }
     }
 }
