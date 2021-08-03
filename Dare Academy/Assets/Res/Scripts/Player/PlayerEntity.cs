@@ -274,7 +274,6 @@ public class PlayerEntity : GridEntity
         {
             if (Dash())
             {
-                // #adam #sound #sfx
                 animationController.StopDashChargeParticles();
                 m_abilityDirection = m_playerInput.DirectionFour(true);
                 SetMovementDirection(m_abilityDirection, m_dashDistance);
@@ -285,7 +284,7 @@ public class PlayerEntity : GridEntity
             else
             {
                 // failed to dash, no enough energy
-                // #TODO #sound #adam - sound effect here
+                blu.App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/Player/sfx_ability_fail");
                 m_abilityDirection = Vector2Int.zero;
             }
         }
@@ -302,7 +301,7 @@ public class PlayerEntity : GridEntity
             else
             {
                 // failed to block, no enough energy
-                // #TODO #sound #adam - sound effect here
+                blu.App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/Player/sfx_ability_fail");
                 m_abilityDirection = Vector2Int.zero;
             }
         }
