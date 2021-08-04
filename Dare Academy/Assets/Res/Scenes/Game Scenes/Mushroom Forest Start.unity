@@ -40939,6 +40939,30 @@ PrefabInstance:
       propertyPath: m_Delegates.Array.data[2].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: Play
       objectReference: {fileID: 0}
+    - target: {fileID: 2180610211418603823, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2180610211418603823, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2180610211418603823, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2180610211418603823, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2180610211418603823, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2180610211418603823, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3005146253527410695, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
@@ -41793,7 +41817,7 @@ TilemapRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 1532050139
   m_SortingLayer: 3
-  m_SortingOrder: -1
+  m_SortingOrder: 0
   m_ChunkSize: {x: 32, y: 32, z: 32}
   m_ChunkCullingBounds: {x: 1.165214, y: 0.88249993, z: 0}
   m_MaxChunkCount: 16
