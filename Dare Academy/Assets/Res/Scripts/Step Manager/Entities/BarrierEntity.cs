@@ -5,29 +5,26 @@ using blu;
 
 public class BarrierEntity : GridEntity
 {
-    [SerializeField] private GameEventFlags.Flags m_flagToFlip;
+    [SerializeField] private GameEventFlags.Flags m_barrierFlag;
 
-    protected override void Start()
+    public override void AnalyseStep()
     {
-        base.Start();
-
-        if (App.GetModule<LevelModule>().EventFlags.IsFlagsSet(m_flagToFlip))        
-            DestroyAll();
-        
+        if (App.GetModule<LevelModule>().EventFlags.IsFlagsSet(m_barrierFlag))
+            Kill();
     }
 
-    private void OnDestroy()
+    public override void OnDeath()
     {
-        App.GetModule<LevelModule>().EventFlags.SetFlags(m_flagToFlip, true);
-        DestroyAll();
-    }
+        base.OnDeath();
 
-    void DestroyAll()
-    {
-        foreach (BarrierEntity barrier in transform.parent.GetComponentsInChildren<BarrierEntity>())
+        App.GetModule<LevelModule>().EventFlags.SetFlags(m_barrierFlag, true);
+
+        var barriers = transform.parent.GetComponentsInChildren<BarrierEntity>();
+
+        foreach (var barrier in barriers)
         {
-            barrier.CleanUp();
+            if (barrier != null)
+                barrier.CleanUp();
         }
     }
-
 }
