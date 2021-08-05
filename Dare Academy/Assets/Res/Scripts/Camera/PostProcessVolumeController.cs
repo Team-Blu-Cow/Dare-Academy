@@ -10,9 +10,9 @@ public class PostProcessVolumeController : MonoBehaviour
     [SerializeField] private Vignette m_ppVignette;
     [SerializeField] private ChromaticAberration m_ppChromaticAberration;
     [SerializeField] private LensDistortion m_ppLensDistortion;
-    [SerializeField] private float m_vignetteIntensityVal = 0.4f;
+    // [SerializeField] private float m_vignetteIntensityVal = 0.4f;
 
-    void OnValidate()
+    private void OnValidate()
     {
         m_ppVolume = GetComponent<Volume>();
         m_ppVolume.profile.TryGet<Vignette>(out m_ppVignette);
@@ -25,18 +25,18 @@ public class PostProcessVolumeController : MonoBehaviour
             m_ppVignette.intensity.overrideState = true;
         }
 
-        if(m_ppChromaticAberration != null)
+        if (m_ppChromaticAberration != null)
         {
             m_ppChromaticAberration.intensity.value = 0;
         }
 
-        if(m_ppLensDistortion != null)
+        if (m_ppLensDistortion != null)
         {
             m_ppLensDistortion.intensity.value = 0;
         }
     }
 
-    void Awake()
+    private void Awake()
     {
         if (m_ppVignette != null)
         {

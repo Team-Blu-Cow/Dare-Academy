@@ -10,14 +10,15 @@ public class ArcherEntity : GridEntity
     [Header("Attack attributes")]
     [SerializeField] private int m_attackCooldown = 5; // Cooldown after firing a bullet
 
-    [SerializeField] private int agroRange = 5; // Range for how far away the entity is allowed to start attacking the player
+    // [SerializeField] private int agroRange = 5; // Range for how far away the entity is allowed to start attacking the player
     [SerializeField] private int m_cooldownCounter = 0; // Cooldown counter (monitors how long it has been since the last buller has been fired)
-    [SerializeField] private int m_shootingWindupTime = 1;
-    private bool isAttacking = false; // Boolean for if the entity is attacking or not
-    private bool isWaiting = false; // Boolean for if the entity is waiting after firing a bullet
 
-    [Header("Move attributes")]
-    [SerializeField] private int moveSpeed = 1; // Set move speed to 1. Travels 1 square each step
+    // [SerializeField] private int m_shootingWindupTime = 1;
+    // private bool isAttacking = false; // Boolean for if the entity is attacking or not
+    // private bool isWaiting = false; // Boolean for if the entity is waiting after firing a bullet
+
+    // [Header("Move attributes")]
+    // [SerializeField] private int moveSpeed = 1; // Set move speed to 1. Travels 1 square each step
 
     [Header("Resources needed")]
     [SerializeField] private GameObject m_bulletPrefab = null; // Bullet prefab for spawning bullets

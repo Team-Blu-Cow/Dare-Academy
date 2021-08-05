@@ -8,14 +8,14 @@ public class MortarShot : GridEntity
     [SerializeField] public int m_damage = 1;
     public int counter = 0;
     public int m_landTime = 3;
-    bool m_landed = false;
+    private bool m_landed = false;
 
     public float m_initialScale = 0.5f;
     public float m_scale = 0.5f;
 
-    GameObject m_mortarLandPrefab;
+    private GameObject m_mortarLandPrefab;
 
-    public void Start()
+    protected override void Start()
     {
         base.Start();
 
@@ -31,7 +31,6 @@ public class MortarShot : GridEntity
 
         m_stepController = App.GetModule<LevelModule>().LevelManager.StepController;
         m_stepController.RoomChangeEvent += RoomChange;
-
 
         if (m_currentNode == null)
         {
@@ -55,7 +54,7 @@ public class MortarShot : GridEntity
 
         m_scale = Mathf.Lerp(m_initialScale, 1.1f, increment);
 
-        //transform.localScale 
+        //transform.localScale
         LeanTween.scale(gameObject, Vector3.one * m_scale, 0.1f);
     }
 
@@ -67,8 +66,6 @@ public class MortarShot : GridEntity
         Health = int.MinValue;
 
         m_landed = true;
-
-        
     }
 
     public override void AnalyseStep()
@@ -109,5 +106,4 @@ public class MortarShot : GridEntity
     {
         OnDeath();
     }
-
 }

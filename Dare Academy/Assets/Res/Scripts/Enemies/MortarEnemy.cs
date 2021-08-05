@@ -11,9 +11,10 @@ public class MortarEnemy : GridEntity
 
     private GameObject mortarGraphic;
 
-    private Vector3 centreAttack = new Vector3();
+    // private Vector3 centreAttack = new Vector3();
     private bool m_attack = false;
-    private int m_attackTimer = 0;
+
+    // private int m_attackTimer = 0;
 
     [SerializeField] private int m_fireRate = 2;
     private int m_cooldown = 0;

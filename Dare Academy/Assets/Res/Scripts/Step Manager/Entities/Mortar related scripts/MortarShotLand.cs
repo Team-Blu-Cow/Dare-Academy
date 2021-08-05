@@ -9,7 +9,7 @@ public class MortarShotLand : MonoBehaviour
     private float currentYScale;
 
     private float speedModifier = 0;
-    private float alphaModifier = 0;
+    // private float alphaModifier = 0;
 
     private float initY;
     private Rigidbody2D rb;
@@ -19,21 +19,21 @@ public class MortarShotLand : MonoBehaviour
     private GameObject explosionPrefab;
 
     // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         initY = transform.position.y;
         transform.position += Vector3.up * disapearDistance;
         rb = GetComponent<Rigidbody2D>();
         sr = GetComponent<SpriteRenderer>();
         colour = sr.color;
-        sr.sortingOrder = Mathf.RoundToInt( disapearDistance);
+        sr.sortingOrder = Mathf.RoundToInt(disapearDistance);
         rb.velocity = Vector2.down;
         currentYScale = transform.localScale.y;
         explosionPrefab = Resources.Load<GameObject>("Prefabs/Enemies/Mortar/MortarExplosion");
     }
 
     // Update is called once per frame
-    void Update()
+    private void Update()
     {
         speedModifier += Time.deltaTime * speedMod;
         rb.velocity += Vector2.down * (speedModifier * 2);
@@ -46,7 +46,7 @@ public class MortarShotLand : MonoBehaviour
 
         if (transform.position.y < initY)
         {
-            if(explosionPrefab != null)
+            if (explosionPrefab != null)
                 GameObject.Instantiate(explosionPrefab, transform.position + (Vector3.up * 0.5f), Quaternion.identity);
             Destroy(gameObject);
         }
