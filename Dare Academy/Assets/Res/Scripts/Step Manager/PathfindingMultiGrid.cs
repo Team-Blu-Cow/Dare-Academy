@@ -506,6 +506,27 @@ public class PathfindingMultiGrid
         return pathfinder.FindPathWithAvoidance(startNode, endNode, fearNode, fearRange, false, debugSettings.showPathfindTime);
     }
 
+    public Vector3[] GetPathWithAvoidance(Vector3 start, Vector3 end, Vector3[] fearPos, int fearRange)
+    {
+        GridNode startNode = GetNodeFromWorld(start);
+        GridNode endNode = GetNodeFromWorld(end);
+
+        GridNode[] fearNodes = new GridNode[fearPos.Length];
+        for (int i = 0; i < fearNodes.Length; i++)
+        {
+            fearNodes[i] = GetNodeFromWorld(fearPos[i]);
+        }
+
+        //if(!grids[0].NodeExistsAt(start) || !grids[0].NodeExistsAt(end))
+        if (startNode == null || endNode == null)
+        {
+            UnityEngine.Debug.LogWarning("trying to pathfind to non existent nodes");
+            return null;
+        }
+
+        return pathfinder.FindPathWithAvoidance(startNode, endNode, fearNodes, fearRange, false, debugSettings.showPathfindTime);
+    }
+
     // MISC METHODS *******************************************************************************
     public Grid<GridNode> Grid(int i)
     {
