@@ -95,7 +95,8 @@ public class StepController
     {
         for (int j = m_entities.Count - 1; j >= 0; j--)
         {
-            m_entities[j].PreMoveStep();
+            if (m_entities[j] != null)
+                m_entities[j].PreMoveStep();
         }
     }
 
@@ -103,8 +104,9 @@ public class StepController
     {
         for (int j = m_entities.Count - 1; j >= 0; j--)
         {
-            if (!m_entities[j].isFinishedMoving && !m_entities[j].isDead)
-                m_entities[j].MoveStep();
+            if (m_entities[j] != null)
+                if (!m_entities[j].isFinishedMoving && !m_entities[j].isDead)
+                    m_entities[j].MoveStep();
         }
     }
 
@@ -112,8 +114,9 @@ public class StepController
     {
         for (int j = m_entities.Count - 1; j >= 0; j--)
         {
-            if (!m_entities[j].isDead)
-                m_entities[j].ResolvePassThroughStep();
+            if (m_entities[j] != null)
+                if (!m_entities[j].isDead)
+                    m_entities[j].ResolvePassThroughStep();
         }
     }
 
@@ -130,8 +133,9 @@ public class StepController
 
             for (int j = m_entities.Count - 1; j >= 0; j--)
             {
-                if (!m_entities[j].isDead)
-                    m_entities[j].ResolveMoveStep();
+                if (m_entities[j] != null)
+                    if (!m_entities[j].isDead)
+                        m_entities[j].ResolveMoveStep();
             }
         }
     }
@@ -140,7 +144,8 @@ public class StepController
     {
         for (int j = m_entities.Count - 1; j >= 0; j--)
         {
-            m_entities[j].PostMoveStep();
+            if (m_entities[j] != null)
+                m_entities[j].PostMoveStep();
         }
     }
 
@@ -148,7 +153,8 @@ public class StepController
     {
         for (int j = m_entities.Count - 1; j >= 0; j--)
         {
-            m_entities[j].AttackStep();
+            if (m_entities[j] != null)
+                m_entities[j].AttackStep();
         }
     }
 
@@ -156,7 +162,8 @@ public class StepController
     {
         for (int j = m_entities.Count - 1; j >= 0; j--)
         {
-            m_entities[j].DamageStep();
+            if (m_entities[j] != null)
+                m_entities[j].DamageStep();
         }
     }
 
@@ -164,7 +171,8 @@ public class StepController
     {
         for (int j = m_entities.Count - 1; j >= 0; j--)
         {
-            m_entities[j].EndStep();
+            if (m_entities[j] != null)
+                m_entities[j].EndStep();
         }
     }
 
@@ -172,7 +180,8 @@ public class StepController
     {
         for (int j = m_entities.Count - 1; j >= 0; j--)
         {
-            m_entities[j].DrawStep();
+            if (m_entities[j] != null)
+                m_entities[j].DrawStep();
         }
     }
 
@@ -180,7 +189,8 @@ public class StepController
     {
         for (int j = m_entities.Count - 1; j >= 0; j--)
         {
-            m_entities[j].AnalyseStep();
+            if (m_entities[j] != null)
+                m_entities[j].AnalyseStep();
         }
     }
 
@@ -243,8 +253,9 @@ public class StepController
     {
         foreach (GridEntity entity in m_entities)
         {
-            if (!entity.isFinishedMoving)
-                return false;
+            if (m_entities[j] != null)
+                if (!entity.isFinishedMoving)
+                    return false;
         }
         return true;
     }
