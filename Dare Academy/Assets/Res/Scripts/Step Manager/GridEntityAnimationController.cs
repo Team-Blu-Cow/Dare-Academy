@@ -19,6 +19,9 @@ public class GridEntityAnimationController : MonoBehaviour
     float m_xScale = 1;
     float animatorSpeed;
 
+    [SerializeField] public bool m_overwriteAnimSpeed = true;
+    [HideInInspector] public bool m_isDead = false;
+
     protected virtual void OnValidate()
     {
         m_animator = GetComponent<Animator>();
@@ -68,12 +71,23 @@ public class GridEntityAnimationController : MonoBehaviour
                 m_spriteHead.transform.localPosition = Vector3.zero;
             }
         }
+
+        m_sprite.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
+        if (m_hasHead)
+            m_spriteHead.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
     }
 
     protected virtual void Start()
     {
-        animatorSpeed = 1f / App.GetModule<LevelModule>().StepController.stepTime;
-        m_animator.speed = animatorSpeed;
+        if (m_overwriteAnimSpeed)
+        {
+            animatorSpeed = 1f / App.GetModule<LevelModule>().StepController.stepTime;
+            m_animator.speed = animatorSpeed;
+        }
+
+        m_sprite.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
+        if (m_hasHead)
+            m_spriteHead.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
     }
 
     public void SetAnimationSpeed(float speed)
@@ -87,7 +101,8 @@ public class GridEntityAnimationController : MonoBehaviour
         if (m_animator.runtimeAnimatorController == null)
             return;
 
-        m_animator.speed = 1f/time;
+        if (m_overwriteAnimSpeed)
+            m_animator.speed = 1f / time;
 
         m_animator.Play(animationName, layer, 0f);
     }
@@ -120,5 +135,17 @@ public class GridEntityAnimationController : MonoBehaviour
         }
 
         transform.localScale = new Vector3(m_xScale * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+    }
+
+    public virtual void DamageFlash()
+    {
+        LeanTween.value(gameObject, 0, 1, 0.5f)
+            .setEasePunch()
+            .setOnUpdate((float value) => 
+            {
+                m_sprite.GetComponent<SpriteRenderer>().material.SetFloat("_Strength", value);
+                if(m_hasHead)
+                    m_spriteHead.GetComponent<SpriteRenderer>().material.SetFloat("_Strength", value);
+            });
     }
 }

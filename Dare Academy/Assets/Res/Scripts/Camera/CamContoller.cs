@@ -18,6 +18,9 @@ namespace blu
 
         private LevelModule levelModule;
 
+        public Cinemachine.CinemachineVirtualCamera virtualCam
+        { get => _virtualCam; }
+
         private void Start()
         {
             levelModule = App.GetModule<LevelModule>();

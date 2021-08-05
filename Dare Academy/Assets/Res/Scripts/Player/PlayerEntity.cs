@@ -846,4 +846,26 @@ public class PlayerEntity : GridEntity
         levelModule.ActiveSaveData.respawnLocation = Position.grid;
         levelModule.ActiveSaveData.levelId = LevelModule.CurrentLevelId();
     }
+
+    public override void OnHit(int damage, float offsetTime = 0f)
+    {
+        base.OnHit(damage);
+
+        if (isDead)
+        {
+            animationController.DamageFlash();
+            animationController.CameraShake(9f, 0.2f);
+        }
+        else
+            StartCoroutine(OnHitFX(offsetTime));
+    }
+
+    System.Collections.IEnumerator OnHitFX(float time)
+    {
+        yield return new WaitForSeconds(time);
+
+        animationController.DamageFlash();
+
+        animationController.CameraShake(9f, 0.2f);
+    }
 }

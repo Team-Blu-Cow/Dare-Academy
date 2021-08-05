@@ -32,7 +32,8 @@ public class DamageEntity : GridEntity
             List<GridEntity> entities = GetEntitiesOnNode(m_currentNode);
             foreach (var entity in entities)
             {
-                entity.Health -= Damage;
+                //entity.Health -= Damage;
+                entity.OnHit(Damage);
             }
 
             if (Linger == 0)
