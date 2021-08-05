@@ -164,4 +164,17 @@ public class EightDirectionalEntity : GridEntity
             }
         }
     }
+
+    public override void OnDeath()
+    {
+        m_animationController.PlayAnimation("die", 1);
+    }
+
+    public override void OnHit(int damage, float offsetTime = 0f)
+    {
+        base.OnHit(damage);
+
+        m_animationController.DamageFlash();
+
+    }
 }

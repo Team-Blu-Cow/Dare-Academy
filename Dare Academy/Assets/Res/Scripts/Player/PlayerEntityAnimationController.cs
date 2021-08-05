@@ -5,6 +5,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 using JUtil;
 using blu;
+using Cinemachine;
 
 public class PlayerEntityAnimationController : GridEntityAnimationController
 {
@@ -21,6 +22,8 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
     [SerializeField, HideInInspector] private ParticleSystem m_dashChargeParticles;
     [SerializeField, HideInInspector] private ParticleSystem[] m_dashChargeSubParticles;
     [SerializeField, HideInInspector] private GameObject m_dashBurstPrefab;
+
+    [SerializeField, HideInInspector] protected GameObject m_spriteBody;
 
     [Header("Vignette Settings")]
 
@@ -54,6 +57,16 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
     {
         base.OnValidate();
 
+        Transform[] ts = GetComponentsInChildren<Transform>();
+        foreach (var t in ts)
+        {
+            if (t.name == "body")
+            {
+                m_spriteBody = t.gameObject;
+                break;
+            }
+        }
+
         m_playerEntity = GetComponent<PlayerEntity>();
 
         m_LuvMuzzleFlashPrefab = Resources.Load<GameObject>("prefabs/GFX/LuvGunMuzzleFlash");
@@ -61,6 +74,10 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
 
         //m_ppVolume = FindObjectOfType<Volume>();
         //m_ppVolume.profile.TryGet<Vignette>(out m_ppVignette);
+
+        m_sprite.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
+        m_spriteHead.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
+        m_spriteBody.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
     }
 
     protected override void Start()
@@ -82,6 +99,10 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         SetParticleColours();
         StopLuvParticles();
         StopDashChargeParticles();
+
+        m_sprite.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
+        m_spriteHead.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
+        m_spriteBody.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
     }
 
     public void SetParticleColours()
@@ -380,5 +401,34 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
             ParticleSystem.MainModule settings = p.main;
             settings.startColor = m_abilityColours[1];
         }
+    }
+
+    public override void DamageFlash()
+    {
+        LeanTween.value(gameObject, 0, 1, 0.5f)
+            .setEasePunch()
+            .setOnUpdate((float value) =>
+            {
+                m_sprite.GetComponent<SpriteRenderer>().material.SetFloat("_Strength", value);
+                m_spriteHead.GetComponent<SpriteRenderer>().material.SetFloat("_Strength", value);
+                m_spriteBody.GetComponent<SpriteRenderer>().material.SetFloat("_Strength", value);
+            });
+    }
+
+    public void CameraShake(float intensity, float time)
+    {
+        CinemachineBasicMultiChannelPerlin camNoise = App.CameraController.virtualCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+
+        camNoise.m_AmplitudeGain = intensity;
+
+        LeanTween.value(intensity, 0, time)
+            .setOnUpdate((float value) =>
+            {
+                camNoise.m_AmplitudeGain = value;
+            })
+            .setOnComplete(() =>
+            {
+                App.CameraController.transform.rotation = Quaternion.identity;
+            });
     }
 }

@@ -20,6 +20,7 @@ public class GridEntityAnimationController : MonoBehaviour
     float animatorSpeed;
 
     [SerializeField] public bool m_overwriteAnimSpeed = true;
+    [HideInInspector] public bool m_isDead = false;
 
     protected virtual void OnValidate()
     {
@@ -70,6 +71,10 @@ public class GridEntityAnimationController : MonoBehaviour
                 m_spriteHead.transform.localPosition = Vector3.zero;
             }
         }
+
+        m_sprite.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
+        if (m_hasHead)
+            m_spriteHead.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
     }
 
     protected virtual void Start()
@@ -79,6 +84,10 @@ public class GridEntityAnimationController : MonoBehaviour
             animatorSpeed = 1f / App.GetModule<LevelModule>().StepController.stepTime;
             m_animator.speed = animatorSpeed;
         }
+
+        m_sprite.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
+        if (m_hasHead)
+            m_spriteHead.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
     }
 
     public void SetAnimationSpeed(float speed)
@@ -126,5 +135,17 @@ public class GridEntityAnimationController : MonoBehaviour
         }
 
         transform.localScale = new Vector3(m_xScale * Mathf.Abs(transform.localScale.x), transform.localScale.y, transform.localScale.z);
+    }
+
+    public virtual void DamageFlash()
+    {
+        LeanTween.value(gameObject, 0, 1, 0.5f)
+            .setEasePunch()
+            .setOnUpdate((float value) => 
+            {
+                m_sprite.GetComponent<SpriteRenderer>().material.SetFloat("_Strength", value);
+                if(m_hasHead)
+                    m_spriteHead.GetComponent<SpriteRenderer>().material.SetFloat("_Strength", value);
+            });
     }
 }

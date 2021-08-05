@@ -98,6 +98,10 @@ PrefabInstance:
       propertyPath: m_WasSpriteAssigned
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 6754036733429259749, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: cde38c62f08096742aaf1d5dae49a7f0, type: 2}
     - target: {fileID: 7765752218238835681, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
       propertyPath: m_Name
       value: MeleePathfinder

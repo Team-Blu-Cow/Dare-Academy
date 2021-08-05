@@ -131,6 +131,7 @@ public class MeleePathfinder : GridEntity
             GameObject gobj = Instantiate(m_attackPrefab, m_attackNode.position.world, Quaternion.identity);
 
             MeleeAttackEntity ent = gobj.GetComponent<MeleeAttackEntity>();
+            ent.m_damageTimeOffset = 0.15f;
 
             m_attackVfxSpawnPos = m_attackNode.position.world + new Vector3(0, 0.4f, 0);
 
@@ -176,5 +177,12 @@ public class MeleePathfinder : GridEntity
     {
         LeanTween.value(tweenVal, targetVal, time)
             .setOnUpdate(setMethod);
+    }
+
+    public override void OnHit(int damage, float offsetTime = 0f)
+    {
+        base.OnHit(damage);
+
+        m_animationController.DamageFlash();
     }
 }

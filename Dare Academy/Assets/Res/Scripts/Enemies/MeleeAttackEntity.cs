@@ -6,8 +6,11 @@ using blu;
 public class MeleeAttackEntity : GridEntity
 {
     public int m_damage = 1;
+    public float m_damageTimeOffset = 0f;
 
     public GameObject m_vfxPrefab;
+
+    private List<GridEntity> entities;
 
     public void Init(GridNode node, GameObject prefab = null)
     {
@@ -43,17 +46,26 @@ public class MeleeAttackEntity : GridEntity
     {
         //Instantiate(m_vfxPrefab, m_currentNode.position.world + new Vector3(0, 0.25f, 1), Quaternion.identity);
 
-        foreach (var e in m_currentNode.GetGridEntities())
+        entities = m_currentNode.GetGridEntities();
+
+        foreach (var e in entities)
         {
             if(e.Flags.IsFlagsSet(GridEntityFlags.Flags.isKillable))
             {
-                e.Health -= m_damage;
+                //e.Health -= m_damage;
+                e.OnHit(m_damage, m_damageTimeOffset);
             }
         }
     }
 
+    public override void DrawStep()
+    {
+        
+    }
+
     public override void EndStep()
     {
+        //RemoveFromCurrentNode();
         OnDeath();
     }
 
