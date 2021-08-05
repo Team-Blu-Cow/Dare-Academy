@@ -151,6 +151,8 @@ MonoBehaviour:
   m_sprite: {fileID: 7385283130911696075}
   m_spriteHead: {fileID: 0}
   m_hasHead: 0
+  m_overwriteAnimSpeed: 1
+  m_isDead: 0
 --- !u!114 &3563906274979890762
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -166,5 +168,6 @@ MonoBehaviour:
   m_mass: 2
   m_health: 1
   m_flags:
-    m_flagData: 0
+    m_flagData: 6146
   m_animationController: {fileID: 5424648584174721742}
+  IsFire: 1

@@ -9,6 +9,9 @@ public abstract class WyrmSection : GridEntity
     private WyrmSection m_sectionInfront;
     private WyrmSection m_sectionBehind;
 
+    public WyrmHead Head
+    { get; set; }
+
     [SerializeField, HideInInspector] protected SpriteRenderer spriteRenderer;
 
     public WyrmSection SectionInfront
@@ -37,6 +40,11 @@ public abstract class WyrmSection : GridEntity
     protected override void Start()
     {
         base.Start();
+    }
+
+    public override void OnHit(int damage, float offsetTime = 0)
+    {
+        Head.Health -= damage;
     }
 
     public override void AnalyseStep()

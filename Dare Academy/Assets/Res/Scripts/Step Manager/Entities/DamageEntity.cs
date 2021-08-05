@@ -6,6 +6,9 @@ public class DamageEntity : GridEntity
 {
     private int m_damage = 1;
 
+    [SerializeField]
+    readonly public bool IsFire;
+
     public int Damage
     {
         get => m_damage;

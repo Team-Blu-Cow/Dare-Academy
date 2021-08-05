@@ -59,6 +59,8 @@ public class WyrmHead : WyrmSection
 
         m_stepsUntilResurface = 5;
 
+        this.Head = this;
+
         // create the rest of the wyrm
         WyrmSection back = this;
         for (int i = 1; i < m_length; i++)
@@ -68,7 +70,7 @@ public class WyrmHead : WyrmSection
             body.transform.position = this.transform.position;
 
             WyrmSection section = body.GetComponent<WyrmSection>();
-
+            section.Head = this;
             back.SectionBehind = section;
             section.SectionInfront = back;
             back = section;
@@ -267,16 +269,14 @@ public class WyrmHead : WyrmSection
 
     private void State_Chasing()
     {
-        GridNode target = PlayerEntity.Instance.currentNode;
-        Vector3[] path;
-        if (SectionBehind.currentNode == null)
+        List<WyrmSection> sections = GetAboveGroundSections();
+        Vector3[] avoidNodes = new Vector3[sections.Count];
+        for (int i = 0; i < sections.Count; i++)
         {
-            path = levelModule.MetaGrid.GetPath(currentNode, target);
+            avoidNodes[i] = sections[i].currentNode.position.world;
         }
-        else
-        {
-            path = levelModule.MetaGrid.GetPathWithAvoidance(currentNode.position.world, target.position.world, SectionBehind.Position.world, 1);
-        }
+
+        Vector3[] path = levelModule.MetaGrid.GetPathWithAvoidance(currentNode.position.world, PlayerEntity.Instance.currentNode.position.world, avoidNodes, 1);
 
         if (path == null)
             return;
@@ -329,6 +329,28 @@ public class WyrmHead : WyrmSection
         doReanalyse = true;
     }
 
+    private void State_RandomMovement()
+    {
+        state = WyrmState.NoState;
+    }
+
+    private void State_Running()
+    {
+        state = WyrmState.NoState;
+    }
+
+    private void State_CrossScreenCharge()
+    {
+        state = WyrmState.NoState;
+    }
+
+    private void State_FireAttack()
+    {
+        state = WyrmState.NoState;
+    }
+
+    // HELPER FUNCTIONS
+
     private Vector3[] CirclingGetPath()
     {
         if (m_chasingNodeDirection >= 8)
@@ -355,6 +377,24 @@ public class WyrmHead : WyrmSection
             return null;
         }
 
+        List<WyrmSection> sections = GetAboveGroundSections();
+
+        Vector3[] avoidNodes = new Vector3[sections.Count + 1];
+        for (int i = 0; i < sections.Count; i++)
+        {
+            avoidNodes[i] = sections[i].currentNode.position.world;
+        }
+
+        // avoid player
+        avoidNodes[avoidNodes.Length - 1] = PlayerEntity.Instance.currentNode.position.world;
+
+        Vector3[] path = levelModule.MetaGrid.GetPathWithAvoidance(currentNode.position.world, node.position.world, avoidNodes, 1);
+
+        return path;
+    }
+
+    private List<WyrmSection> GetAboveGroundSections()
+    {
         List<WyrmSection> sections = new List<WyrmSection>();
         sections.Add(this);
         while (true)
@@ -368,34 +408,38 @@ public class WyrmHead : WyrmSection
             sections.Add(sections[sections.Count - 1].SectionBehind);
         }
 
-        Vector3[] avoidNodes = new Vector3[sections.Count];
-        for (int i = 0; i < sections.Count; i++)
+        return sections;
+    }
+
+    private bool SpawnFire(GridNode spawnNode)
+    {
+        const int fireTime = 3;
+
+        if (spawnNode == null)
+            return false;
+
+        List<GridEntity> entities = spawnNode.GetGridEntities();
+
+        // if a fire is already present extend its life
+        foreach (var entity in entities)
         {
-            avoidNodes[i] = sections[i].currentNode.position.world;
+            if (entity is DamageEntity && (entity as DamageEntity).IsFire)
+            {
+                if ((entity as DamageEntity).Linger < fireTime)
+                    (entity as DamageEntity).Linger = fireTime;
+                return true;
+            }
         }
 
-        Vector3[] path = levelModule.MetaGrid.GetPathWithAvoidance(currentNode.position.world, node.position.world, avoidNodes, 1);
+        // spawn a fire
+        GameObject obj = GameObject.Instantiate(m_firePrefab, spawnNode.position.world, Quaternion.identity);
+        if (obj.TryGetComponent(out DamageEntity fire))
+        {
+            fire.Linger = fireTime;
+            return true;
+        }
 
-        return path;
-    }
-
-    private void State_RandomMovement()
-    {
-        state = WyrmState.NoState;
-    }
-
-    private void State_Running()
-    {
-        state = WyrmState.NoState;
-    }
-
-    private void State_CrossScreenCharge()
-    {
-        state = WyrmState.NoState;
-    }
-
-    private void State_FireAttack()
-    {
-        state = WyrmState.NoState;
+        // couldnt get component, spawn failed
+        return false;
     }
 }

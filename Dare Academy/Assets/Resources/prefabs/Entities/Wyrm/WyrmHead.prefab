@@ -84,13 +84,13 @@ MonoBehaviour:
   m_mass: 2
   m_health: 1
   m_flags:
-    m_flagData: 512
+    m_flagData: 12820
   m_animationController: {fileID: 2588129808047499239}
   spriteRenderer: {fileID: 7903504327842597309}
   m_length: 0
   m_headPrefab: {fileID: 720815317660526086, guid: 6c28d158b937ef84f908a682ed1f6570, type: 3}
-  m_bodyPrefab: {fileID: 7931373814993925924, guid: 9ff33d66912821f47886139049f0526f, type: 3}
-  m_firePrefab: {fileID: 0}
+  m_bodyPrefab: {fileID: 949926586993298758, guid: 8e1fd613113460c48b09a25d44edb85a, type: 3}
+  m_firePrefab: {fileID: 7931373814993925924, guid: 9ff33d66912821f47886139049f0526f, type: 3}
 --- !u!1 &7930745544707642228
 GameObject:
   m_ObjectHideFlags: 0
