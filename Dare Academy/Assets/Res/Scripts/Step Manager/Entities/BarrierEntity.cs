@@ -24,7 +24,7 @@ public class BarrierEntity : GridEntity
         foreach (var barrier in barriers)
         {
             if (barrier != null)
-                barrier.CleanUp();
+                barrier.KillImmediate();
         }
     }
 }
