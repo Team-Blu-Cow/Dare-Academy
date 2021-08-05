@@ -86,7 +86,6 @@ namespace blu
         private void OnDestroy()
         {
             SceneManager.sceneLoaded -= LevelChanged;
-            SaveGame();
         }
 
         public override void Initialize()
