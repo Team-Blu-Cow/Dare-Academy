@@ -20,6 +20,7 @@ MonoBehaviour:
   moveSpeed: 1
   m_player: {fileID: 0}
   m_attackPrefab: {fileID: 1887864478633094999, guid: f49abbd6d92ba354eac4f2d2848b17ba, type: 3}
+  m_attackVFXPrefab: {fileID: 6245065894495507563, guid: 31cdbfa29dc482342a3cabf7baa1e42b, type: 3}
   showPath: 0
   m_state: 0
 --- !u!1001 &5955981787926821866

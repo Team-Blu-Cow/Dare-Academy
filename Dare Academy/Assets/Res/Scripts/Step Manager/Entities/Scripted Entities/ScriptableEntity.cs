@@ -24,6 +24,14 @@ public class ScriptableEntity : GridEntity
 
         sr = GetComponentInChildren<SpriteRenderer>();
         anim = GetComponent<Animator>();
+
+        if (m_prefab != null)
+        {
+            Sprite prefabSprite = m_prefab.GetComponentInChildren<SpriteRenderer>().sprite;
+
+            if (prefabSprite != null)
+                sr.sprite = prefabSprite;
+        }
     }
 
     protected void Awake()

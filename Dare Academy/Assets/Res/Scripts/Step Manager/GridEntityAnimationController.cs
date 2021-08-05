@@ -19,7 +19,7 @@ public class GridEntityAnimationController : MonoBehaviour
     float m_xScale = 1;
     float animatorSpeed;
 
-    [SerializeField, HideInInspector] public bool m_overwriteAnimSpeed = true;
+    [SerializeField] public bool m_overwriteAnimSpeed = true;
 
     protected virtual void OnValidate()
     {
@@ -92,7 +92,8 @@ public class GridEntityAnimationController : MonoBehaviour
         if (m_animator.runtimeAnimatorController == null)
             return;
 
-        m_animator.speed = 1f/time;
+        if (m_overwriteAnimSpeed)
+            m_animator.speed = 1f / time;
 
         m_animator.Play(animationName, layer, 0f);
     }
