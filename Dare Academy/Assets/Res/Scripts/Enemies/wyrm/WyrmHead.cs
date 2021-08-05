@@ -44,7 +44,7 @@ public class WyrmHead : WyrmSection
 
         m_headPrefab = Resources.Load<GameObject>("prefabs/Entities/Wyrm/WyrmHead");
         m_bodyPrefab = Resources.Load<GameObject>("prefabs/Entities/Wyrm/WyrmBody");
-        m_bodyPrefab = Resources.Load<GameObject>("prefabs/Entities/fire");
+        m_firePrefab = Resources.Load<GameObject>("prefabs/Entities/fire");
     }
 
     protected override void Start()
