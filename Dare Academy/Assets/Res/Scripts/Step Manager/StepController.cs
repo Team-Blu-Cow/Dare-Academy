@@ -253,7 +253,7 @@ public class StepController
     {
         foreach (GridEntity entity in m_entities)
         {
-            if (m_entities[j] != null)
+            if (entity != null)
                 if (!entity.isFinishedMoving)
                     return false;
         }
