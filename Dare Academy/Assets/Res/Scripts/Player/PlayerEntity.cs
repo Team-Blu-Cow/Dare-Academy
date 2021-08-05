@@ -182,6 +182,8 @@ public class PlayerEntity : GridEntity
             Debug.LogWarning("[PlayerEntity.Start] failed to draw MiniMap");
         }
 
+        App.GetModule<QuestModule>().AddQuest(Resources.Load<Quest>("Quests/MainQuest"));
+
         audioModule.PlayAudioEvent("event:/SFX/Player/sfx_ability_select");
         audioModule.PlayAudioEvent("event:/SFX/Player/sfx_dash_chrage");
 
