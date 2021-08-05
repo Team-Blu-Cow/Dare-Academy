@@ -5,7 +5,6 @@ using UnityEngine;
 public class DamageEntity : GridEntity
 {
     private int m_damage = 1;
-    private int m_count = 0;
 
     public int Damage
     {
@@ -14,10 +13,10 @@ public class DamageEntity : GridEntity
     }
 
     public int Countdown
-    {
-        get => m_count;
-        set => m_count = value;
-    }
+    { get; set; }
+
+    public int Linger
+    { get; set; }
 
     public override void AnalyseStep()
     {
@@ -35,7 +34,11 @@ public class DamageEntity : GridEntity
             {
                 entity.Health -= Damage;
             }
-            Kill();
+
+            if (Linger == 0)
+                Kill();
+
+            Linger--;
         }
     }
 }

@@ -32,6 +32,7 @@ public class WyrmHead : WyrmSection
 
     [SerializeField, HideInInspector] private GameObject m_headPrefab;
     [SerializeField, HideInInspector] private GameObject m_bodyPrefab;
+    [SerializeField, HideInInspector] private GameObject m_firePrefab;
 
     private int m_stepsUntilResurface = 0;
 
@@ -39,10 +40,11 @@ public class WyrmHead : WyrmSection
 
     protected override void OnValidate()
     {
+        base.OnValidate();
+
         m_headPrefab = Resources.Load<GameObject>("prefabs/Entities/Wyrm/WyrmHead");
         m_bodyPrefab = Resources.Load<GameObject>("prefabs/Entities/Wyrm/WyrmBody");
-
-        base.OnValidate();
+        m_bodyPrefab = Resources.Load<GameObject>("prefabs/Entities/fire");
     }
 
     protected override void Start()
