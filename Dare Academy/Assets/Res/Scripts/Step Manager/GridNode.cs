@@ -106,6 +106,11 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
         return App.GetModule<blu.LevelModule>().Grid(roomIndex).GetNodeRelative(position.grid, offset);
     }
 
+    public GridNode GetNodeRelative(int x, int y)
+    {
+        return App.GetModule<blu.LevelModule>().Grid(roomIndex).GetNodeRelative(position.grid, x, y);
+    }
+
     public int GetDistanceInDirection(Vector2Int direction)
     {
         int i = 0;

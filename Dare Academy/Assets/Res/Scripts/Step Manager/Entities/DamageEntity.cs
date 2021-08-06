@@ -45,6 +45,9 @@ public class DamageEntity : GridEntity
             List<GridEntity> entities = GetEntitiesOnNode(m_currentNode);
             foreach (var entity in entities)
             {
+                if (entity is WyrmSection)
+                    continue;
+
                 //entity.Health -= Damage;
                 entity.OnHit(Damage);
             }

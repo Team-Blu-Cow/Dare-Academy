@@ -418,6 +418,9 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
     {
         CinemachineBasicMultiChannelPerlin camNoise = App.CameraController.virtualCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
 
+        if (camNoise is null)
+            return;
+
         camNoise.m_AmplitudeGain = intensity;
 
         LeanTween.value(intensity, 0, time)

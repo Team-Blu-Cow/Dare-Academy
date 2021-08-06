@@ -14,7 +14,6 @@ public class WyrmHead : WyrmSection
         Chasing,
         Circing,
         RandomMovement,
-        Running,
         CrossScreenCharge,
         FireAttack,
     }
@@ -123,10 +122,6 @@ public class WyrmHead : WyrmSection
 
             case WyrmState.RandomMovement:
                 State_RandomMovement();
-                break;
-
-            case WyrmState.Running:
-                State_Running();
                 break;
 
             case WyrmState.CrossScreenCharge:
@@ -250,7 +245,7 @@ public class WyrmHead : WyrmSection
         // #wyrm implement state selection
         System.Random rnd = new System.Random();
 
-        state = WyrmState.Circing;
+        state = WyrmState.Chasing;
         return;
 
     tryAgain:
@@ -297,23 +292,14 @@ public class WyrmHead : WyrmSection
 
     private void State_Chasing()
     {
-        List<WyrmSection> sections = GetAboveGroundSections();
-        Vector3[] avoidNodes = new Vector3[sections.Count];
-        for (int i = 0; i < sections.Count; i++)
-        {
-            avoidNodes[i] = sections[i].currentNode.position.world;
-        }
-
-        Vector3[] path = levelModule.MetaGrid.GetPathWithAvoidance(currentNode.position.world, PlayerEntity.Instance.currentNode.position.world, avoidNodes, 1);
+        Vector3[] path = PathToPlayer();
 
         if (path == null)
             return;
 
         if (Vector2Int.Distance(Position.grid, PlayerEntity.Instance.Position.grid) <= 1)
         {
-            // Vector2 temp = Position.grid - PlayerEntity.Instance.Position.grid;
-            // attack
-            state = WyrmState.NoState;
+            state = WyrmState.FireAttack;
             return;
         }
         else
@@ -408,12 +394,6 @@ public class WyrmHead : WyrmSection
         doReanalyse = true;
     }
 
-    private void State_Running()
-    {
-        // #wyrm implement running
-        state = WyrmState.NoState;
-    }
-
     private void State_CrossScreenCharge()
     {
         if (m_chargeStartNode == null)
@@ -446,8 +426,49 @@ public class WyrmHead : WyrmSection
 
     private void State_FireAttack()
     {
-        // #wyrm implement fire attack
-        state = WyrmState.NoState;
+        Vector3[] path  = PathToPlayer();
+
+        Vector3 pos = new Vector3(path[0].x, path[0].y, 0);
+        GridNode n = levelModule.MetaGrid.GetNodeFromWorld(pos);
+        Vector2Int dir = n.position.grid - m_currentNode.position.grid;
+
+        List<GridNode> attackNodes = new List<GridNode>();
+
+        if (dir.x != 0)
+        {
+            int x = dir.x;
+
+            attackNodes.Add(currentNode.GetNodeRelative(x, 0));
+
+            attackNodes.Add(currentNode.GetNodeRelative(2 * x, 0));
+            attackNodes.Add(currentNode.GetNodeRelative(2 * x, 1));
+            attackNodes.Add(currentNode.GetNodeRelative(2 * x, -1));
+
+            attackNodes.Add(currentNode.GetNodeRelative(3 * x, 0));
+            attackNodes.Add(currentNode.GetNodeRelative(3 * x, 1));
+            attackNodes.Add(currentNode.GetNodeRelative(3 * x, -1));
+        }
+        else if (dir.y != 0)
+        {
+            int y = dir.y;
+
+            attackNodes.Add(currentNode.GetNodeRelative(0, y));
+
+            attackNodes.Add(currentNode.GetNodeRelative(0, 2 * y));
+            attackNodes.Add(currentNode.GetNodeRelative(1, 2 * y));
+            attackNodes.Add(currentNode.GetNodeRelative(-1, 2 * y));
+
+            attackNodes.Add(currentNode.GetNodeRelative(0, 3 * y));
+            attackNodes.Add(currentNode.GetNodeRelative(1, 3 * y));
+            attackNodes.Add(currentNode.GetNodeRelative(-1, 3 * y));
+        }
+
+        foreach (var node in attackNodes)
+        {
+            SpawnFire(node);
+        }
+        attackNodes.Clear();
+        state = WyrmState.UnderGround;
     }
 
     // HELPER FUNCTIONS
@@ -672,5 +693,17 @@ public class WyrmHead : WyrmSection
             Debug.LogWarning("[WyrmHead] could not generate node");
 
         return node;
+    }
+
+    private Vector3[] PathToPlayer()
+    {
+        List<WyrmSection> sections = GetAboveGroundSections();
+        Vector3[] avoidNodes = new Vector3[sections.Count];
+        for (int i = 0; i < sections.Count; i++)
+        {
+            avoidNodes[i] = sections[i].currentNode.position.world;
+        }
+
+        return levelModule.MetaGrid.GetPathWithAvoidance(currentNode.position.world, PlayerEntity.Instance.currentNode.position.world, avoidNodes, 1);
     }
 }
