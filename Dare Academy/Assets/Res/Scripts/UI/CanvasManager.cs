@@ -219,7 +219,7 @@ namespace CanvasTool
                 if (openCanvases.Count > 0)
                 {
                     CanvasContainer top = openCanvases[openCanvases.Count - 1];
-                    top.CloseCanvas();
+                    CloseCanvas(top.name);
                     overlay.canvas.sortingOrder = openCanvases.Count - 1;
                 }
             }

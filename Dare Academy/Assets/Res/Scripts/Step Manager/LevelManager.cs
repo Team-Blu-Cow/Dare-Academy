@@ -125,6 +125,24 @@ public class LevelManager : MonoBehaviour
             App.GetModule<LevelModule>().ExecuteStep();
     }
 
+    private void UnPause()
+    {
+        EventSystem.current.SetSelectedGameObject(null);
+
+        App.GetModule<InputModule>().PlayerController.Player.Enable();
+        App.GetModule<InputModule>().SystemController.UI.Map.Enable();
+
+        if (App.GetModule<AudioModule>().GetCurrentSong() != null)
+            App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
+
+        ResolutionDropdown dropDown = FindObjectOfType<ResolutionDropdown>();
+        if (dropDown)
+            dropDown.Hide();
+
+        if (_treeSounds)
+            _treeSounds.SetActive(true);
+    }
+
     public void PauseGame(InputAction.CallbackContext ctx)
     {
         if (paused)
@@ -133,21 +151,9 @@ public class LevelManager : MonoBehaviour
                 App.CanvasManager.CloseCanvas();
             App.CanvasManager.CloseCanvas();
 
-            EventSystem.current.SetSelectedGameObject(null);
-
-            App.GetModule<InputModule>().PlayerController.Player.Enable();
-            App.GetModule<InputModule>().SystemController.UI.Map.Enable();
-
-            if (App.GetModule<AudioModule>().GetCurrentSong() != null)
-                App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
-
-            ResolutionDropdown dropDown = FindObjectOfType<ResolutionDropdown>();
-            if (dropDown)
-                dropDown.Hide();
-
+            UnPause();
             App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/UI/sfx_unpause");
-            if (_treeSounds)
-                _treeSounds.SetActive(true);
+
 
             paused = false;
         }
@@ -171,13 +177,11 @@ public class LevelManager : MonoBehaviour
             CanvasTool.CanvasContainer mapCanvas = App.CanvasManager.GetCanvasContainer("Map");
             if (App.CanvasManager.openCanvases.Contains(mapCanvas))
             {
-                mapCanvas.CloseCanvas();
+                App.CanvasManager.CloseCanvas(mapCanvas.name);
                 mapCanvas.gameObject.GetComponentInChildren<MiniMapGen>().Open = false;
 
                 if (mapCanvas.gameObject.transform.GetChild(2).TryGetComponent(out QuestLog questLog))
                     questLog.Open = false;
-
-                App.CanvasManager.openCanvases.Remove(mapCanvas);
             }
         }
     }
@@ -189,24 +193,14 @@ public class LevelManager : MonoBehaviour
             if (App.CanvasManager.topCanvas.name == "Options Menu")
             {
                 paused = false;
-                App.GetModule<InputModule>().PlayerController.Player.Enable();
-                App.GetModule<InputModule>().SystemController.UI.Map.Enable();
-
-                if (App.GetModule<AudioModule>().GetCurrentSong() != null)
-                    App.GetModule<AudioModule>().GetCurrentSong().SetParameter("Muffled", 0);
-
-                EventSystem.current.SetSelectedGameObject(null);
+                UnPause();
+                App.CanvasManager.CloseCanvas();
+                return;
             }
 
-            ResolutionDropdown dropDown = FindObjectOfType<ResolutionDropdown>();
-            if (dropDown)
-                dropDown.Hide();
-
-            if (_treeSounds)
-                _treeSounds.SetActive(true);
-
             App.CanvasManager.CloseCanvas();
-            EventSystem.current.SetSelectedGameObject(App.CanvasManager.GetCanvasContainer("Options Menu").gameObject.transform.GetChild(1).GetChild(0).GetChild(2).gameObject);
+            App.CanvasManager.OpenCanvas("Options Menu", true);
+            EventSystem.current.SetSelectedGameObject(App.CanvasManager.GetCanvasContainer("Options Menu").gameObject.transform.GetChild(1).GetChild(0).GetChild(0).gameObject);
         }
     }
 
