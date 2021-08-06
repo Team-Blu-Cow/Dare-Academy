@@ -42,6 +42,8 @@ public class WyrmHead : WyrmSection
     private int m_chargeCountdown = 0;
     private const int m_chargeCountdownTime = 0;
 
+    private GridNode m_randomMovementTargetNode = null;
+
     private int m_stepsUntilResurface = 0;
 
     private int m_chasingNodeDirection = 0;
@@ -236,7 +238,7 @@ public class WyrmHead : WyrmSection
         // #wyrm implement state selection
         System.Random rnd = new System.Random();
 
-        state = WyrmState.CrossScreenCharge;
+        state = WyrmState.RandomMovement;
         return;
 
     tryAgain:
@@ -345,8 +347,53 @@ public class WyrmHead : WyrmSection
 
     private void State_RandomMovement()
     {
-        // #wyrm implement random movement
         state = WyrmState.NoState;
+        if (m_randomMovementTargetNode is null)
+        {
+            m_randomMovementTargetNode = GetRandomNode();
+        }
+
+        if (m_randomMovementTargetNode is null)
+        {
+            state = WyrmState.UnderGround;
+            return;
+        }
+
+        List<WyrmSection> sections = GetAboveGroundSections();
+
+        Vector3[] avoidNodes = new Vector3[sections.Count + 1];
+        for (int i = 0; i < sections.Count; i++)
+        {
+            avoidNodes[i] = sections[i].currentNode.position.world;
+        }
+
+        // avoid player
+        avoidNodes[avoidNodes.Length - 1] = PlayerEntity.Instance.currentNode.position.world;
+
+        Vector3[] path = levelModule.MetaGrid.GetPathWithAvoidance(currentNode.position.world, m_randomMovementTargetNode.position.world, avoidNodes, 1);
+
+        if (path is null)
+        {
+            state = WyrmState.UnderGround;
+            m_randomMovementTargetNode = null;
+            return;
+        }
+
+        if (path.Length == 0)
+        {
+            state = WyrmState.UnderGround;
+            m_randomMovementTargetNode = null;
+            return;
+        }
+
+        // idk why but path[0].z is 2 so it cant be resolved to the grid
+        Vector3 pos = new Vector3(path[0].x, path[0].y, 0);
+
+        GridNode targetNode = levelModule.MetaGrid.GetNodeFromWorld(pos);
+        Vector2Int targetDir = targetNode.position.grid - m_currentNode.position.grid;
+
+        SetMovementDirection(targetDir);
+        doReanalyse = true;
     }
 
     private void State_Running()
@@ -594,5 +641,24 @@ public class WyrmHead : WyrmSection
         m_chargeDir = dir;
 
         return true;
+    }
+
+    private GridNode GetRandomNode()
+    {
+        System.Random rand = new System.Random();
+        JUtil.Grids.Grid<GridNode> grid = levelModule.MetaGrid.Grid(RoomIndex);
+
+        GridNode node = null;
+        for (int i = 0; i < 100; i++)
+        {
+            node = grid[rand.Next(0, grid.Width), rand.Next(0, grid.Height)];
+            if (node != null)
+                break;
+        }
+
+        if (node is null)
+            Debug.LogWarning("[WyrmHead] could not generate node");
+
+        return node;
     }
 }
