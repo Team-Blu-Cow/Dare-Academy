@@ -258,7 +258,6 @@ namespace blu
             await AwaitSaveLoad();
             App.GetModule<QuestModule>().WriteToFile();
             io.ActiveSaveData.gameEventFlags = EventFlags._FlagData;
-            // #TODO #matthew - move the await out of here
             await io.SaveAsync();
         }
 
