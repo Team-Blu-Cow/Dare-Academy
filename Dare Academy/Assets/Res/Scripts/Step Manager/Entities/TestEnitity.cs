@@ -11,7 +11,7 @@ public class TestEnitity : GridEntity
     {
         SetMovementDirection(testDirection, moveSpeed);
 
-        m_animationController.SetDirection(testDirection.x, 1);
+        m_animationController.SetDirection(-testDirection.x, 1);
     }
 
     protected override void OnDrawGizmos()

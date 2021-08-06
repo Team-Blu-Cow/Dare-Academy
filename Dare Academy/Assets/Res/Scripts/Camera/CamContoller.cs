@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using blu;
 using JUtil.Grids;
+using Cinemachine;
 
 namespace blu
 {
@@ -17,6 +18,9 @@ namespace blu
         [SerializeField] [Range(0, 10)] private float _tolerance = 1.5f;
 
         private LevelModule levelModule;
+
+        public Cinemachine.CinemachineVirtualCamera virtualCam
+        { get => _virtualCam; }
 
         private void Start()
         {
@@ -141,6 +145,23 @@ namespace blu
 
                 _virtualCam.Follow.position = new Vector3(xFollow, yFollow, 0);
             }
+        }
+
+        public void CameraShake(float intensity, float time)
+        {
+            CinemachineBasicMultiChannelPerlin camNoise = virtualCam.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+
+            camNoise.m_AmplitudeGain = intensity;
+
+            LeanTween.value(intensity, 0, time)
+                .setOnUpdate((float value) =>
+                {
+                    camNoise.m_AmplitudeGain = value;
+                })
+                .setOnComplete(() =>
+                {
+                    App.CameraController.transform.rotation = Quaternion.identity;
+                });
         }
     }
 }

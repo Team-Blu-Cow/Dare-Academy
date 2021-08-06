@@ -1005,6 +1005,11 @@ public abstract class GridEntity : MonoBehaviour
 
     // HELPER METHODS *****************************************************************************
 
+    virtual public void OnHit(int damage, float offsetTime = 0f)
+    {
+        m_health -= damage;
+    }
+
     protected void UpdateTransform()
     {
         if (m_currentNode != null)
@@ -1119,7 +1124,7 @@ public abstract class GridEntity : MonoBehaviour
             m_currentNode.AddEntity(this);
     }
 
-    private void CleanUp()
+    virtual public void CleanUp()
     {
         RemoveFromCurrentNode();
         m_stepController.RemoveEntity(this);
@@ -1247,7 +1252,8 @@ public abstract class GridEntity : MonoBehaviour
             {
                 foreach (GridEntity entity in entities)
                 {
-                    entity.Health -= damage;
+                    //entity.m_health -= damage;
+                    entity.OnHit(damage);
                 }
 
                 if (prefab.TryGetComponent(out BulletEntity bulletEntity))
