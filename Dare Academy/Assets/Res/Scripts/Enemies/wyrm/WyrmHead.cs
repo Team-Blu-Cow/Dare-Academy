@@ -11,6 +11,7 @@ public class WyrmHead : WyrmSection
     {
         NoState,
         UnderGround,
+        Splitting,
         Chasing,
         Circing,
         RandomMovement,
@@ -27,7 +28,12 @@ public class WyrmHead : WyrmSection
     { get; private set; }
 
     private LevelModule levelModule;
-    private bool m_hasSplit = false;
+
+    public bool HasSplit
+    { get; private set; }
+
+    public int StartingHealth
+    { get; private set; }
 
     [SerializeField] private int m_length;
 
@@ -41,6 +47,9 @@ public class WyrmHead : WyrmSection
     private int m_chargeCountdown = 0;
     private const int m_chargeCountdownTime = 5;
     private List<GridNode> m_chargeDamageNodes = new List<GridNode>();
+
+    public WyrmHead other
+    { get; private set; }
 
     private bool DoChargeAttack
     { get; set; }
@@ -68,6 +77,8 @@ public class WyrmHead : WyrmSection
         base.Start();
         levelModule = App.GetModule<LevelModule>();
 
+        StartingHealth = Health;
+
         // we start underground
         RemoveFromCurrentNode();
         m_currentNode = null;
@@ -77,19 +88,22 @@ public class WyrmHead : WyrmSection
 
         this.Head = this;
 
-        // create the rest of the wyrm
-        WyrmSection back = this;
-        for (int i = 1; i < m_length; i++)
+        if (!HasSplit)
         {
-            // slow but it happens on start so i couldn't give less of a fuck
-            GameObject body = GameObject.Instantiate(m_bodyPrefab);
-            body.transform.position = this.transform.position;
+            // create the rest of the wyrm
+            WyrmSection back = this;
+            for (int i = 1; i < m_length; i++)
+            {
+                // slow but it happens on start so i couldn't give less of a fuck
+                GameObject body = GameObject.Instantiate(m_bodyPrefab);
+                body.transform.position = this.transform.position;
 
-            WyrmSection section = body.GetComponent<WyrmSection>();
-            section.Head = this;
-            back.SectionBehind = section;
-            section.SectionInfront = back;
-            back = section;
+                WyrmSection section = body.GetComponent<WyrmSection>();
+                section.Head = this;
+                back.SectionBehind = section;
+                section.SectionInfront = back;
+                back = section;
+            }
         }
     }
 
@@ -116,6 +130,10 @@ public class WyrmHead : WyrmSection
 
             case WyrmState.UnderGround:
                 State_UnderGround();
+                break;
+
+            case WyrmState.Splitting:
+                State_Splitting();
                 break;
 
             case WyrmState.Chasing:
@@ -217,6 +235,8 @@ public class WyrmHead : WyrmSection
 
     private void Split()
     {
+        HasSplit = true;
+
         List<WyrmSection> sections = new List<WyrmSection>();
         WyrmSection current = this;
         while (current)
@@ -233,22 +253,29 @@ public class WyrmHead : WyrmSection
             // tail of front half will auto disconnect
 
             {
-                // replace body script with head
-                GameObject obj  = sections[newHead].gameObject;
                 GameObject.Destroy(sections[newHead]);
-                WyrmHead head = obj.AddComponent<WyrmHead>();
-                head.m_hasSplit = true;
+                GameObject obj  =GameObject.Instantiate(m_headPrefab, transform.position, Quaternion.identity);
+
+                WyrmHead head = obj.GetComponent<WyrmHead>();
+
+                head.HasSplit = true;
+
+                head.other = this;
+                this.other = head;
+
+                other.Flags._FlagData = Flags._FlagData;
 
                 //set health
                 int h = Health/2;
                 head.Health = h;
-
                 Health = h;
 
                 // add back to list and reset references
                 sections[newHead] = head;
                 sections[newHead].SectionBehind = sections[newHead + 1];
                 sections[newHead + 1].SectionInfront = sections[newHead];
+
+                // wyrm head start function will assign all other references
             }
         }
         else
@@ -274,7 +301,7 @@ public class WyrmHead : WyrmSection
         // #wyrm implement state selection
         System.Random rnd = new System.Random();
 
-        state = WyrmState.CrossScreenCharge;
+        state = WyrmState.Circing;
         return;
 
     tryAgain:
@@ -309,6 +336,12 @@ public class WyrmHead : WyrmSection
             return;
         }
 
+        if (!HasSplit && Health <= StartingHealth / 2)
+        {
+            state = WyrmState.Splitting;
+            return;
+        }
+
         spriteRenderer.enabled = false;
         m_stepsUntilResurface--;
 
@@ -317,6 +350,27 @@ public class WyrmHead : WyrmSection
             Resurface();
             state = WyrmState.NoState;
         }
+    }
+
+    private void State_Splitting()
+    {
+        if (HasSplit)
+        {
+            state = WyrmState.UnderGround;
+            return;
+        }
+
+        if (currentNode != null)
+        {
+            Burrow();
+            return;
+        }
+
+        if (GetAboveGroundSections().Count > 0)
+            return;
+
+        Split();
+        state = WyrmState.UnderGround;
     }
 
     private void State_Chasing()
@@ -557,16 +611,23 @@ public class WyrmHead : WyrmSection
     private List<WyrmSection> GetAboveGroundSections()
     {
         List<WyrmSection> sections = new List<WyrmSection>();
-        sections.Add(this);
-        while (true)
+
+        WyrmSection sect = this;
+
+        while (sect)
         {
-            if (sections[sections.Count - 1].SectionBehind == null)
-                break;
+            if (sect.currentNode != null)
+                sections.Add(sect);
 
-            if (sections[sections.Count - 1].SectionBehind.currentNode == null)
-                break;
+            sect = sect.SectionBehind;
+        }
 
-            sections.Add(sections[sections.Count - 1].SectionBehind);
+        sect = other;
+        while (sect)
+        {
+            if (sect.currentNode != null)
+                sections.Add(sect);
+            sect = sect.SectionBehind;
         }
 
         return sections;
