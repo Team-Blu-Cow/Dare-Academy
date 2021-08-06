@@ -19,6 +19,8 @@ public class WyrmHead : WyrmSection
         FireAttack,
     }
 
+    private List<DamageEntity> m_activeWarningSymbols = new List<DamageEntity>();
+
     public WyrmState lastState
     { get; private set; }
 
@@ -33,6 +35,12 @@ public class WyrmHead : WyrmSection
     [SerializeField, HideInInspector] private GameObject m_headPrefab;
     [SerializeField, HideInInspector] private GameObject m_bodyPrefab;
     [SerializeField, HideInInspector] private GameObject m_firePrefab;
+    [SerializeField, HideInInspector] private GameObject m_warningPrefab;
+
+    private GridNode m_chargeStartNode = null;
+    private Vector2Int m_chargeDir = Vector2Int.zero;
+    private int m_chargeCountdown = 0;
+    private const int m_chargeCountdownTime = 0;
 
     private int m_stepsUntilResurface = 0;
 
@@ -44,7 +52,8 @@ public class WyrmHead : WyrmSection
 
         m_headPrefab = Resources.Load<GameObject>("prefabs/Entities/Wyrm/WyrmHead");
         m_bodyPrefab = Resources.Load<GameObject>("prefabs/Entities/Wyrm/WyrmBody");
-        m_firePrefab = Resources.Load<GameObject>("prefabs/Entities/fire");
+        m_firePrefab = Resources.Load<GameObject>("prefabs/Entities/Fire");
+        m_warningPrefab = Resources.Load<GameObject>("prefabs/Entities/WarningSymbol");
     }
 
     protected override void Start()
@@ -224,11 +233,15 @@ public class WyrmHead : WyrmSection
 
     private void State_NoState()
     {
+        // #wyrm implement state selection
         System.Random rnd = new System.Random();
+
+        state = WyrmState.CrossScreenCharge;
+        return;
 
     tryAgain:
 
-        int num = rnd.Next(0,3);
+        int num = rnd.Next(0,4);
 
         if (num == 0)
         { state = WyrmState.UnderGround; }
@@ -237,11 +250,12 @@ public class WyrmHead : WyrmSection
         else if (num == 2)
         { state = WyrmState.Circing; }
         else if (num == 3)
-        { state = WyrmState.RandomMovement; }
-        else if (num == 4)
-        { state = WyrmState.Running; }
-        else if (num == 5)
         { state = WyrmState.CrossScreenCharge; }
+
+        // { state = WyrmState.RandomMovement; }
+        // else if (num == 4)
+        // { state = WyrmState.Running; }
+        // else if (num == 5)
 
         if (state == lastState)
             goto tryAgain;
@@ -331,21 +345,49 @@ public class WyrmHead : WyrmSection
 
     private void State_RandomMovement()
     {
+        // #wyrm implement random movement
         state = WyrmState.NoState;
     }
 
     private void State_Running()
     {
+        // #wyrm implement running
         state = WyrmState.NoState;
     }
 
     private void State_CrossScreenCharge()
     {
-        state = WyrmState.NoState;
+        if (m_chargeStartNode == null)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                if (GenerateChargePath())
+                {
+                    SpawnWarningSymbol(m_chargeStartNode);
+                    m_chargeCountdown = m_chargeCountdownTime;
+                    Burrow();
+                    return;
+                }
+            }
+            return;
+        }
+        else
+        {
+            m_chargeCountdown--;
+            if (m_chargeCountdown <= 0)
+            {
+                // #wyrm do charge
+                state = WyrmState.UnderGround;
+                m_chargeStartNode = null;
+                m_chargeDir = Vector2Int.zero;
+                ClearWarningsSymbols();
+            }
+        }
     }
 
     private void State_FireAttack()
     {
+        // #wyrm implement fire attack
         state = WyrmState.NoState;
     }
 
@@ -423,7 +465,7 @@ public class WyrmHead : WyrmSection
         // if a fire is already present extend its life
         foreach (var entity in entities)
         {
-            if (entity is DamageEntity && (entity as DamageEntity).IsFire)
+            if (entity is DamageEntity && (entity as DamageEntity).DamageType == DamageEntity.DamageEntityType.Fire)
             {
                 if ((entity as DamageEntity).Linger < fireTime)
                     (entity as DamageEntity).Linger = fireTime;
@@ -439,7 +481,118 @@ public class WyrmHead : WyrmSection
             return true;
         }
 
-        // couldnt get component, spawn failed
+        // couldnt get component, spawn failed, destroy to be safe
+        if (obj)
+            GameObject.Destroy(obj);
+
         return false;
+    }
+
+    private bool SpawnWarningSymbol(GridNode spawnNode)
+    {
+        if (spawnNode == null)
+            return false;
+
+        List<GridEntity> entities = spawnNode.GetGridEntities();
+
+        // if a fire is already present extend its life
+        foreach (var entity in entities)
+        {
+            if (entity is DamageEntity && (entity as DamageEntity).DamageType == DamageEntity.DamageEntityType.Warning)
+            {
+                return true;
+            }
+        }
+
+        // spawn warning
+        GameObject obj = GameObject.Instantiate(m_warningPrefab, spawnNode.position.world, Quaternion.identity);
+        if (obj.TryGetComponent(out DamageEntity warning))
+        {
+            warning.Linger = int.MaxValue;
+            m_activeWarningSymbols.Add(warning);
+            return true;
+        }
+
+        // couldn't get component, spawn failed, destroy to be safe
+        if (obj)
+            GameObject.Destroy(obj);
+
+        return false;
+    }
+
+    private void ClearWarningsSymbols()
+    {
+        for (int i = 0; i < m_activeWarningSymbols.Count; i++)
+        {
+            if (m_activeWarningSymbols[i])
+            {
+                m_activeWarningSymbols[i].KillImmediate();
+            }
+        }
+
+        m_activeWarningSymbols.Clear();
+    }
+
+    private bool GenerateChargePath()
+    {
+        m_chargeStartNode = null;
+        m_chargeDir = Vector2Int.zero;
+
+        JUtil.Grids.Grid<GridNode> grid = levelModule.MetaGrid.Grid(RoomIndex);
+
+        System.Random rand = new System.Random();
+
+        int r = rand.Next(0,4);
+
+        Vector2Int dir = Vector2Int.zero;
+        GridNode node = null;
+
+        switch (r)
+        {
+            case 0:
+                dir = Vector2Int.up;
+                node = grid[rand.Next(0, grid.Width), 0];
+                break;
+
+            case 1:
+                dir = Vector2Int.down;
+                node = grid[rand.Next(0, grid.Width), grid.Height - 1];
+                break;
+
+            case 2:
+                dir = Vector2Int.left;
+                node = grid[grid.Width - 1, rand.Next(0, grid.Height)];
+                break;
+
+            case 3:
+                dir = Vector2Int.right;
+                node = grid[0, rand.Next(0, grid.Height)];
+                break;
+        }
+
+        if (node == null)
+            return false;
+
+        int dist = node.GetDistanceInDirection(dir);
+
+        if (dist < 4)
+            return false;
+
+        GridNode n = node;
+        while (true)
+        {
+            if (n == null)
+                break;
+
+            if (n.overridden)
+                return false;
+
+            n = n.GetNeighbour(dir);
+        }
+
+        m_chargeStartNode = node;
+        m_chargeDir = dir;
+
+        return true;
     }
 }

@@ -4,10 +4,20 @@ using UnityEngine;
 
 public class DamageEntity : GridEntity
 {
+    public enum DamageEntityType
+    {
+        None,
+        Fire,
+        Warning, // doesnt damage but im lazy
+    }
+
+    [SerializeField]
     private int m_damage = 1;
 
     [SerializeField]
-    readonly public bool IsFire;
+    private DamageEntityType m_damageType;
+
+    public DamageEntityType DamageType => m_damageType;
 
     public int Damage
     {

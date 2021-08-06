@@ -170,4 +170,5 @@ MonoBehaviour:
   m_flags:
     m_flagData: 6146
   m_animationController: {fileID: 5424648584174721742}
-  IsFire: 1
+  m_damage: 1
+  m_damageType: 2
