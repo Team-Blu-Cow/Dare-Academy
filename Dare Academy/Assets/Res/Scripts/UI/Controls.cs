@@ -26,6 +26,20 @@ public class Controls : MonoBehaviour
 
     public void ForceUpdate()
     {
+        SwitchDevice();
+    }
+
+    private void DeviceChanged()
+    {
+        var controlsCanvas = App.CanvasManager.GetCanvasContainer("Controls");
+        if (controlsCanvas != null && controlsCanvas.canvas.isActiveAndEnabled)
+        {
+            SwitchDevice();
+        }
+    }
+
+    private void SwitchDevice()
+    {
         switch (App.GetModule<InputModule>().LastUsedDevice.displayName)
         {
             case "Keyboard":
@@ -46,32 +60,6 @@ public class Controls : MonoBehaviour
         }
     }
 
-    private void DeviceChanged()
-    {
-        var controlsCanvas = App.CanvasManager.GetCanvasContainer("Controls");
-        if (controlsCanvas != null && controlsCanvas.canvas.isActiveAndEnabled)
-        {
-            switch (App.GetModule<InputModule>().LastUsedDevice.displayName)
-            {
-                case "Keyboard":
-                    SetKeyboard();
-                    break;
-
-                case "Mouse":
-                    SetKeyboard();
-                    break;
-
-                case "Xbox Controller":
-                    SetController();
-                    break;
-
-                case "Wireless Controller":
-                    SetController();
-                    break;
-            }
-        }
-    }
-
     private void SetKeyboard()
     {
         Transform baseTransform = transform.GetChild(2);
@@ -89,6 +77,7 @@ public class Controls : MonoBehaviour
         baseTransform.GetComponentsInChildren<Image>()[9].sprite = KeyboardSprites[13];
         baseTransform.GetComponentsInChildren<Image>()[10].sprite = KeyboardSprites[14];
         baseTransform.GetComponentsInChildren<Image>()[11].sprite = KeyboardSprites[14];
+        baseTransform.GetComponentsInChildren<Image>()[12].sprite = KeyboardSprites[10];
     }
 
     private void SetController()
@@ -108,5 +97,6 @@ public class Controls : MonoBehaviour
         baseTransform.GetComponentsInChildren<Image>()[9].sprite = ControllerSprites[12];
         baseTransform.GetComponentsInChildren<Image>()[10].sprite = ControllerSprites[9];
         baseTransform.GetComponentsInChildren<Image>()[11].sprite = ControllerSprites[11];
+        baseTransform.GetComponentsInChildren<Image>()[12].sprite = ControllerSprites[0];
     }
 }

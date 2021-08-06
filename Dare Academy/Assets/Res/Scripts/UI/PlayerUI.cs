@@ -196,7 +196,17 @@ public class PlayerUI : MonoBehaviour
                 temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[1];
                 break;
 
+            case "Mouse":
+                temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[0];
+                temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[1];
+                break;
+
             case "Xbox Controller":
+                temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[2];
+                temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[3];
+                break;
+
+            case "Wireless Controller":
                 temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[2];
                 temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[3];
                 break;
