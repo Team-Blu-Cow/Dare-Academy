@@ -154,6 +154,7 @@ public class LevelManager : MonoBehaviour
             UnPause();
             App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/UI/sfx_unpause");
 
+            EventSystem.current.SetSelectedGameObject(null);
 
             paused = false;
         }
@@ -195,6 +196,9 @@ public class LevelManager : MonoBehaviour
                 paused = false;
                 UnPause();
                 App.CanvasManager.CloseCanvas();
+
+                EventSystem.current.SetSelectedGameObject(null);
+
                 return;
             }
 
