@@ -133,7 +133,7 @@ public class BulletEntity : GridEntity
 
     public override void DamageStep()
     {
-        if (m_previousNode == null)
+        if (!MovedThisStep)
         {
             return;
         }

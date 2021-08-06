@@ -156,6 +156,18 @@ public class WyrmHead : WyrmSection
         ResurfacedThisStep = false;
     }
 
+    public override void OnDeath()
+    {
+        WyrmSection section = SectionBehind;
+        while (section)
+        {
+            section.KillImmediate();
+            section = section.SectionBehind;
+        }
+
+        base.OnDeath();
+    }
+
     private GridNode GenerateBurrowLocation()
     {
         var currentRoom = levelModule.CurrentRoom;
@@ -238,7 +250,7 @@ public class WyrmHead : WyrmSection
         // #wyrm implement state selection
         System.Random rnd = new System.Random();
 
-        state = WyrmState.RandomMovement;
+        state = WyrmState.Circing;
         return;
 
     tryAgain:

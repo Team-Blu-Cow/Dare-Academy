@@ -75,6 +75,9 @@ public abstract class GridEntity : MonoBehaviour
     protected GridNode m_startingNode = null;
     protected GridNode m_initialNode = null;
 
+    public bool MovedThisStep
+    { get; protected set; }
+
     public GridNode previousNode
     { get { return m_previousNode; } }
 
@@ -171,6 +174,8 @@ public abstract class GridEntity : MonoBehaviour
         m_actionList.Clear();
 
         m_initialNode = m_currentNode;
+
+        MovedThisStep = false;
     }
 
     public void PreMoveStep()
@@ -381,6 +386,9 @@ public abstract class GridEntity : MonoBehaviour
 
     public void PostMoveStep()
     {
+        if (currentNode != previousNode)
+            MovedThisStep = true;
+
         forceStepAgain = false;
 
         if (m_currentNode != null && !m_flags.IsFlagsSet(flags.allowedOffGrid))
