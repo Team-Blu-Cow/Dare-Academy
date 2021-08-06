@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using blu;
 
 public class MortarShotLand : MonoBehaviour
 {
@@ -16,7 +17,7 @@ public class MortarShotLand : MonoBehaviour
     private SpriteRenderer sr;
     private Color colour;
 
-    private GameObject explosionPrefab;
+    [SerializeField] private GameObject explosionPrefab;
 
     // Start is called before the first frame update
     void Start()
@@ -27,9 +28,8 @@ public class MortarShotLand : MonoBehaviour
         sr = GetComponent<SpriteRenderer>();
         colour = sr.color;
         sr.sortingOrder = Mathf.RoundToInt( disapearDistance);
-        rb.velocity = Vector2.down;
+        rb.velocity = Vector2.down*20;
         currentYScale = transform.localScale.y;
-        explosionPrefab = Resources.Load<GameObject>("Prefabs/Enemies/Mortar/MortarExplosion");
     }
 
     // Update is called once per frame
@@ -44,10 +44,12 @@ public class MortarShotLand : MonoBehaviour
 
         sr.sortingOrder = Mathf.RoundToInt(transform.position.y - initY);
 
-        if (transform.position.y < initY)
+        if (transform.position.y <= initY)
         {
             if(explosionPrefab != null)
-                GameObject.Instantiate(explosionPrefab, transform.position + (Vector3.up * 0.5f), Quaternion.identity);
+                GameObject.Instantiate(explosionPrefab, new Vector3(transform.position.x,initY-0.75f,transform.position.z), Quaternion.identity);
+
+            App.CameraController.CameraShake(6f, 0.3f);
             Destroy(gameObject);
         }
     }

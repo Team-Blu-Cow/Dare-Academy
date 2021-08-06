@@ -15,6 +15,8 @@ public class MortarShot : GridEntity
 
     GameObject m_mortarLandPrefab;
 
+    [SerializeField] private GameObject explosionPrefab;
+
     public void Start()
     {
         base.Start();
@@ -89,13 +91,14 @@ public class MortarShot : GridEntity
             return;
 
         Instantiate(m_mortarLandPrefab, m_currentNode.position.world, Quaternion.identity);
+        //GameObject.Instantiate(explosionPrefab, transform.position, Quaternion.identity);
 
         foreach (var e in m_currentNode.GetGridEntities())
         {
             if (e.Flags.IsFlagsSet(GridEntityFlags.Flags.isKillable))
             {
                 //e.Health -= m_damage;
-                e.OnHit(m_damage);
+                e.OnHit(m_damage, 0.2f);
             }
         }
     }

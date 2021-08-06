@@ -39,8 +39,6 @@ public class MeleePathfinder : GridEntity
     protected override void Start()
     {
         base.Start();
-        m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true);
-        m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true);
         m_player = PlayerEntity.Instance;
         m_animationController.animator.speed = 1;
         m_animationController.m_overwriteAnimSpeed = false;
@@ -48,6 +46,9 @@ public class MeleePathfinder : GridEntity
 
     public override void AnalyseStep()
     {
+        if (isDead)
+            return;
+
         m_animationController.animator.speed = 1;
 
         if (m_player == null)
@@ -121,11 +122,16 @@ public class MeleePathfinder : GridEntity
 
         SetMovementDirection(m_dir, moveSpeed);
 
+        LevelManager.Instance.TelegraphDrawer.CreateTelegraph(m_currentNode.Neighbors[new Vector2(dir.x, dir.y)].reference, TelegraphDrawer.Type.MOVE);
+
         m_animationController.SetDirection(-m_dir.x, 1);
     }
 
     public override void AttackStep()
     {
+        if (isDead)
+            return;
+
         if (m_state == State.ATTACK && m_attackNode != null)
         {
             GameObject gobj = Instantiate(m_attackPrefab, m_attackNode.position.world, Quaternion.identity);
@@ -184,5 +190,16 @@ public class MeleePathfinder : GridEntity
         base.OnHit(damage);
 
         m_animationController.DamageFlash();
+    }
+
+    protected override void CleanUp()
+    {
+        m_animationController.SpawnDeathPoof(transform.position);
+        base.CleanUp();
+    }
+
+    public override void OnDeath()
+    {
+        m_animationController.PlayAnimation("Die", 1);
     }
 }

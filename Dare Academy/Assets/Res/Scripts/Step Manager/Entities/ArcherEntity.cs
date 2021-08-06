@@ -47,8 +47,6 @@ public class ArcherEntity : GridEntity
     protected override void Start()
     {
         base.Start(); // Run base start function
-        m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true); // Set flag for killable to true
-        m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true); // Set flag for if solid to true
         player = PlayerEntity.Instance;
         m_state = State.MOVING;
     }
@@ -61,6 +59,9 @@ public class ArcherEntity : GridEntity
 
     public override void AnalyseStep()
     {
+        if (isDead)
+            return;
+
         if (player == null)
             return;
 
@@ -149,6 +150,7 @@ public class ArcherEntity : GridEntity
             direction = path[0] - Position.world;
 
         SetMovementDirection(new Vector2(direction.x, direction.y));
+        m_animationController.SetDirection(-direction.x, 1);
 
         if (direction != Vector3.zero)
         {
@@ -166,6 +168,7 @@ public class ArcherEntity : GridEntity
         if (m_state != State.SHOOTING || m_cooldownCounter > 0)
             return;
 
+
         GridNode targetNode = m_currentNode.Neighbors[offsetVector].reference;
 
         if (targetNode != null)
@@ -176,8 +179,13 @@ public class ArcherEntity : GridEntity
 
     public override void AttackStep()
     {
+        if (isDead)
+            return;
+
         if (m_state == State.SHOOTING && m_cooldownCounter <= 0) // If the entity is attacking
         {
+            m_animationController.animator.SetBool("isShooting", true);
+
             m_cooldownCounter = m_attackCooldown;
             SpawnBullet(m_bulletPrefab, m_currentNode, offsetVector); // Spawn bullet in the direction the entity was moving
         }
@@ -222,5 +230,33 @@ public class ArcherEntity : GridEntity
 
         if (Application.isPlaying)
             JUtils.DrawPath(path, App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(m_currentNode.position.world).position.world);
+    }
+
+    public override void DrawStep()
+    {
+        LeanTween.move(gameObject, m_currentNode.position.world, m_stepController.stepTime);
+    }
+
+    public void ResetAnimation()
+    {
+        m_animationController.animator.SetBool("isShooting", false);
+    }
+
+    public override void OnDeath()
+    {
+        m_animationController.PlayAnimation("Death", 1);
+    }
+
+    protected override void CleanUp()
+    {
+        m_animationController.SpawnDeathPoof(transform.position);
+        base.CleanUp();
+    }
+
+    public override void OnHit(int damage, float offsetTime = 0f)
+    {
+        base.OnHit(damage);
+
+        m_animationController.DamageFlash();
     }
 }

@@ -35,6 +35,9 @@ public class TelegraphDrawer
 
     public void CreateTelegraph(GridNode node, Type type)
     {
+        if (node == null)
+            return;
+
         GameObject newTelegraph =  GameObject.Instantiate(m_prefabList[GetPrefabIndex(type)], node.position.world, Quaternion.identity);
 
         newTelegraph.transform.parent = m_telegraphParentGameobject.transform;
@@ -44,6 +47,9 @@ public class TelegraphDrawer
 
     public void CreateTelegraph(GridNode node, Type type, float in_alpha)
     {
+        if (node == null)
+            return;
+
         GameObject newTelegraph =  GameObject.Instantiate(m_prefabList[GetPrefabIndex(type)], node.position.world, Quaternion.identity);
 
         newTelegraph.transform.parent = m_telegraphParentGameobject.transform;
@@ -59,6 +65,9 @@ public class TelegraphDrawer
 
     public void CreateTelegraph(GridNode node, Type type, Color colour)
     {
+        if (node == null)
+            return;
+
         GameObject newTelegraph =  GameObject.Instantiate(m_prefabList[GetPrefabIndex(type)], node.position.world, Quaternion.identity);
 
         newTelegraph.transform.parent = m_telegraphParentGameobject.transform;
