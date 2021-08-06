@@ -41128,6 +41128,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1790997687142397300, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+      propertyPath: m_SortingOrder
+      value: 4
+      objectReference: {fileID: 0}
     - target: {fileID: 1790997687339080767, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -41700,6 +41704,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 4892750155117328769, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+      propertyPath: m_SortingOrder
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 4892750155414101636, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -41843,6 +41851,10 @@ PrefabInstance:
     - target: {fileID: 6095877200651625099, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
       propertyPath: m_AnchoredPosition.y
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6502292220562432226, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+      propertyPath: m_SortingOrder
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 6934749240813179014, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
       propertyPath: m_AnchorMax.y
@@ -42402,6 +42414,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: fc5df5ac0b919d845ac807f04037f84a, type: 3}
+--- !u!1 &1408636315 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8556918547414486314, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+  m_PrefabInstance: {fileID: 1262773479}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1408636319 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1110466310764053623, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+  m_PrefabInstance: {fileID: 1262773479}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1408636315}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!223 &1408636320 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 6502292220562432226, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+  m_PrefabInstance: {fileID: 1262773479}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &1496319620
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -44820,6 +44853,14 @@ MonoBehaviour:
     canvas: {fileID: 1262773482}
     canvasScaler: {fileID: 1262773480}
     name: Audio Settings
+    desc: 
+    layer: 0
+    transition: 0
+    showInEditor: 0
+  - gameObject: {fileID: 1408636315}
+    canvas: {fileID: 1408636320}
+    canvasScaler: {fileID: 1408636319}
+    name: Controls
     desc: 
     layer: 0
     transition: 0
