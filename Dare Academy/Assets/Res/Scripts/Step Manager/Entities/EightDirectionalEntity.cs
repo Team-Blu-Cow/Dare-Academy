@@ -41,6 +41,9 @@ public class EightDirectionalEntity : GridEntity
 
     public override void AnalyseStep()
     {
+        if (isDead)
+            return;
+
         if (player == null)
             return;
 
@@ -78,12 +81,15 @@ public class EightDirectionalEntity : GridEntity
 
     public override void AttackStep()
     {
+        if (isDead)
+            return;
+
         m_attackCounter++; // Increment cooldown
         if (isAttacking == true) // If the entity is meant to be attacking
         {
             if (m_attackCounter >= m_attackSpeed) // IF the cooldown has expired
             {
-                TelegraphAttack(); // Telegraph the attacking positions
+                //TelegraphAttack(); // Telegraph the attacking positions
                 SpawnBullets(); // Spawn the bullets
                 m_attackCounter = 0; // Reset cooldown
             }
@@ -99,7 +105,9 @@ public class EightDirectionalEntity : GridEntity
         {
             if (m_currentNode.GetNeighbour(m_attackDirections[i]) != null) // If the grid neighbour is not a wall then it is fine to spawn a bullet
             {
-                telegraphPos[i] = m_currentNode.GetNeighbour(m_attackDirections[i]).position.world; // Set the telegraph position to whatever the position of that node is
+                //telegraphPos[i] = m_currentNode.GetNeighbour(m_attackDirections[i]).position.world; // Set the telegraph position to whatever the position of that node is
+
+                LevelManager.Instance.TelegraphDrawer.CreateTelegraph(m_currentNode.GetNeighbour(m_attackDirections[i]), TelegraphDrawer.Type.ATTACK);
             }
         }
     }
@@ -163,5 +171,24 @@ public class EightDirectionalEntity : GridEntity
                 Gizmos.DrawCube(telegraphPos[i], new Vector3(1, 1, 1)); // Draw square at the correct coordinates using the telegraph positions vector array
             }
         }
+    }
+
+    public override void OnDeath()
+    {
+        m_animationController.PlayAnimation("die", 1);
+    }
+
+    public override void OnHit(int damage, float offsetTime = 0f)
+    {
+        base.OnHit(damage);
+
+        m_animationController.DamageFlash();
+
+    }
+
+    protected override void CleanUp()
+    {
+        m_animationController.SpawnDeathPoof(m_currentNode.position.world);
+        base.CleanUp();
     }
 }

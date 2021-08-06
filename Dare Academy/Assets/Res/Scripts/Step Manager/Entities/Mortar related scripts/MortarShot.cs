@@ -63,7 +63,7 @@ public class MortarShot : GridEntity
         m_currentNode.AddEntity(this);
         m_roomIndex = m_currentNode.roomIndex;
 
-        Health = int.MinValue;
+        m_health = int.MinValue;
 
         m_landed = true;
     }
@@ -86,12 +86,14 @@ public class MortarShot : GridEntity
             return;
 
         Instantiate(m_mortarLandPrefab, m_currentNode.position.world, Quaternion.identity);
+        //GameObject.Instantiate(explosionPrefab, transform.position, Quaternion.identity);
 
         foreach (var e in m_currentNode.GetGridEntities())
         {
             if (e.Flags.IsFlagsSet(GridEntityFlags.Flags.isKillable))
             {
-                e.Health -= m_damage;
+                //e.Health -= m_damage;
+                e.OnHit(m_damage, 0.2f);
             }
         }
     }

@@ -15,12 +15,12 @@ MonoBehaviour:
   m_mass: 2
   m_health: 2
   m_flags:
-    m_flagData: 8192
+    m_flagData: 8212
   m_animationController: {fileID: 5132389425398250544}
   m_player: {fileID: 0}
-  m_attackRadius: 0
+  m_attackRadius: 7
   m_mortarShotFallTime: 3
-  m_fireRate: 2
+  m_fireRate: 3
   m_damageEntityPrefab: {fileID: 8942996305946734803, guid: faa825ce776f61746b1363a0fb91c677, type: 3}
   m_shotUpPrefab: {fileID: 1277626979347394152, guid: 57b0eb9347a605844bb344cb8ef66342, type: 3}
 --- !u!1001 &2323404699630022036
@@ -40,11 +40,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1597557835413445020, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -16.500746
       objectReference: {fileID: 0}
     - target: {fileID: 1597557835413445020, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -0.49715346
       objectReference: {fileID: 0}
     - target: {fileID: 1597557835413445020, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
       propertyPath: m_LocalPosition.z
@@ -81,10 +81,14 @@ PrefabInstance:
     - target: {fileID: 6754036733429259749, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 28d26a0f84c806443bd11dbba5b663da, type: 3}
+      objectReference: {fileID: 21300000, guid: 0a20393ba98614e48a7bb53a152a9a3d, type: 3}
     - target: {fileID: 6754036733429259749, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
       propertyPath: m_WasSpriteAssigned
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7424057261825118628, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
+      propertyPath: m_overwriteAnimSpeed
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7765752218238835681, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
       propertyPath: m_Name

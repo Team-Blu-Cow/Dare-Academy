@@ -143,7 +143,8 @@ public class BulletEntity : GridEntity
         List<GridEntity> entities = GetEntitiesOnNode(m_currentNode);
         foreach (GridEntity entity in entities)
         {
-            entity.Health -= m_damage;
+            //entity.Health -= m_damage;
+            entity.OnHit(m_damage);
             Kill();
         }
     }

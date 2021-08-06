@@ -37,10 +37,8 @@ public class MortarEnemy : GridEntity
 
     public override void AnalyseStep()
     {
-        if (Health <= 0)
-        {
-            Kill();
-        }
+        if (isDead)
+            return;
 
         m_cooldown--;
 
@@ -89,31 +87,6 @@ public class MortarEnemy : GridEntity
         GameObject obj = Instantiate(m_shotUpPrefab, transform.position, Quaternion.identity);
     }
 
-    public override void DamageStep()
-    {
-        /*if (m_attack)
-        {
-            m_attack = false;
-
-            List<GridNode> nodes = new List<GridNode>();
-            nodes.Add(m_player.currentNode);
-
-            for (int i = 0; i < 8; i += 2)
-            {
-                nodes.Add(m_player.currentNode.Neighbors[i].reference);
-            }
-
-            foreach (var node in nodes)
-            {
-                if (node != null && node != currentNode)
-                {
-                    GameObject obj = GameObject.Instantiate(m_damageEntityPrefab, node.position.world, Quaternion.identity);
-                    obj.GetComponent<DamageEntity>().Countdown = 2;
-                }
-            }
-        }*/
-    }
-
     private bool PlayerInFiringRange()
     {
         if (m_player.currentNode == null)
@@ -126,5 +99,18 @@ public class MortarEnemy : GridEntity
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, m_attackRadius);
+    }
+
+    protected override void CleanUp()
+    {
+        m_animationController.SpawnDeathPoof(transform.position);
+        base.CleanUp();
+    }
+
+    public override void OnHit(int damage, float offsetTime = 0f)
+    {
+        base.OnHit(damage);
+
+        m_animationController.DamageFlash();
     }
 }

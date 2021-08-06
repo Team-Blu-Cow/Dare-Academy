@@ -1,0 +1,21 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!221 &22100000
+AnimatorOverrideController:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: Truffle Shroom
+  m_Controller: {fileID: 9100000, guid: 252986235844cac46ae977c2457ffb87, type: 2}
+  m_Clips:
+  - m_OriginalClip: {fileID: 7400000, guid: c54b3bf1f00b95441952cc4bc4184b87, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: d1540283309d5894a99d516979b19d97, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 270f0a5f216f78c49a426e14c75951fb, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: cdb8d2e2c5636554297b4026439ed848, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 366c5762940263444bc3221c202f7651, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 7ad3d6de3dc826445b630d6643dc521f, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 13efe696e177d104c9b1d7e5031797d3, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 8776be27dbc38e44f895e38ec71214da, type: 2}
+  - m_OriginalClip: {fileID: 7400000, guid: 54d28104b3b73cf40857bd150e6cf7dd, type: 2}
+    m_OverrideClip: {fileID: 7400000, guid: 82861fc082af90342b974c12c8fc0912, type: 2}
