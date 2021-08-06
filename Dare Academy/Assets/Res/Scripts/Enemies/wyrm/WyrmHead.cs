@@ -39,7 +39,13 @@ public class WyrmHead : WyrmSection
     private GridNode m_chargeStartNode = null;
     private Vector2Int m_chargeDir = Vector2Int.zero;
     private int m_chargeCountdown = 0;
-    private const int m_chargeCountdownTime = 0;
+    private const int m_chargeCountdownTime = 5;
+    private List<GridNode> m_chargeDamageNodes = new List<GridNode>();
+
+    private bool DoChargeAttack
+    { get; set; }
+
+    private int m_chargeDamage = 1;
 
     private GridNode m_randomMovementTargetNode = null;
 
@@ -151,6 +157,29 @@ public class WyrmHead : WyrmSection
         ResurfacedThisStep = false;
     }
 
+    public override void DamageStep()
+    {
+        base.DamageStep();
+        if (DoChargeAttack)
+        {
+            DoChargeAttack = false;
+            foreach (var node in m_chargeDamageNodes)
+            {
+                if (node != null)
+                {
+                    var entities = node.GetGridEntities();
+                    foreach (var entity in entities)
+                    {
+                        if (!(entity is WyrmSection))
+                            entity.OnHit(m_chargeDamage);
+                    }
+                }
+            }
+
+            m_chargeDamageNodes.Clear();
+        }
+    }
+
     public override void OnDeath()
     {
         WyrmSection section = SectionBehind;
@@ -245,7 +274,7 @@ public class WyrmHead : WyrmSection
         // #wyrm implement state selection
         System.Random rnd = new System.Random();
 
-        state = WyrmState.Chasing;
+        state = WyrmState.CrossScreenCharge;
         return;
 
     tryAgain:
@@ -402,12 +431,15 @@ public class WyrmHead : WyrmSection
             {
                 if (GenerateChargePath())
                 {
+                    TelegraphChargeNodes();
+
                     SpawnWarningSymbol(m_chargeStartNode);
                     m_chargeCountdown = m_chargeCountdownTime;
                     Burrow();
                     return;
                 }
             }
+
             return;
         }
         else
@@ -416,10 +448,17 @@ public class WyrmHead : WyrmSection
             if (m_chargeCountdown <= 0)
             {
                 // #wyrm do charge
+                DoChargeAttack = true;
+
                 state = WyrmState.UnderGround;
                 m_chargeStartNode = null;
                 m_chargeDir = Vector2Int.zero;
+
                 ClearWarningsSymbols();
+            }
+            else
+            {
+                TelegraphChargeNodes();
             }
         }
     }
@@ -673,6 +712,15 @@ public class WyrmHead : WyrmSection
         m_chargeStartNode = node;
         m_chargeDir = dir;
 
+        GridNode damageNode = node;
+
+        m_chargeDamageNodes.Clear();
+        while (damageNode != null)
+        {
+            m_chargeDamageNodes.Add(damageNode);
+            damageNode = damageNode.GetNeighbour(dir);
+        }
+
         return true;
     }
 
@@ -705,5 +753,13 @@ public class WyrmHead : WyrmSection
         }
 
         return levelModule.MetaGrid.GetPathWithAvoidance(currentNode.position.world, PlayerEntity.Instance.currentNode.position.world, avoidNodes, 1);
+    }
+
+    private void TelegraphChargeNodes()
+    {
+        foreach (var node in m_chargeDamageNodes)
+        {
+            LevelManager.Instance.TelegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.MOVE);
+        }
     }
 }
