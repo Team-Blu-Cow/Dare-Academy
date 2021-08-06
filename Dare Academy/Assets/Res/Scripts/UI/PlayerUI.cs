@@ -250,7 +250,6 @@ public class PlayerUI : MonoBehaviour
 
     private void CheckAbilitiesUnlocked()
     {
-        // #jay #matthew #jack #TODO set this back to how it was
         numOfAbilitiesUnlocked = 0; // Number of abilities equal 0
 
         foreach (PlayerAbilities.AbilityEnum ability in (PlayerAbilities.AbilityEnum[])Enum.GetValues(typeof(PlayerAbilities.AbilityEnum)))

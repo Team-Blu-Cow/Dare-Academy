@@ -50,7 +50,8 @@ public class SaveSlots : MonoBehaviour
 
         if (io.IsSaveLoaded)
         {
-            await io.SaveAsync(); // #matthew #jack we cant do this here, move it into a function called when moving to main menu
+            //#matthew this could cause serious issues with bad data being written
+            await io.SaveAsync();
             io.DiscardSaveData();
         }
 
@@ -85,7 +86,7 @@ public class SaveSlots : MonoBehaviour
         if (io.SaveSlots[slotNumber] != null)
         {
             System.IO.File.Delete(io.SaveSlots[slotNumber].m_filepath);
-            io.LoadSaveSlots(); //#matthew you better fix
+            io.LoadSaveSlots();
             GetComponentInParent<CanvasTool.ButtonWrapper>().buttons[slotNumber].sceneName = LevelModule.ResolveSceneNameString(blu.LevelID._default);
             OnOpen();
         }
