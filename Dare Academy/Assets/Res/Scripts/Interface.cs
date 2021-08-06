@@ -49,8 +49,8 @@ public abstract class Interface : MonoBehaviour
 
     public virtual void OnValidate()
     {
-        m_interactImages[0] = Resources.Load<Sprite>("GFX/ButtonImages/EButton");
-        m_interactImages[1] = Resources.Load<Sprite>("GFX/ButtonImages/AButton");
+        m_interactImages[0] = Resources.Load<Sprite>("GFX/ButtonImages/Keyboard/E_Key_Dark");
+        m_interactImages[1] = Resources.Load<Sprite>("GFX/ButtonImages/Controller/AButton");
     }
 
     private void DeviceChanged()
