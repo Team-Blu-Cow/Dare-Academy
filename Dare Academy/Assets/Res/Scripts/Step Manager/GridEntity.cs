@@ -1124,7 +1124,7 @@ public abstract class GridEntity : MonoBehaviour
             m_currentNode.AddEntity(this);
     }
 
-    private void CleanUp()
+    virtual public void CleanUp()
     {
         RemoveFromCurrentNode();
         m_stepController.RemoveEntity(this);

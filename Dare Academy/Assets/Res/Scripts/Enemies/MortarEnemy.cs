@@ -101,7 +101,7 @@ public class MortarEnemy : GridEntity
         Gizmos.DrawWireSphere(transform.position, m_attackRadius);
     }
 
-    protected override void CleanUp()
+    public override void CleanUp()
     {
         m_animationController.SpawnDeathPoof(transform.position);
         base.CleanUp();

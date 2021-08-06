@@ -192,7 +192,7 @@ public class MeleePathfinder : GridEntity
         m_animationController.DamageFlash();
     }
 
-    protected override void CleanUp()
+    public override void CleanUp()
     {
         m_animationController.SpawnDeathPoof(transform.position);
         base.CleanUp();

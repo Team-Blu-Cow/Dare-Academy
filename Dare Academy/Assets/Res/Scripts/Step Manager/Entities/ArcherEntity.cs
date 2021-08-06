@@ -248,7 +248,7 @@ public class ArcherEntity : GridEntity
         m_animationController.PlayAnimation("Death", 1);
     }
 
-    protected override void CleanUp()
+    public override void CleanUp()
     {
         m_animationController.SpawnDeathPoof(transform.position);
         base.CleanUp();

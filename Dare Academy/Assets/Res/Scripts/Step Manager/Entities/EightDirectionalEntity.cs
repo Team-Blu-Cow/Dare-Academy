@@ -186,7 +186,7 @@ public class EightDirectionalEntity : GridEntity
 
     }
 
-    protected override void CleanUp()
+    public override void CleanUp()
     {
         m_animationController.SpawnDeathPoof(m_currentNode.position.world);
         base.CleanUp();
