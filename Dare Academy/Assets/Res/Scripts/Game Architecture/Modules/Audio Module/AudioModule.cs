@@ -166,6 +166,8 @@ namespace blu
             NewAudioEvent("event:/SFX/UI/sfx_unpause");
             NewAudioEvent("event:/SFX/UI/sfx_pause");
             NewAudioEvent("event:/SFX/Player/sfx_dash");
+            NewAudioEvent("event:/SFX/Player/sfx_player_hit");
+            // #todo #jay #adam pop this where the player gets hit -> App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/Player/sfx_player_hit");
             NewAudioEvent("event:/SFX/Player/sfx_footstep", 15);
             NewAudioEvent("event:/SFX/Player/sfx_shoot", 15);
             NewAudioEvent("event:/SFX/Systems/dialogue/sfx_dialogue_blip", 15);

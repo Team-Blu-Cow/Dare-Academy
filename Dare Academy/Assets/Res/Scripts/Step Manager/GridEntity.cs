@@ -1154,7 +1154,7 @@ public abstract class GridEntity : MonoBehaviour
             m_currentNode.AddEntity(this);
     }
 
-    virtual protected void CleanUp()
+    private void CleanUp()
     {
         RemoveFromCurrentNode();
         m_stepController.RemoveEntity(this);
@@ -1164,6 +1164,28 @@ public abstract class GridEntity : MonoBehaviour
     virtual public void Kill()
     {
         m_internalFlags.SetFlags(interalFlags.isDead, true);
+    }
+
+    virtual public void KillImmediate()
+    {
+        m_internalFlags.SetFlags(interalFlags.isDead, true);
+        RemoveFromCurrentNode();
+
+        SpriteRenderer spriteRenderer;
+
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        if (spriteRenderer)
+        {
+            spriteRenderer.enabled = false;
+            spriteRenderer = null;
+        }
+
+        spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        if (spriteRenderer)
+        {
+            spriteRenderer.enabled = false;
+            spriteRenderer = null;
+        }
     }
 
     protected List<GridEntity> GetEntitiesOnNode(GridNode node, bool discardAttacks = true)
