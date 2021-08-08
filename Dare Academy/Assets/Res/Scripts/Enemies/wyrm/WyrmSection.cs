@@ -67,4 +67,45 @@ public abstract class WyrmSection : GridEntity
         transform.position = m_currentNode.position.world;
         ResurfacedThisStep = true;
     }
+
+    private void CallAnimateCharge(Vector3 startPos, Vector3 endPos)
+    {
+        StartCoroutine(AnimateCharge(startPos, endPos));
+    }
+
+    protected IEnumerator AnimateCharge(Vector3 startPos, Vector3 endPos)
+    {
+        float animationTime = m_stepController.stepTime * 2.5f;
+        float currentTime = 0;
+
+        bool nextHasStarted = false;
+
+        while (true)
+        {
+            spriteRenderer.enabled = true;
+            currentTime += Time.deltaTime;
+            Vector3 currentPos = Vector3.Lerp(startPos, endPos, currentTime / animationTime);
+            transform.position = currentPos;
+            yield return null;
+
+            if (!nextHasStarted)
+            {
+                Vector3 diff = currentPos - startPos;
+
+                if (diff.magnitude > 1)
+                {
+                    if (SectionBehind)
+                    {
+                        SectionBehind.CallAnimateCharge(startPos, endPos);
+                    }
+                    nextHasStarted = true;
+                }
+            }
+
+            if (currentTime > animationTime)
+                break;
+        }
+
+        spriteRenderer.enabled = false;
+    }
 }

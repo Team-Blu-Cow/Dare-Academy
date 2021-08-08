@@ -523,6 +523,11 @@ public class WyrmHead : WyrmSection
                 // #wyrm do charge
                 DoChargeAttack = true;
 
+                Vector3 startPos = m_chargeStartNode.position.world;
+                Vector3 endPos = m_chargeDamageNodes[m_chargeDamageNodes.Count - 1].position.world;
+
+                StartCoroutine(AnimateCharge(startPos, endPos));
+
                 state = WyrmState.UnderGround;
                 m_chargeStartNode = null;
                 m_chargeDir = Vector2Int.zero;
