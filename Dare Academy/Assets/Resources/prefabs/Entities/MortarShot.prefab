@@ -151,6 +151,9 @@ MonoBehaviour:
   m_sprite: {fileID: 8942996305724900256}
   m_spriteHead: {fileID: 0}
   m_hasHead: 0
+  m_overwriteAnimSpeed: 1
+  m_isDead: 0
+  m_deathPoofPrefab: {fileID: 3161301949072914463, guid: 2a7ca93a7ffa1174b8f8062d29cd88d7, type: 3}
 --- !u!114 &8942996305946734800
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,10 +167,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_mass: 0
+  m_health: 1
   m_flags:
     m_flagData: 2
+  m_animationController: {fileID: 8942996305946734801}
   m_damage: 1
   counter: 0
   m_landTime: 3
   m_initialScale: 0.5
   m_scale: 0.5
+  explosionPrefab: {fileID: 8418542875586225781, guid: 7ea576a5b90c0be4a89260f67c0fdcc8, type: 3}

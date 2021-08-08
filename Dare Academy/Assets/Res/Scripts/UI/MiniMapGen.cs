@@ -429,6 +429,21 @@ public class MiniMapGen : MonoBehaviour, IScrollHandler, IDragHandler, IBeginDra
 
         if (transform.localScale.x + scale.x > 5 && transform.localScale.x + scale.x < 30)
             transform.localScale += scale;
+
+        Vector2 pos = transform.anchoredPosition;
+        float scales = transform.localScale.x;
+
+        if (pos.x > Screen.width / 2 - (bounds[0] * scales))
+            transform.anchoredPosition = new Vector2(Screen.width / 2 - (bounds[0] * scales), pos.y);
+
+        if (pos.x < -Screen.width / 2 - (bounds[1] * scales))
+            transform.anchoredPosition = new Vector2(-Screen.width / 2 - (bounds[1] * scales), pos.y);
+
+        if (pos.y > Screen.height / 2 - (bounds[2] * scales))
+            transform.anchoredPosition = new Vector2(pos.x, Screen.height / 2 - (bounds[2] * scales));
+
+        if (pos.y < -Screen.height / 2 - (bounds[3] * scales))
+            transform.anchoredPosition = new Vector2(pos.x, -Screen.height / 2 - (bounds[3] * scales));
     }
 
     private Vector2 m_PointerStartLocalCursor;
