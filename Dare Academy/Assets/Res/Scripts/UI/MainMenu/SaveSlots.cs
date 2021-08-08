@@ -61,12 +61,40 @@ public class SaveSlots : MonoBehaviour
         for (int i = 0; i < m_slots.Length; i++)
         {
             if (io.SaveSlots[i] == null)
-                m_slots[i].GetComponentInChildren<TextMeshProUGUI>().text = "New Game";
+            {
+                SaveSlotButton ssb = m_slots[i].GetComponent<SaveSlotButton>();
+
+                ssb.DisableExtras();
+
+                ssb.saveName.text = "New Game";
+
+                //m_slots[i].GetComponentInChildren<TextMeshProUGUI>().text = "New Game";
+            }
             else
             {
-                string playtime = System.TimeSpan.FromSeconds(io.SaveSlots[i].playtime).ToString(@"hh\:mm\:ss");
+                SaveSlotButton ssb = m_slots[i].GetComponent<SaveSlotButton>();
+                if (ssb != null)
+                {
+                    ssb.EnableExtras();
 
-                m_slots[i].GetComponentInChildren<TextMeshProUGUI>().text = $"Save {i + 1}          {playtime}";
+                    ssb.SpawnHearts(io.SaveSlots[i].heartCount);
+                    ssb.SpawnEnergy(io.SaveSlots[i].enegryCount);
+
+                    ssb.powerupUnlocked[0] = io.SaveSlots[i].powerUpsunlocked[0];
+                    ssb.powerupUnlocked[1] = io.SaveSlots[i].powerUpsunlocked[1];
+                    ssb.powerupUnlocked[2] = io.SaveSlots[i].powerUpsunlocked[2];
+
+                    ssb.InitPowerups();
+
+                    string playtime = System.TimeSpan.FromSeconds(io.SaveSlots[i].playtime).ToString(@"hh\:mm\:ss");
+
+                    ssb.saveName.text = $"Save {i + 1}";
+                    ssb.playTime.text = $"{playtime}";
+
+                    ssb.isInitialised = true;
+                }
+
+                //m_slots[i].GetComponentInChildren<TextMeshProUGUI>().text = $"Save {i + 1}          {playtime}";
             }
         }
     }

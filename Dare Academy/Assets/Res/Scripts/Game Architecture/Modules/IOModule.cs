@@ -116,8 +116,19 @@ namespace blu
                     BaseFileLoader<SaveData> fileloader = CreateFileLoader<SaveData>(data.m_filepath);
                     SaveData savedata = fileloader.ReadData();
 
-                    data.levelId = savedata.levelId;
-                    data.playtime = savedata.playtime;
+                    data.levelId        = savedata.levelId;
+                    data.playtime       = savedata.playtime;
+                    data.enegryCount    = savedata.maxEnergy;
+                    data.heartCount     = savedata.maxHealth;
+
+                    int flagTest = (savedata.gameEventFlags & (Int32)GameEventFlags.Flags.shoot_unlocked);
+                    data.powerUpsunlocked[0] = (flagTest == (Int32)GameEventFlags.Flags.shoot_unlocked) ? true : false;
+
+                    flagTest = (savedata.gameEventFlags & (Int32)GameEventFlags.Flags.dash_unlocked);
+                    data.powerUpsunlocked[1] = (flagTest == (Int32)GameEventFlags.Flags.dash_unlocked) ? true : false;
+
+                    flagTest = (savedata.gameEventFlags & (Int32)GameEventFlags.Flags.block_unlocked);
+                    data.powerUpsunlocked[2] = (flagTest == (Int32)GameEventFlags.Flags.block_unlocked) ? true : false;
 
                     if (savedata == null)
                     {
