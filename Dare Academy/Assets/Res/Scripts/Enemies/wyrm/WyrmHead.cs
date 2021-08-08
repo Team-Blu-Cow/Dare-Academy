@@ -14,7 +14,6 @@ public class WyrmHead : WyrmSection
         Splitting,
         Chasing,
         Circing,
-        RandomMovement,
         CrossScreenCharge,
         FireAttack,
     }
@@ -35,6 +34,9 @@ public class WyrmHead : WyrmSection
     public int StartingHealth
     { get; private set; }
 
+    private int SplitHealth
+    { get; set; }
+
     [SerializeField] private int m_length;
 
     [SerializeField, HideInInspector] private GameObject m_headPrefab;
@@ -47,6 +49,12 @@ public class WyrmHead : WyrmSection
     private int m_chargeCountdown = 0;
     private const int m_chargeCountdownTime = 5;
     private List<GridNode> m_chargeDamageNodes = new List<GridNode>();
+
+    private const int CirclingMinTime = 30;
+    private const int CirclingMaxTime = 40;
+
+    private int CirclingCountToChase
+    { get; set; }
 
     public WyrmHead other
     { get; private set; }
@@ -77,7 +85,10 @@ public class WyrmHead : WyrmSection
         base.Start();
         levelModule = App.GetModule<LevelModule>();
 
+        ResetChaseCounter();
+
         StartingHealth = Health;
+        SplitHealth = StartingHealth / 2;
 
         // we start underground
         RemoveFromCurrentNode();
@@ -122,6 +133,11 @@ public class WyrmHead : WyrmSection
 
     private void AnalyseFSM()
     {
+        if (state != WyrmState.Splitting && !HasSplit && Health < SplitHealth)
+        {
+            state = WyrmState.Splitting;
+        }
+
         switch (state)
         {
             case WyrmState.NoState:
@@ -144,9 +160,9 @@ public class WyrmHead : WyrmSection
                 State_Circing();
                 break;
 
-            case WyrmState.RandomMovement:
-                State_RandomMovement();
-                break;
+            //             case WyrmState.RandomMovement:
+            //                 State_RandomMovement();
+            //                 break;
 
             case WyrmState.CrossScreenCharge:
                 State_CrossScreenCharge();
@@ -301,26 +317,18 @@ public class WyrmHead : WyrmSection
         // #wyrm implement state selection
         System.Random rnd = new System.Random();
 
-        state = WyrmState.Circing;
-        return;
-
     tryAgain:
 
-        int num = rnd.Next(0,4);
+        int num = rnd.Next(0,100);
 
-        if (num == 0)
+        if (num < 25) // 25% chance
         { state = WyrmState.UnderGround; }
-        else if (num == 1)
+        else if (num < 35) // 10% chance
         { state = WyrmState.Chasing; }
-        else if (num == 2)
+        else if (num < 80) // 45% chance
         { state = WyrmState.Circing; }
-        else if (num == 3)
+        else // 20% chance
         { state = WyrmState.CrossScreenCharge; }
-
-        // { state = WyrmState.RandomMovement; }
-        // else if (num == 4)
-        // { state = WyrmState.Running; }
-        // else if (num == 5)
 
         if (state == lastState)
             goto tryAgain;
@@ -400,13 +408,23 @@ public class WyrmHead : WyrmSection
 
     private void State_Circing()
     {
+        if (CirclingCountToChase < 0)
+        {
+            ResetChaseCounter();
+            state = WyrmState.Chasing;
+            doReanalyse = true;
+            return;
+        }
+
     restartCirclingFunc:
 
         Vector3[] path = CirclingGetPath();
         if (path == null)
         {
+            ResetChaseCounter();
             state = WyrmState.Chasing;
             m_chasingNodeDirection = 0;
+            doReanalyse = true;
             return;
         }
 
@@ -422,60 +440,61 @@ public class WyrmHead : WyrmSection
         GridNode targetNode = levelModule.MetaGrid.GetNodeFromWorld(pos);
         Vector2Int targetDir = targetNode.position.grid - m_currentNode.position.grid;
 
+        CirclingCountToChase--;
         SetMovementDirection(targetDir);
         doReanalyse = true;
     }
 
-    private void State_RandomMovement()
-    {
-        state = WyrmState.NoState;
-        if (m_randomMovementTargetNode is null)
-        {
-            m_randomMovementTargetNode = GetRandomNode();
-        }
-
-        if (m_randomMovementTargetNode is null)
-        {
-            state = WyrmState.UnderGround;
-            return;
-        }
-
-        List<WyrmSection> sections = GetAboveGroundSections();
-
-        Vector3[] avoidNodes = new Vector3[sections.Count + 1];
-        for (int i = 0; i < sections.Count; i++)
-        {
-            avoidNodes[i] = sections[i].currentNode.position.world;
-        }
-
-        // avoid player
-        avoidNodes[avoidNodes.Length - 1] = PlayerEntity.Instance.currentNode.position.world;
-
-        Vector3[] path = levelModule.MetaGrid.GetPathWithAvoidance(currentNode.position.world, m_randomMovementTargetNode.position.world, avoidNodes, 1);
-
-        if (path is null)
-        {
-            state = WyrmState.UnderGround;
-            m_randomMovementTargetNode = null;
-            return;
-        }
-
-        if (path.Length == 0)
-        {
-            state = WyrmState.UnderGround;
-            m_randomMovementTargetNode = null;
-            return;
-        }
-
-        // idk why but path[0].z is 2 so it cant be resolved to the grid
-        Vector3 pos = new Vector3(path[0].x, path[0].y, 0);
-
-        GridNode targetNode = levelModule.MetaGrid.GetNodeFromWorld(pos);
-        Vector2Int targetDir = targetNode.position.grid - m_currentNode.position.grid;
-
-        SetMovementDirection(targetDir);
-        doReanalyse = true;
-    }
+    //     private void State_RandomMovement()
+    //     {
+    //         state = WyrmState.NoState;
+    //         if (m_randomMovementTargetNode is null)
+    //         {
+    //             m_randomMovementTargetNode = GetRandomNode();
+    //         }
+    //
+    //         if (m_randomMovementTargetNode is null)
+    //         {
+    //             state = WyrmState.UnderGround;
+    //             return;
+    //         }
+    //
+    //         List<WyrmSection> sections = GetAboveGroundSections();
+    //
+    //         Vector3[] avoidNodes = new Vector3[sections.Count + 1];
+    //         for (int i = 0; i < sections.Count; i++)
+    //         {
+    //             avoidNodes[i] = sections[i].currentNode.position.world;
+    //         }
+    //
+    //         // avoid player
+    //         avoidNodes[avoidNodes.Length - 1] = PlayerEntity.Instance.currentNode.position.world;
+    //
+    //         Vector3[] path = levelModule.MetaGrid.GetPathWithAvoidance(currentNode.position.world, m_randomMovementTargetNode.position.world, avoidNodes, 1);
+    //
+    //         if (path is null)
+    //         {
+    //             state = WyrmState.UnderGround;
+    //             m_randomMovementTargetNode = null;
+    //             return;
+    //         }
+    //
+    //         if (path.Length == 0)
+    //         {
+    //             state = WyrmState.UnderGround;
+    //             m_randomMovementTargetNode = null;
+    //             return;
+    //         }
+    //
+    //         // idk why but path[0].z is 2 so it cant be resolved to the grid
+    //         Vector3 pos = new Vector3(path[0].x, path[0].y, 0);
+    //
+    //         GridNode targetNode = levelModule.MetaGrid.GetNodeFromWorld(pos);
+    //         Vector2Int targetDir = targetNode.position.grid - m_currentNode.position.grid;
+    //
+    //         SetMovementDirection(targetDir);
+    //         doReanalyse = true;
+    //     }
 
     private void State_CrossScreenCharge()
     {
@@ -822,5 +841,15 @@ public class WyrmHead : WyrmSection
         {
             LevelManager.Instance.TelegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.MOVE);
         }
+    }
+
+    private static int RandWrapper(int min, int max)
+    {
+        return new System.Random().Next(min, max);
+    }
+
+    private void ResetChaseCounter()
+    {
+        CirclingCountToChase = RandWrapper(CirclingMinTime, CirclingMaxTime);
     }
 }
