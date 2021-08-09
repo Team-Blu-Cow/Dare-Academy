@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -4435254147680224146, guid: fc5df5ac0b919d845ac807f04037f84a, type: 3}
+      propertyPath: m_attackSFX
+      value: event:/SFX/melee pathfinder/truffle/sfx_truffle_hit
+      objectReference: {fileID: 0}
     - target: {fileID: 1088971153683211791, guid: fc5df5ac0b919d845ac807f04037f84a, type: 3}
       propertyPath: m_Sprite
       value: 

@@ -92,6 +92,7 @@ public class EightDirectionalEntity : GridEntity
                 //TelegraphAttack(); // Telegraph the attacking positions
                 SpawnBullets(); // Spawn the bullets
                 m_attackCounter = 0; // Reset cooldown
+                App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/8dir/sfx_enemy_bullet_eight");
             }
             isAttacking = false; // Set attacking to false
         }
@@ -175,6 +176,7 @@ public class EightDirectionalEntity : GridEntity
 
     public override void OnDeath()
     {
+        App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/8dir/sfx_eight_death");
         m_animationController.PlayAnimation("die", 1);
     }
 
@@ -183,7 +185,6 @@ public class EightDirectionalEntity : GridEntity
         base.OnHit(damage);
 
         m_animationController.DamageFlash();
-
     }
 
     public override void CleanUp()

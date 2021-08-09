@@ -167,7 +167,12 @@ namespace blu
             NewAudioEvent("event:/SFX/UI/sfx_pause");
             NewAudioEvent("event:/SFX/Player/sfx_dash");
             NewAudioEvent("event:/SFX/Player/sfx_player_hit");
-            // #todo #jay #adam pop this where the player gets hit -> App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/Player/sfx_player_hit");
+            NewAudioEvent("event:/SFX/melee pathfinder/hammy/sfx_melee_munch");
+            NewAudioEvent("event:/SFX/melee pathfinder/truffle/sfx_truffle_hit");
+            NewAudioEvent("event:/SFX/archer/sfx_fly_death");
+            NewAudioEvent("event:/SFX/archer/sfx_enemy_bullet_fly");
+            NewAudioEvent("event:/SFX/8dir/sfx_eight_death");
+            NewAudioEvent("event:/SFX/8dir/sfx_enemy_bullet_eight");
             NewAudioEvent("event:/SFX/Player/sfx_footstep", 15);
             NewAudioEvent("event:/SFX/Player/sfx_shoot", 15);
             NewAudioEvent("event:/SFX/Systems/dialogue/sfx_dialogue_blip", 15);

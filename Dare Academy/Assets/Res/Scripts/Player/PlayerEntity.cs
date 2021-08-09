@@ -1,5 +1,3 @@
-#define PLAYERENTITY_HOLD_FOR_ABILITY_MODE
-
 using UnityEngine;
 using blu;
 using UnityEngine.InputSystem;
@@ -66,6 +64,20 @@ public class PlayerEntity : GridEntity
     public int m_shootEnergyCost = 3;
     public int m_blockEnergyCost = 3;
 
+    // INPUT
+
+    public enum AbilityInputMode
+    {
+        None,
+        Hold,
+        Toggle,
+    }
+
+    public AbilityInputMode abilityInputMode
+    { get; private set; }
+
+    private PlayerInput m_playerInput = new PlayerInput();
+
     // OTHER
     private int m_pickups;
 
@@ -75,7 +87,6 @@ public class PlayerEntity : GridEntity
     [SerializeField] private GameObject m_bulletPrefab = null;
     private int m_dashDistance = 2;
     private bool m_abilityUsedThisTurn = false;
-    private PlayerInput m_playerInput = new PlayerInput();
 
     private Vector2Int m_moveDirection = Vector2Int.zero;
     [SerializeField] public Vector2Int m_abilityDirection = Vector2Int.zero;
@@ -138,6 +149,9 @@ public class PlayerEntity : GridEntity
 
     protected override void Start()
     {
+        abilityInputMode = AbilityInputMode.None;
+        UpdateInputMode();
+
         if (levelModule.LevelManager.debug_SpawnPlayer && levelModule.ActiveSaveData.useRespawnData && !LoadingFromOtherScene)
         {
             Vector3 pos = levelModule.MetaGrid.Grid(levelModule.ActiveSaveData.respawnRoomID)[levelModule.ActiveSaveData.respawnLocation].position.world;
@@ -201,12 +215,9 @@ public class PlayerEntity : GridEntity
 
         m_playerInput.Init();
 
-#if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
         m_input.Player.AbilityMode.started += EnterAbilityMode;
         m_input.Player.AbilityMode.canceled += ExitAbilityMode;
-#else
-        input.Ability.AbilityMode.started += ToggleAbilityMode;
-#endif
+        m_input.Player.AbilityMode.started += ToggleAbilityMode;
 
         m_input.Player.CancelAbility.performed += CancelAbility;
 
@@ -218,12 +229,9 @@ public class PlayerEntity : GridEntity
     {
         m_playerInput.Cleanup();
 
-#if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
         m_input.Player.AbilityMode.started -= EnterAbilityMode;
         m_input.Player.AbilityMode.canceled -= ExitAbilityMode;
-#else
-        input.Ability.AbilityMode.started -= ToggleAbilityMode;
-#endif
+        m_input.Player.AbilityMode.started -= ToggleAbilityMode;
 
         m_input.Player.CancelAbility.performed -= CancelAbility;
 
@@ -422,6 +430,9 @@ public class PlayerEntity : GridEntity
 
     protected void ToggleAbilityMode(InputAction.CallbackContext context)
     {
+        if (abilityInputMode != AbilityInputMode.Toggle)
+            return;
+
         if (!m_abilityMode && !LevelManager.Instance.AllowPlayerMovement)
             return;
 
@@ -438,12 +449,24 @@ public class PlayerEntity : GridEntity
             }
         }
 
-        ToggleAnimationState();
-        //SetAbilityAnimationFlag();
+        if (m_abilityMode)
+        {
+            ToggleAnimationState();
+        }
+        else
+        {
+            animationController.DisableVignette();
+
+            if (m_abilityDirection == Vector2Int.zero)
+                animationController.SetAbilityState(0);
+        }
     }
 
     protected void EnterAbilityMode(InputAction.CallbackContext context)
     {
+        if (abilityInputMode != AbilityInputMode.Hold)
+            return;
+
         if (!LevelManager.Instance.AllowPlayerMovement)
             return;
 
@@ -455,6 +478,9 @@ public class PlayerEntity : GridEntity
 
     protected void ExitAbilityMode(InputAction.CallbackContext context)
     {
+        if (abilityInputMode != AbilityInputMode.Hold)
+            return;
+
         m_abilityMode = false;
 
         if (!levelModule.LevelManager.paused)
@@ -702,6 +728,31 @@ public class PlayerEntity : GridEntity
         }
     }
 
+    public void UpdateInputMode()
+    {
+        bool hold = levelModule.HoldForAbilityMode;
+        AbilityInputMode iMode;
+        if (hold)
+        {
+            iMode = AbilityInputMode.Hold;
+        }
+        else
+        {
+            iMode = AbilityInputMode.Toggle;
+        }
+
+        if (abilityInputMode != iMode)
+        {
+            if (iMode == AbilityInputMode.Hold)
+                Debug.Log("Player is using \"Hold for Ability Mode\"");
+            else if (iMode == AbilityInputMode.Toggle)
+                Debug.Log("Player is using \"Toggle for Ability Mode\"");
+
+            abilityInputMode = iMode;
+            m_abilityMode = false;
+        }
+    }
+
     // HELPER METHODS
 
     private void Shoot()
@@ -853,16 +904,18 @@ public class PlayerEntity : GridEntity
     {
         base.OnHit(damage);
 
+        audioModule.PlayAudioEvent("event:/SFX/Player/sfx_player_hit");
+
         if (isDead)
         {
             animationController.DamageFlash();
-            animationController.CameraShake(9f, 0.2f);
+            App.CameraController.CameraShake(9f, 0.2f);
         }
         else
             StartCoroutine(OnHitFX(offsetTime));
     }
 
-    System.Collections.IEnumerator OnHitFX(float time)
+    private System.Collections.IEnumerator OnHitFX(float time)
     {
         yield return new WaitForSeconds(time);
 

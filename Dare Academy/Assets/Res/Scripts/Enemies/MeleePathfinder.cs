@@ -18,15 +18,23 @@ public class MeleePathfinder : GridEntity
 
     [SerializeField] private GameObject m_attackVFXPrefab;
 
+    [FMODUnity.EventRef]
+    [SerializeField]
+    private string m_deathSFX = null;
+
+    [FMODUnity.EventRef]
+    [SerializeField]
+    private string m_attackSFX = null;
+
     private Vector3 m_attackVfxSpawnPos;
 
     public bool showPath = false;
+
     public enum State
     {
         MOVE,
         ATTACK
     }
-
 
     [SerializeField] private State m_state;
 
@@ -70,7 +78,6 @@ public class MeleePathfinder : GridEntity
                 m_animationController.animator.SetBool("IsMoving", false);
                 break;
         }
-
     }
 
     private void DecideState()
@@ -110,7 +117,7 @@ public class MeleePathfinder : GridEntity
         if (m_path.Length > 1)
             dir = m_path[0] - m_currentNode.position.world;
 
-        if(Mathf.Abs(dir.x) > 0 && Mathf.Abs(dir.y) > 0)
+        if (Mathf.Abs(dir.x) > 0 && Mathf.Abs(dir.y) > 0)
         {
             if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
                 dir = new Vector3(Mathf.Sign(dir.x), 0, 0);
@@ -142,6 +149,8 @@ public class MeleePathfinder : GridEntity
             m_attackVfxSpawnPos = m_attackNode.position.world + new Vector3(0, 0.4f, 0);
 
             ent.Init(m_attackNode, m_attackVFXPrefab);
+
+            App.GetModule<AudioModule>().PlayAudioEvent(m_attackSFX);
         }
     }
 
@@ -200,6 +209,7 @@ public class MeleePathfinder : GridEntity
 
     public override void OnDeath()
     {
+        // #TODO #sound play specific death sound once impl App.GetModule<AudioModule>().PlayAudioEvent(m_deathSFX);
         m_animationController.PlayAnimation("Die", 1);
     }
 }

@@ -169,7 +169,6 @@ public class ArcherEntity : GridEntity
         if (m_state != State.SHOOTING || m_cooldownCounter > 0)
             return;
 
-
         GridNode targetNode = m_currentNode.Neighbors[offsetVector].reference;
 
         if (targetNode != null)
@@ -189,6 +188,8 @@ public class ArcherEntity : GridEntity
 
             m_cooldownCounter = m_attackCooldown;
             SpawnBullet(m_bulletPrefab, m_currentNode, offsetVector); // Spawn bullet in the direction the entity was moving
+
+            App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/archer/sfx_enemy_bullet_fly");
         }
     }
 
@@ -245,6 +246,7 @@ public class ArcherEntity : GridEntity
 
     public override void OnDeath()
     {
+        App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/archer/sfx_fly_death");
         m_animationController.PlayAnimation("Death", 1);
     }
 

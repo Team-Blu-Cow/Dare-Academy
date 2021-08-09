@@ -25,6 +25,9 @@ namespace blu
         private PathfindingMultiGrid m_grid = null;
         private GameEventFlags m_gameEventFlags = new GameEventFlags();
 
+        public bool HoldForAbilityMode
+        { get; private set; }
+
         public bool Initialised
         { get; private set; }
 
@@ -104,6 +107,8 @@ namespace blu
 
             if (m_playerPrefab == null)
                 m_playerPrefab = Resources.Load<GameObject>("prefabs/Entities/Player");
+
+            HoldForAbilityMode = PlayerPrefs.GetInt("HoldForAbilityMode", 1) == 1;
         }
 
         protected override void SetDependancies()
@@ -201,6 +206,16 @@ namespace blu
         public bool ExecuteStep()
         {
             return StepController.ExecuteStep();
+        }
+
+        public void SetHoldForAbilityMode(bool b)
+        {
+            HoldForAbilityMode = b;
+            PlayerPrefs.SetInt("HoldForAbilityMode", HoldForAbilityMode ? 1 : 0);
+            if (PlayerEntity.Instance)
+            {
+                PlayerEntity.Instance.UpdateInputMode();
+            }
         }
 
         // FILE IO

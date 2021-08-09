@@ -1,5 +1,3 @@
-#define PLAYERENTITY_HOLD_FOR_ABILITY_MODE
-
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -62,11 +60,18 @@ public class UpgradePlayer : Interface
                             break;
                     }
 
-#if PLAYERENTITY_HOLD_FOR_ABILITY_MODE
-                    popUpController.m_body = new List<string>() { "Hold " + key + " to enter ability mode", "When in ability mode use the direction controls to use the ability", "The next step the ability will be used" };
-#else
-                    popUpController.m_body = new List<string>() { "Press " + key + " to toggle ability mode ", "When in ability mode use the direction controls to use the ability", "The next step the ability will be used"};
-#endif
+                    if (PlayerEntity.Instance.abilityInputMode == PlayerEntity.AbilityInputMode.Hold)
+                    {
+                        popUpController.m_body = new List<string>() { "Hold " + key + " to enter ability mode", "When in ability mode use the direction controls to use the ability", "The next step the ability will be used" };
+                    }
+                    else if (PlayerEntity.Instance.abilityInputMode == PlayerEntity.AbilityInputMode.Toggle)
+                    {
+                        popUpController.m_body = new List<string>() { "Press " + key + " to toggle ability mode ", "When in ability mode use the direction controls to use the ability", "The next step the ability will be used" };
+                    }
+                    else
+                    {
+                        Debug.LogWarning("[UpgradePlayer] invalid AbilityInputMode set, grab @Jack or @Matthew to fix this");
+                    }
 
                     break;
 
