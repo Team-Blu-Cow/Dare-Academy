@@ -853,6 +853,8 @@ public class PlayerEntity : GridEntity
     {
         base.OnHit(damage);
 
+        audioModule.PlayAudioEvent("event:/SFX/Player/sfx_player_hit");
+
         if (isDead)
         {
             animationController.DamageFlash();
@@ -862,7 +864,7 @@ public class PlayerEntity : GridEntity
             StartCoroutine(OnHitFX(offsetTime));
     }
 
-    System.Collections.IEnumerator OnHitFX(float time)
+    private System.Collections.IEnumerator OnHitFX(float time)
     {
         yield return new WaitForSeconds(time);
 

@@ -21,6 +21,8 @@ MonoBehaviour:
   m_player: {fileID: 0}
   m_attackPrefab: {fileID: 1887864478633094999, guid: f49abbd6d92ba354eac4f2d2848b17ba, type: 3}
   m_attackVFXPrefab: {fileID: 6245065894495507563, guid: 31cdbfa29dc482342a3cabf7baa1e42b, type: 3}
+  m_deathSFX: 
+  m_attackSFX: event:/SFX/melee pathfinder/hammy/sfx_melee_munch
   showPath: 0
   m_state: 0
 --- !u!1001 &5955981787926821866
@@ -104,7 +106,7 @@ PrefabInstance:
       objectReference: {fileID: 2100000, guid: cde38c62f08096742aaf1d5dae49a7f0, type: 2}
     - target: {fileID: 7765752218238835681, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
       propertyPath: m_Name
-      value: MeleePathfinder
+      value: Snappy Hammy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
