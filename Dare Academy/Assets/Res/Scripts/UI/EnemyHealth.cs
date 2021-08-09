@@ -30,7 +30,7 @@ public class EnemyHealth : MonoBehaviour
         GameObject tempGo = new GameObject("Health");
 
         tempGo.transform.SetParent(transform);
-        tempGo.transform.localScale = Vector3.one * 0.1f;
+        tempGo.transform.localScale = Vector3.one * 0.4f;
 
         SpriteRenderer spriteRenderer = tempGo.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = Resources.Load<Sprite>("GFX/HeartFull");
