@@ -210,6 +210,11 @@ public class PlayerUI : MonoBehaviour
                 temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[2];
                 temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[3];
                 break;
+
+            default:
+                temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[0];
+                temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[1];
+                break;
         }
     }
 
