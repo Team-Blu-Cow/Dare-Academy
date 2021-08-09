@@ -75,7 +75,8 @@ namespace CanvasTool
 
         public void RemoveButton(ButtonContainer container)
         {
-            DestroyImmediate(container.button.gameObject);
+            if(container.button != null && container.button.gameObject != null)
+                DestroyImmediate(container.button.gameObject);
             buttons.Remove(container);
         }
     }
