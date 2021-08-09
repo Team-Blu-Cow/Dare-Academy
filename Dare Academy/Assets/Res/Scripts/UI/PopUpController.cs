@@ -113,7 +113,10 @@ public class PopUpController : MonoBehaviour
         m_playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
 
         App.GetModule<InputModule>().SystemController.UI.Enable();
+    }
 
+    private void OnDestroy()
+    {
         if (m_playerControlled)
             StopControls();
     }

@@ -42,6 +42,9 @@ namespace blu
         public bool InCombat
         { get; private set; }
 
+        public float CombatMusicUpdateTimer
+        { get; private set; }
+
         public GameEventFlags EventFlags
         {
             get { return m_gameEventFlags; }
@@ -82,6 +85,11 @@ namespace blu
         }
 
         private GameObject m_playerPrefab;
+
+        private void Update()
+        {
+            UpdateCombatMusic();
+        }
 
         private void OnDestroy()
         {
@@ -192,25 +200,7 @@ namespace blu
 
         public bool ExecuteStep()
         {
-            if (StepController._ExecuteStep(out bool combat))
-            {
-                if (combat != InCombat)
-                {
-                    InCombat = combat;
-                    if (combat)
-                    {
-                        App.Jukebox.CombatStarted();
-                    }
-                    else
-                    {
-                        App.Jukebox.CombatEnded();
-                    }
-                }
-
-                return true;
-            }
-
-            return false;
+            return StepController.ExecuteStep();
         }
 
         // FILE IO
@@ -374,6 +364,35 @@ namespace blu
         public static LevelID CurrentLevelId()
         {
             return ResolveLevelId(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        private void UpdateCombatMusic()
+        {
+            // we check if you are in combat every 0.5s
+            // isHostile flags could be set by scriptable entites at unexpected times so we cant just check on Execute step
+
+            CombatMusicUpdateTimer += Time.deltaTime;
+            if (CombatMusicUpdateTimer > 0.5f)
+            {
+                CombatMusicUpdateTimer = 0f;
+                if (LevelManager && StepController != null)
+                {
+                    bool combat =  StepController.CheckForHostileFlag();
+
+                    if (combat != InCombat)
+                    {
+                        InCombat = combat;
+                        if (combat)
+                        {
+                            App.Jukebox.CombatStarted();
+                        }
+                        else
+                        {
+                            App.Jukebox.CombatEnded();
+                        }
+                    }
+                }
+            }
         }
     }
 

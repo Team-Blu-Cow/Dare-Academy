@@ -624,6 +624,10 @@ PrefabInstance:
       propertyPath: m_Delegates.Array.data[2].callback.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: Play
       objectReference: {fileID: 0}
+    - target: {fileID: 6502292220562432226, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+      propertyPath: m_SortingOrder
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 7432761000738988753, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
@@ -936,6 +940,27 @@ Canvas:
 --- !u!1 &623157411 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 7911873667537752145, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+  m_PrefabInstance: {fileID: 623157401}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &623157412 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1110466310764053623, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+  m_PrefabInstance: {fileID: 623157401}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 623157414}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!223 &623157413 stripped
+Canvas:
+  m_CorrespondingSourceObject: {fileID: 6502292220562432226, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
+  m_PrefabInstance: {fileID: 623157401}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &623157414 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8556918547414486314, guid: 994a490c3c3978945b13d14ecf2b1868, type: 3}
   m_PrefabInstance: {fileID: 623157401}
   m_PrefabAsset: {fileID: 0}
 --- !u!1 &946727069
@@ -2362,6 +2387,14 @@ MonoBehaviour:
     canvas: {fileID: 623157404}
     canvasScaler: {fileID: 623157402}
     name: Audio Settings
+    desc: 
+    layer: 0
+    transition: 0
+    showInEditor: 0
+  - gameObject: {fileID: 623157414}
+    canvas: {fileID: 623157413}
+    canvasScaler: {fileID: 623157412}
+    name: Controls
     desc: 
     layer: 0
     transition: 0
