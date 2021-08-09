@@ -44,6 +44,8 @@ public abstract class GridEntity : MonoBehaviour
         set { m_health = value; }
     }
 
+    private int m_startingHealth;
+
     public bool isDead
     {
         get
@@ -84,6 +86,8 @@ public abstract class GridEntity : MonoBehaviour
     protected virtual void Start()
     {
         m_currentNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(transform.position);
+
+        m_startingHealth = Health;
 
         if (m_currentNode == null)
         {
@@ -1042,6 +1046,7 @@ public abstract class GridEntity : MonoBehaviour
         {
             RemoveFromCurrentNode();
             m_currentNode = m_startingNode;
+            m_health = m_startingHealth;
             AddToCurrentNode();
             UpdateTransform();
         }
