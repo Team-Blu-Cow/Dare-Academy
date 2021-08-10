@@ -48671,7 +48671,6 @@ MonoBehaviour:
   m_ppVignette: {fileID: 0}
   m_ppChromaticAberration: {fileID: 0}
   m_ppLensDistortion: {fileID: 0}
-  m_vignetteIntensityVal: 0.4
 --- !u!1 &596553851098654284
 GameObject:
   m_ObjectHideFlags: 0
@@ -48964,7 +48963,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 2100000, guid: cde38c62f08096742aaf1d5dae49a7f0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -49081,6 +49080,9 @@ MonoBehaviour:
   m_sprite: {fileID: 8411778651801602617}
   m_spriteHead: {fileID: 8411778651999712004}
   m_hasHead: 1
+  m_overwriteAnimSpeed: 1
+  m_isDead: 0
+  m_deathPoofPrefab: {fileID: 3161301949072914463, guid: 2a7ca93a7ffa1174b8f8062d29cd88d7, type: 3}
   m_luvGunParticles: {fileID: 1483593464}
   m_luvGunSubParticles:
   - {fileID: 641196474}
@@ -49094,6 +49096,7 @@ MonoBehaviour:
   - {fileID: 1095423734}
   - {fileID: 1690996961}
   m_dashBurstPrefab: {fileID: 702105276640128607, guid: 0e8357a46b18ae64582619d461a7f131, type: 3}
+  m_spriteBody: {fileID: 8576133519772152680}
   m_abilityColours:
   - {r: 0, g: 0, b: 0, a: 0}
   - {r: 1, g: 0, b: 0.61164474, a: 1}
@@ -49250,7 +49253,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 2100000, guid: cde38c62f08096742aaf1d5dae49a7f0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -49362,7 +49365,7 @@ SpriteRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 9dfc825aed78fcd4ba02077103263b40, type: 2}
+  - {fileID: 2100000, guid: cde38c62f08096742aaf1d5dae49a7f0, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
