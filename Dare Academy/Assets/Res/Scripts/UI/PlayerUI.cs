@@ -94,6 +94,7 @@ public class PlayerUI : MonoBehaviour
         UpdateUI();
         UpdateHealthUI();
         UpdateEnergyUI();
+        DeviceChanged();
     }
 
     private void OnValidate()
