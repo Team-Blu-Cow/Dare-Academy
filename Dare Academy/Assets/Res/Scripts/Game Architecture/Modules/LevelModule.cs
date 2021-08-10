@@ -157,7 +157,7 @@ namespace blu
         public void SpawnPlayer()
         {
             if (m_levelManager.debug_SpawnPlayer == true)
-
+            {
                 if (m_lvlTransitionInfo == null)
                 {
                     Vector3 pos = m_grid.Grid(m_levelManager.m_defaultPlayerSpawnIndex)[m_levelManager.m_defaultPlayerPosition].position.world;
@@ -196,6 +196,7 @@ namespace blu
                     GameObject player = Instantiate(m_playerPrefab, pos, Quaternion.identity);
                     player.GetComponent<PlayerEntity>().LoadingFromOtherScene = true;
                 }
+            }
         }
 
         public void AddEntityToCurrentRoom(GridEntity entity)
