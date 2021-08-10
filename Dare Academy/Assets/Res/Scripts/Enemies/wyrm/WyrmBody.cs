@@ -25,9 +25,19 @@ public class WyrmBody : WyrmSection
     public override void AnalyseStep()
     {
         base.AnalyseStep();
-
+        BodyAnalyseLogic();
         doReanalyse = true;
+    }
 
+    public override void ReAnalyseStep()
+    {
+        base.ReAnalyseStep();
+        BodyAnalyseLogic();
+        doReanalyse = false;
+    }
+
+    private void BodyAnalyseLogic()
+    {
         if (currentNode == null)
         {
             // is underground
@@ -65,21 +75,16 @@ public class WyrmBody : WyrmSection
             }
 
             // follow in front
+            if (SectionInfront.MovedThisStep)
+            {
+                node = SectionInfront.currentNode;
+                if (node == null)
+                    return;
 
-            node = SectionInfront.currentNode;
-            if (node == null)
-                return;
-
-            dir = node.position.grid - currentNode.position.grid;
-            SetMovementDirection(dir);
+                dir = node.position.grid - currentNode.position.grid;
+                SetMovementDirection(dir);
+            }
         }
-    }
-
-    public override void ReAnalyseStep()
-    {
-        base.ReAnalyseStep();
-        AnalyseStep();
-        doReanalyse = false;
     }
 
     public override void EndStep()

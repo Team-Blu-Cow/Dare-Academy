@@ -388,7 +388,8 @@ public class WyrmHead : WyrmSection
         if (path == null)
             return;
 
-        if (Vector2Int.Distance(Position.grid, PlayerEntity.Instance.Position.grid) <= 1)
+        // if (Vector2Int.Distance(Position.grid, PlayerEntity.Instance.Position.grid) <= 1)
+        if (path.Length <= 1)
         {
             state = WyrmState.FireAttack;
             return;
@@ -699,7 +700,7 @@ public class WyrmHead : WyrmSection
 
         List<GridEntity> entities = spawnNode.GetGridEntities();
 
-        // if a fire is already present extend its life
+        // if a warning is already present return
         foreach (var entity in entities)
         {
             if (entity is DamageEntity && (entity as DamageEntity).DamageType == DamageEntity.DamageEntityType.Warning)
