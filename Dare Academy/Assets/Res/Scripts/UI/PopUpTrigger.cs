@@ -26,23 +26,30 @@ public class PopUpTrigger : MonoBehaviour
         popUpController.m_head = m_head;
         popUpController.m_playerControlled = false;
 
-        switch (App.GetModule<InputModule>().LastUsedDevice.displayName)
+        if (App.GetModule<InputModule>().LastUsedDevice is null)
         {
-            case "Keyboard":
-                popUpController.m_body = m_bodyKeyboard;
-                break;
+            popUpController.m_body = m_bodyKeyboard;
+        }
+        else
+        {
+            switch (App.GetModule<InputModule>().LastUsedDevice.displayName)
+            {
+                case "Keyboard":
+                    popUpController.m_body = m_bodyKeyboard;
+                    break;
 
-            case "Mouse":
-                popUpController.m_body = m_bodyKeyboard;
-                break;
+                case "Mouse":
+                    popUpController.m_body = m_bodyKeyboard;
+                    break;
 
-            case "Xbox Controller":
-                popUpController.m_body = m_bodyControler;
-                break;
+                case "Xbox Controller":
+                    popUpController.m_body = m_bodyControler;
+                    break;
 
-            case "Wireless Controller":
-                popUpController.m_body = m_bodyControler;
-                break;
+                case "Wireless Controller":
+                    popUpController.m_body = m_bodyControler;
+                    break;
+            }
         }
 
         Destroy(gameObject);
