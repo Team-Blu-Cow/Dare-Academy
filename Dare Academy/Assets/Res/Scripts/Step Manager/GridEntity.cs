@@ -34,6 +34,13 @@ public abstract class GridEntity : MonoBehaviour
     public int Speed { get { return m_speed; } }
     public int RoomIndex { get { return m_roomIndex; } set { m_roomIndex = value; } }
 
+    // used for controlling the reanalyse process
+    public bool doReanalyse
+    { get; protected set; }
+
+    private bool forceStepAgain
+    { get; set; }
+
     public GridEntityFlags Flags => m_flags;
 
     public bool FailedSwitchingRooms => m_failedAttemptToSwitchRoom;
@@ -60,7 +67,7 @@ public abstract class GridEntity : MonoBehaviour
 
     public bool isPlayer { get { return m_flags.IsFlagsSet(flags.isPlayer); } }
 
-    public bool isFinishedMoving { get { return m_speed <= m_stepsTaken; } }
+    public bool isFinishedMoving { get { return m_speed <= m_stepsTaken && !forceStepAgain; } }
 
     protected StepController m_stepController;
 
@@ -69,6 +76,12 @@ public abstract class GridEntity : MonoBehaviour
     protected GridNode m_previousNode = null;
     protected GridNode m_startingNode = null;
     protected GridNode m_initialNode = null;
+
+    public bool MovedThisStep
+    { get; protected set; }
+
+    public GridNode previousNode
+    { get { return m_previousNode; } }
 
     public GridNode currentNode
     { get { return m_currentNode; } }
@@ -85,6 +98,8 @@ public abstract class GridEntity : MonoBehaviour
     // INITIALISATION METHODS *********************************************************************
     protected virtual void Start()
     {
+        doReanalyse = false;
+
         m_currentNode = App.GetModule<LevelModule>().MetaGrid.GetNodeFromWorld(transform.position);
 
         m_startingHealth = Health;
@@ -145,6 +160,7 @@ public abstract class GridEntity : MonoBehaviour
      * virtual [resolve pass through]
      * virtual [resolve move]
      *         [post-move]
+     *         [reanalyse] - exclusivly used by wyrm boss
      *         IF m_stepsTaken != m_speed: GOTO [move]
      * virtual [attack]
      * virtual [damage]
@@ -162,6 +178,8 @@ public abstract class GridEntity : MonoBehaviour
         m_actionList.Clear();
 
         m_initialNode = m_currentNode;
+
+        MovedThisStep = false;
     }
 
     public void PreMoveStep()
@@ -372,6 +390,11 @@ public abstract class GridEntity : MonoBehaviour
 
     public void PostMoveStep()
     {
+        if (currentNode != previousNode)
+            MovedThisStep = true;
+
+        forceStepAgain = false;
+
         if (m_currentNode != null && !m_flags.IsFlagsSet(flags.allowedOffGrid))
         {
             List<GridEntity> entities = m_currentNode.GetGridEntities();
@@ -396,6 +419,12 @@ public abstract class GridEntity : MonoBehaviour
         }
     }
 
+    public virtual void ReAnalyseStep()
+    {
+        doReanalyse = false;
+        forceStepAgain = true;
+    }
+
     virtual public void AttackStep()
     {
     }
@@ -406,6 +435,8 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void EndStep()
     {
+        doReanalyse = false;
+
         m_stepsTaken = 0;
         m_speed = 0;
 
@@ -973,7 +1004,11 @@ public abstract class GridEntity : MonoBehaviour
 
     public void AddAnimationAction(GridNode node, ActionTypes type, string animationName, int layer = -1) => AddAnimationAction(node.position, type, animationName, layer);
 
-    public void AddAnimationAction(ActionTypes type, string animationName, int layer = -1) => AddAnimationAction(m_currentNode.position, type, animationName, layer);
+    public void AddAnimationAction(ActionTypes type, string animationName, int layer = -1)
+    {
+        if (m_currentNode != null)
+            AddAnimationAction(m_currentNode.position, type, animationName, layer);
+    }
 
     public void AddAnimationAction(GridNodePosition position, ActionTypes type, string animationName, int layer = -1)
     {

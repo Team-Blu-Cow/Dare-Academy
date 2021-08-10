@@ -4,8 +4,20 @@ using UnityEngine;
 
 public class DamageEntity : GridEntity
 {
+    public enum DamageEntityType
+    {
+        None,
+        Fire,
+        Warning, // doesnt damage but im lazy
+    }
+
+    [SerializeField]
     private int m_damage = 1;
-    private int m_count = 0;
+
+    [SerializeField]
+    private DamageEntityType m_damageType;
+
+    public DamageEntityType DamageType => m_damageType;
 
     public int Damage
     {
@@ -14,10 +26,10 @@ public class DamageEntity : GridEntity
     }
 
     public int Countdown
-    {
-        get => m_count;
-        set => m_count = value;
-    }
+    { get; set; }
+
+    public int Linger
+    { get; set; }
 
     public override void AnalyseStep()
     {
@@ -33,10 +45,17 @@ public class DamageEntity : GridEntity
             List<GridEntity> entities = GetEntitiesOnNode(m_currentNode);
             foreach (var entity in entities)
             {
+                if (entity is WyrmSection)
+                    continue;
+
                 //entity.Health -= Damage;
                 entity.OnHit(Damage);
             }
-            Kill();
+
+            if (Linger == 0)
+                Kill();
+
+            Linger--;
         }
     }
 }

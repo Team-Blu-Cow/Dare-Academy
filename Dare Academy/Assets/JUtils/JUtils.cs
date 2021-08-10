@@ -31,7 +31,7 @@ namespace JUtil
             float tx = v.x;
             float ty = v.y;
 
-            return new Vector2(-1*(cos * tx - sin * ty), sin * tx + cos * ty);
+            return new Vector2(-1 * (cos * tx - sin * ty), sin * tx + cos * ty);
         }
 
         public static float GetRotation(this Vector2 v)
@@ -39,7 +39,7 @@ namespace JUtil
             Vector2 v_up = Vector2.up;
             var sign = BetterSign(v_up.x * v.y - v_up.y * v.x);
 
-            if(sign <= 0)
+            if (sign <= 0)
                 return Vector2.Angle(v_up, v);
             else
                 return 360 - Vector2.Angle(v_up, v);
@@ -88,7 +88,7 @@ namespace JUtil
         }
 
         // BETTER SIGN MENTHODS *******************************************************************
-        // Returns -1, 0 or 1 depending on the numbers sign or if it is zero 
+        // Returns -1, 0 or 1 depending on the numbers sign or if it is zero
 
         public static float BetterSign(float value)
         {
@@ -118,6 +118,7 @@ namespace JUtil
 
         // GIZMO DRAWING HELPER METHODS ***********************************************************
         public static void DrawPath(Vector3[] path, Vector3 startPos) => DrawPath(path, startPos, Color.black);
+
         public static void DrawPath(Vector3[] path, Vector3 startPos, Color colour)
         {
             if (path != null && path.Length > 0)

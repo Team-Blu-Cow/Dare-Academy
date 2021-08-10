@@ -62,6 +62,7 @@ public class StepController
             ResolvePassThroughStep();
             ResolveMoveStep();
             PostMoveStep();
+            ReanalyseStep();
         }
         while (!AllEntitiesFinishedMoving());
 
@@ -142,6 +143,15 @@ public class StepController
         {
             if (m_entities[j] != null)
                 m_entities[j].PostMoveStep();
+        }
+    }
+
+    public void ReanalyseStep()
+    {
+        for (int j = m_entities.Count - 1; j >= 0; j--)
+        {
+            if (m_entities[j] != null && m_entities[j].doReanalyse)
+                m_entities[j].ReAnalyseStep();
         }
     }
 

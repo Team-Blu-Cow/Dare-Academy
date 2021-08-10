@@ -26,7 +26,7 @@ public class TelegraphDrawer
     {
         m_prefabList = Resources.LoadAll<GameObject>("prefabs/Telegraph Types");
 
-        if(m_telegraphParentGameobject == null)
+        if (m_telegraphParentGameobject == null)
         {
             m_telegraphParentGameobject = new GameObject("Telegraph Container");
             m_telegraphParentGameobject.transform.position = Vector3.zero;
@@ -35,7 +35,7 @@ public class TelegraphDrawer
 
     public void CreateTelegraph(GridNode node, Type type)
     {
-        if (node == null)
+        if (node is null)
             return;
 
         GameObject newTelegraph =  GameObject.Instantiate(m_prefabList[GetPrefabIndex(type)], node.position.world, Quaternion.identity);
@@ -90,17 +90,15 @@ public class TelegraphDrawer
             default:
                 return 0;
         }
-
     }
 
     public void OnStep()
     {
-        for(int i = m_spriteList.Count-1; i >= 0; i--)
+        for (int i = m_spriteList.Count - 1; i >= 0; i--)
         {
             GameObject.Destroy(m_spriteList[i]);
         }
 
         m_spriteList.Clear();
     }
-
 }

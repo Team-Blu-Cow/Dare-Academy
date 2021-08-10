@@ -79,6 +79,58 @@ namespace JUtil.Grids
             Stopwatch sw = new Stopwatch();
             sw.Start();
 
+            T[] fearNodeArr = new T[1];
+            fearNodeArr[0] = fearNode;
+
+            Vector3[] wayPoints;
+            bool pathSuccess = false;
+
+            startNode = startPos;
+            targetNode = targetPos;
+
+            if (startNode.IsTraversable() && targetNode.IsTraversable())
+            {
+                openSet = new Heap<T>(area);
+                closedSet = new HashSet<T>();
+
+                openSet.Add(startNode);
+
+                while (openSet.Count > 0)
+                {
+                    T currentNode = openSet.RemoveFirst();
+                    closedSet.Add(currentNode);
+
+                    if (currentNode == targetNode)
+                    {
+                        sw.Stop();
+
+                        if (showtime)
+                            JUtils.ShowTime(sw.ElapsedTicks, "Path found in:");
+
+                        pathSuccess = true;
+                        break;
+                    }
+
+                    if (eightDir)
+                        CheckNeighborsMooreWithAvoidance(currentNode, fearNodeArr, fearRange);
+                    else
+                        CheckNeighborsVonNeumanWithAvoidance(currentNode, fearNodeArr, fearRange);
+                }
+            }
+            if (pathSuccess)
+            {
+                wayPoints = RetracePath(startNode, targetNode);
+                return wayPoints;
+            }
+            UnityEngine.Debug.Log("Path not found");
+            return null;
+        }
+
+        public Vector3[] FindPathWithAvoidance(T startPos, T targetPos, T[] fearNode, int fearRange, bool eightDir = false, bool showtime = false)
+        {
+            Stopwatch sw = new Stopwatch();
+            sw.Start();
+
             Vector3[] wayPoints;
             bool pathSuccess = false;
 
@@ -191,7 +243,7 @@ namespace JUtil.Grids
             }
         }
 
-        private void CheckNeighborsMooreWithAvoidance(T currentNode, T fearNode, int fearRange)
+        private void CheckNeighborsMooreWithAvoidance(T currentNode, T[] fearNode, int fearRange)
         {
             foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
             {
@@ -203,7 +255,15 @@ namespace JUtil.Grids
                 if (!neighbour.IsTraversable() || closedSet.Contains(neighbour))
                     continue;
 
-                if (Vector3.Distance(neighbour.position.world, fearNode.position.world) <= fearRange - 1)
+                bool anyInRange = false;
+                foreach (var node in fearNode)
+                {
+                    if (Vector3.Distance(neighbour.position.world, node.position.world) <= fearRange - 1)
+                    {
+                        anyInRange = true;
+                    }
+                }
+                if (anyInRange)
                     continue;
 
                 int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
@@ -221,7 +281,7 @@ namespace JUtil.Grids
             }
         }
 
-        private void CheckNeighborsVonNeumanWithAvoidance(T currentNode, T fearNode, int fearRange)
+        private void CheckNeighborsVonNeumanWithAvoidance(T currentNode, T[] fearNode, int fearRange)
         {
             int count = -1;
             foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
@@ -240,7 +300,15 @@ namespace JUtil.Grids
                 if (!neighbour.IsTraversable() || closedSet.Contains(neighbour))
                     continue;
 
-                if (Vector3.Distance(neighbour.position.world, fearNode.position.world) <= fearRange - 1)
+                bool anyInRange = false;
+                foreach (var node in fearNode)
+                {
+                    if (Vector3.Distance(neighbour.position.world, node.position.world) <= fearRange - 1)
+                    {
+                        anyInRange = true;
+                    }
+                }
+                if (anyInRange)
                     continue;
 
                 int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
