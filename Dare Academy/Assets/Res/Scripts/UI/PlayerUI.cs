@@ -39,6 +39,14 @@ public class PlayerUI : MonoBehaviour
     [SerializeField, HideInInspector] private Sprite[] m_healthSprites = new Sprite[2];
     [SerializeField, HideInInspector] private Sprite[] m_energySprites = new Sprite[2];
 
+    [SerializeField] private GameObject m_heartPrefab;
+    [SerializeField] private GameObject m_energyPrefab;
+
+    [SerializeField] private float m_abilityIconSizeLarge = 1.5f;
+    [SerializeField] private float m_abilityIconSizeSmall = 1f;
+
+    [SerializeField] private GameObject[] m_iconObjects;
+
     private Vector2[] m_iconPositions;
 
     private int numOfAbilitiesUnlocked = 0; // Tracks the amount of abilities the player has unlocked
@@ -50,7 +58,7 @@ public class PlayerUI : MonoBehaviour
         // Setup each icon
         for (int i = 0; i < m_Icons.Length; i++)
         {
-            m_Icons[i].GO = transform.GetChild(2).GetChild(i).gameObject;
+            m_Icons[i].GO = transform.GetChild(4).GetChild(i).gameObject;
             var rect = (RectTransform)m_Icons[i].GO.transform;
             m_Icons[i].position = rect.anchoredPosition;
             m_Icons[i].index = i;
@@ -96,11 +104,26 @@ public class PlayerUI : MonoBehaviour
         m_controlSprites[2] = Resources.Load<Sprite>("GFX/ButtonImages/Controller/LBButton");
         m_controlSprites[3] = Resources.Load<Sprite>("GFX/ButtonImages/Controller/RBButton");
 
-        m_healthSprites[0] = Resources.Load<Sprite>("GFX/HeartFull");
-        m_healthSprites[1] = Resources.Load<Sprite>("GFX/HeartEmpty");
+        m_healthSprites[0] = Resources.Load<Sprite>("GFX/UI/heart");
+        m_healthSprites[1] = Resources.Load<Sprite>("GFX/UI/heart_empty");
 
-        m_energySprites[0] = Resources.Load<Sprite>("GFX/EnergyFull");
-        m_energySprites[1] = Resources.Load<Sprite>("GFX/EnergyEmpty");
+        m_energySprites[0] = Resources.Load<Sprite>("GFX/UI/energy");
+        m_energySprites[1] = Resources.Load<Sprite>("GFX/UI/energy_empty");
+
+        if (m_iconObjects == null)
+            return;
+
+        for (int i = 0; i < m_iconObjects.Length; i++)
+        {
+            if (i == 1)
+            {
+                m_iconObjects[i].GetComponent<RectTransform>().localScale = new Vector3(m_abilityIconSizeLarge, m_abilityIconSizeLarge, m_abilityIconSizeLarge);
+            }
+            else
+            {
+                m_iconObjects[i].GetComponent<RectTransform>().localScale = new Vector3(m_abilityIconSizeSmall, m_abilityIconSizeSmall, m_abilityIconSizeSmall);
+            }
+        }
     }
 
     private void OnDisable()
@@ -140,11 +163,23 @@ public class PlayerUI : MonoBehaviour
 
     private void SetStartingPosition()
     {
-        transform.GetChild(2).GetChild(3).gameObject.SetActive(true);
+        transform.GetChild(4).GetChild(3).gameObject.SetActive(true);
 
         m_Icons[(int)IconIndex.Dash].GO.SetActive(true);
         m_Icons[(int)IconIndex.Block].GO.SetActive(true);
         m_Icons[(int)IconIndex.Gun].GO.SetActive(true);
+
+        for (int i = 0; i < m_Icons.Length; i++)
+        {
+            if (m_Icons[i].index == 1)
+            {
+                m_Icons[i].GO.GetComponent<RectTransform>().localScale = new Vector3(m_abilityIconSizeLarge, m_abilityIconSizeLarge, m_abilityIconSizeLarge);
+            }
+            else
+            {
+                m_Icons[i].GO.GetComponent<RectTransform>().localScale = new Vector3(m_abilityIconSizeSmall, m_abilityIconSizeSmall, m_abilityIconSizeSmall);
+            }
+        }
 
         switch (numOfAbilitiesUnlocked)
         {
@@ -152,7 +187,7 @@ public class PlayerUI : MonoBehaviour
                 m_Icons[(int)IconIndex.Dash].GO.SetActive(false);
                 m_Icons[(int)IconIndex.Block].GO.SetActive(false);
                 m_Icons[(int)IconIndex.Gun].GO.SetActive(false);
-                transform.GetChild(2).GetChild(3).gameObject.SetActive(false);
+                transform.GetChild(4).GetChild(3).gameObject.SetActive(false);
 
                 break;
 
@@ -160,7 +195,7 @@ public class PlayerUI : MonoBehaviour
                 m_Icons[(int)IconIndex.Dash].GO.SetActive(false);
                 m_Icons[(int)IconIndex.Block].GO.SetActive(false);
 
-                transform.GetChild(2).GetChild(3).gameObject.SetActive(false);
+                transform.GetChild(4).GetChild(3).gameObject.SetActive(false);
                 break;
 
             case 2:
@@ -187,7 +222,8 @@ public class PlayerUI : MonoBehaviour
 
     public void DeviceChanged()
     {
-        Transform temp = transform.GetChild(2).GetChild(3);
+        Transform temp = transform.GetChild(4);
+        temp = temp.GetChild(3);
 
         switch (App.GetModule<InputModule>().LastUsedDevice.displayName)
         {
@@ -225,7 +261,7 @@ public class PlayerUI : MonoBehaviour
             m_Icons[i].ActiveGameObject().SetActive(false);
 
         // Enable active display for selected ability
-        switch (m_player.Abilities.GetActiveAbility())
+        /*switch (m_player.Abilities.GetActiveAbility())
         {
             case PlayerAbilities.AbilityEnum.None:
                 break;
@@ -244,7 +280,7 @@ public class PlayerUI : MonoBehaviour
 
             default:
                 break;
-        }
+        }*/
     }
 
     private void ChangeAbilityL(InputAction.CallbackContext ctx)
@@ -286,13 +322,13 @@ public class PlayerUI : MonoBehaviour
                     if (m_Icons[i].index == 2)
                     {
                         LeanTween.moveLocal(m_Icons[i].GO, m_iconPositions[(int)IconIndex.Gun], transitionSpeed);
-                        LeanTween.scale(m_Icons[i].GO, new Vector3(1.5f, 1.5f, 1.5f), transitionSpeed);
+                        LeanTween.scale(m_Icons[i].GO, new Vector3(m_abilityIconSizeLarge, m_abilityIconSizeLarge, m_abilityIconSizeLarge), transitionSpeed);
                         m_Icons[i].index--;
                     }
                     else
                     {
                         LeanTween.moveLocal(m_Icons[i].GO, m_iconPositions[(int)IconIndex.Block], transitionSpeed);
-                        LeanTween.scale(m_Icons[i].GO, new Vector3(1, 1, 1), transitionSpeed);
+                        LeanTween.scale(m_Icons[i].GO, new Vector3(m_abilityIconSizeSmall, m_abilityIconSizeSmall, m_abilityIconSizeSmall), transitionSpeed);
                         m_Icons[i].GO.transform.SetAsFirstSibling();
 
                         m_Icons[i].index++;
@@ -322,9 +358,9 @@ public class PlayerUI : MonoBehaviour
 
                         //Scale
                         if (m_Icons[i].index != 1)
-                            LeanTween.scale(m_Icons[i].GO, new Vector3(1, 1, 1), transitionSpeed);
+                            LeanTween.scale(m_Icons[i].GO, new Vector3(m_abilityIconSizeSmall, m_abilityIconSizeSmall, m_abilityIconSizeSmall), transitionSpeed);
                         else
-                            LeanTween.scale(m_Icons[i].GO, new Vector3(1.5f, 1.5f, 1.5f), transitionSpeed);
+                            LeanTween.scale(m_Icons[i].GO, new Vector3(m_abilityIconSizeLarge, m_abilityIconSizeLarge, m_abilityIconSizeLarge), transitionSpeed);
                     }
                     else // Cycle icons to the right
                     {
@@ -343,9 +379,9 @@ public class PlayerUI : MonoBehaviour
 
                         //Scale
                         if (m_Icons[i].index != 1)
-                            LeanTween.scale(m_Icons[i].GO, new Vector3(1, 1, 1), transitionSpeed);
+                            LeanTween.scale(m_Icons[i].GO, new Vector3(m_abilityIconSizeSmall, m_abilityIconSizeSmall, m_abilityIconSizeSmall), transitionSpeed);
                         else
-                            LeanTween.scale(m_Icons[i].GO, new Vector3(1.5f, 1.5f, 1.5f), transitionSpeed);
+                            LeanTween.scale(m_Icons[i].GO, new Vector3(m_abilityIconSizeLarge, m_abilityIconSizeLarge, m_abilityIconSizeLarge), transitionSpeed);
                     }
                 }
                 break;
@@ -392,7 +428,7 @@ public class PlayerUI : MonoBehaviour
         GameObject newHealth = new GameObject("Health", typeof(RectTransform), typeof(Image)); // Create new object
         newHealth.transform.SetParent(gameObject.transform.GetChild(0)); // Set parent
 
-        newHealth.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1); // Set scale
+        newHealth.GetComponent<RectTransform>().localScale = new Vector3(0.5f, 0.5f, 1f); // Set scale
         Image image = newHealth.GetComponent<Image>();
         image.sprite = m_healthSprites[0]; // Set color
 
@@ -404,7 +440,7 @@ public class PlayerUI : MonoBehaviour
         GameObject newEnergy = new GameObject("Energy", typeof(RectTransform), typeof(Image)); // Create new object
         newEnergy.transform.SetParent(gameObject.transform.GetChild(1)); // Set parent
 
-        newEnergy.GetComponent<RectTransform>().localScale = new Vector3(0.6f, 0.6f, 0.6f); // Set scale
+        newEnergy.GetComponent<RectTransform>().localScale = new Vector3(0.5f, 0.5f, 0.5f); // Set scale
         Image image = newEnergy.GetComponent<Image>();
         image.sprite = m_energySprites[0]; // Set color
 
