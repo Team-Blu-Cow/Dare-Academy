@@ -169,7 +169,8 @@ namespace CanvasTool
                                 SerializedProperty canvasScaler = canvas.FindPropertyRelative("canvasScaler"); //???
                                 SerializedProperty resolution = canvasScaler.FindPropertyRelative("referenceResolution");
 
-                                currentCanvas.canvasScaler.referenceResolution = EditorGUILayout.Vector2Field("", currentCanvas.canvasScaler.referenceResolution);
+                                if (currentCanvas.canvasScaler != null)
+                                    currentCanvas.canvasScaler.referenceResolution = EditorGUILayout.Vector2Field("", currentCanvas.canvasScaler.referenceResolution);
                             }
 
                             // #TODO:: How to transition to a new canvas
@@ -184,9 +185,10 @@ namespace CanvasTool
 
                             Indent();
 
-                            // Show a;ll the buttons on the canvas
+                            // Show all the buttons on the canvas
                             GUILayout.Label("Buttons");
-                            CreateEditor(currentCanvas.gameObject.GetComponent<ButtonWrapper>()).OnInspectorGUI();
+                            if (currentCanvas.gameObject != null)
+                                CreateEditor(currentCanvas.gameObject.GetComponent<ButtonWrapper>()).OnInspectorGUI();
 
                             Indent(10);
 

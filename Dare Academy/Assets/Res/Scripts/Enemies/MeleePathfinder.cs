@@ -18,15 +18,23 @@ public class MeleePathfinder : GridEntity
 
     [SerializeField] private GameObject m_attackVFXPrefab;
 
+    [FMODUnity.EventRef]
+    [SerializeField]
+    private string m_deathSFX = null;
+
+    [FMODUnity.EventRef]
+    [SerializeField]
+    private string m_attackSFX = null;
+
     private Vector3 m_attackVfxSpawnPos;
 
     public bool showPath = false;
+
     public enum State
     {
         MOVE,
         ATTACK
     }
-
 
     [SerializeField] private State m_state;
 
@@ -39,8 +47,6 @@ public class MeleePathfinder : GridEntity
     protected override void Start()
     {
         base.Start();
-        m_flags.SetFlags(GridEntityFlags.Flags.isKillable, true);
-        m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true);
         m_player = PlayerEntity.Instance;
         m_animationController.animator.speed = 1;
         m_animationController.m_overwriteAnimSpeed = false;
@@ -48,6 +54,9 @@ public class MeleePathfinder : GridEntity
 
     public override void AnalyseStep()
     {
+        if (isDead)
+            return;
+
         m_animationController.animator.speed = 1;
 
         if (m_player == null)
@@ -69,7 +78,6 @@ public class MeleePathfinder : GridEntity
                 m_animationController.animator.SetBool("IsMoving", false);
                 break;
         }
-
     }
 
     private void DecideState()
@@ -109,7 +117,7 @@ public class MeleePathfinder : GridEntity
         if (m_path.Length > 1)
             dir = m_path[0] - m_currentNode.position.world;
 
-        if(Mathf.Abs(dir.x) > 0 && Mathf.Abs(dir.y) > 0)
+        if (Mathf.Abs(dir.x) > 0 && Mathf.Abs(dir.y) > 0)
         {
             if (Mathf.Abs(dir.x) > Mathf.Abs(dir.y))
                 dir = new Vector3(Mathf.Sign(dir.x), 0, 0);
@@ -121,11 +129,16 @@ public class MeleePathfinder : GridEntity
 
         SetMovementDirection(m_dir, moveSpeed);
 
+        LevelManager.Instance.TelegraphDrawer.CreateTelegraph(m_currentNode.Neighbors[new Vector2(dir.x, dir.y)].reference, TelegraphDrawer.Type.MOVE);
+
         m_animationController.SetDirection(-m_dir.x, 1);
     }
 
     public override void AttackStep()
     {
+        if (isDead)
+            return;
+
         if (m_state == State.ATTACK && m_attackNode != null)
         {
             GameObject gobj = Instantiate(m_attackPrefab, m_attackNode.position.world, Quaternion.identity);
@@ -136,6 +149,8 @@ public class MeleePathfinder : GridEntity
             m_attackVfxSpawnPos = m_attackNode.position.world + new Vector3(0, 0.4f, 0);
 
             ent.Init(m_attackNode, m_attackVFXPrefab);
+
+            App.GetModule<AudioModule>().PlayAudioEvent(m_attackSFX);
         }
     }
 
@@ -184,5 +199,17 @@ public class MeleePathfinder : GridEntity
         base.OnHit(damage);
 
         m_animationController.DamageFlash();
+    }
+
+    public override void CleanUp()
+    {
+        m_animationController.SpawnDeathPoof(transform.position);
+        base.CleanUp();
+    }
+
+    public override void OnDeath()
+    {
+        // #TODO #sound play specific death sound once impl App.GetModule<AudioModule>().PlayAudioEvent(m_deathSFX);
+        m_animationController.PlayAnimation("Die", 1);
     }
 }

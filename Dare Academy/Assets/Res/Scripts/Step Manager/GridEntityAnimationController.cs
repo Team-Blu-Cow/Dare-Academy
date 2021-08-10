@@ -22,6 +22,8 @@ public class GridEntityAnimationController : MonoBehaviour
     [SerializeField] public bool m_overwriteAnimSpeed = true;
     [HideInInspector] public bool m_isDead = false;
 
+    [SerializeField] protected GameObject m_deathPoofPrefab;
+
     protected virtual void OnValidate()
     {
         m_animator = GetComponent<Animator>();
@@ -72,9 +74,13 @@ public class GridEntityAnimationController : MonoBehaviour
             }
         }
 
-        m_sprite.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
+        if(m_sprite)
+            if(m_sprite.GetComponent<SpriteRenderer>().sharedMaterial)
+                m_sprite.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
         if (m_hasHead)
             m_spriteHead.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
+
+        m_deathPoofPrefab = Resources.Load<GameObject>("prefabs/GFX/DeathPoof");
     }
 
     protected virtual void Start()
@@ -147,5 +153,10 @@ public class GridEntityAnimationController : MonoBehaviour
                 if(m_hasHead)
                     m_spriteHead.GetComponent<SpriteRenderer>().material.SetFloat("_Strength", value);
             });
+    }
+
+    public void SpawnDeathPoof(Vector3 position)
+    {
+        Instantiate(m_deathPoofPrefab, position - new Vector3(0,0.5f,0), Quaternion.identity);
     }
 }

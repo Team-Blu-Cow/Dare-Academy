@@ -33,7 +33,19 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
 
     public bool IsTraversable()
     {
-        return walkable;
+        bool traversable = walkable;
+
+        /*foreach (var e in m_currentEntities)
+        {
+            // #matthew if wyrm breaks after merge this is why
+            if(!e.Flags.IsFlagsSet(GridEntityFlags.Flags.isAttack) || !e.Flags.IsFlagsSet(GridEntityFlags.Flags.isPlayer))
+            {
+                traversable = false;
+                break;
+            }
+        }*/
+
+        return traversable;
     }
 
     public int roomIndex { get; set; }

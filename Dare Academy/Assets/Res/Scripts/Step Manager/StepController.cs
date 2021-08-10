@@ -37,10 +37,8 @@ public class StepController
     }
 
     // STEP METHODS *******************************************************************************
-    public bool _ExecuteStep(out bool InCombat)
+    public bool ExecuteStep()
     {
-        InCombat = false;
-
         if (m_timer < m_stepTime)
             return false;
 
@@ -76,8 +74,6 @@ public class StepController
         CheckForRoomChange();
 
         AnalyseStep();
-
-        InCombat = CheckForHostileFlag();
 
         return true;
     }
@@ -220,7 +216,7 @@ public class StepController
         RoomChangeEvent?.Invoke();
     }
 
-    private bool CheckForHostileFlag()
+    public bool CheckForHostileFlag()
     {
         foreach (var entity in m_entities)
         {

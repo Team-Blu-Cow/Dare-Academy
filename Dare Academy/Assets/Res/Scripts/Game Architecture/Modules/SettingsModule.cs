@@ -17,7 +17,6 @@ namespace blu
         public override void Initialize()
         {
             Debug.Log("[App]: Initializing settings module");
-
             audioSettings.Init();
             m_graphicsSettings.Init();
 

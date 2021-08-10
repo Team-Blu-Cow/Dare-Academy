@@ -25,6 +25,9 @@ namespace blu
         private PathfindingMultiGrid m_grid = null;
         private GameEventFlags m_gameEventFlags = new GameEventFlags();
 
+        public bool HoldForAbilityMode
+        { get; private set; }
+
         public bool Initialised
         { get; private set; }
 
@@ -40,6 +43,9 @@ namespace blu
         }
 
         public bool InCombat
+        { get; private set; }
+
+        public float CombatMusicUpdateTimer
         { get; private set; }
 
         public GameEventFlags EventFlags
@@ -83,6 +89,11 @@ namespace blu
 
         private GameObject m_playerPrefab;
 
+        private void Update()
+        {
+            UpdateCombatMusic();
+        }
+
         private void OnDestroy()
         {
             SceneManager.sceneLoaded -= LevelChanged;
@@ -96,6 +107,8 @@ namespace blu
 
             if (m_playerPrefab == null)
                 m_playerPrefab = Resources.Load<GameObject>("prefabs/Entities/Player");
+
+            HoldForAbilityMode = PlayerPrefs.GetInt("HoldForAbilityMode", 1) == 1;
         }
 
         protected override void SetDependancies()
@@ -192,25 +205,17 @@ namespace blu
 
         public bool ExecuteStep()
         {
-            if (StepController._ExecuteStep(out bool combat))
+            return StepController.ExecuteStep();
+        }
+
+        public void SetHoldForAbilityMode(bool b)
+        {
+            HoldForAbilityMode = b;
+            PlayerPrefs.SetInt("HoldForAbilityMode", HoldForAbilityMode ? 1 : 0);
+            if (PlayerEntity.Instance)
             {
-                if (combat != InCombat)
-                {
-                    InCombat = combat;
-                    if (combat)
-                    {
-                        App.Jukebox.CombatStarted();
-                    }
-                    else
-                    {
-                        App.Jukebox.CombatEnded();
-                    }
-                }
-
-                return true;
+                PlayerEntity.Instance.UpdateInputMode();
             }
-
-            return false;
         }
 
         // FILE IO
@@ -374,6 +379,35 @@ namespace blu
         public static LevelID CurrentLevelId()
         {
             return ResolveLevelId(SceneManager.GetActiveScene().buildIndex);
+        }
+
+        private void UpdateCombatMusic()
+        {
+            // we check if you are in combat every 0.5s
+            // isHostile flags could be set by scriptable entites at unexpected times so we cant just check on Execute step
+
+            CombatMusicUpdateTimer += Time.deltaTime;
+            if (CombatMusicUpdateTimer > 0.5f)
+            {
+                CombatMusicUpdateTimer = 0f;
+                if (LevelManager && StepController != null)
+                {
+                    bool combat =  StepController.CheckForHostileFlag();
+
+                    if (combat != InCombat)
+                    {
+                        InCombat = combat;
+                        if (combat)
+                        {
+                            App.Jukebox.CombatStarted();
+                        }
+                        else
+                        {
+                            App.Jukebox.CombatEnded();
+                        }
+                    }
+                }
+            }
         }
     }
 

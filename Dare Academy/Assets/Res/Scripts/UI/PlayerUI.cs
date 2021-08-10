@@ -91,10 +91,10 @@ public class PlayerUI : MonoBehaviour
     private void OnValidate()
     {
         // Add button swaps sprites
-        m_controlSprites[0] = Resources.Load<Sprite>("GFX/ButtonImages/1Button");
-        m_controlSprites[1] = Resources.Load<Sprite>("GFX/ButtonImages/3Button");
-        m_controlSprites[2] = Resources.Load<Sprite>("GFX/ButtonImages/LBButton");
-        m_controlSprites[3] = Resources.Load<Sprite>("GFX/ButtonImages/RBButton");
+        m_controlSprites[0] = Resources.Load<Sprite>("GFX/ButtonImages/Keyboard/1_Key_Dark");
+        m_controlSprites[1] = Resources.Load<Sprite>("GFX/ButtonImages/Keyboard/3_Key_Dark");
+        m_controlSprites[2] = Resources.Load<Sprite>("GFX/ButtonImages/Controller/LBButton");
+        m_controlSprites[3] = Resources.Load<Sprite>("GFX/ButtonImages/Controller/RBButton");
 
         m_healthSprites[0] = Resources.Load<Sprite>("GFX/HeartFull");
         m_healthSprites[1] = Resources.Load<Sprite>("GFX/HeartEmpty");
@@ -196,9 +196,24 @@ public class PlayerUI : MonoBehaviour
                 temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[1];
                 break;
 
+            case "Mouse":
+                temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[0];
+                temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[1];
+                break;
+
             case "Xbox Controller":
                 temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[2];
                 temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[3];
+                break;
+
+            case "Wireless Controller":
+                temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[2];
+                temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[3];
+                break;
+
+            default:
+                temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[0];
+                temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[1];
                 break;
         }
     }
