@@ -9,6 +9,14 @@ public class PopUpTrigger : MonoBehaviour
     public List<string> m_bodyControler;
     public List<string> m_bodyKeyboard;
 
+    private void Start()
+    {
+        if (App.GetModule<LevelModule>().EventFlags.IsFlagsSet(GameEventFlags.Flags.shoot_unlocked))
+        {
+            Destroy(gameObject);
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         GameObject popup = Instantiate(Resources.Load<GameObject>("prefabs/UI prefabs/PopUp"));

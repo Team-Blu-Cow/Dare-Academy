@@ -73,6 +73,7 @@ public class EnemyHealth : MonoBehaviour
     private void OnHit()
     {
         //Remove sprite
-        m_hearts[m_entity.Health].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("GFX/HeartEmpty");
+        if (m_entity.Health > 0)
+            m_hearts[m_entity.Health].GetComponent<SpriteRenderer>().sprite = Resources.Load<Sprite>("GFX/HeartEmpty");
     }
 }
