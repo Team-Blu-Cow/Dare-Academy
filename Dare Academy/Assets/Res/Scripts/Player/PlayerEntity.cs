@@ -764,11 +764,15 @@ public class PlayerEntity : GridEntity
                 GridNode node;
                 if (m_previousNode != null)
                 {
-                    node = m_previousNode;
+                    // node = m_previousNode;
+                    node = m_currentNode;
 
                     if (LastDirection == m_abilityDirection)
                     {
-                        node = m_currentNode;
+                    }
+                    else
+                    {
+                        node = node.GetNeighbour(-LastDirection);
                     }
                 }
                 else

@@ -815,7 +815,7 @@ SpriteRenderer:
   m_SortingLayerID: 1532050139
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 2fad829770b38f14294205be1ce7a469, type: 3}
+  m_Sprite: {fileID: -8649625125931609346, guid: ae0eda2f00757e54e9caf22d53fe37ea, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -20573,7 +20573,8 @@ MonoBehaviour:
   m_flags:
     m_flagData: 3092
   m_animationController: {fileID: 361344318}
-  m_barrierFlag: 0
+  m_barrierFlag: 32768
+  m_destructionVfxPrefab: {fileID: 5130302680430111424, guid: 7b6eaf059b02d3c40b4246b5e94ffb14, type: 3}
 --- !u!1001 &369279471
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -37878,8 +37879,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   debug_SpawnPlayer: 1
   m_stepTime: 0.2
-  m_defaultPlayerSpawnIndex: 1
-  m_defaultPlayerPosition: {x: 1, y: 1}
+  m_defaultPlayerSpawnIndex: 0
+  m_defaultPlayerPosition: {x: 9, y: 4}
   m_stepController:
     m_entities: []
     m_currentRoomIndex: 0
@@ -70469,7 +70470,7 @@ SpriteRenderer:
   m_SortingLayerID: 1532050139
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 2fad829770b38f14294205be1ce7a469, type: 3}
+  m_Sprite: {fileID: 1035268857605684615, guid: ae0eda2f00757e54e9caf22d53fe37ea, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -72064,7 +72065,8 @@ MonoBehaviour:
   m_flags:
     m_flagData: 3092
   m_animationController: {fileID: 1339388273}
-  m_barrierFlag: 0
+  m_barrierFlag: 32768
+  m_destructionVfxPrefab: {fileID: 5130302680430111424, guid: 7b6eaf059b02d3c40b4246b5e94ffb14, type: 3}
 --- !u!1 &1360725754
 GameObject:
   m_ObjectHideFlags: 0
@@ -72136,7 +72138,7 @@ SpriteRenderer:
   m_SortingLayerID: 1532050139
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 2fad829770b38f14294205be1ce7a469, type: 3}
+  m_Sprite: {fileID: 1035268857605684615, guid: ae0eda2f00757e54e9caf22d53fe37ea, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -73467,6 +73469,36 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1084415781764570524, guid: 27f8a2aef42da1c46962f1d27793f90b, type: 3}
   m_PrefabInstance: {fileID: 95410326}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1660318598
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1660318599}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1660318599
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1660318598}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -36.5, y: 5.48, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 20
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1668278086
 GameObject:
   m_ObjectHideFlags: 0
@@ -73897,7 +73929,7 @@ SpriteRenderer:
   m_SortingLayerID: 1532050139
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 2fad829770b38f14294205be1ce7a469, type: 3}
+  m_Sprite: {fileID: -4577882492467488195, guid: ae0eda2f00757e54e9caf22d53fe37ea, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -75649,7 +75681,8 @@ MonoBehaviour:
   m_flags:
     m_flagData: 3092
   m_animationController: {fileID: 1864814244}
-  m_barrierFlag: 0
+  m_barrierFlag: 32768
+  m_destructionVfxPrefab: {fileID: 5130302680430111424, guid: 7b6eaf059b02d3c40b4246b5e94ffb14, type: 3}
 --- !u!1 &1871761446
 GameObject:
   m_ObjectHideFlags: 0
@@ -76004,7 +76037,8 @@ MonoBehaviour:
   m_flags:
     m_flagData: 3092
   m_animationController: {fileID: 1955958825}
-  m_barrierFlag: 0
+  m_barrierFlag: 32768
+  m_destructionVfxPrefab: {fileID: 5130302680430111424, guid: 7b6eaf059b02d3c40b4246b5e94ffb14, type: 3}
 --- !u!1001 &1959429591
 PrefabInstance:
   m_ObjectHideFlags: 0
