@@ -26,15 +26,18 @@ public class WyrmUIHealth : MonoBehaviour
 
     public void Hit(int health, WyrmSection head)
     {
-        if (m_split)
+        if (health >= 0)
         {
-            if (head == m_startHead)
-                m_addHealth[health].sprite = m_healthSprites[1];
+            if (m_split)
+            {
+                if (head != null && head == m_startHead)
+                    m_addHealth[health].sprite = m_healthSprites[1];
+                else
+                    m_addHealthSplit[health].sprite = m_healthSprites[1];
+            }
             else
-                m_addHealthSplit[health].sprite = m_healthSprites[1];
+                m_addHealth[health].sprite = m_healthSprites[1];
         }
-        else
-            m_addHealth[health].sprite = m_healthSprites[1];
     }
 
     public void FightStart()
