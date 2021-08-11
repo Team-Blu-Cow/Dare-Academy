@@ -69,7 +69,7 @@ public class MisplacedForestManager : MonoBehaviour
 
                         App.GetModule<LevelModule>().persistantSceneData._direction = Vector2Int.down;
 
-                        App.GetModule<LevelModule>().persistantSceneData._soundEmitter.transform.position = new Vector3(0, -App.GetModule<LevelModule>().CurrentRoom.Width / 2, 0);
+                        App.GetModule<LevelModule>().persistantSceneData._soundEmitter.transform.position = new Vector3(0, -App.GetModule<LevelModule>().CurrentRoom.Height / 2, 0);
                         validDirection = true;
                         break;
 
