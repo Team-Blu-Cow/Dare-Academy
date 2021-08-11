@@ -6,6 +6,13 @@ using blu;
 public class BarrierEntity : GridEntity
 {
     [SerializeField] private GameEventFlags.Flags m_barrierFlag;
+    [SerializeField] private GameObject m_destructionVfxPrefab;
+    bool m_haveAnimated = false;
+
+    protected override void Start()
+    {
+        base.Start();
+    }
 
     public override void AnalyseStep()
     {
@@ -26,5 +33,13 @@ public class BarrierEntity : GridEntity
             if (barrier != null)
                 barrier.KillImmediate();
         }
+    }
+
+    public override void KillImmediate()
+    {
+        if (!m_haveAnimated)
+            Instantiate(m_destructionVfxPrefab, transform.position, Quaternion.identity);
+        m_haveAnimated = true;
+        base.KillImmediate();
     }
 }
