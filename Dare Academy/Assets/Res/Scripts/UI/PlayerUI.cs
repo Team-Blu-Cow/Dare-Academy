@@ -226,32 +226,40 @@ public class PlayerUI : MonoBehaviour
         Transform temp = transform.GetChild(4);
         temp = temp.GetChild(3);
 
-        switch (App.GetModule<InputModule>().LastUsedDevice.displayName)
+        if (App.GetModule<InputModule>().LastUsedDevice is null)
         {
-            case "Keyboard":
-                temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[0];
-                temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[1];
-                break;
+            temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[0];
+            temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[1];
+        }
+        else
+        {
+            switch (App.GetModule<InputModule>().LastUsedDevice.displayName)
+            {
+                case "Keyboard":
+                    temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[0];
+                    temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[1];
+                    break;
 
-            case "Mouse":
-                temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[0];
-                temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[1];
-                break;
+                case "Mouse":
+                    temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[0];
+                    temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[1];
+                    break;
 
-            case "Xbox Controller":
-                temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[2];
-                temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[3];
-                break;
+                case "Xbox Controller":
+                    temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[2];
+                    temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[3];
+                    break;
 
-            case "Wireless Controller":
-                temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[2];
-                temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[3];
-                break;
+                case "Wireless Controller":
+                    temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[2];
+                    temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[3];
+                    break;
 
-            default:
-                temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[0];
-                temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[1];
-                break;
+                default:
+                    temp.GetComponentsInChildren<Image>()[0].sprite = m_controlSprites[0];
+                    temp.GetComponentsInChildren<Image>()[1].sprite = m_controlSprites[1];
+                    break;
+            }
         }
     }
 
