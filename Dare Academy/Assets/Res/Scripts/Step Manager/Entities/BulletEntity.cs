@@ -83,6 +83,7 @@ public class BulletEntity : GridEntity
 
             if (entity.Direction == -Direction)
             {
+                m_passthrough = true;
                 RemoveFromCurrentNode();
                 m_currentNode = m_previousNode;
                 AddToCurrentNode();
@@ -133,7 +134,7 @@ public class BulletEntity : GridEntity
 
     public override void DamageStep()
     {
-        if (!MovedThisStep)
+        if (!MovedThisStep && !m_passthrough)
         {
             return;
         }
