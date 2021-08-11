@@ -54,7 +54,7 @@ public class MortarEnemy : GridEntity
 
     public override void AttackStep()
     {
-        if (m_attack)
+        if (m_attack && PlayerInFiringRange())
         {
             m_animationController.PlayAnimation("shoot", m_stepController.stepTime * 2f);
 
@@ -65,7 +65,9 @@ public class MortarEnemy : GridEntity
 
             for (int i = 0; i < 8; i += 2)
             {
-                nodes.Add(m_player.currentNode.Neighbors[i].reference);
+                GridNode node = m_player.currentNode.Neighbors[i].reference;
+                if(node != null && node.roomIndex == m_stepController.m_currentRoomIndex)
+                    nodes.Add(m_player.currentNode.Neighbors[i].reference);
             }
 
             foreach (var node in nodes)
