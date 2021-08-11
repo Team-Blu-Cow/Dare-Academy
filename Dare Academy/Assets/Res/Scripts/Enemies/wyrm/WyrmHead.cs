@@ -70,6 +70,8 @@ public class WyrmHead : WyrmSection
 
     private int m_chasingNodeDirection = 0;
 
+    private int started = 0;
+
     protected override void OnValidate()
     {
         base.OnValidate();
@@ -122,6 +124,19 @@ public class WyrmHead : WyrmSection
     {
         base.AnalyseStep();
         AnalyseFSM();
+
+        if (started <= 1 && !HasSplit)
+        {
+            if (started == 1)
+                m_uiHealth.FightStart();
+
+            started++;
+        }
+    }
+
+    public override void OnHit(int damage, float offsetTime = 0)
+    {
+        base.OnHit(damage, offsetTime);
     }
 
     public override void ReAnalyseStep()
@@ -216,6 +231,8 @@ public class WyrmHead : WyrmSection
 
     public override void OnDeath()
     {
+        m_uiHealth.FightEnd();
+
         WyrmSection section = SectionBehind;
         while (section)
         {
@@ -264,13 +281,13 @@ public class WyrmHead : WyrmSection
         if (sections.Count >= 4)
         {
             // point wyrm is split at
-            int newHead = (sections.Count/2);
+            int newHead = (sections.Count / 2);
 
             // tail of front half will auto disconnect
 
             {
                 GameObject.Destroy(sections[newHead]);
-                GameObject obj  =GameObject.Instantiate(m_headPrefab, transform.position, Quaternion.identity);
+                GameObject obj = GameObject.Instantiate(m_headPrefab, transform.position, Quaternion.identity);
 
                 WyrmHead head = obj.GetComponent<WyrmHead>();
 
@@ -282,7 +299,7 @@ public class WyrmHead : WyrmSection
                 other.Flags._FlagData = Flags._FlagData;
 
                 //set health
-                int h = Health/2;
+                int h = Health / 2;
                 head.Health = h;
                 Health = h;
 
@@ -290,6 +307,10 @@ public class WyrmHead : WyrmSection
                 sections[newHead] = head;
                 sections[newHead].SectionBehind = sections[newHead + 1];
                 sections[newHead + 1].SectionInfront = sections[newHead];
+
+                // Update ui so it know its split
+                m_uiHealth.m_splitHead = head;
+                m_uiHealth.FightSplit();
 
                 // wyrm head start function will assign all other references
             }
@@ -319,7 +340,7 @@ public class WyrmHead : WyrmSection
 
     tryAgain:
 
-        int num = rnd.Next(0,100);
+        int num = rnd.Next(0, 100);
 
         if (num < 25) // 25% chance
         { state = WyrmState.UnderGround; }
@@ -544,7 +565,7 @@ public class WyrmHead : WyrmSection
 
     private void State_FireAttack()
     {
-        Vector3[] path  = PathToPlayer();
+        Vector3[] path = PathToPlayer();
 
         Vector3 pos = new Vector3(path[0].x, path[0].y, 0);
         GridNode n = levelModule.MetaGrid.GetNodeFromWorld(pos);
@@ -602,7 +623,7 @@ public class WyrmHead : WyrmSection
 
         Vector2 dir = m_chasingNodeDirection.IndexToRotation();
         Vector2Int dirI = Vector2Int.RoundToInt(dir);
-        GridNode node  = playerNode;
+        GridNode node = playerNode;
 
         for (int i = 0; i < chasingDistance; i++)
         {
@@ -747,7 +768,7 @@ public class WyrmHead : WyrmSection
 
         System.Random rand = new System.Random();
 
-        int r = rand.Next(0,4);
+        int r = rand.Next(0, 4);
 
         Vector2Int dir = Vector2Int.zero;
         GridNode node = null;

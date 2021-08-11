@@ -13,6 +13,7 @@ public abstract class WyrmSection : GridEntity
     { get; set; }
 
     [SerializeField, HideInInspector] protected SpriteRenderer spriteRenderer;
+    [SerializeField, HideInInspector] protected WyrmUIHealth m_uiHealth;
 
     public WyrmSection SectionInfront
     { get; set; }
@@ -30,6 +31,7 @@ public abstract class WyrmSection : GridEntity
     {
         base.OnValidate();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        m_uiHealth = FindObjectOfType<WyrmUIHealth>();
     }
 
     protected void Awake()
@@ -45,6 +47,7 @@ public abstract class WyrmSection : GridEntity
     public override void OnHit(int damage, float offsetTime = 0)
     {
         Head.Health -= damage;
+        m_uiHealth.Hit(Head.Health, Head);
     }
 
     public override void AnalyseStep()
