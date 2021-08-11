@@ -308,6 +308,14 @@ public class WyrmHead : WyrmSection
                 sections[newHead].SectionBehind = sections[newHead + 1];
                 sections[newHead + 1].SectionInfront = sections[newHead];
 
+                // reassign other variable
+                WyrmSection section = this.other;
+                while (section)
+                {
+                    section.Head = this.other;
+                    section = section.SectionBehind;
+                }
+
                 // Update ui so it know its split
                 m_uiHealth.m_splitHead = head;
                 m_uiHealth.FightSplit();
