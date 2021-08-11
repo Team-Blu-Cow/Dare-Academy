@@ -2,10 +2,28 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using blu;
+using UnityEngine.Tilemaps;
 
 public class MisplacedForestManager : MonoBehaviour
 {
-    // Start is called before the first frame update
+    [SerializeField] private GameObject[] m_tilesets;
+    [SerializeField] private Tilemap[] m_Collisiontilesets;
+
+    private void Awake()
+    {
+        LevelManager lvlManager = FindObjectOfType<LevelManager>();
+        List<Tilemap> collisionMap = lvlManager.Grid.tileData.tilemaps;
+        //collisionMap.Clear();
+
+        collisionMap.Add(m_Collisiontilesets[App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter]);
+
+        for(int i = 0; i < 4; i++)
+        {
+            if(m_tilesets[i] != null)
+                m_tilesets[i].SetActive((i == App.GetModule<LevelModule>().persistantSceneData._MisplacedForestCounter)? true : false);
+        }
+        
+    }
 
     private void Start()
     {
@@ -51,7 +69,7 @@ public class MisplacedForestManager : MonoBehaviour
 
                         App.GetModule<LevelModule>().persistantSceneData._direction = Vector2Int.down;
 
-                        App.GetModule<LevelModule>().persistantSceneData._soundEmitter.transform.position = new Vector3(0, -App.GetModule<LevelModule>().CurrentRoom.Width / 2, 0);
+                        App.GetModule<LevelModule>().persistantSceneData._soundEmitter.transform.position = new Vector3(0, -App.GetModule<LevelModule>().CurrentRoom.Height / 2, 0);
                         validDirection = true;
                         break;
 

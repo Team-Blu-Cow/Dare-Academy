@@ -580,7 +580,7 @@ public class PlayerEntity : GridEntity
                     m_currentNode.lvlTransitionInfo.loadType
                     );
             }
-            else if (levelModule.persistantSceneData._MisplacedForestCounter >= 3)
+            else if (levelModule.persistantSceneData._MisplacedForestCounter >= 3 && LastDirection == levelModule.persistantSceneData._direction)
             {
                 m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(0, 3);
                 m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
