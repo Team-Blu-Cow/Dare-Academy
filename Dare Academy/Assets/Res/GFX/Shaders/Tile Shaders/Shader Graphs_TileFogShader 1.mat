@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Shader Graphs_TileFogShader
+  m_Name: Shader Graphs_TileFogShader 1
   m_Shader: {fileID: -6465566751694194690, guid: e7bff101ccb66b946ae4f6f3d0aec394, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -36,9 +36,9 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Floats:
-    - Vector1_0e2b813ee4ff4518959be8eff1c35624: 5
-    - Vector1_4031cef7f248418ea323aed52eded0e3: 0.3
-    - Vector1_763e05ae579a4110a0ab0f4dc5c66ea6: 0.05
-    - Vector1_92e07cfa8d3241e2a9aaab2542cf9620: 1
+    - Vector1_0e2b813ee4ff4518959be8eff1c35624: 0.1
+    - Vector1_4031cef7f248418ea323aed52eded0e3: 0.1
+    - Vector1_763e05ae579a4110a0ab0f4dc5c66ea6: 0.08
+    - Vector1_92e07cfa8d3241e2a9aaab2542cf9620: 0.8
     m_Colors: []
   m_BuildTextureStacks: []

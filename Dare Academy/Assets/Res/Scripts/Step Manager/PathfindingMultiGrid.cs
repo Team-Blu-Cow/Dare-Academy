@@ -19,7 +19,7 @@ public class PathfindingMultiGrid
 
     [SerializeField] public NodeOverrides<GridNode> nodeOverrides;
 
-    [SerializeField] private TileDatabase tileData;
+    [SerializeField] public TileDatabase tileData;
 
     private Pathfinder<GridNode> pathfinder;
 
