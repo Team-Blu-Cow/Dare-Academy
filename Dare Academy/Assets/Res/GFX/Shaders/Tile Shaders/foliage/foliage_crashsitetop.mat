@@ -37,9 +37,9 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _noiseScale: 1
-    - _windInfluence: 1
+    - _windInfluence: 2
     - _windSpeed: 1
-    - windStrength: 0.1
+    - windStrength: 0.2
     m_Colors:
     - _windDirection: {r: 1, g: 0, b: 0, a: 0}
   m_BuildTextureStacks: []
