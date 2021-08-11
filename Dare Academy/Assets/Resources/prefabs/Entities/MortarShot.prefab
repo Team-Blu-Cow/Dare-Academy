@@ -169,11 +169,10 @@ MonoBehaviour:
   m_mass: 0
   m_health: 1
   m_flags:
-    m_flagData: 2
+    m_flagData: 6146
   m_animationController: {fileID: 8942996305946734801}
   m_damage: 1
   counter: 0
   m_landTime: 3
   m_initialScale: 0.5
   m_scale: 0.5
-  explosionPrefab: {fileID: 8418542875586225781, guid: 7ea576a5b90c0be4a89260f67c0fdcc8, type: 3}
