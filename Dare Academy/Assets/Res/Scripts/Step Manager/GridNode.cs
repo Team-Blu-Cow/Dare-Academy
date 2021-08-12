@@ -31,19 +31,12 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
         return -compare;
     }
 
-    public bool IsTraversable()
+    public bool IsTraversable(bool isAirborn)
     {
         bool traversable = walkable;
 
-        /*foreach (var e in m_currentEntities)
-        {
-            // #matthew if wyrm breaks after merge this is why
-            if(!e.Flags.IsFlagsSet(GridEntityFlags.Flags.isAttack) || !e.Flags.IsFlagsSet(GridEntityFlags.Flags.isPlayer))
-            {
-                traversable = false;
-                break;
-            }
-        }*/
+        if (!isAirborn)
+            traversable = !ishole;
 
         return traversable;
     }
@@ -59,6 +52,8 @@ public class GridNode : IPathFindingNode<GridNode>, IHeapItem<GridNode>, MultiNo
     // MEMBERS ********************************************************************************
 
     protected List<GridEntity> m_currentEntities = new List<GridEntity>();
+
+    public bool ishole = false;
 
     // METHODS ********************************************************************************
     public GridNode(Grid<GridNode> grid, int x, int y)

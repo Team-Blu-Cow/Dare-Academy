@@ -412,7 +412,7 @@ public class PlayerEntity : GridEntity
                 if ((x + y) % 2 != modVal)
                 {
                     GridNode node = currentGrid[xx, yy];
-                    if (node != null && node.roomIndex == m_currentNode.roomIndex && node.IsTraversable())
+                    if (node != null && node.roomIndex == m_currentNode.roomIndex && node.IsTraversable(false))
                     {
                         float dist = Vector3.Distance(node.position.world, m_currentNode.position.world);
 

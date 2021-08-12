@@ -276,6 +276,7 @@ public class PathfindingMultiGrid
     private void CreateNode(int x, int y, Grid<GridNode> grid, int index)
     {
         bool walkable = false;
+        bool hole = false;
         int tilecount = 0;
         TileDataObject tileDataObject = null;
 
@@ -292,6 +293,7 @@ public class PathfindingMultiGrid
                 {
                     tileDataObject = tileData[tilemap.GetTile(currentTile)];
                     tileDataObject.data.GetDataBool("walkable", out walkable);
+                    tileDataObject.data.GetDataBool("hole", out hole);
                 }
                 tilecount++;
             }
@@ -307,6 +309,7 @@ public class PathfindingMultiGrid
         grid[x, y].position = grid.GetNodePosition(x, y);
         grid[x, y].overridden = false;
         grid[x, y].walkable = walkable;
+        grid[x, y].ishole = hole;
         grid[x, y].Neighbors = new NodeNeighborhood<GridNode>(8);
         grid[x, y].roomIndex = index;
 

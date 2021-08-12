@@ -64,7 +64,7 @@ public class SlideyBoi : GridEntity
 
         while (!found)
         {
-            if (node == null || node.IsTraversable() == false)
+            if (node == null || node.IsTraversable(false) == false)
             {
                 found = true;
             }

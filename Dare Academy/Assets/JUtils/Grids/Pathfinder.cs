@@ -381,7 +381,7 @@ namespace JUtil.Grids
 
         public GridNodePosition position { get; set; }
 
-        public bool IsTraversable();
+        public bool IsTraversable(bool isAirborn = false);
     }
 
     // NODE NEIGHBOURHOOD CONTAINER *****************************************************************************************************************
