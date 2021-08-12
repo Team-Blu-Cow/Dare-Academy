@@ -116,6 +116,21 @@ public class WyrmHead : WyrmSection
                 back = section;
             }
         }
+
+        {
+            WyrmSection section = SectionBehind;
+            bool leg = true;
+            while (section)
+            {
+                if (leg)
+                {
+                    ((WyrmBody)section).isLegs = true;
+                }
+                leg = !leg;
+
+                section = section.SectionBehind;
+            }
+        }
     }
 
     public override void AnalyseStep()

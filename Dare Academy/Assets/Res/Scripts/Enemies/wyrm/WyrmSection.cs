@@ -13,6 +13,7 @@ public abstract class WyrmSection : GridEntity
     { get; set; }
 
     [SerializeField, HideInInspector] protected SpriteRenderer spriteRenderer;
+    [SerializeField, HideInInspector] protected Animator animator;
 
     public WyrmSection SectionInfront
     { get; set; }
@@ -29,6 +30,7 @@ public abstract class WyrmSection : GridEntity
     protected override void OnValidate()
     {
         base.OnValidate();
+        animator = GetComponent<Animator>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 

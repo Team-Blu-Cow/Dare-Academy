@@ -6,6 +6,8 @@ using interalFlags = GridEntityInternalFlags.Flags;
 
 public class WyrmBody : WyrmSection
 {
+    public bool isLegs = false;
+
     protected override void Start()
     {
         base.Start();
@@ -20,6 +22,11 @@ public class WyrmBody : WyrmSection
         base.OnValidate();
         Health = 5;
         Flags.SetFlags(flags.alwaysWinConflict, true);
+    }
+
+    protected void Update()
+    {
+        animator.SetBool("isLegs", isLegs);
     }
 
     public override void AnalyseStep()
@@ -84,6 +91,19 @@ public class WyrmBody : WyrmSection
                 dir = node.position.grid - currentNode.position.grid;
                 SetMovementDirection(dir);
             }
+        }
+    }
+
+    public override void DrawStep()
+    {
+        // base.DrawStep();
+
+        if (MovedThisStep && m_currentNode != null)
+        {
+            // #matthew what if the wyrm moves twice in different directions?
+            m_animationController.animator.SetBool("IsMoving", true);
+            LeanTween.move(gameObject, m_currentNode.position.world, m_stepController.stepTime)
+                    .setOnComplete(() => { m_animationController.animator.SetBool("IsMoving", false); });
         }
     }
 
