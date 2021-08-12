@@ -69,4 +69,9 @@ public class ButtonSelector : MonoBehaviour
             Debug.LogWarning("m_seleced is null");
         }
     }
+
+    public void AbilityToggle(bool input)
+    {
+        App.GetModule<LevelModule>().SetHoldForAbilityMode(input);
+    }
 }
