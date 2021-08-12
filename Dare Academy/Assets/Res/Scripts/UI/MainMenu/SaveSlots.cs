@@ -32,7 +32,8 @@ public class SaveSlots : MonoBehaviour
             string name;
             if (io.SaveSlots[i] == null)
             {
-                name = LevelModule.ResolveSceneNameString(blu.LevelID._default);
+                name = "StartingCutscene";
+                //LevelModule.ResolveSceneNameString(blu.LevelID._default)
             }
             else
             {
@@ -115,7 +116,7 @@ public class SaveSlots : MonoBehaviour
         {
             System.IO.File.Delete(io.SaveSlots[slotNumber].m_filepath);
             io.LoadSaveSlots();
-            GetComponentInParent<CanvasTool.ButtonWrapper>().buttons[slotNumber].sceneName = LevelModule.ResolveSceneNameString(blu.LevelID._default);
+            GetComponentInParent<CanvasTool.ButtonWrapper>().buttons[slotNumber].sceneName = "StartingCutscene";
             OnOpen();
         }
     }
