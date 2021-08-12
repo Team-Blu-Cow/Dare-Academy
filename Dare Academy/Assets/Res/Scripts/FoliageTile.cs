@@ -12,6 +12,10 @@ public class FoliageTile : Tile
         Vector2 min_UV = uvs[0];
         Vector2 max_UV = uvs[uvs.Length-1];
 
+        Material mat = tilemap.GetComponent<TilemapRenderer>().material;
+
+
+
         if (Application.isPlaying)
         {
             
