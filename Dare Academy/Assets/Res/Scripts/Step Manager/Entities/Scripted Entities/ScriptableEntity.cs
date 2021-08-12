@@ -257,6 +257,12 @@ public class ScriptableEntity : GridEntity
                 stepQueue = true;
                 return;
 
+            case ScriptedActionQueue.ActionType.AddQuest:
+                AddQuest(currentAction);
+                runAgain = true;
+                stepQueue = true;
+                break;
+
             default:
                 Debug.LogWarning($"[ScriptedEntity] [{gameObject.name}] could not resolve action [type = {currentAction.type.ToString()}]");
                 runAgain = true;
@@ -458,5 +464,13 @@ public class ScriptableEntity : GridEntity
         }
 
         return true;
+    }
+
+    protected void AddQuest(ScriptedActionQueue.ActionWrapper data)
+    {
+        if (data.unityObject && data.unityObject is Quest)
+        {
+            blu.App.GetModule<blu.QuestModule>().AddQuest(data.unityObject as Quest);
+        }
     }
 }

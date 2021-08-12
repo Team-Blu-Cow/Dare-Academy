@@ -123,6 +123,7 @@ public class ScriptableEntityEditor : Editor
                 queue.m_actionList[i].gameObject = null;
                 queue.m_actionList[i].boolData = false;
                 queue.m_actionList[i].vec3data = Vector3.zero;
+                queue.m_actionList[i].unityObject = null;
             }
 
             switch (queue.m_actionList[i].type)
@@ -173,6 +174,10 @@ public class ScriptableEntityEditor : Editor
 
                 case ScriptedActionQueue.ActionType.KillIfEventFlagNotSet:
                     KillIfEventFlagSet(ref queue.m_actionList[i].int32Data, ref queue.m_actionList[i].boolData);
+                    break;
+
+                case ScriptedActionQueue.ActionType.AddQuest:
+                    AddQuest(ref queue.m_actionList[i].unityObject);
                     break;
 
                 default:
@@ -251,9 +256,14 @@ public class ScriptableEntityEditor : Editor
         return (double)d;
     }
 
-    private GameObject ObjectField(GameObject obj)
+    private GameObject GameObjectField(GameObject obj)
     {
         return EditorGUILayout.ObjectField(obj, typeof(GameObject), true) as GameObject;
+    }
+
+    private UnityEngine.Object UnityObjectField(UnityEngine.Object obj, System.Type type)
+    {
+        return UnityEditor.EditorGUILayout.ObjectField(obj, type, true);
     }
 
     private ScriptedActionQueue.MoveData MoveDataField(ScriptedActionQueue.MoveData data)
@@ -322,6 +332,11 @@ public class ScriptableEntityEditor : Editor
             b = false;
     }
 
+    private void AddQuest(ref UnityEngine.Object obj)
+    {
+        obj = UnityObjectField(obj, typeof(Quest));
+    }
+
     private void SetCameraPositionField(ref bool b, ref Vector3 vec3, ref GameObject obj)
     {
         _cameraOptionsEnum e;
@@ -339,7 +354,7 @@ public class ScriptableEntityEditor : Editor
 
         if (b)
         {
-            obj = ObjectField(obj);
+            obj = GameObjectField(obj);
             vec3 = Vector3.zero;
         }
         else
