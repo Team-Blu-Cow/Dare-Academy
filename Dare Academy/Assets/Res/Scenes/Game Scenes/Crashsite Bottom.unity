@@ -2343,6 +2343,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 95309deeb1ce2364cbecb4beed778479, type: 3}
+--- !u!114 &148250033 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 1603619528484664145, guid: 95309deeb1ce2364cbecb4beed778479, type: 3}
+  m_PrefabInstance: {fileID: 148250032}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a1a79308c5486c4da6b19132f6482ee, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &188868478
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -37830,8 +37841,16 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7558758715919986829, guid: f39de10426350474cbed29d3cb06eedc, type: 3}
+      propertyPath: m_playerUI
+      value: 
+      objectReference: {fileID: 1869139614}
+    - target: {fileID: 7558758715919986829, guid: f39de10426350474cbed29d3cb06eedc, type: 3}
+      propertyPath: m_shipParts
+      value: 
+      objectReference: {fileID: 148250033}
+    - target: {fileID: 7558758715919986829, guid: f39de10426350474cbed29d3cb06eedc, type: 3}
       propertyPath: m_flagToFlip
-      value: 262144
+      value: 524288
       objectReference: {fileID: 0}
     - target: {fileID: 7558758715919986830, guid: f39de10426350474cbed29d3cb06eedc, type: 3}
       propertyPath: m_Name
@@ -37947,6 +37966,22 @@ PrefabInstance:
     - target: {fileID: 7558758715919986827, guid: f39de10426350474cbed29d3cb06eedc, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7558758715919986829, guid: f39de10426350474cbed29d3cb06eedc, type: 3}
+      propertyPath: m_type
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7558758715919986829, guid: f39de10426350474cbed29d3cb06eedc, type: 3}
+      propertyPath: m_playerUI
+      value: 
+      objectReference: {fileID: 1869139614}
+    - target: {fileID: 7558758715919986829, guid: f39de10426350474cbed29d3cb06eedc, type: 3}
+      propertyPath: m_shipParts
+      value: 
+      objectReference: {fileID: 148250033}
+    - target: {fileID: 7558758715919986829, guid: f39de10426350474cbed29d3cb06eedc, type: 3}
+      propertyPath: m_flagToFlip
+      value: 262144
       objectReference: {fileID: 0}
     - target: {fileID: 7558758715919986830, guid: f39de10426350474cbed29d3cb06eedc, type: 3}
       propertyPath: m_Name
@@ -48826,6 +48861,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 32a337d02d8225644bb655ddf8278489, type: 3}
+--- !u!114 &1869139614 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 449536245014271651, guid: 32a337d02d8225644bb655ddf8278489, type: 3}
+  m_PrefabInstance: {fileID: 1869139613}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2142553884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bdd388bd9ef6d01439409cb2d846d2a5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &1947030493
 PrefabInstance:
   m_ObjectHideFlags: 0

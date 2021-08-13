@@ -55,7 +55,7 @@ public class ArcherEntity : GridEntity
     protected override void OnValidate()
     {
         base.OnValidate();
-        m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet"); // Find bullet prefab
+        m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/enemyBullet"); // Find bullet prefab
     }
 
     public override void AnalyseStep()

@@ -28,7 +28,7 @@ public class EightDirectionalEntity : GridEntity
         m_flags.SetFlags(GridEntityFlags.Flags.isSolid, true); // Set flag for if solid to true
 
         player = PlayerEntity.Instance; // Find the player
-        m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/Bullet"); // Find the bullet prefab
+        m_bulletPrefab = Resources.Load<GameObject>("prefabs/Entities/enemyBullet"); // Find the bullet prefab
         base.Start(); // Run base start
         m_animationController.SetAnimationSpeed(0.5f);
     }
