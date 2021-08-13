@@ -33,5 +33,7 @@ namespace blu
 
         public List<StrippedQuest> activeQuests = new List<StrippedQuest>();
         public List<StrippedQuest> completedQuests = new List<StrippedQuest>();
+
+        public MirInteract.State mirState = MirInteract.State.NotInteracted;
     }
 }

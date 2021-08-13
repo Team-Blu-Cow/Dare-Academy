@@ -61,7 +61,6 @@ public class PlayerPickup : Interface
 
                     m_player.ShipParts++;
                     App.GetModule<LevelModule>().ActiveSaveData.partsCollected++;
-                    m_shipParts.UpdateUI();
 
                     break;
 
@@ -83,7 +82,6 @@ public class PlayerPickup : Interface
     public override void Start()
     {
         base.Start();
-        m_shipParts.UpdateUI();
 
         if (App.GetModule<LevelModule>().EventFlags.IsFlagsSet(m_flagToFlip))
             Destroy(gameObject);
