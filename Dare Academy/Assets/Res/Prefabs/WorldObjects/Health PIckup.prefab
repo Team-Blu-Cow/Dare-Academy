@@ -4914,6 +4914,7 @@ GameObject:
   - component: {fileID: 2989854093864605557}
   - component: {fileID: 2989854093864605555}
   - component: {fileID: 2989854093864605556}
+  - component: {fileID: 485250860}
   m_Layer: 0
   m_Name: Health PIckup
   m_TagString: Untagged
@@ -4928,7 +4929,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2989854093864605552}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 20.5, y: -21.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -4952,7 +4953,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 79daafe6d2f867a4abffdba61c1ac392, type: 3}
   - {fileID: 21300000, guid: cb240d46d23e4ed469ba70ba3674eed3, type: 3}
   m_type: 0
-  m_flagToFlip: 1024
+  m_flagToFlip: 16384
   m_playerUI: {fileID: 0}
   m_shipParts: {fileID: 0}
 --- !u!61 &2989854093864605556
@@ -4981,3 +4982,26 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.8, y: 2.8}
   m_EdgeRadius: 0
+--- !u!114 &485250860
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2989854093864605552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/SFX/UI/sfx_heart_pickup
+  PlayEvent: 2
+  StopEvent: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 0
+  OverrideMaxDistance: 0

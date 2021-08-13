@@ -176,6 +176,12 @@ namespace blu
             NewAudioEvent("event:/SFX/Player/sfx_footstep", 15);
             NewAudioEvent("event:/SFX/Player/sfx_shoot", 15);
             NewAudioEvent("event:/SFX/Systems/dialogue/sfx_dialogue_blip", 15);
+            NewAudioEvent("event:/SFX/UI/sfx_energy_pickup", 15);
+            NewAudioEvent("event:/SFX/UI/sfx_heart_pickup", 15);
+            NewAudioEvent("event:/SFX/UI/sfx_save_game", 15);
+            NewAudioEvent("event:/SFX/UI/Vitalsfx_ability_left", 15);
+            NewAudioEvent("event:/SFX/UI/Vitalsfx_ability_right", 15);
+            NewAudioEvent("event:/SFX/sfx_kitty", 15);
             // put any new mono event in here
         }
     }

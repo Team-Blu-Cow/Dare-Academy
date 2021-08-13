@@ -534,6 +534,9 @@ public class PlayerEntity : GridEntity
 
         animationController.SetAbilityState(GetAbilityStateInt());
 
+        audioModule.PlayAudioEvent("event:/SFX/UI/Vitalsfx_ability_right");
+        
+
         //SetAbilityAnimationFlag();
     }
 
@@ -543,6 +546,8 @@ public class PlayerEntity : GridEntity
         m_abilities.SetActiveAbility(m_abilities.LeftAbility());
 
         animationController.SetAbilityState(GetAbilityStateInt());
+
+        audioModule.PlayAudioEvent("event:/SFX/UI/Vitalsfx_ability_left");
         //SetAbilityAnimationFlag();
     }
 

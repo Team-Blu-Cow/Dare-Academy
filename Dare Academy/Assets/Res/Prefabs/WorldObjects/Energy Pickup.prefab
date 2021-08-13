@@ -110,6 +110,7 @@ GameObject:
   - component: {fileID: 5743623725719532223}
   - component: {fileID: 5743623725719532217}
   - component: {fileID: 5743623725719532222}
+  - component: {fileID: 380160172}
   m_Layer: 0
   m_Name: Energy Pickup
   m_TagString: Untagged
@@ -148,7 +149,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 79daafe6d2f867a4abffdba61c1ac392, type: 3}
   - {fileID: 21300000, guid: cb240d46d23e4ed469ba70ba3674eed3, type: 3}
   m_type: 1
-  m_flagToFlip: 2048
+  m_flagToFlip: 8192
   m_playerUI: {fileID: 0}
   m_shipParts: {fileID: 0}
 --- !u!61 &5743623725719532222
@@ -177,6 +178,29 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 2.8, y: 2.8}
   m_EdgeRadius: 0
+--- !u!114 &380160172
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5743623725719532218}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a6610d2e704f1648819acc8d7460285, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CollisionTag: 
+  Event: event:/SFX/UI/sfx_energy_pickup
+  PlayEvent: 2
+  StopEvent: 0
+  AllowFadeout: 1
+  TriggerOnce: 0
+  Preload: 0
+  Params: []
+  OverrideAttenuation: 0
+  OverrideMinDistance: 0
+  OverrideMaxDistance: 0
 --- !u!1 &8008423264645608671
 GameObject:
   m_ObjectHideFlags: 0
