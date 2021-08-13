@@ -62,7 +62,7 @@ public class PlayerEntity : GridEntity
 
     public int m_dashEnergyCost = 3;
     public int m_shootEnergyCost = 3;
-    public int m_blockEnergyCost = 3;
+    public int m_blockEnergyCost = 1;
 
     // INPUT
 
