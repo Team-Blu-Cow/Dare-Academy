@@ -329,6 +329,20 @@ public class WyrmHead : WyrmSection
                 {
                     if (currentRoom[new_x, new_y].GetGridEntities().Count == 0)
                     {
+                        bool anyValidNeighbours = false;
+                        foreach (var neighbor in currentRoom[new_x, new_y].Neighbors)
+                        {
+                            if (neighbor != null && neighbor.connected && neighbor.reference.IsTraversable())
+                            {
+                                anyValidNeighbours = true;
+                                break;
+                            }
+                        }
+                        if (anyValidNeighbours == false)
+                        {
+                            continue;
+                        }
+
                         return currentRoom[new_x, new_y];
                     }
                 }
