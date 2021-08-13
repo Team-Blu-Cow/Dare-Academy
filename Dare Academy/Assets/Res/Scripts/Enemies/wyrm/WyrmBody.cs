@@ -61,6 +61,7 @@ public class WyrmBody : WyrmSection
             {
                 spriteRenderer.enabled = false;
             }
+            return;
         }
         else
         {
@@ -138,13 +139,11 @@ public class WyrmBody : WyrmSection
     public override void EndStep()
     {
         base.EndStep();
-
-        ResurfacedThisStep = false;
     }
 
     protected override void Resurface()
     {
-        m_currentNode = SectionInfront.currentNode;
+        m_currentNode = SectionInfront.ResurfaceFrom;
         base.Resurface();
     }
 }

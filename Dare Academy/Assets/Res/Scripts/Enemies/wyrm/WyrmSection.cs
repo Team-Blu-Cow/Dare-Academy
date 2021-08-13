@@ -28,6 +28,9 @@ public abstract class WyrmSection : GridEntity
     public GridNode BurrowFrom
     { get; protected set; }
 
+    public GridNode ResurfaceFrom
+    { get; protected set; }
+
     protected override void OnValidate()
     {
         base.OnValidate();
@@ -58,16 +61,24 @@ public abstract class WyrmSection : GridEntity
         base.AnalyseStep();
     }
 
+    public override void PostMoveStep()
+    {
+        base.PostMoveStep();
+        ResurfacedThisStep = false;
+    }
+
     protected virtual void Burrow()
     {
         RemoveFromCurrentNode();
         BurrowFrom = m_currentNode;
         m_currentNode = null;
+        spriteRenderer.enabled = false;
     }
 
     protected virtual void Resurface()
     {
         AddToCurrentNode();
+        ResurfaceFrom = currentNode;
         spriteRenderer.enabled = true;
         BurrowFrom = null;
         transform.position = m_currentNode.position.world;

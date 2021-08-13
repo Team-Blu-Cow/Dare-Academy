@@ -241,8 +241,6 @@ public class WyrmHead : WyrmSection
     public override void EndStep()
     {
         base.EndStep();
-
-        ResurfacedThisStep = false;
     }
 
     public override void DamageStep()
@@ -627,7 +625,7 @@ public class WyrmHead : WyrmSection
     {
         if (m_chargeStartNode == null)
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 30; i++)
             {
                 if (GenerateChargePath())
                 {
@@ -639,6 +637,8 @@ public class WyrmHead : WyrmSection
                     return;
                 }
             }
+
+            state = WyrmState.UnderGround;
 
             return;
         }

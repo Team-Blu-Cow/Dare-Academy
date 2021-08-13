@@ -61,7 +61,7 @@ public abstract class GridEntity : MonoBehaviour
                 (m_health <= 0 && m_flags.IsFlagsSet(flags.isKillable))
                 || m_currentNode == null && !m_flags.IsFlagsSet(flags.allowedOffGrid)
                 || m_internalFlags.IsFlagsSet(interalFlags.isDead)
-                || (m_currentNode!= null && !m_currentNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
+                || (m_currentNode != null && !m_currentNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
                 ; // fuck you Adam, its staying in :] - Love Matthew & Jay
         }
     }
@@ -192,7 +192,7 @@ public abstract class GridEntity : MonoBehaviour
         if (m_currentNode == null && !m_flags.IsFlagsSet(flags.allowedOffGrid))
             Kill();
 
-        if(m_currentNode != null && !m_currentNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
+        if (m_currentNode != null && !m_currentNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
         {
             Kill();
         }
@@ -394,7 +394,7 @@ public abstract class GridEntity : MonoBehaviour
         // check for any new conflicts
     }
 
-    public void PostMoveStep()
+    public virtual void PostMoveStep()
     {
         if (currentNode != previousNode)
             MovedThisStep = true;
@@ -416,7 +416,7 @@ public abstract class GridEntity : MonoBehaviour
             Kill();
         }
 
-        if(m_currentNode != null && !m_currentNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
+        if (m_currentNode != null && !m_currentNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
         {
             m_stepsTaken = int.MaxValue;
             m_movementDirection = Vector2Int.zero;
@@ -856,7 +856,7 @@ public abstract class GridEntity : MonoBehaviour
             return false;
         }
 
-        if(!node.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
+        if (!node.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
         {
             RemoveFromCurrentNode();
             m_currentNode = null;
