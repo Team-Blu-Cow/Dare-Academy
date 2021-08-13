@@ -44,6 +44,7 @@ public abstract class WyrmSection : GridEntity
     protected override void Start()
     {
         base.Start();
+        m_uiHealth = FindObjectOfType<WyrmUIHealth>();
     }
 
     public override void OnHit(int damage, float offsetTime = 0)
