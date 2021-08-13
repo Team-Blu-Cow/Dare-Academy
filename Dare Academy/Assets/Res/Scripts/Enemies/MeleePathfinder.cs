@@ -110,9 +110,15 @@ public class MeleePathfinder : GridEntity
 
     private void MoveState()
     {
-        m_path = App.GetModule<LevelModule>().MetaGrid.GetPath(m_currentNode, m_player.currentNode);
+        m_path = App.GetModule<LevelModule>().MetaGrid.GetPath(m_currentNode, m_player.currentNode, m_flags.IsFlagsSet(GridEntityFlags.Flags.isAirBorn));
 
         Vector3 dir = Vector3.zero;
+
+        if(m_path == null)
+        {
+            SetMovementDirection(Vector2Int.zero, 0);
+            return;
+        }
 
         if (m_path.Length > 1)
             dir = m_path[0] - m_currentNode.position.world;

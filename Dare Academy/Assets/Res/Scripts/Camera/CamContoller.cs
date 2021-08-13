@@ -129,14 +129,15 @@ namespace blu
                 float xFollow = 0;
                 float yFollow = 0;
 
-                if (_Cam.OrthographicBounds().extents.y * 2 > levelModule.CurrentRoom.Height)
+                //if (_Cam.OrthographicBounds().extents.y * 2 > levelModule.CurrentRoom.Height)
+                if (_tolerance == 0 && _Cam.OrthographicBounds().extents.y * 2 > levelModule.CurrentRoom.Height)
                     yFollow = levelModule.CurrentRoom.OriginPosition.y + levelModule.CurrentRoom.Height / 2;
                 else
                     yFollow = Mathf.Clamp(_player.transform.position.y,
                     levelModule.CurrentRoom.OriginPosition.y + (_Cam.OrthographicBounds().extents.y - _tolerance),
                     levelModule.CurrentRoom.OriginPosition.y + levelModule.CurrentRoom.Height - (_Cam.OrthographicBounds().extents.y) + _tolerance);
 
-                if (_Cam.OrthographicBounds().extents.x * 2 > levelModule.CurrentRoom.Width)
+                if (_tolerance == 0 && _Cam.OrthographicBounds().extents.x * 2 > levelModule.CurrentRoom.Width)
                     xFollow = levelModule.CurrentRoom.OriginPosition.x + levelModule.CurrentRoom.Width / 2;
                 else
                     xFollow = Mathf.Clamp(_player.transform.position.x,
