@@ -141,7 +141,7 @@ public class ArcherEntity : GridEntity
         }
 
         path = new Vector3[0];
-        path = App.GetModule<LevelModule>().MetaGrid.GetPathWithAvoidance(Position.world, targetPosition.world, player.Position.world, fearRange);
+        path = App.GetModule<LevelModule>().MetaGrid.GetPathWithAvoidance(Position.world, targetPosition.world, player.Position.world, fearRange, m_flags.IsFlagsSet(GridEntityFlags.Flags.isAirBorn));
 
         Vector3 direction;
 

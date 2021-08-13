@@ -142,7 +142,7 @@ TextureImporter:
     second: Cliff_0_NE
   - first:
       213: 5020972695870156569
-    second: TILESET_test (1)_49
+    second: Cliff_0_Corner_SW
   - first:
       213: 3990117140881770809
     second: Cliff_1_NW
@@ -181,7 +181,7 @@ TextureImporter:
     second: Path_ALT_3
   - first:
       213: 2103106885242672239
-    second: TILESET_test (1)_62
+    second: Cliff_0_Corner_SE
   - first:
       213: 7601944259634100975
     second: Cliff_0_W
@@ -298,16 +298,16 @@ TextureImporter:
     second: Cliff_Wall_2
   - first:
       213: 433772271580325830
-    second: TILESET_test (1)_108
+    second: Cliff_0_C_1
   - first:
       213: -6530351773221564305
     second: Cliff_1_C_1
   - first:
       213: 4627185094638732395
-    second: TILESET_test (1)_25
+    second: Cliff_0_Corner_NW
   - first:
       213: 5194075914446966778
-    second: TILESET_test (1)_38
+    second: Cliff_0_Corner_NE
   - first:
       213: -3205989079189219152
     second: Cliff_0_C
@@ -343,7 +343,7 @@ TextureImporter:
     second: Grass_3_4
   - first:
       213: -6230991034139057496
-    second: TILESET_test (1)_113
+    second: Cliff_Wall_0_W_Platform
   - first:
       213: -5073943726729268081
     second: Path_2_Corner_transparent
@@ -538,7 +538,7 @@ TextureImporter:
     second: Cliff_Wall_1_E_ALT_1
   - first:
       213: -5023963113343096000
-    second: TILESET_test (1)_196
+    second: Path_4_ALT_2
   - first:
       213: -8897521682667779637
     second: TILESET_test (1)_201
@@ -554,6 +554,69 @@ TextureImporter:
   - first:
       213: 6448940884278746514
     second: TILESET_test (1)_206
+  - first:
+      213: 894701071088452428
+    second: Cliff_Wall_0_C_Platform
+  - first:
+      213: 7928118275351145316
+    second: Cliff_Wall_0_E_Platform
+  - first:
+      213: 4629651660727826188
+    second: Cliff_0_SW_ALT
+  - first:
+      213: 7852362558169654989
+    second: Cliff_0_SE_ALT
+  - first:
+      213: -8820998347529853151
+    second: Cliff_Wall_0_W_ALT
+  - first:
+      213: -3814366157018918881
+    second: Cliff_Wall_0_E_ALT
+  - first:
+      213: -5961330042555498549
+    second: Cliff_Wall_0_W_ALT_1
+  - first:
+      213: -8886512744414966140
+    second: Cliff_Wall_0_E_ALT_1
+  - first:
+      213: -8227923331912488761
+    second: Path_4_NW
+  - first:
+      213: 2309991114071023670
+    second: Path_4_N
+  - first:
+      213: -7866612158640005715
+    second: Path_4_NE
+  - first:
+      213: -2429777784641670220
+    second: Path_4_W
+  - first:
+      213: -7186295571139785356
+    second: Path_4_C
+  - first:
+      213: -705356121193935760
+    second: Path_4_E
+  - first:
+      213: -1409072211366472517
+    second: Path_4_SW
+  - first:
+      213: 2582478225411661824
+    second: Path_4_
+  - first:
+      213: 1172052551921781510
+    second: Path_4_S
+  - first:
+      213: -396842850665544393
+    second: Path_4_ALT_1
+  - first:
+      213: 8095919897549263320
+    second: Path_4_ALT_3
+  - first:
+      213: -5598311527749930495
+    second: Path_4_CORNER
+  - first:
+      213: 1107136396343622104
+    second: Path_4_CORNER_TRANSPARENT
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -4169,7 +4232,7 @@ TextureImporter:
       rect:
         serializedVersion: 2
         x: 600
-        y: 2400
+        y: 2404
         width: 200
         height: 200
       alignment: 0
@@ -4270,132 +4333,6 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: TILESET_test (1)_196
-      rect:
-        serializedVersion: 2
-        x: 3400
-        y: 1400
-        width: 200
-        height: 200
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 04be480aa2c474ab0800000000000000
-      internalID: -5023963113343096000
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: TILESET_test (1)_201
-      rect:
-        serializedVersion: 2
-        x: 3400
-        y: 800
-        width: 200
-        height: 200
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: bc94043bb27a58480800000000000000
-      internalID: -8897521682667779637
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: TILESET_test (1)_202
-      rect:
-        serializedVersion: 2
-        x: 800
-        y: 600
-        width: 200
-        height: 200
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: bb7fe3549df46da00800000000000000
-      internalID: 780899379983611835
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: TILESET_test (1)_204
-      rect:
-        serializedVersion: 2
-        x: 800
-        y: 400
-        width: 200
-        height: 200
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: f14fe204576c2bdf0800000000000000
-      internalID: -165852029368994785
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: TILESET_test (1)_205
-      rect:
-        serializedVersion: 2
-        x: 800
-        y: 200
-        width: 200
-        height: 200
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: e1773d429dc6c2420800000000000000
-      internalID: 2606577964222215966
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: TILESET_test (1)_206
-      rect:
-        serializedVersion: 2
-        x: 800
-        y: 0
-        width: 200
-        height: 200
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 29d9de8f09d3f7950800000000000000
-      internalID: 6448940884278746514
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: Cliff_1_C_1
       rect:
         serializedVersion: 2
@@ -4412,6 +4349,594 @@ TextureImporter:
       bones: []
       spriteID: f6059ca59a78f55a0800000000000000
       internalID: -6530351773221564305
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cliff_0_Corner_NW
+      rect:
+        serializedVersion: 2
+        x: 2000
+        y: 1200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: b648ce3e350173040800000000000000
+      internalID: 4627185094638732395
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cliff_0_Corner_NE
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 1200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: aff06095680151840800000000000000
+      internalID: 5194075914446966778
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cliff_0_Corner_SW
+      rect:
+        serializedVersion: 2
+        x: 2400
+        y: 1200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 91fa64c80141ea540800000000000000
+      internalID: 5020972695870156569
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cliff_0_Corner_SE
+      rect:
+        serializedVersion: 2
+        x: 2600
+        y: 1200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f645193c19cbf2d10800000000000000
+      internalID: 2103106885242672239
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cliff_0_C_1
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 800
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 6c7a5f03591150600800000000000000
+      internalID: 433772271580325830
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cliff_Wall_0_W_Platform
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 600
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8a26f7beaa21789a0800000000000000
+      internalID: -6230991034139057496
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cliff_Wall_0_C_Platform
+      rect:
+        serializedVersion: 2
+        x: 2400
+        y: 600
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c43836242ed9a6c00800000000000000
+      internalID: 894701071088452428
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cliff_Wall_0_E_Platform
+      rect:
+        serializedVersion: 2
+        x: 2600
+        y: 600
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 46b66930195560e60800000000000000
+      internalID: 7928118275351145316
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cliff_0_SW_ALT
+      rect:
+        serializedVersion: 2
+        x: 2400
+        y: 1000
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: c07ba7f08a3df3040800000000000000
+      internalID: 4629651660727826188
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cliff_0_SE_ALT
+      rect:
+        serializedVersion: 2
+        x: 2600
+        y: 1000
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dc6a74f942239fc60800000000000000
+      internalID: 7852362558169654989
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cliff_Wall_0_W_ALT
+      rect:
+        serializedVersion: 2
+        x: 2400
+        y: 800
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 127ec231db4859580800000000000000
+      internalID: -8820998347529853151
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cliff_Wall_0_E_ALT
+      rect:
+        serializedVersion: 2
+        x: 2600
+        y: 800
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: f109d978036a01bc0800000000000000
+      internalID: -3814366157018918881
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cliff_Wall_0_W_ALT_1
+      rect:
+        serializedVersion: 2
+        x: 2000
+        y: 1000
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bcf7d9829e9154da0800000000000000
+      internalID: -5961330042555498549
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Cliff_Wall_0_E_ALT_1
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 1000
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 48e0a21edb3cca480800000000000000
+      internalID: -8886512744414966140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_NW
+      rect:
+        serializedVersion: 2
+        x: 1800
+        y: 2600
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7c82532b25b80dd80800000000000000
+      internalID: -8227923331912488761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_N
+      rect:
+        serializedVersion: 2
+        x: 2000
+        y: 2600
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 630238cedacbe0020800000000000000
+      internalID: 2309991114071023670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_NE
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 2600
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dad5e7abbed24d290800000000000000
+      internalID: -7866612158640005715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_W
+      rect:
+        serializedVersion: 2
+        x: 1800
+        y: 2400
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b33c477af1b74ed0800000000000000
+      internalID: -2429777784641670220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_C
+      rect:
+        serializedVersion: 2
+        x: 2000
+        y: 2400
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 47d004fa046254c90800000000000000
+      internalID: -7186295571139785356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_E
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 2400
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 07c861c48521636f0800000000000000
+      internalID: -705356121193935760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_SW
+      rect:
+        serializedVersion: 2
+        x: 1800
+        y: 2200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb490a21a48f17ce0800000000000000
+      internalID: -1409072211366472517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_
+      rect:
+        serializedVersion: 2
+        x: 2000
+        y: 2200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 000e7d1734ec6d320800000000000000
+      internalID: 2582478225411661824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_S
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 2200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 60b436f0697f34010800000000000000
+      internalID: 1172052551921781510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_ALT_1
+      rect:
+        serializedVersion: 2
+        x: 2000
+        y: 3000
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7354d66a7812e7af0800000000000000
+      internalID: -396842850665544393
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_ALT_2
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 3000
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 04be480aa2c474ab0800000000000000
+      internalID: -5023963113343096000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_ALT_3
+      rect:
+        serializedVersion: 2
+        x: 2000
+        y: 2800
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8d1d077b04c7a5070800000000000000
+      internalID: 8095919897549263320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_CORNER
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 2800
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 102bd7e935dce42b0800000000000000
+      internalID: -5598311527749930495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_CORNER_TRANSPARENT
+      rect:
+        serializedVersion: 2
+        x: 1800
+        y: 2800
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8d9b7f5cfa65d5f00800000000000000
+      internalID: 1107136396343622104
       vertices: []
       indices: 
       edges: []

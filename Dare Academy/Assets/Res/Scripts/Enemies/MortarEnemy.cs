@@ -66,7 +66,8 @@ public class MortarEnemy : GridEntity
             for (int i = 0; i < 8; i += 2)
             {
                 GridNode node = m_player.currentNode.Neighbors[i].reference;
-                if(node != null && node.roomIndex == m_stepController.m_currentRoomIndex)
+                if((node != null && node.IsTraversable(false))
+                    && node.roomIndex == m_stepController.m_currentRoomIndex)
                     nodes.Add(m_player.currentNode.Neighbors[i].reference);
             }
 

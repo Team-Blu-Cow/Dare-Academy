@@ -61,6 +61,7 @@ public abstract class GridEntity : MonoBehaviour
                 (m_health <= 0 && m_flags.IsFlagsSet(flags.isKillable))
                 || m_currentNode == null && !m_flags.IsFlagsSet(flags.allowedOffGrid)
                 || m_internalFlags.IsFlagsSet(interalFlags.isDead)
+                || (m_currentNode!= null && !m_currentNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
                 ; // fuck you Adam, its staying in :] - Love Matthew & Jay
         }
     }
@@ -190,6 +191,11 @@ public abstract class GridEntity : MonoBehaviour
         // if not on node kill entity, this will prevent next steps from being run
         if (m_currentNode == null && !m_flags.IsFlagsSet(flags.allowedOffGrid))
             Kill();
+
+        if(m_currentNode != null && !m_currentNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
+        {
+            Kill();
+        }
     }
 
     virtual public void MoveStep()
@@ -216,7 +222,7 @@ public abstract class GridEntity : MonoBehaviour
 
         // set currentNode to targetNode
         // keep a record of where we came from
-        if (m_targetNode != null)
+        if (m_targetNode != null && m_targetNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
         {
             // remove ourself from currentNode
             // previous and target node is overkill to account for sloppy programing
@@ -407,6 +413,13 @@ public abstract class GridEntity : MonoBehaviour
 
         if (m_flags.IsFlagsSet(flags.killOnRoomSwitch) && FailedSwitchingRooms)
         {
+            Kill();
+        }
+
+        if(m_currentNode != null && !m_currentNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
+        {
+            m_stepsTaken = int.MaxValue;
+            m_movementDirection = Vector2Int.zero;
             Kill();
         }
 
@@ -841,6 +854,13 @@ public abstract class GridEntity : MonoBehaviour
                 return true;
             }
             return false;
+        }
+
+        if(!node.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
+        {
+            RemoveFromCurrentNode();
+            m_currentNode = null;
+            return true;
         }
 
         bool return_value = true;

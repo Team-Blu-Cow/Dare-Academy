@@ -18,6 +18,8 @@ MonoBehaviour:
     boolData:
     - name: walkable
       data: 1
+    - name: hole
+      data: 0
     intData: []
     floatData: []
   neighbours:

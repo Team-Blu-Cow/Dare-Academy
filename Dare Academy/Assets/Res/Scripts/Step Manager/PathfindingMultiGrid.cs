@@ -276,6 +276,7 @@ public class PathfindingMultiGrid
     private void CreateNode(int x, int y, Grid<GridNode> grid, int index)
     {
         bool walkable = false;
+        bool hole = false;
         int tilecount = 0;
         TileDataObject tileDataObject = null;
 
@@ -292,6 +293,7 @@ public class PathfindingMultiGrid
                 {
                     tileDataObject = tileData[tilemap.GetTile(currentTile)];
                     tileDataObject.data.GetDataBool("walkable", out walkable);
+                    tileDataObject.data.GetDataBool("hole", out hole);
                 }
                 tilecount++;
             }
@@ -307,6 +309,7 @@ public class PathfindingMultiGrid
         grid[x, y].position = grid.GetNodePosition(x, y);
         grid[x, y].overridden = false;
         grid[x, y].walkable = walkable;
+        grid[x, y].ishole = hole;
         grid[x, y].Neighbors = new NodeNeighborhood<GridNode>(8);
         grid[x, y].roomIndex = index;
 
@@ -470,12 +473,12 @@ public class PathfindingMultiGrid
 
     //public Vector3[] GetPath(Vector2Int start, Vector2Int end) => GetPath(grids[0].ToWorld(start.x, start.y), grids[0].ToWorld(end.x, end.y));
 
-    public Vector3[] GetPath(GridNode start, GridNode end)
+    public Vector3[] GetPath(GridNode start, GridNode end, bool isAirborn = false)
     {
-        return pathfinder.FindPath(start, end, false, debugSettings.showPathfindTime);
+        return pathfinder.FindPath(start, end, isAirborn, false, debugSettings.showPathfindTime);
     }
 
-    public Vector3[] GetPath(Vector3 start, Vector3 end)
+    public Vector3[] GetPath(Vector3 start, Vector3 end, bool isAirborn = false)
     {
         GridNode startNode = GetNodeFromWorld(start);
         GridNode endNode = GetNodeFromWorld(end);
@@ -487,10 +490,10 @@ public class PathfindingMultiGrid
             return null;
         }
 
-        return pathfinder.FindPath(startNode, endNode, false, debugSettings.showPathfindTime);
+        return pathfinder.FindPath(startNode, endNode, isAirborn, false, debugSettings.showPathfindTime);
     }
 
-    public Vector3[] GetPathWithAvoidance(Vector3 start, Vector3 end, Vector3 fearPos, int fearRange)
+    public Vector3[] GetPathWithAvoidance(Vector3 start, Vector3 end, Vector3 fearPos, int fearRange, bool isAirborn = false)
     {
         GridNode startNode = GetNodeFromWorld(start);
         GridNode endNode = GetNodeFromWorld(end);
@@ -503,10 +506,10 @@ public class PathfindingMultiGrid
             return null;
         }
 
-        return pathfinder.FindPathWithAvoidance(startNode, endNode, fearNode, fearRange, false, debugSettings.showPathfindTime);
+        return pathfinder.FindPathWithAvoidance(startNode, endNode, fearNode, fearRange, isAirborn, false, debugSettings.showPathfindTime);
     }
 
-    public Vector3[] GetPathWithAvoidance(Vector3 start, Vector3 end, Vector3[] fearPos, int fearRange)
+    public Vector3[] GetPathWithAvoidance(Vector3 start, Vector3 end, Vector3[] fearPos, int fearRange, bool isAirborn = false)
     {
         GridNode startNode = GetNodeFromWorld(start);
         GridNode endNode = GetNodeFromWorld(end);
@@ -524,7 +527,7 @@ public class PathfindingMultiGrid
             return null;
         }
 
-        return pathfinder.FindPathWithAvoidance(startNode, endNode, fearNodes, fearRange, false, debugSettings.showPathfindTime);
+        return pathfinder.FindPathWithAvoidance(startNode, endNode, fearNodes, fearRange, isAirborn, false, debugSettings.showPathfindTime);
     }
 
     // MISC METHODS *******************************************************************************

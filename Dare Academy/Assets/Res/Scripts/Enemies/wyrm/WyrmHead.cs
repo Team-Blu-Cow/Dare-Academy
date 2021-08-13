@@ -325,7 +325,7 @@ public class WyrmHead : WyrmSection
             int new_y = rnd.Next(0, currentRoom.Height);
             if (currentRoom[new_x, new_y] != null)
             {
-                if (currentRoom[new_x, new_y].IsTraversable())
+                if (currentRoom[new_x, new_y].IsTraversable(false))
                 {
                     if (currentRoom[new_x, new_y].GetGridEntities().Count == 0)
                     {
