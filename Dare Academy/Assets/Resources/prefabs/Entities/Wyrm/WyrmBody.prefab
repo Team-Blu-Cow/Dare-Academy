@@ -44,7 +44,7 @@ Animator:
   m_GameObject: {fileID: 949926586993298758}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: b1929280ecde5b5419b817f3eda48f7b, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -69,6 +69,9 @@ MonoBehaviour:
   m_sprite: {fileID: 4353027277489821422}
   m_spriteHead: {fileID: 0}
   m_hasHead: 0
+  m_overwriteAnimSpeed: 1
+  m_isDead: 0
+  m_deathPoofPrefab: {fileID: 3161301949072914463, guid: 2a7ca93a7ffa1174b8f8062d29cd88d7, type: 3}
 --- !u!114 &7643601807165943896
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -158,7 +161,7 @@ SpriteRenderer:
   m_SortingLayerID: 1532050139
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: a2dd912b791959946ba0c42ad344a8ae, type: 3}
+  m_Sprite: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -166,6 +169,6 @@ SpriteRenderer:
   m_Size: {x: 1, y: 1}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
-  m_WasSpriteAssigned: 1
+  m_WasSpriteAssigned: 0
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0

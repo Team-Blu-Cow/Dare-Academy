@@ -6,6 +6,9 @@ using interalFlags = GridEntityInternalFlags.Flags;
 
 public class WyrmBody : WyrmSection
 {
+    public bool isLegs = false;
+    private Vector3 m_animationMidNode = Vector3.zero;
+
     protected override void Start()
     {
         base.Start();
@@ -22,6 +25,11 @@ public class WyrmBody : WyrmSection
         Flags.SetFlags(flags.alwaysWinConflict, true);
     }
 
+    protected void Update()
+    {
+        animator.SetBool("isLegs", isLegs);
+    }
+
     public override void AnalyseStep()
     {
         base.AnalyseStep();
@@ -34,6 +42,10 @@ public class WyrmBody : WyrmSection
         base.ReAnalyseStep();
         BodyAnalyseLogic();
         doReanalyse = false;
+        if (m_currentNode != null)
+        {
+            m_animationMidNode = m_currentNode.position.world;
+        }
     }
 
     private void BodyAnalyseLogic()
@@ -85,6 +97,42 @@ public class WyrmBody : WyrmSection
                 SetMovementDirection(dir);
             }
         }
+    }
+
+    public override void DrawStep()
+    {
+        // base.DrawStep();
+
+        if (MovedThisStep && m_currentNode != null)
+        {
+            m_animationController.animator.SetBool("IsMoving", true);
+            SetAnimationFlags(transform.position, m_animationMidNode);
+            LeanTween.move(gameObject, m_animationMidNode, m_stepController.stepTime / 2).setOnComplete(() =>
+            {
+                if (m_currentNode is null)
+                {
+                    return;
+                }
+
+                SetAnimationFlags(transform.position, m_currentNode.position.world);
+                LeanTween.move(gameObject, m_currentNode.position.world, m_stepController.stepTime / 2).setOnComplete(() =>
+                {
+                    m_animationController.animator.SetBool("IsMoving", false);
+                }
+                );
+            }
+            );
+
+            m_animationMidNode = Vector3.zero;
+        }
+    }
+
+    private void ZeroAnimationFlags()
+    {
+        animator.SetBool("movingUp", false);
+        animator.SetBool("movingDown", false);
+        animator.SetBool("movingLeft", false);
+        animator.SetBool("movingRight", false);
     }
 
     public override void EndStep()

@@ -44,7 +44,7 @@ Animator:
   m_GameObject: {fileID: 720815317660526086}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 4b9ab85dd3645304f877f2410e14e3b9, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -69,6 +69,9 @@ MonoBehaviour:
   m_sprite: {fileID: 7930745544707642228}
   m_spriteHead: {fileID: 0}
   m_hasHead: 0
+  m_overwriteAnimSpeed: 1
+  m_isDead: 0
+  m_deathPoofPrefab: {fileID: 3161301949072914463, guid: 2a7ca93a7ffa1174b8f8062d29cd88d7, type: 3}
 --- !u!114 &2468310734715714110
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -91,6 +94,7 @@ MonoBehaviour:
   m_headPrefab: {fileID: 720815317660526086, guid: 6c28d158b937ef84f908a682ed1f6570, type: 3}
   m_bodyPrefab: {fileID: 949926586993298758, guid: 8e1fd613113460c48b09a25d44edb85a, type: 3}
   m_firePrefab: {fileID: 7931373814993925924, guid: 9ff33d66912821f47886139049f0526f, type: 3}
+  m_warningPrefab: {fileID: 3337772929521212927, guid: 6995bcc27a7248a448ffe1b98a06ad1d, type: 3}
 --- !u!1 &7930745544707642228
 GameObject:
   m_ObjectHideFlags: 0

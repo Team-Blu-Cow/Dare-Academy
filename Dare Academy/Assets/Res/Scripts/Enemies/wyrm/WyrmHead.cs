@@ -37,6 +37,13 @@ public class WyrmHead : WyrmSection
     private int SplitHealth
     { get; set; }
 
+    private bool HasAttacked
+    { get; set; }
+
+    private List<GridNode> m_fireAttackNodes = new List<GridNode>();
+
+    private Vector3 m_animationMidNode = Vector3.zero;
+
     [SerializeField] private int m_length;
 
     [SerializeField, HideInInspector] private GameObject m_headPrefab;
@@ -118,6 +125,21 @@ public class WyrmHead : WyrmSection
                 back = section;
             }
         }
+
+        {
+            WyrmSection section = SectionBehind;
+            bool leg = true;
+            while (section)
+            {
+                if (leg)
+                {
+                    ((WyrmBody)section).isLegs = true;
+                }
+                leg = !leg;
+
+                section = section.SectionBehind;
+            }
+        }
     }
 
     public override void AnalyseStep()
@@ -144,6 +166,10 @@ public class WyrmHead : WyrmSection
         base.ReAnalyseStep();
         AnalyseFSM();
         doReanalyse = false;
+        if (m_currentNode != null)
+        {
+            m_animationMidNode = m_currentNode.position.world;
+        }
     }
 
     private void AnalyseFSM()
@@ -192,6 +218,17 @@ public class WyrmHead : WyrmSection
     public override void AttackStep()
     {
         base.AttackStep();
+
+        if (m_fireAttackNodes.Count > 0)
+        {
+            foreach (var node in m_fireAttackNodes)
+            {
+                SpawnFire(node);
+            }
+            m_fireAttackNodes.Clear();
+            state = WyrmState.UnderGround;
+            HasAttacked = true;
+        }
     }
 
     public override void MoveStep()
@@ -241,6 +278,40 @@ public class WyrmHead : WyrmSection
         }
 
         base.OnDeath();
+    }
+
+    public override void DrawStep()
+    {
+        // base.DrawStep();
+
+        animator.SetBool("IsAttacking", HasAttacked);
+        if (HasAttacked)
+        {
+            HasAttacked = false;
+        }
+
+        if (MovedThisStep && m_currentNode != null && m_animationMidNode != Vector3.zero)
+        {
+            // m_animationController.animator.SetBool("IsMoving", true);
+            SetAnimationFlags(transform.position, m_animationMidNode);
+            LeanTween.move(gameObject, m_animationMidNode, m_stepController.stepTime / 2).setOnComplete(() =>
+            {
+                if (m_currentNode is null)
+                {
+                    return;
+                }
+
+                SetAnimationFlags(transform.position, m_currentNode.position.world);
+                LeanTween.move(gameObject, m_currentNode.position.world, m_stepController.stepTime / 2).setOnComplete(() =>
+                {
+                    // m_animationController.animator.SetBool("IsMoving", false);
+                }
+                );
+            }
+            );
+
+            m_animationMidNode = Vector3.zero;
+        }
     }
 
     private GridNode GenerateBurrowLocation()
@@ -573,49 +644,43 @@ public class WyrmHead : WyrmSection
 
     private void State_FireAttack()
     {
+        if (m_fireAttackNodes.Count > 0)
+            return;
+
         Vector3[] path = PathToPlayer();
 
         Vector3 pos = new Vector3(path[0].x, path[0].y, 0);
         GridNode n = levelModule.MetaGrid.GetNodeFromWorld(pos);
         Vector2Int dir = n.position.grid - m_currentNode.position.grid;
 
-        List<GridNode> attackNodes = new List<GridNode>();
-
         if (dir.x != 0)
         {
             int x = dir.x;
 
-            attackNodes.Add(currentNode.GetNodeRelative(x, 0));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(x, 0));
 
-            attackNodes.Add(currentNode.GetNodeRelative(2 * x, 0));
-            attackNodes.Add(currentNode.GetNodeRelative(2 * x, 1));
-            attackNodes.Add(currentNode.GetNodeRelative(2 * x, -1));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(2 * x, 0));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(2 * x, 1));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(2 * x, -1));
 
-            attackNodes.Add(currentNode.GetNodeRelative(3 * x, 0));
-            attackNodes.Add(currentNode.GetNodeRelative(3 * x, 1));
-            attackNodes.Add(currentNode.GetNodeRelative(3 * x, -1));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(3 * x, 0));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(3 * x, 1));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(3 * x, -1));
         }
         else if (dir.y != 0)
         {
             int y = dir.y;
 
-            attackNodes.Add(currentNode.GetNodeRelative(0, y));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(0, y));
 
-            attackNodes.Add(currentNode.GetNodeRelative(0, 2 * y));
-            attackNodes.Add(currentNode.GetNodeRelative(1, 2 * y));
-            attackNodes.Add(currentNode.GetNodeRelative(-1, 2 * y));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(0, 2 * y));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(1, 2 * y));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(-1, 2 * y));
 
-            attackNodes.Add(currentNode.GetNodeRelative(0, 3 * y));
-            attackNodes.Add(currentNode.GetNodeRelative(1, 3 * y));
-            attackNodes.Add(currentNode.GetNodeRelative(-1, 3 * y));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(0, 3 * y));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(1, 3 * y));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(-1, 3 * y));
         }
-
-        foreach (var node in attackNodes)
-        {
-            SpawnFire(node);
-        }
-        attackNodes.Clear();
-        state = WyrmState.UnderGround;
     }
 
     // HELPER FUNCTIONS

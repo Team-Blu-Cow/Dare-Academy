@@ -14,6 +14,7 @@ public abstract class WyrmSection : GridEntity
 
     [SerializeField, HideInInspector] protected SpriteRenderer spriteRenderer;
     [SerializeField, HideInInspector] protected WyrmUIHealth m_uiHealth;
+    [SerializeField, HideInInspector] protected Animator animator;
 
     public WyrmSection SectionInfront
     { get; set; }
@@ -30,6 +31,7 @@ public abstract class WyrmSection : GridEntity
     protected override void OnValidate()
     {
         base.OnValidate();
+        animator = GetComponent<Animator>();
         spriteRenderer = GetComponentInChildren<SpriteRenderer>();
         m_uiHealth = FindObjectOfType<WyrmUIHealth>();
     }
@@ -110,5 +112,50 @@ public abstract class WyrmSection : GridEntity
         }
 
         spriteRenderer.enabled = false;
+    }
+
+    protected void SetAnimationFlags(Vector3 start_pos, Vector3 end_pos)
+    {
+        Vector3 diff = end_pos - start_pos;
+
+        if (diff.magnitude < 0.7)
+        {
+            return;
+            // ZeroAnimationFlags();
+        }
+
+        Quaternion rot = Quaternion.identity;
+
+        if (diff.x > 0.7)
+        {
+            animator.SetBool("movingUp", false);
+            animator.SetBool("movingDown", false);
+            animator.SetBool("movingLeft", false);
+            animator.SetBool("movingRight", true);
+            rot = Quaternion.Euler(0, 180, 0);
+        }
+        if (diff.x < -0.7)
+        {
+            animator.SetBool("movingUp", false);
+            animator.SetBool("movingDown", false);
+            animator.SetBool("movingLeft", true);
+            animator.SetBool("movingRight", false);
+        }
+        if (diff.y > 0.7)
+        {
+            animator.SetBool("movingUp", true);
+            animator.SetBool("movingDown", false);
+            animator.SetBool("movingLeft", false);
+            animator.SetBool("movingRight", false);
+        }
+        if (diff.y < -0.7)
+        {
+            animator.SetBool("movingUp", false);
+            animator.SetBool("movingDown", true);
+            animator.SetBool("movingLeft", false);
+            animator.SetBool("movingRight", false);
+        }
+
+        transform.rotation = rot;
     }
 }
