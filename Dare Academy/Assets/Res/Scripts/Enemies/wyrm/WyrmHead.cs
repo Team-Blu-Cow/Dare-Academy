@@ -332,7 +332,7 @@ public class WyrmHead : WyrmSection
                         bool anyValidNeighbours = false;
                         foreach (var neighbor in currentRoom[new_x, new_y].Neighbors)
                         {
-                            if (neighbor != null && neighbor.connected && neighbor.reference.IsTraversable())
+                            if (neighbor != null && neighbor.connected && neighbor.reference.IsTraversable(false))
                             {
                                 anyValidNeighbours = true;
                                 break;
