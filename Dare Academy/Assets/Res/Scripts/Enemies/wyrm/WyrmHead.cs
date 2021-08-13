@@ -256,8 +256,12 @@ public class WyrmHead : WyrmSection
                     var entities = node.GetGridEntities();
                     foreach (var entity in entities)
                     {
-                        if (!(entity is WyrmSection))
-                            entity.OnHit(m_chargeDamage);
+                        if (entity is WyrmSection)
+                            continue;
+                        if (entity is BarrierEntity)
+                            continue;
+
+                        entity.OnHit(m_chargeDamage);
                     }
                 }
             }
