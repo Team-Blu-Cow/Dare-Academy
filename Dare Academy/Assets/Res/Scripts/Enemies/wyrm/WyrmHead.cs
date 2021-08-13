@@ -241,8 +241,6 @@ public class WyrmHead : WyrmSection
     public override void EndStep()
     {
         base.EndStep();
-
-        ResurfacedThisStep = false;
     }
 
     public override void DamageStep()
@@ -258,8 +256,12 @@ public class WyrmHead : WyrmSection
                     var entities = node.GetGridEntities();
                     foreach (var entity in entities)
                     {
-                        if (!(entity is WyrmSection))
-                            entity.OnHit(m_chargeDamage);
+                        if (entity is WyrmSection)
+                            continue;
+                        if (entity is BarrierEntity)
+                            continue;
+
+                        entity.OnHit(m_chargeDamage);
                     }
                 }
             }
@@ -627,7 +629,7 @@ public class WyrmHead : WyrmSection
     {
         if (m_chargeStartNode == null)
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 30; i++)
             {
                 if (GenerateChargePath())
                 {
@@ -639,6 +641,8 @@ public class WyrmHead : WyrmSection
                     return;
                 }
             }
+
+            state = WyrmState.UnderGround;
 
             return;
         }
@@ -796,6 +800,11 @@ public class WyrmHead : WyrmSection
                     (entity as DamageEntity).Linger = fireTime;
                 return true;
             }
+
+            if (entity is BarrierEntity)
+            {
+                return true;
+            }
         }
 
         // spawn a fire
@@ -861,66 +870,57 @@ public class WyrmHead : WyrmSection
     private bool GenerateChargePath()
     {
         m_chargeStartNode = null;
+        m_chargeDamageNodes.Clear();
         m_chargeDir = Vector2Int.zero;
-
         JUtil.Grids.Grid<GridNode> grid = levelModule.MetaGrid.Grid(RoomIndex);
-
         System.Random rand = new System.Random();
 
-        int r = rand.Next(0, 4);
+        List<GridNode> nodes = new List<GridNode>();
+        GridNode playerNode = PlayerEntity.Instance.currentNode;
+
+        // double chance of spawn
+        nodes.Add(playerNode);
+        nodes.Add(playerNode);
+
+        GridNode node;
+
+        node = playerNode.GetNeighbour(Vector2Int.up);
+        if (node != null) nodes.Add(node);
+        node = playerNode.GetNeighbour(Vector2Int.down);
+        if (node != null) nodes.Add(node);
+        node = playerNode.GetNeighbour(Vector2Int.left);
+        if (node != null) nodes.Add(node);
+        node = playerNode.GetNeighbour(Vector2Int.right);
+        if (node != null) nodes.Add(node);
+
+        node = nodes[rand.Next(0, nodes.Count)];
 
         Vector2Int dir = Vector2Int.zero;
-        GridNode node = null;
-
-        switch (r)
+        switch (rand.Next(0, 4))
         {
             case 0:
                 dir = Vector2Int.up;
-                node = grid[rand.Next(0, grid.Width), 0];
                 break;
 
             case 1:
                 dir = Vector2Int.down;
-                node = grid[rand.Next(0, grid.Width), grid.Height - 1];
                 break;
 
             case 2:
                 dir = Vector2Int.left;
-                node = grid[grid.Width - 1, rand.Next(0, grid.Height)];
                 break;
 
             case 3:
                 dir = Vector2Int.right;
-                node = grid[0, rand.Next(0, grid.Height)];
                 break;
         }
 
-        if (node == null)
+        m_chargeStartNode = FindLastNodeInDirection(node, -dir);
+        if (m_chargeStartNode == null)
             return false;
 
-        int dist = node.GetDistanceInDirection(dir);
-
-        if (dist < 4)
-            return false;
-
-        GridNode n = node;
-        while (true)
-        {
-            if (n == null)
-                break;
-
-            if (n.overridden)
-                return false;
-
-            n = n.GetNeighbour(dir);
-        }
-
-        m_chargeStartNode = node;
         m_chargeDir = dir;
-
-        GridNode damageNode = node;
-
-        m_chargeDamageNodes.Clear();
+        GridNode damageNode = m_chargeStartNode;
         while (damageNode != null)
         {
             m_chargeDamageNodes.Add(damageNode);
@@ -928,6 +928,33 @@ public class WyrmHead : WyrmSection
         }
 
         return true;
+    }
+
+    private GridNode FindLastNodeInDirection(GridNode node, Vector2Int dir)
+    {
+        if (dir == Vector2Int.zero)
+            return node;
+        if (node == null)
+            return null;
+
+        GridNode n = node;
+        while (true)
+        {
+            if (n.overridden)
+            {
+                return n;
+            }
+
+            GridNode neighbor = n.GetNeighbour(dir);
+            if (neighbor == null)
+            {
+                return n;
+            }
+            else
+            {
+                n = neighbor;
+            }
+        }
     }
 
     private GridNode GetRandomNode()
