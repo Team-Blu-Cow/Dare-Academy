@@ -34,7 +34,7 @@ public class GameEventFlags : BitFlags_32
         Flag_25 = 0x0100_0000,
         Flag_26 = 0x0200_0000,
         Flag_27 = 0x0400_0000,
-        Flag_28 = 0x0800_0000,
+        mir_saved_cutscene = 0x0800_0000,
         Flag_29 = 0x1000_0000,
         Flag_30 = 0x2000_0000,
         Flag_31 = 0x4000_0000,

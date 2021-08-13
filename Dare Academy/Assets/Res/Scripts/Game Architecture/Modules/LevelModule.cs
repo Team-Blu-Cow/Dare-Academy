@@ -422,6 +422,18 @@ namespace blu
                         else
                         {
                             App.Jukebox.CombatEnded();
+
+                            if (CurrentLevelId() == LevelID.crashsite_bottom)
+                            {
+                                if (PlayerEntity.Instance != null && PlayerEntity.Instance.RoomIndex == 8)
+                                {
+                                    if (m_gameEventFlags.IsFlagsSet(GameEventFlags.Flags.mir_saved_cutscene) == false)
+                                    {
+                                        m_gameEventFlags.SetFlags(GameEventFlags.Flags.mir_saved_cutscene, true);
+                                        // #cutscene
+                                    }
+                                }
+                            }
                         }
                     }
                 }
