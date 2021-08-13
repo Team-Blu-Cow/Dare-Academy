@@ -779,7 +779,7 @@ public class PlayerEntity : GridEntity
             if (m_abilityDirection != Vector2.zero)
             {
                 GridNode node;
-                if (MovedThisStep)
+                if ((currentNode != previousNode) && previousNode != null)
                 {
                     // node = m_previousNode;
                     node = m_currentNode;
