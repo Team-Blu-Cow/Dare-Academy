@@ -127,6 +127,7 @@ public class LevelManager : MonoBehaviour
 
     private void UnPause()
     {
+        SavePlayerPref();
         EventSystem.current.SetSelectedGameObject(null);
 
         App.GetModule<InputModule>().PlayerController.Player.Enable();
@@ -147,6 +148,8 @@ public class LevelManager : MonoBehaviour
     {
         if (paused)
         {
+            SavePlayerPref();
+
             if (App.CanvasManager.topCanvas.name != "Options Menu")
                 App.CanvasManager.CloseCanvas();
             App.CanvasManager.CloseCanvas();

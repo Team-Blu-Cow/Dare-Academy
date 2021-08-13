@@ -9,5 +9,6 @@ public class CreditsSceneSwap : MonoBehaviour
     private void Awake()
     {
         App.GetModule<SceneModule>().SwitchScene("MainMenu", TransitionType.LRSweep, LoadingBarType.BottomRightRadial);
+        App.GetModule<QuestModule>().SetComplete(Resources.Load<Quest>("Quests/MainQuest"));
     }
 }
