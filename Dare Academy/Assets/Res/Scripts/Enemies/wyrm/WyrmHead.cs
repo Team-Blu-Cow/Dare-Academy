@@ -80,6 +80,8 @@ public class WyrmHead : WyrmSection
     private int started = 0;
 
     [SerializeField] private GameObject m_endPickup;
+    [SerializeField] private BarrierEntity m_endBarrier;
+    private GameObject m_startBarrier;
 
     protected override void OnValidate()
     {
@@ -171,6 +173,30 @@ public class WyrmHead : WyrmSection
         if (m_currentNode != null)
         {
             m_animationMidNode = m_currentNode.position.world;
+        }
+    }
+
+    protected override void OnRoomEnter()
+    {
+        //spawn barrier
+
+        m_startBarrier = Resources.Load<GameObject>("prefabs/BarrierEntrance");
+        m_startBarrier = Instantiate(m_startBarrier);
+    }
+
+    protected override void OnRoomExit()
+    {
+        //spawn barrier
+
+        if (m_startBarrier != null)
+        {
+            m_startBarrier.GetComponentInChildren<BarrierEntity>().KillImmediate();
+            m_startBarrier = null;
+
+            LeanTween.delayedCall(0.1f, () =>
+        {
+            App.GetModule<LevelModule>().EventFlags.SetFlags(GameEventFlags.Flags.Flag_29, false);
+        });
         }
     }
 
@@ -276,6 +302,13 @@ public class WyrmHead : WyrmSection
         {
             m_uiHealth.FightEnd();
             m_endPickup.SetActive(true);
+
+            //Kill barriers
+            if (m_startBarrier != null)
+                Destroy(m_startBarrier);
+
+            if (m_endBarrier != null)
+                m_endBarrier.KillImmediate();
         }
 
         WyrmSection section = SectionBehind;
@@ -390,6 +423,8 @@ public class WyrmHead : WyrmSection
                 this.other = head;
 
                 other.m_endPickup = m_endPickup;
+                other.m_endBarrier = m_endBarrier;
+                other.m_startBarrier = m_startBarrier;
 
                 other.Flags._FlagData = Flags._FlagData;
 

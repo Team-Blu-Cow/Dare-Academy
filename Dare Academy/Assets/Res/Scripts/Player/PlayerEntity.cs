@@ -535,7 +535,6 @@ public class PlayerEntity : GridEntity
         animationController.SetAbilityState(GetAbilityStateInt());
 
         audioModule.PlayAudioEvent("event:/SFX/UI/Vitalsfx_ability_right");
-        
 
         //SetAbilityAnimationFlag();
     }
@@ -720,6 +719,7 @@ public class PlayerEntity : GridEntity
                 Energy = MaxEnergy;
                 transform.position = m_currentNode.position.world;
                 AddToCurrentNode();
+                App.CameraController.MoveToRoomByIndex(respawnPoint.roomIndex);
                 return true;
             }
         }

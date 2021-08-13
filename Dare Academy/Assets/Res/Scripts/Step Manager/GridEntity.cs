@@ -1075,16 +1075,26 @@ public abstract class GridEntity : MonoBehaviour
             transform.position = m_currentNode.position.world;
     }
 
+    virtual protected void OnRoomEnter()
+    {
+    }
+
+    virtual protected void OnRoomExit()
+    {
+    }
+
     virtual public void RoomChange()
     {
         if (m_roomIndex == m_stepController.m_currentRoomIndex || Flags.IsFlagsSet(flags.keepAwake))
         {
             m_stepController.AddEntity(this);
+            OnRoomEnter();
         }
         else
         {
             ResetPosition();
             m_stepController.RemoveEntity(this);
+            OnRoomExit();
         }
     }
 
