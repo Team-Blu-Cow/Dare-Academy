@@ -332,7 +332,7 @@ public class WyrmHead : WyrmSection
                         bool anyValidNeighbours = false;
                         foreach (var neighbor in currentRoom[new_x, new_y].Neighbors)
                         {
-                            if (neighbor != null && neighbor.connected && neighbor.reference.IsTraversable(false))
+                            if (neighbor != null && neighbor.reference != null && neighbor.reference.IsTraversable(false))
                             {
                                 anyValidNeighbours = true;
                                 break;
@@ -500,7 +500,11 @@ public class WyrmHead : WyrmSection
         Vector3[] path = PathToPlayer();
 
         if (path == null)
+        {
+            // couldnt find a path, burrow
+            state = WyrmState.UnderGround;
             return;
+        }
 
         // if (Vector2Int.Distance(Position.grid, PlayerEntity.Instance.Position.grid) <= 1)
         if (path.Length <= 1)

@@ -212,4 +212,21 @@ public class LevelManager : MonoBehaviour
     {
         PauseGame(new InputAction.CallbackContext());
     }
+
+    public static void SavePlayerPref()
+    {
+        bool hold = App.GetModule<LevelModule>().HoldForAbilityMode;
+        WriteHoldForAbilityMode(hold);
+        PlayerPrefs.Save();
+    }
+
+    public static bool ReadHoldForAbilityMode()
+    {
+        return PlayerPrefs.GetInt("HoldForAbilityMode", 1) == 1;
+    }
+
+    public static void WriteHoldForAbilityMode(bool hold)
+    {
+        PlayerPrefs.SetInt("HoldForAbilityMode", hold ? 1 : 0);
+    }
 }

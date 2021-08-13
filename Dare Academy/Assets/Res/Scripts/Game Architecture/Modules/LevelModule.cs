@@ -102,13 +102,10 @@ namespace blu
         public override void Initialize()
         {
             io = App.GetModule<IOModule>();
-
             SceneManager.sceneLoaded += LevelChanged;
 
             if (m_playerPrefab == null)
                 m_playerPrefab = Resources.Load<GameObject>("prefabs/Entities/Player");
-
-            HoldForAbilityMode = PlayerPrefs.GetInt("HoldForAbilityMode", 1) == 1;
         }
 
         protected override void SetDependancies()
@@ -118,6 +115,20 @@ namespace blu
 
         public void LevelChanged(Scene scene, LoadSceneMode loadSceneMode)
         {
+            bool hold = LevelManager.ReadHoldForAbilityMode();
+
+            UnityEngine.UI.Toggle[] toggles = App.CanvasManager.GetComponentsInChildren<UnityEngine.UI.Toggle>();
+
+            for (int i = 0; i < toggles.Length; i++)
+            {
+                if (toggles[i].name == "Hold For Ability")
+                {
+                    toggles[i].isOn = hold;
+                    //SetHoldForAbilityMode(hold);
+                    break;
+                }
+            }
+
             m_levelManager = null;
             m_levelManager = FindObjectOfType<LevelManager>();
 
@@ -219,8 +230,6 @@ namespace blu
         public void SetHoldForAbilityMode(bool b)
         {
             HoldForAbilityMode = b;
-            PlayerPrefs.SetInt("HoldForAbilityMode", HoldForAbilityMode ? 1 : 0);
-            PlayerPrefs.Save();
             if (PlayerEntity.Instance)
             {
                 PlayerEntity.Instance.UpdateInputMode();
