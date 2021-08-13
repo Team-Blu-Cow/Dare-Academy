@@ -337,6 +337,22 @@ public class PlayerEntity : GridEntity
         }
     }
 
+    // run immediately before the step controller runs ExecuteStep()
+    // returns if step should be executed
+    public bool PreExecuteStep()
+    {
+        if (m_abilityMode && Abilities.GetActiveAbility() == AbilityEnum.Dash && m_abilityDirection != Vector2Int.zero)
+        {
+            _ExitAbilityMode();
+            return false;
+        }
+        else
+        {
+            _ExitAbilityMode();
+            return true;
+        }
+    }
+
     public void ExecuteStep()
     {
         levelModule.ExecuteStep();
@@ -436,29 +452,13 @@ public class PlayerEntity : GridEntity
         if (!m_abilityMode && !LevelManager.Instance.AllowPlayerMovement)
             return;
 
-        m_abilityMode = !m_abilityMode;
         if (m_abilityMode)
         {
-            audioModule.GetCurrentSong().SetParameter("Muffled", 1);
+            _ExitAbilityMode();
         }
         else
         {
-            if (!levelModule.LevelManager.paused)
-            {
-                audioModule.GetCurrentSong().SetParameter("Muffled", 0);
-            }
-        }
-
-        if (m_abilityMode)
-        {
-            ToggleAnimationState();
-        }
-        else
-        {
-            animationController.DisableVignette();
-
-            if (m_abilityDirection == Vector2Int.zero)
-                animationController.SetAbilityState(0);
+            _EnterAbilityMode();
         }
     }
 
@@ -470,10 +470,7 @@ public class PlayerEntity : GridEntity
         if (!LevelManager.Instance.AllowPlayerMovement)
             return;
 
-        m_abilityMode = true;
-        audioModule.GetCurrentSong().SetParameter("Muffled", 1);
-        //SetAbilityAnimationFlag();
-        ToggleAnimationState();
+        _EnterAbilityMode();
     }
 
     protected void ExitAbilityMode(InputAction.CallbackContext context)
@@ -481,15 +478,26 @@ public class PlayerEntity : GridEntity
         if (abilityInputMode != AbilityInputMode.Hold)
             return;
 
+        _ExitAbilityMode();
+    }
+
+    protected void _EnterAbilityMode()
+    {
+        m_abilityMode = true;
+        audioModule.GetCurrentSong().SetParameter("Muffled", 1);
+        ToggleAnimationState();
+    }
+
+    protected void _ExitAbilityMode()
+    {
         m_abilityMode = false;
 
         if (!levelModule.LevelManager.paused)
         {
             audioModule.GetCurrentSong().SetParameter("Muffled", 0);
         }
-        //ToggleAnimationState();
-        animationController.DisableVignette();
 
+        animationController.DisableVignette();
         if (m_abilityDirection == Vector2Int.zero)
             animationController.SetAbilityState(0);
     }

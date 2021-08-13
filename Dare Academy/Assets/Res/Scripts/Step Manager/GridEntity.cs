@@ -1268,6 +1268,12 @@ public abstract class GridEntity : MonoBehaviour
                 return false;
             }
 
+            if (sourceNode.roomIndex != spawnNode.roomIndex)
+            {
+                bullet = null;
+                return false;
+            }
+
             List<GridEntity> entities = spawnNode.GetGridEntities();
 
             for (int i = entities.Count - 1; i >= 0; i--)

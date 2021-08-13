@@ -206,13 +206,21 @@ namespace blu
 
         public bool ExecuteStep()
         {
-            return StepController.ExecuteStep();
+            if (PlayerEntity.Instance.PreExecuteStep())
+            {
+                return StepController.ExecuteStep();
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public void SetHoldForAbilityMode(bool b)
         {
             HoldForAbilityMode = b;
             PlayerPrefs.SetInt("HoldForAbilityMode", HoldForAbilityMode ? 1 : 0);
+            PlayerPrefs.Save();
             if (PlayerEntity.Instance)
             {
                 PlayerEntity.Instance.UpdateInputMode();
