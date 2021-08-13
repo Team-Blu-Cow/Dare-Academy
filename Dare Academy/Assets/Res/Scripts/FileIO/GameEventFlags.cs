@@ -22,7 +22,7 @@ public class GameEventFlags : BitFlags_32
         mir_ship_health_pickup = 0x0000_4000,
         first_barrier = 0x0000_8000,
 
-        Flag_17 = 0x0001_0000,
+        misplaced_forest_quest = 0x0001_0000,
         Flag_18 = 0x0002_0000,
         Flag_19 = 0x0004_0000,
         Flag_20 = 0x0008_0000,

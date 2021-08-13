@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 5e114c5400f12b248a550cd667c457cb, type: 3}
-  m_Name: InvestigateScream
+  m_Name: ExploreForest
   m_EditorClassIdentifier: 
-  name: Investigate
+  name: Explore
   Prerequisites: []
   Requierments: []
-  activeDescription: You heard an unknown scream, maybe youi should look into it
+  activeDescription: Find a way through the mysterious forest
   completeDescription: 
   complete: 0
-  showMarker: 1
-  markerLocations: 02000000
-  markerScene: Mushroom Forest Start
+  showMarker: 0
+  markerLocations: 
+  markerScene: 

@@ -382,7 +382,7 @@ public class ScriptableEntity : GridEntity
 
     protected bool AwaitDialogueAction()
     {
-        bool active  = blu.App.GetModule<blu.DialogueModule>().DialogueActive;
+        bool active = blu.App.GetModule<blu.DialogueModule>().DialogueActive;
 
         if (!m_dialogueHasStarted)
         {
@@ -470,7 +470,7 @@ public class ScriptableEntity : GridEntity
     {
         if (data.unityObject && data.unityObject is Quest)
         {
-            blu.App.GetModule<blu.QuestModule>().AddQuest(data.unityObject as Quest);
+            blu.App.GetModule<blu.QuestModule>().AddQuest(data.unityObject as Quest, true);
         }
     }
 }

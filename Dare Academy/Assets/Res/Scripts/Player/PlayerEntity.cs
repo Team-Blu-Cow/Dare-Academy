@@ -484,7 +484,8 @@ public class PlayerEntity : GridEntity
     protected void _EnterAbilityMode()
     {
         m_abilityMode = true;
-        audioModule.GetCurrentSong().SetParameter("Muffled", 1);
+        if (audioModule.GetCurrentSong() != null)
+            audioModule.GetCurrentSong().SetParameter("Muffled", 1);
         ToggleAnimationState();
     }
 
@@ -492,7 +493,7 @@ public class PlayerEntity : GridEntity
     {
         m_abilityMode = false;
 
-        if (!levelModule.LevelManager.paused)
+        if (!levelModule.LevelManager.paused && audioModule.GetCurrentSong() != null)
         {
             audioModule.GetCurrentSong().SetParameter("Muffled", 0);
         }
