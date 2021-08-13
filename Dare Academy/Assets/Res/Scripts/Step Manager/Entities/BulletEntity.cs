@@ -33,7 +33,7 @@ public class BulletEntity : GridEntity
 
     private void SetTailDirection()
     {
-        int index = m_bulletDirection.RotationToIndex(90);
+        int index = m_bulletDirection.RotationToIndex(45);
 
         switch (index)
         {
@@ -41,16 +41,32 @@ public class BulletEntity : GridEntity
                 transform.Rotate(new Vector3(0, 0, 180));
                 break;
 
-            case 1: // east
+            case 1: // north-east
+                transform.Rotate(new Vector3(0, 0, 135));
+                break;
+
+            case 2: // east
                 transform.Rotate(new Vector3(0, 0, 90));
                 break;
 
-            case 2: // south
+            case 3: // south-east
+                transform.Rotate(new Vector3(0, 0, 45));
+                break;
+
+            case 4: // south
                 transform.Rotate(new Vector3(0, 0, 0));
                 break;
 
-            case 3: // west
+            case 5: // south-west
+                transform.Rotate(new Vector3(0, 0, 315));
+                break;
+
+            case 6: // west
                 transform.Rotate(new Vector3(0, 0, 270));
+                break;
+
+            case 7: // north-west
+                transform.Rotate(new Vector3(0, 0, 225));
                 break;
         }
     }
