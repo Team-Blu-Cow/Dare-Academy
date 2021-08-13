@@ -473,12 +473,12 @@ public class PathfindingMultiGrid
 
     //public Vector3[] GetPath(Vector2Int start, Vector2Int end) => GetPath(grids[0].ToWorld(start.x, start.y), grids[0].ToWorld(end.x, end.y));
 
-    public Vector3[] GetPath(GridNode start, GridNode end)
+    public Vector3[] GetPath(GridNode start, GridNode end, bool isAirborn = false)
     {
-        return pathfinder.FindPath(start, end, false, debugSettings.showPathfindTime);
+        return pathfinder.FindPath(start, end, isAirborn, false, debugSettings.showPathfindTime);
     }
 
-    public Vector3[] GetPath(Vector3 start, Vector3 end)
+    public Vector3[] GetPath(Vector3 start, Vector3 end, bool isAirborn = false)
     {
         GridNode startNode = GetNodeFromWorld(start);
         GridNode endNode = GetNodeFromWorld(end);
@@ -490,10 +490,10 @@ public class PathfindingMultiGrid
             return null;
         }
 
-        return pathfinder.FindPath(startNode, endNode, false, debugSettings.showPathfindTime);
+        return pathfinder.FindPath(startNode, endNode, isAirborn, false, debugSettings.showPathfindTime);
     }
 
-    public Vector3[] GetPathWithAvoidance(Vector3 start, Vector3 end, Vector3 fearPos, int fearRange)
+    public Vector3[] GetPathWithAvoidance(Vector3 start, Vector3 end, Vector3 fearPos, int fearRange, bool isAirborn = false)
     {
         GridNode startNode = GetNodeFromWorld(start);
         GridNode endNode = GetNodeFromWorld(end);
@@ -506,10 +506,10 @@ public class PathfindingMultiGrid
             return null;
         }
 
-        return pathfinder.FindPathWithAvoidance(startNode, endNode, fearNode, fearRange, false, debugSettings.showPathfindTime);
+        return pathfinder.FindPathWithAvoidance(startNode, endNode, fearNode, fearRange, isAirborn, false, debugSettings.showPathfindTime);
     }
 
-    public Vector3[] GetPathWithAvoidance(Vector3 start, Vector3 end, Vector3[] fearPos, int fearRange)
+    public Vector3[] GetPathWithAvoidance(Vector3 start, Vector3 end, Vector3[] fearPos, int fearRange, bool isAirborn = false)
     {
         GridNode startNode = GetNodeFromWorld(start);
         GridNode endNode = GetNodeFromWorld(end);
@@ -527,7 +527,7 @@ public class PathfindingMultiGrid
             return null;
         }
 
-        return pathfinder.FindPathWithAvoidance(startNode, endNode, fearNodes, fearRange, false, debugSettings.showPathfindTime);
+        return pathfinder.FindPathWithAvoidance(startNode, endNode, fearNodes, fearRange, isAirborn, false, debugSettings.showPathfindTime);
     }
 
     // MISC METHODS *******************************************************************************

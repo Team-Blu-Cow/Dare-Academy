@@ -23,7 +23,7 @@ namespace JUtil.Grids
             area = A;
         }
 
-        public Vector3[] FindPath(T startPos, T targetPos, bool eightDir = false, bool showtime = false)
+        public Vector3[] FindPath(T startPos, T targetPos, bool isAirborn, bool eightDir = false, bool showtime = false)
         {
             Stopwatch sw  = new Stopwatch();
             if (showtime)
@@ -35,7 +35,7 @@ namespace JUtil.Grids
             startNode = startPos;
             targetNode = targetPos;
 
-            if (startNode.IsTraversable() && targetNode.IsTraversable())
+            if (startNode.IsTraversable(isAirborn) && targetNode.IsTraversable(isAirborn))
             {
                 openSet = new Heap<T>(area);
                 closedSet = new HashSet<T>();
@@ -60,9 +60,9 @@ namespace JUtil.Grids
                     }
 
                     if (eightDir)
-                        CheckNeighborsMoore(currentNode);
+                        CheckNeighborsMoore(currentNode, isAirborn);
                     else
-                        CheckNeighborsVonNeuman(currentNode);
+                        CheckNeighborsVonNeuman(currentNode, isAirborn);
                 }
             }
             if (pathSuccess)
@@ -74,7 +74,7 @@ namespace JUtil.Grids
             return null;
         }
 
-        public Vector3[] FindPathWithAvoidance(T startPos, T targetPos, T fearNode, int fearRange, bool eightDir = false, bool showtime = false)
+        public Vector3[] FindPathWithAvoidance(T startPos, T targetPos, T fearNode, int fearRange, bool isAirborn, bool eightDir = false, bool showtime = false)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -88,7 +88,7 @@ namespace JUtil.Grids
             startNode = startPos;
             targetNode = targetPos;
 
-            if (startNode.IsTraversable() && targetNode.IsTraversable())
+            if (startNode.IsTraversable(isAirborn) && targetNode.IsTraversable(isAirborn))
             {
                 openSet = new Heap<T>(area);
                 closedSet = new HashSet<T>();
@@ -112,9 +112,9 @@ namespace JUtil.Grids
                     }
 
                     if (eightDir)
-                        CheckNeighborsMooreWithAvoidance(currentNode, fearNodeArr, fearRange);
+                        CheckNeighborsMooreWithAvoidance(currentNode, fearNodeArr, fearRange, isAirborn);
                     else
-                        CheckNeighborsVonNeumanWithAvoidance(currentNode, fearNodeArr, fearRange);
+                        CheckNeighborsVonNeumanWithAvoidance(currentNode, fearNodeArr, fearRange, isAirborn);
                 }
             }
             if (pathSuccess)
@@ -126,7 +126,7 @@ namespace JUtil.Grids
             return null;
         }
 
-        public Vector3[] FindPathWithAvoidance(T startPos, T targetPos, T[] fearNode, int fearRange, bool eightDir = false, bool showtime = false)
+        public Vector3[] FindPathWithAvoidance(T startPos, T targetPos, T[] fearNode, int fearRange, bool isAirborn, bool eightDir = false, bool showtime = false)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -137,7 +137,7 @@ namespace JUtil.Grids
             startNode = startPos;
             targetNode = targetPos;
 
-            if (startNode.IsTraversable() && targetNode.IsTraversable())
+            if (startNode.IsTraversable(isAirborn) && targetNode.IsTraversable(isAirborn))
             {
                 openSet = new Heap<T>(area);
                 closedSet = new HashSet<T>();
@@ -161,9 +161,9 @@ namespace JUtil.Grids
                     }
 
                     if (eightDir)
-                        CheckNeighborsMooreWithAvoidance(currentNode, fearNode, fearRange);
+                        CheckNeighborsMooreWithAvoidance(currentNode, fearNode, fearRange, isAirborn);
                     else
-                        CheckNeighborsVonNeumanWithAvoidance(currentNode, fearNode, fearRange);
+                        CheckNeighborsVonNeumanWithAvoidance(currentNode, fearNode, fearRange, isAirborn);
                 }
             }
             if (pathSuccess)
@@ -182,7 +182,7 @@ namespace JUtil.Grids
             return neighbourNode;
         }
 
-        private void CheckNeighborsMoore(T currentNode)
+        private void CheckNeighborsMoore(T currentNode, bool isAirborn)
         {
             foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
             {
@@ -191,7 +191,7 @@ namespace JUtil.Grids
                 if (!neighbourStruct.connected || neighbour == null)
                     continue;
 
-                if (!neighbour.IsTraversable() || closedSet.Contains(neighbour))
+                if (!neighbour.IsTraversable(isAirborn) || closedSet.Contains(neighbour))
                     continue;
 
                 int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
@@ -209,7 +209,7 @@ namespace JUtil.Grids
             }
         }
 
-        private void CheckNeighborsVonNeuman(T currentNode)
+        private void CheckNeighborsVonNeuman(T currentNode, bool isAirborn)
         {
             int count = -1;
             foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
@@ -225,7 +225,7 @@ namespace JUtil.Grids
                 if (!neighbourStruct.connected || neighbour == null)
                     continue;
 
-                if (!neighbour.IsTraversable() || closedSet.Contains(neighbour))
+                if (!neighbour.IsTraversable(isAirborn) || closedSet.Contains(neighbour))
                     continue;
 
                 int newMovementCostToNeighbour = currentNode.gCost + GetDistance(currentNode, neighbour);
@@ -243,7 +243,7 @@ namespace JUtil.Grids
             }
         }
 
-        private void CheckNeighborsMooreWithAvoidance(T currentNode, T[] fearNode, int fearRange)
+        private void CheckNeighborsMooreWithAvoidance(T currentNode, T[] fearNode, int fearRange, bool isAirborn)
         {
             foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
             {
@@ -252,7 +252,7 @@ namespace JUtil.Grids
                 if (!neighbourStruct.connected || neighbour == null)
                     continue;
 
-                if (!neighbour.IsTraversable() || closedSet.Contains(neighbour))
+                if (!neighbour.IsTraversable(isAirborn) || closedSet.Contains(neighbour))
                     continue;
 
                 bool anyInRange = false;
@@ -281,7 +281,7 @@ namespace JUtil.Grids
             }
         }
 
-        private void CheckNeighborsVonNeumanWithAvoidance(T currentNode, T[] fearNode, int fearRange)
+        private void CheckNeighborsVonNeumanWithAvoidance(T currentNode, T[] fearNode, int fearRange, bool isAirborn)
         {
             int count = -1;
             foreach (NodeNeighbor<T> neighbourStruct in currentNode.Neighbors)
@@ -297,7 +297,7 @@ namespace JUtil.Grids
                 if (!neighbourStruct.connected || neighbour == null)
                     continue;
 
-                if (!neighbour.IsTraversable() || closedSet.Contains(neighbour))
+                if (!neighbour.IsTraversable(isAirborn) || closedSet.Contains(neighbour))
                     continue;
 
                 bool anyInRange = false;
@@ -381,7 +381,7 @@ namespace JUtil.Grids
 
         public GridNodePosition position { get; set; }
 
-        public bool IsTraversable(bool isAirborn = false);
+        public bool IsTraversable(bool isAirborn);
     }
 
     // NODE NEIGHBOURHOOD CONTAINER *****************************************************************************************************************

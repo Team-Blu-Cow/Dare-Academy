@@ -538,7 +538,7 @@ TextureImporter:
     second: Cliff_Wall_1_E_ALT_1
   - first:
       213: -5023963113343096000
-    second: TILESET_test (1)_196
+    second: Path_4_ALT_2
   - first:
       213: -8897521682667779637
     second: TILESET_test (1)_201
@@ -578,6 +578,45 @@ TextureImporter:
   - first:
       213: -8886512744414966140
     second: Cliff_Wall_0_E_ALT_1
+  - first:
+      213: -8227923331912488761
+    second: Path_4_NW
+  - first:
+      213: 2309991114071023670
+    second: Path_4_N
+  - first:
+      213: -7866612158640005715
+    second: Path_4_NE
+  - first:
+      213: -2429777784641670220
+    second: Path_4_W
+  - first:
+      213: -7186295571139785356
+    second: Path_4_C
+  - first:
+      213: -705356121193935760
+    second: Path_4_E
+  - first:
+      213: -1409072211366472517
+    second: Path_4_SW
+  - first:
+      213: 2582478225411661824
+    second: Path_4_
+  - first:
+      213: 1172052551921781510
+    second: Path_4_S
+  - first:
+      213: -396842850665544393
+    second: Path_4_ALT_1
+  - first:
+      213: 8095919897549263320
+    second: Path_4_ALT_3
+  - first:
+      213: -5598311527749930495
+    second: Path_4_CORNER
+  - first:
+      213: 1107136396343622104
+    second: Path_4_CORNER_TRANSPARENT
   externalObjects: {}
   serializedVersion: 11
   mipmaps:
@@ -4604,6 +4643,300 @@ TextureImporter:
       bones: []
       spriteID: 48e0a21edb3cca480800000000000000
       internalID: -8886512744414966140
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_NW
+      rect:
+        serializedVersion: 2
+        x: 1800
+        y: 2600
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7c82532b25b80dd80800000000000000
+      internalID: -8227923331912488761
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_N
+      rect:
+        serializedVersion: 2
+        x: 2000
+        y: 2600
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 630238cedacbe0020800000000000000
+      internalID: 2309991114071023670
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_NE
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 2600
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: dad5e7abbed24d290800000000000000
+      internalID: -7866612158640005715
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_W
+      rect:
+        serializedVersion: 2
+        x: 1800
+        y: 2400
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4b33c477af1b74ed0800000000000000
+      internalID: -2429777784641670220
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_C
+      rect:
+        serializedVersion: 2
+        x: 2000
+        y: 2400
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 47d004fa046254c90800000000000000
+      internalID: -7186295571139785356
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_E
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 2400
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 07c861c48521636f0800000000000000
+      internalID: -705356121193935760
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_SW
+      rect:
+        serializedVersion: 2
+        x: 1800
+        y: 2200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: bb490a21a48f17ce0800000000000000
+      internalID: -1409072211366472517
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_
+      rect:
+        serializedVersion: 2
+        x: 2000
+        y: 2200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 000e7d1734ec6d320800000000000000
+      internalID: 2582478225411661824
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_S
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 2200
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 60b436f0697f34010800000000000000
+      internalID: 1172052551921781510
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_ALT_1
+      rect:
+        serializedVersion: 2
+        x: 2000
+        y: 3000
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 7354d66a7812e7af0800000000000000
+      internalID: -396842850665544393
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_ALT_2
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 3000
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 04be480aa2c474ab0800000000000000
+      internalID: -5023963113343096000
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_ALT_3
+      rect:
+        serializedVersion: 2
+        x: 2000
+        y: 2800
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8d1d077b04c7a5070800000000000000
+      internalID: 8095919897549263320
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_CORNER
+      rect:
+        serializedVersion: 2
+        x: 2200
+        y: 2800
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 102bd7e935dce42b0800000000000000
+      internalID: -5598311527749930495
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: Path_4_CORNER_TRANSPARENT
+      rect:
+        serializedVersion: 2
+        x: 1800
+        y: 2800
+        width: 200
+        height: 200
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 8d9b7f5cfa65d5f00800000000000000
+      internalID: 1107136396343622104
       vertices: []
       indices: 
       edges: []

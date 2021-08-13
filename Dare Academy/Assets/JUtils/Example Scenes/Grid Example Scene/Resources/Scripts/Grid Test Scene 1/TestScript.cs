@@ -36,7 +36,7 @@ public class TestScript : MonoBehaviour
         if (positions == null || positions[0] == null || positions[1] == null)
             return;
 
-        path = grid.GetPath(positions[0].position, positions[1].position);
+        path = grid.GetPath(positions[0].position, positions[1].position, false);
     }
 
     private void OnDrawGizmos()

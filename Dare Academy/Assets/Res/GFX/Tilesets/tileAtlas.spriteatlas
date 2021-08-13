@@ -48,7 +48,7 @@ SpriteAtlas:
     - {fileID: 2800000, guid: 5eab43e1b700b5f45a2dc54e692562d2, type: 3}
     - {fileID: 2800000, guid: fc891af1143ccbf4089df7a90dd3888d, type: 3}
     - {fileID: 2800000, guid: 99580f18b9cb4db478b037d2034f97c1, type: 3}
-    totalSpriteSurfaceArea: 21961366
+    totalSpriteSurfaceArea: 22521366
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
@@ -238,6 +238,7 @@ SpriteAtlas:
   - {fileID: -733644358879210631, guid: e814293a4eab40b4ea9a12841891ef4b, type: 3}
   - {fileID: -5922832521335626584, guid: e814293a4eab40b4ea9a12841891ef4b, type: 3}
   - {fileID: 26990884617261934, guid: e814293a4eab40b4ea9a12841891ef4b, type: 3}
+  - {fileID: -396842850665544393, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 8814268740091661051, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -7985161796820590841, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -6887967224339722394, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
@@ -325,19 +326,25 @@ SpriteAtlas:
   - {fileID: 3713736574964892941, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -3912571941077401154, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -1811911798416768409, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
+  - {fileID: -2429777784641670220, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -2676614968362554051, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 3808337165145955380, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
+  - {fileID: 1172052551921781510, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 3909301271862159071, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
+  - {fileID: 2582478225411661824, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 7739131651729612781, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 1076352819040228893, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 6986912995481230892, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -4568459531641308319, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 4161068794622951946, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
+  - {fileID: -705356121193935760, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 4986114834030399069, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 3990117140881770809, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 2711419495677771710, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 7601944259634100975, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
+  - {fileID: -7186295571139785356, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 7326531781239363322, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
+  - {fileID: 2309991114071023670, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 2770725137333030417, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 6902912019288850591, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 8426709742893681019, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
@@ -378,6 +385,7 @@ SpriteAtlas:
   - {fileID: 2505018724196933605, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 7826394402028710697, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -6101885034741468972, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
+  - {fileID: -5598311527749930495, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -239741559733705945, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 3944931516159762335, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 7701123293022811989, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
@@ -413,6 +421,7 @@ SpriteAtlas:
   - {fileID: 1445256892784147152, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -1248935559298939872, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -954738695461126550, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
+  - {fileID: -7866612158640005715, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -5308526003201499429, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -1143003688586790781, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -3781819625989384336, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
@@ -421,8 +430,13 @@ SpriteAtlas:
   - {fileID: 5495884753727130223, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 7171007333317123142, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: 1602313121961602851, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
+  - {fileID: -1409072211366472517, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
+  - {fileID: -8227923331912488761, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -8798903827781823765, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
+  - {fileID: 1107136396343622104, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
+  - {fileID: -5023963113343096000, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -8886512744414966140, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
+  - {fileID: 8095919897549263320, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   - {fileID: -5291398397153794521, guid: 7517ab9a164153842bdac110e26d59b6, type: 3}
   m_PackedSpriteNamesToIndex:
   - foliage_2 1_186
@@ -609,6 +623,7 @@ SpriteAtlas:
   - trees_purple_grass_143
   - blue_tree_01
   - blue_tree_02
+  - Path_4_ALT_1
   - Grass_1_6
   - Grass_1_7
   - Grass_1_4
@@ -696,19 +711,25 @@ SpriteAtlas:
   - Cliff_1_SW_ALT
   - Cliff_Grass_2_C
   - Cliff_Wall_1_E
+  - Path_4_W
   - Cliff_1_NE
   - Cliff_Wall_1_W_ALT_1
+  - Path_4_S
   - Cliff_Wall_1_E_Platform
+  - Path_4_
   - Path_1_SE
   - Path_1_NE
   - Cliff_Wall_1_W_Platform
   - Cliff_0_S
   - Path_1_E
+  - Path_4_E
   - Cliff_Wall_1_C_Platform
   - Cliff_1_NW
   - Cliff_1_SW
   - Cliff_0_W
+  - Path_4_C
   - Path_3_Corner
+  - Path_4_N
   - Path_1_N
   - Path_1_S
   - Grass_0_7
@@ -749,6 +770,7 @@ SpriteAtlas:
   - Path_0_SW
   - Path_0_NW
   - Path_0_Corner
+  - Path_4_CORNER
   - Path_3_S
   - Cliff_Base_1_W
   - Cliff_Grass_0_SE
@@ -784,6 +806,7 @@ SpriteAtlas:
   - Path_2_NW
   - Path_2_E
   - Cliff_2_N
+  - Path_4_NE
   - Cliff_2_W
   - Cliff_2_NE
   - Cliff_2_S
@@ -792,8 +815,13 @@ SpriteAtlas:
   - Cliff_Wall_2_W
   - Path_2_W
   - Path_2_S
+  - Path_4_SW
+  - Path_4_NW
   - TILESET_test (1)_80
+  - Path_4_CORNER_TRANSPARENT
+  - Path_4_ALT_2
   - Cliff_Wall_0_E_ALT_1
+  - Path_4_ALT_3
   - Path_2_Corner
   m_RenderDataMap: {}
   m_Tag: tileAtlas

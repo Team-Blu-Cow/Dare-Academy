@@ -566,7 +566,7 @@ public class PlayerEntity : GridEntity
 
             if (levelModule.persistantSceneData._MisplacedForestCounter == 0 && LastDirection == Vector2Int.down)
             {
-                m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(2, 4);
+                m_currentNode.lvlTransitionInfo.targetNodeIndex = new Vector2Int(2, 7);
                 m_currentNode.lvlTransitionInfo.targetSceneName = "Mushroom Forest Start";
                 m_currentNode.lvlTransitionInfo.targetRoomIndex = 8;
 
@@ -636,6 +636,9 @@ public class PlayerEntity : GridEntity
 
     public override void EndStep()
     {
+        if (m_abilityUsedThisTurn && Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Dash)
+            m_flags.SetFlags(flags.isAirBorn, false);
+
         base.EndStep();
 
         if (m_currentNode != m_previousNode && m_previousNode != null)
@@ -819,6 +822,7 @@ public class PlayerEntity : GridEntity
             {
                 m_abilityUsedThisTurn = true;
                 Energy -= m_dashEnergyCost;
+                m_flags.SetFlags(flags.isAirBorn, true);
                 return true;
             }
         }
