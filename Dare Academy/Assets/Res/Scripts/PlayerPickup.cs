@@ -10,7 +10,8 @@ public class PlayerPickup : Interface
     {
         Health,
         Energy,
-        ShipPart
+        ShipPart,
+        Helmet
     }
 
     [SerializeField] private Type m_type;
@@ -61,6 +62,13 @@ public class PlayerPickup : Interface
                     m_player.ShipParts++;
                     App.GetModule<LevelModule>().ActiveSaveData.partsCollected++;
                     m_shipParts.UpdateUI();
+
+                    break;
+
+                case Type.Helmet:
+
+                    Destroy(popup);
+                    App.GetModule<DialogueModule>().StartDialogue(transform.parent.gameObject);
 
                     break;
 

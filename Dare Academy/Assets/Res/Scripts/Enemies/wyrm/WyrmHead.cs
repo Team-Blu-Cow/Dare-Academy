@@ -79,6 +79,8 @@ public class WyrmHead : WyrmSection
 
     private int started = 0;
 
+    [SerializeField] private GameObject m_endPickup;
+
     protected override void OnValidate()
     {
         base.OnValidate();
@@ -268,7 +270,11 @@ public class WyrmHead : WyrmSection
 
     public override void OnDeath()
     {
-        m_uiHealth.FightEnd();
+        if (other == null)
+        {
+            m_uiHealth.FightEnd();
+            m_endPickup.SetActive(true);
+        }
 
         WyrmSection section = SectionBehind;
         while (section)
@@ -380,6 +386,8 @@ public class WyrmHead : WyrmSection
 
                 head.other = this;
                 this.other = head;
+
+                other.m_endPickup = m_endPickup;
 
                 other.Flags._FlagData = Flags._FlagData;
 

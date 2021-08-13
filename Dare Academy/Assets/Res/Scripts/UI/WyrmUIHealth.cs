@@ -51,10 +51,7 @@ public class WyrmUIHealth : MonoBehaviour
 
     public void FightEnd()
     {
-        m_deaths++;
-
-        if (m_deaths > 1)
-            GetComponent<Canvas>().enabled = false;
+        GetComponent<Canvas>().enabled = false;
     }
 
     public void FightSplit()

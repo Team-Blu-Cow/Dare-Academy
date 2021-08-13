@@ -148,6 +148,8 @@ public class LevelManager : MonoBehaviour
     {
         if (paused)
         {
+            SavePlayerPref();
+
             if (App.CanvasManager.topCanvas.name != "Options Menu")
                 App.CanvasManager.CloseCanvas();
             App.CanvasManager.CloseCanvas();
@@ -192,8 +194,6 @@ public class LevelManager : MonoBehaviour
     {
         if (paused)
         {
-            SavePlayerPref();
-
             if (App.CanvasManager.topCanvas.name == "Options Menu")
             {
                 paused = false;
