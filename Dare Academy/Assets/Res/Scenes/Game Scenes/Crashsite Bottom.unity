@@ -54516,6 +54516,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Health PIckup
       objectReference: {fileID: 0}
+    - target: {fileID: 2989854093864605555, guid: 767bb5e2ae1f144429a1cca819e6cd37, type: 3}
+      propertyPath: m_playerUI
+      value: 
+      objectReference: {fileID: 1869139614}
+    - target: {fileID: 2989854093864605555, guid: 767bb5e2ae1f144429a1cca819e6cd37, type: 3}
+      propertyPath: m_shipParts
+      value: 
+      objectReference: {fileID: 148250033}
+    - target: {fileID: 2989854093864605555, guid: 767bb5e2ae1f144429a1cca819e6cd37, type: 3}
+      propertyPath: m_flagToFlip
+      value: 1024
+      objectReference: {fileID: 0}
     - target: {fileID: 2989854093864605557, guid: 767bb5e2ae1f144429a1cca819e6cd37, type: 3}
       propertyPath: m_RootOrder
       value: 2
@@ -54574,6 +54586,14 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5743623725719532217, guid: fd4965d0525ddbe448fb789ca77349a2, type: 3}
+      propertyPath: m_shipParts
+      value: 
+      objectReference: {fileID: 148250033}
+    - target: {fileID: 5743623725719532217, guid: fd4965d0525ddbe448fb789ca77349a2, type: 3}
+      propertyPath: m_flagToFlip
+      value: 2048
+      objectReference: {fileID: 0}
     - target: {fileID: 5743623725719532218, guid: fd4965d0525ddbe448fb789ca77349a2, type: 3}
       propertyPath: m_Name
       value: Energy Pickup
