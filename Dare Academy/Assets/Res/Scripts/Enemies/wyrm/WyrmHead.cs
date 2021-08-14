@@ -669,8 +669,8 @@ public class WyrmHead : WyrmSection
                 if (GenerateChargePath())
                 {
                     TelegraphChargeNodes();
-
-                    SpawnWarningSymbol(m_chargeStartNode);
+                    CreateWaringSymbols();
+                    // SpawnWarningSymbol(m_chargeStartNode);
                     m_chargeCountdown = m_chargeCountdownTime;
                     Burrow();
                     return;
@@ -1021,6 +1021,28 @@ public class WyrmHead : WyrmSection
         }
 
         return levelModule.MetaGrid.GetPathWithAvoidance(currentNode.position.world, PlayerEntity.Instance.currentNode.position.world, avoidNodes, 1);
+    }
+
+    private void CreateWaringSymbols()
+    {
+        foreach (var node in m_chargeDamageNodes)
+        {
+            bool hasConflict = false;
+            var entities = node.GetGridEntities();
+            foreach (var entity in entities)
+            {
+                if (entity is BarrierEntity)
+                {
+                    hasConflict = true;
+                    break;
+                }
+            }
+
+            if (!hasConflict)
+            {
+                SpawnWarningSymbol(node);
+            }
+        }
     }
 
     private void TelegraphChargeNodes()
