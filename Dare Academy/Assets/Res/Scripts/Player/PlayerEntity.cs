@@ -719,7 +719,8 @@ public class PlayerEntity : GridEntity
                 Energy = MaxEnergy;
                 transform.position = m_currentNode.position.world;
                 AddToCurrentNode();
-                App.CameraController.MoveToRoomByIndex(respawnPoint.roomIndex);
+                ExecuteStep(); // jank solution but it works
+                // App.CameraController.MoveToRoomByIndex(respawnPoint.roomIndex);
                 return true;
             }
         }

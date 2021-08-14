@@ -5,28 +5,24 @@ using blu;
 
 public class CutsceneControl : MonoBehaviour
 {
-    private float m_timer;
+    private float m_timer = 0f;
 
     private void OnDisable()
     {
         if (App.GetModule<SceneModule>())
         {
-            App.GetModule<SceneModule>().SwitchScene(LevelModule.ResolveSceneNameString(blu.LevelID._default));
+            App.GetModule<SceneModule>().SwitchScene(LevelModule.ResolveSceneNameString(blu.LevelID._default), TransitionType.Fade);
         }
-    }
-
-    private void Start()
-    {
-        m_timer = 0.0f;
     }
 
     private void Update()
     {
-        if(m_timer > 24.5f)
+        if (m_timer > 24.5f)
         {
             if (App.GetModule<SceneModule>())
             {
-                App.GetModule<SceneModule>().SwitchScene(LevelModule.ResolveSceneNameString(blu.LevelID._default));
+                Debug.LogWarning("[CutsceneControl] cutscene took to long, forcing scene switch");
+                App.GetModule<SceneModule>().SwitchScene(LevelModule.ResolveSceneNameString(blu.LevelID._default), TransitionType.Fade);
             }
         }
 

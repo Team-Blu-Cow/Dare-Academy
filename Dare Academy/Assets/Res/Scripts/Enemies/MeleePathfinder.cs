@@ -114,7 +114,7 @@ public class MeleePathfinder : GridEntity
 
         Vector3 dir = Vector3.zero;
 
-        if(m_path == null)
+        if (m_path == null)
         {
             SetMovementDirection(Vector2Int.zero, 0);
             return;
@@ -160,7 +160,7 @@ public class MeleePathfinder : GridEntity
         }
     }
 
-    public void OnDrawGizmos()
+    protected override void OnDrawGizmos()
     {
         if (showPath)
             JUtil.JUtils.DrawPath(m_path, Position.world);
