@@ -7,6 +7,10 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -6973139725137046004, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
+      propertyPath: m_Controller
+      value: 
+      objectReference: {fileID: 9100000, guid: e2e696c9e3b7cfc42852595fe486e13e, type: 2}
     - target: {fileID: 1597557835413445020, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -53,7 +57,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7765752218238835681, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}
       propertyPath: m_Name
-      value: BaseEntity
+      value: Mir
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c8982ff8c5c236e41be2ca486f3ad5db, type: 3}

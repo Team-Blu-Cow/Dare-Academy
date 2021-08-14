@@ -425,7 +425,7 @@ namespace blu
 
                             if (CurrentLevelId() == LevelID.crashsite_bottom)
                             {
-                                if (PlayerEntity.Instance != null && PlayerEntity.Instance.RoomIndex == 8)
+                                if (PlayerEntity.Instance != null && PlayerEntity.Instance.RoomIndex == 7)
                                 {
                                     if (m_gameEventFlags.IsFlagsSet(GameEventFlags.Flags.mir_saved_cutscene) == false)
                                     {

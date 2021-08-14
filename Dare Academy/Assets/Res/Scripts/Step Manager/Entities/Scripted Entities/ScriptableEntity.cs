@@ -248,8 +248,9 @@ public class ScriptableEntity : GridEntity
                 return;
 
             case ScriptedActionQueue.ActionType.KillIfEventFlagSet:
-                runAgain = KillIfEventFlagSet(currentAction);
-                stepQueue = true;
+                b = KillIfEventFlagSet(currentAction);
+                runAgain = b;
+                stepQueue = b;
                 return;
 
             case ScriptedActionQueue.ActionType.KillIfEventFlagNotSet:
@@ -261,6 +262,12 @@ public class ScriptableEntity : GridEntity
                 AddQuest(currentAction);
                 runAgain = true;
                 stepQueue = true;
+                break;
+
+            case ScriptedActionQueue.ActionType.AwaitEventFlagSet:
+                b = AwaitEventFlagSet(currentAction);
+                runAgain = b;
+                stepQueue = b;
                 break;
 
             default:
@@ -404,6 +411,18 @@ public class ScriptableEntity : GridEntity
         }
 
         return true;
+    }
+
+    protected bool AwaitEventFlagSet(ScriptedActionQueue.ActionWrapper data)
+    {
+        if (blu.App.GetModule<blu.LevelModule>().EventFlags.IsFlagsSet(data.int32Data))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 
     protected void ExecuteSteps(ScriptedActionQueue.ActionWrapper data)

@@ -61,7 +61,7 @@ public abstract class GridEntity : MonoBehaviour
                 (m_health <= 0 && m_flags.IsFlagsSet(flags.isKillable))
                 || m_currentNode == null && !m_flags.IsFlagsSet(flags.allowedOffGrid)
                 || m_internalFlags.IsFlagsSet(interalFlags.isDead)
-                || (m_currentNode!= null && !m_currentNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
+                || (m_currentNode != null && !m_currentNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
                 ; // fuck you Adam, its staying in :] - Love Matthew & Jay
         }
     }
@@ -192,7 +192,7 @@ public abstract class GridEntity : MonoBehaviour
         if (m_currentNode == null && !m_flags.IsFlagsSet(flags.allowedOffGrid))
             Kill();
 
-        if(m_currentNode != null && !m_currentNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
+        if (m_currentNode != null && !m_currentNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
         {
             Kill();
         }
@@ -237,8 +237,11 @@ public abstract class GridEntity : MonoBehaviour
             m_targetNode = null;
 
             AddAnimationAction(m_currentNode.position, ActionTypes.MOVE, "WalkBlend");
-            m_animationController.animator.SetFloat("WalkDirX", m_movementDirection.x);
-            m_animationController.animator.SetFloat("WalkDirY", m_movementDirection.y);
+            if (m_animationController.animator.runtimeAnimatorController)
+            {
+                m_animationController.animator.SetFloat("WalkDirX", m_movementDirection.x);
+                m_animationController.animator.SetFloat("WalkDirY", m_movementDirection.y);
+            }
 
             // add ourself to the list of entities currently on the node
             m_currentNode.AddEntity(this);
@@ -394,7 +397,7 @@ public abstract class GridEntity : MonoBehaviour
         // check for any new conflicts
     }
 
-    public void PostMoveStep()
+    public virtual void PostMoveStep()
     {
         if (currentNode != previousNode)
             MovedThisStep = true;
@@ -416,7 +419,7 @@ public abstract class GridEntity : MonoBehaviour
             Kill();
         }
 
-        if(m_currentNode != null && !m_currentNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
+        if (m_currentNode != null && !m_currentNode.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
         {
             m_stepsTaken = int.MaxValue;
             m_movementDirection = Vector2Int.zero;
@@ -856,7 +859,7 @@ public abstract class GridEntity : MonoBehaviour
             return false;
         }
 
-        if(!node.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
+        if (!node.IsTraversable(m_flags.IsFlagsSet(flags.isAirBorn)))
         {
             RemoveFromCurrentNode();
             m_currentNode = null;
@@ -1075,16 +1078,26 @@ public abstract class GridEntity : MonoBehaviour
             transform.position = m_currentNode.position.world;
     }
 
+    virtual protected void OnRoomEnter()
+    {
+    }
+
+    virtual protected void OnRoomExit()
+    {
+    }
+
     virtual public void RoomChange()
     {
         if (m_roomIndex == m_stepController.m_currentRoomIndex || Flags.IsFlagsSet(flags.keepAwake))
         {
             m_stepController.AddEntity(this);
+            OnRoomEnter();
         }
         else
         {
             ResetPosition();
             m_stepController.RemoveEntity(this);
+            OnRoomExit();
         }
     }
 

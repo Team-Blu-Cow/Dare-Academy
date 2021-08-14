@@ -71,6 +71,7 @@ MonoBehaviour:
   m_hasHead: 0
   m_overwriteAnimSpeed: 1
   m_isDead: 0
+  m_deathPoofPrefab: {fileID: 3161301949072914463, guid: 2a7ca93a7ffa1174b8f8062d29cd88d7, type: 3}
 --- !u!114 &5390704845275201333
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,7 +87,7 @@ MonoBehaviour:
   m_mass: 2
   m_health: 1
   m_flags:
-    m_flagData: 0
+    m_flagData: 2050
   m_animationController: {fileID: 3301926477037599487}
   m_damage: 0
   m_damageType: 2
@@ -161,7 +162,7 @@ SpriteRenderer:
   m_SortingLayerID: 1532050139
   m_SortingLayer: 3
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 46f1be8dc08b6eb469c80a7ad5fa41ac, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8fcc5b9798933a6489b4ed482df14604, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0

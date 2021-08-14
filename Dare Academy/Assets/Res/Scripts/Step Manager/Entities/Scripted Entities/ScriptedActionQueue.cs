@@ -6,13 +6,14 @@ public class ScriptedActionQueue : ScriptableObject
 {
     // values are set to prevent scripts being damaged when features are added or removed
     [System.Serializable]
-    public enum ActionType // 15
+    public enum ActionType // 16
     {
         None = 0,
         WaitTurns = 1,              // int
         Move = 2,                   // MoveData
         Dialogue = 3,               // prefab
         AwaitDialogueComplete = 11, // void
+        AwaitEventFlagSet = 16,     // int
         WaitPlayerEnterTrigger = 4, // gameObject
         WaitPlayerExitTrigger = 6,  // gameObject
         SetFlagEntityValue =  7,    // int, bool

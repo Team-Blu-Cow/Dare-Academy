@@ -80,6 +80,8 @@ public class WyrmHead : WyrmSection
     private int started = 0;
 
     [SerializeField] private GameObject m_endPickup;
+    [SerializeField] private BarrierEntity m_endBarrier;
+    private GameObject m_startBarrier;
 
     protected override void OnValidate()
     {
@@ -174,6 +176,30 @@ public class WyrmHead : WyrmSection
         }
     }
 
+    protected override void OnRoomEnter()
+    {
+        //spawn barrier
+
+        m_startBarrier = Resources.Load<GameObject>("prefabs/BarrierEntrance");
+        m_startBarrier = Instantiate(m_startBarrier);
+    }
+
+    protected override void OnRoomExit()
+    {
+        //spawn barrier
+
+        if (m_startBarrier != null)
+        {
+            m_startBarrier.GetComponentInChildren<BarrierEntity>().KillImmediate();
+            m_startBarrier = null;
+
+            LeanTween.delayedCall(0.1f, () =>
+        {
+            App.GetModule<LevelModule>().EventFlags.SetFlags(GameEventFlags.Flags.Flag_29, false);
+        });
+        }
+    }
+
     private void AnalyseFSM()
     {
         if (state != WyrmState.Splitting && !HasSplit && Health < SplitHealth)
@@ -241,8 +267,6 @@ public class WyrmHead : WyrmSection
     public override void EndStep()
     {
         base.EndStep();
-
-        ResurfacedThisStep = false;
     }
 
     public override void DamageStep()
@@ -258,8 +282,12 @@ public class WyrmHead : WyrmSection
                     var entities = node.GetGridEntities();
                     foreach (var entity in entities)
                     {
-                        if (!(entity is WyrmSection))
-                            entity.OnHit(m_chargeDamage);
+                        if (entity is WyrmSection)
+                            continue;
+                        if (entity is BarrierEntity)
+                            continue;
+
+                        entity.OnHit(m_chargeDamage);
                     }
                 }
             }
@@ -274,6 +302,13 @@ public class WyrmHead : WyrmSection
         {
             m_uiHealth.FightEnd();
             m_endPickup.SetActive(true);
+
+            //Kill barriers
+            if (m_startBarrier != null)
+                Destroy(m_startBarrier);
+
+            if (m_endBarrier != null)
+                m_endBarrier.KillImmediate();
         }
 
         WyrmSection section = SectionBehind;
@@ -388,6 +423,8 @@ public class WyrmHead : WyrmSection
                 this.other = head;
 
                 other.m_endPickup = m_endPickup;
+                other.m_endBarrier = m_endBarrier;
+                other.m_startBarrier = m_startBarrier;
 
                 other.Flags._FlagData = Flags._FlagData;
 
@@ -627,18 +664,20 @@ public class WyrmHead : WyrmSection
     {
         if (m_chargeStartNode == null)
         {
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 30; i++)
             {
                 if (GenerateChargePath())
                 {
                     TelegraphChargeNodes();
-
-                    SpawnWarningSymbol(m_chargeStartNode);
+                    CreateWaringSymbols();
+                    // SpawnWarningSymbol(m_chargeStartNode);
                     m_chargeCountdown = m_chargeCountdownTime;
                     Burrow();
                     return;
                 }
             }
+
+            state = WyrmState.UnderGround;
 
             return;
         }
@@ -796,6 +835,11 @@ public class WyrmHead : WyrmSection
                     (entity as DamageEntity).Linger = fireTime;
                 return true;
             }
+
+            if (entity is BarrierEntity)
+            {
+                return true;
+            }
         }
 
         // spawn a fire
@@ -861,66 +905,57 @@ public class WyrmHead : WyrmSection
     private bool GenerateChargePath()
     {
         m_chargeStartNode = null;
+        m_chargeDamageNodes.Clear();
         m_chargeDir = Vector2Int.zero;
-
         JUtil.Grids.Grid<GridNode> grid = levelModule.MetaGrid.Grid(RoomIndex);
-
         System.Random rand = new System.Random();
 
-        int r = rand.Next(0, 4);
+        List<GridNode> nodes = new List<GridNode>();
+        GridNode playerNode = PlayerEntity.Instance.currentNode;
+
+        // double chance of spawn
+        nodes.Add(playerNode);
+        nodes.Add(playerNode);
+
+        GridNode node;
+
+        node = playerNode.GetNeighbour(Vector2Int.up);
+        if (node != null) nodes.Add(node);
+        node = playerNode.GetNeighbour(Vector2Int.down);
+        if (node != null) nodes.Add(node);
+        node = playerNode.GetNeighbour(Vector2Int.left);
+        if (node != null) nodes.Add(node);
+        node = playerNode.GetNeighbour(Vector2Int.right);
+        if (node != null) nodes.Add(node);
+
+        node = nodes[rand.Next(0, nodes.Count)];
 
         Vector2Int dir = Vector2Int.zero;
-        GridNode node = null;
-
-        switch (r)
+        switch (rand.Next(0, 4))
         {
             case 0:
                 dir = Vector2Int.up;
-                node = grid[rand.Next(0, grid.Width), 0];
                 break;
 
             case 1:
                 dir = Vector2Int.down;
-                node = grid[rand.Next(0, grid.Width), grid.Height - 1];
                 break;
 
             case 2:
                 dir = Vector2Int.left;
-                node = grid[grid.Width - 1, rand.Next(0, grid.Height)];
                 break;
 
             case 3:
                 dir = Vector2Int.right;
-                node = grid[0, rand.Next(0, grid.Height)];
                 break;
         }
 
-        if (node == null)
+        m_chargeStartNode = FindLastNodeInDirection(node, -dir);
+        if (m_chargeStartNode == null)
             return false;
 
-        int dist = node.GetDistanceInDirection(dir);
-
-        if (dist < 4)
-            return false;
-
-        GridNode n = node;
-        while (true)
-        {
-            if (n == null)
-                break;
-
-            if (n.overridden)
-                return false;
-
-            n = n.GetNeighbour(dir);
-        }
-
-        m_chargeStartNode = node;
         m_chargeDir = dir;
-
-        GridNode damageNode = node;
-
-        m_chargeDamageNodes.Clear();
+        GridNode damageNode = m_chargeStartNode;
         while (damageNode != null)
         {
             m_chargeDamageNodes.Add(damageNode);
@@ -928,6 +963,33 @@ public class WyrmHead : WyrmSection
         }
 
         return true;
+    }
+
+    private GridNode FindLastNodeInDirection(GridNode node, Vector2Int dir)
+    {
+        if (dir == Vector2Int.zero)
+            return node;
+        if (node == null)
+            return null;
+
+        GridNode n = node;
+        while (true)
+        {
+            if (n.overridden)
+            {
+                return n;
+            }
+
+            GridNode neighbor = n.GetNeighbour(dir);
+            if (neighbor == null)
+            {
+                return n;
+            }
+            else
+            {
+                n = neighbor;
+            }
+        }
     }
 
     private GridNode GetRandomNode()
@@ -959,6 +1021,28 @@ public class WyrmHead : WyrmSection
         }
 
         return levelModule.MetaGrid.GetPathWithAvoidance(currentNode.position.world, PlayerEntity.Instance.currentNode.position.world, avoidNodes, 1);
+    }
+
+    private void CreateWaringSymbols()
+    {
+        foreach (var node in m_chargeDamageNodes)
+        {
+            bool hasConflict = false;
+            var entities = node.GetGridEntities();
+            foreach (var entity in entities)
+            {
+                if (entity is BarrierEntity)
+                {
+                    hasConflict = true;
+                    break;
+                }
+            }
+
+            if (!hasConflict)
+            {
+                SpawnWarningSymbol(node);
+            }
+        }
     }
 
     private void TelegraphChargeNodes()

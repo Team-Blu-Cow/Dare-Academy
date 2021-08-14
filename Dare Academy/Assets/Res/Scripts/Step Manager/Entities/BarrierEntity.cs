@@ -7,7 +7,9 @@ public class BarrierEntity : GridEntity
 {
     [SerializeField] private GameEventFlags.Flags m_barrierFlag;
     [SerializeField] private GameObject m_destructionVfxPrefab;
-    bool m_haveAnimated = false;
+    private bool m_haveAnimated = false;
+
+    public bool m_flipFlag = true;
 
     protected override void Start()
     {
@@ -24,7 +26,8 @@ public class BarrierEntity : GridEntity
     {
         base.OnDeath();
 
-        App.GetModule<LevelModule>().EventFlags.SetFlags(m_barrierFlag, true);
+        if (m_flipFlag)
+            App.GetModule<LevelModule>().EventFlags.SetFlags(m_barrierFlag, true);
 
         var barriers = transform.parent.GetComponentsInChildren<BarrierEntity>();
 
