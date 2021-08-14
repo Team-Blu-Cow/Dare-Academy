@@ -176,6 +176,10 @@ public class ScriptableEntityEditor : Editor
                     KillIfEventFlagSet(ref queue.m_actionList[i].int32Data, ref queue.m_actionList[i].boolData);
                     break;
 
+                case ScriptedActionQueue.ActionType.AwaitEventFlagSet:
+                    AwaitEventFlagSet(ref queue.m_actionList[i].int32Data);
+                    break;
+
                 case ScriptedActionQueue.ActionType.AddQuest:
                     AddQuest(ref queue.m_actionList[i].unityObject);
                     break;
@@ -330,6 +334,11 @@ public class ScriptableEntityEditor : Editor
             b = true;
         else
             b = false;
+    }
+
+    private void AwaitEventFlagSet(ref int i)
+    {
+        i = (int)(GameEventFlags.Flags)EditorGUILayout.EnumFlagsField((GameEventFlags.Flags)(i), GUILayout.Width(160f));
     }
 
     private void AddQuest(ref UnityEngine.Object obj)

@@ -24,8 +24,11 @@ public class BulletEntity : GridEntity
         if (m_animationController == null)
             m_animationController = GetComponent<GridEntityAnimationController>();
 
-        m_animationController.animator.SetFloat("DirX", m_bulletDirection.x);
-        m_animationController.animator.SetFloat("DirY", m_bulletDirection.y);
+        if (m_animationController.animator.runtimeAnimatorController)
+        {
+            m_animationController.animator.SetFloat("DirX", m_bulletDirection.x);
+            m_animationController.animator.SetFloat("DirY", m_bulletDirection.y);
+        }
 
         if (m_particleTail != null)
             SetTailDirection();

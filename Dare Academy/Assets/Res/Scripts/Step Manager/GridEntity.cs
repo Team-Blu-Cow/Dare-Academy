@@ -237,8 +237,11 @@ public abstract class GridEntity : MonoBehaviour
             m_targetNode = null;
 
             AddAnimationAction(m_currentNode.position, ActionTypes.MOVE, "WalkBlend");
-            m_animationController.animator.SetFloat("WalkDirX", m_movementDirection.x);
-            m_animationController.animator.SetFloat("WalkDirY", m_movementDirection.y);
+            if (m_animationController.animator.runtimeAnimatorController)
+            {
+                m_animationController.animator.SetFloat("WalkDirX", m_movementDirection.x);
+                m_animationController.animator.SetFloat("WalkDirY", m_movementDirection.y);
+            }
 
             // add ourself to the list of entities currently on the node
             m_currentNode.AddEntity(this);
