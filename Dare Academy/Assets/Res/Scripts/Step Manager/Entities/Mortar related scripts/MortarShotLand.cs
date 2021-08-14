@@ -49,6 +49,8 @@ public class MortarShotLand : MonoBehaviour
             if(explosionPrefab != null)
                 GameObject.Instantiate(explosionPrefab, new Vector3(transform.position.x,initY-0.75f,transform.position.z), Quaternion.identity);
 
+            App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/mortar/sfx_mortar_impact");
+
             App.CameraController.CameraShake(6f, 0.3f);
             Destroy(gameObject);
         }

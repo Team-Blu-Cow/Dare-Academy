@@ -655,7 +655,7 @@ public class PlayerEntity : GridEntity
 
         base.EndStep();
 
-        if (m_currentNode != m_previousNode && m_previousNode != null)
+        if (m_currentNode != m_previousNode) //  && m_previousNode != null)
         {
             audioModule.PlayAudioEvent("event:/SFX/Player/sfx_footstep");
         }

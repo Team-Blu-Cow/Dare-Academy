@@ -182,6 +182,8 @@ namespace blu
             NewAudioEvent("event:/SFX/UI/Vitalsfx_ability_left", 15);
             NewAudioEvent("event:/SFX/UI/Vitalsfx_ability_right", 15);
             NewAudioEvent("event:/SFX/sfx_kitty", 15);
+            NewAudioEvent("event:/SFX/mortar/sfx_mortar_throw", 15);
+            NewAudioEvent("event:/SFX/mortar/sfx_mortar_impact", 15);
             // put any new mono event in here
         }
     }

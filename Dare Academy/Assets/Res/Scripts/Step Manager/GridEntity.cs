@@ -1296,7 +1296,7 @@ public abstract class GridEntity : MonoBehaviour
 
             List<GridEntity> entities = spawnNode.GetGridEntities();
 
-            for (int i = entities.Count - 1; i >= 0; i--)
+            /*for (int i = entities.Count - 1; i >= 0; i--)
             {
                 if (entities[i].TryGetComponent<GridEntity>(out GridEntity other))
                 {
@@ -1311,27 +1311,36 @@ public abstract class GridEntity : MonoBehaviour
                         entities.RemoveAt(i);
                     }
                 }
-            }
+            }*/
             Vector3 spawnPosition = spawnNode.position.world;
 
             if (entities.Count > 0)
             {
+                bool hasHit = false;
+
                 foreach (GridEntity entity in entities)
                 {
+                    if (entity.m_flags.IsFlagsSet(flags.isAttack))
+                        continue;
                     //entity.m_health -= damage;
                     entity.OnHit(damage);
+                    hasHit = true;
                 }
 
-                if (prefab.TryGetComponent(out BulletEntity bulletEntity))
-                {
-                    if (bulletEntity.ExplosionPrefab != null)
+                if (hasHit)
+                { 
+                    if (prefab.TryGetComponent(out BulletEntity bulletEntity))
                     {
-                        BulletEntity.DeathExplosion(bulletEntity.ExplosionPrefab, spawnPosition);
+                        if (bulletEntity.ExplosionPrefab != null)
+                        {
+                            BulletEntity.DeathExplosion(bulletEntity.ExplosionPrefab, spawnPosition);
+                        }
                     }
-                }
+                
 
                 bullet = null;
                 return true;
+                }
             }
 
             bullet = GameObject.Instantiate(prefab, spawnPosition, Quaternion.identity);

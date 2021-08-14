@@ -82,6 +82,8 @@ public class MortarEnemy : GridEntity
                     obj.GetComponent<MortarShot>().m_landTime = m_mortarShotFallTime;
                 }
             }
+
+            App.GetModule<AudioModule>().PlayAudioEvent("event:/SFX/mortar/sfx_mortar_throw");
         }
     }
 
