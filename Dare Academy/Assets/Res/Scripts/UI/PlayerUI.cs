@@ -193,6 +193,7 @@ public class PlayerUI : MonoBehaviour
                 break;
 
             case 1:
+
                 m_Icons[(int)IconIndex.Dash].GO.SetActive(false);
                 m_Icons[(int)IconIndex.Block].GO.SetActive(false);
 
@@ -200,10 +201,20 @@ public class PlayerUI : MonoBehaviour
                 break;
 
             case 2:
-                m_Icons[(int)IconIndex.Dash].GO.SetActive(false);
+                if (m_player.Abilities.IsUnlocked(PlayerAbilities.AbilityEnum.Block))
+                {
+                    m_Icons[(int)IconIndex.Dash].GO.SetActive(false);
+                }
+                else
+                {
+                    m_Icons[(int)IconIndex.Block].GO.SetActive(false);
+                    m_Icons[0].index = 2;
+                }
+
                 break;
 
             case 3:
+
                 if (m_player.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Block)
                 {
                     m_Icons[(int)IconIndex.Dash].GO.transform.localPosition = m_iconPositions[(int)IconIndex.Block];
@@ -212,7 +223,23 @@ public class PlayerUI : MonoBehaviour
                     m_Icons[(int)IconIndex.Gun].GO.transform.localPosition = m_iconPositions[(int)IconIndex.Dash];
                     m_Icons[(int)IconIndex.Gun].index = 0;
                 }
+                else if (m_player.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Dash)
+                {
+                    m_Icons[(int)IconIndex.Block].GO.transform.localPosition = m_iconPositions[(int)IconIndex.Dash];
+                    m_Icons[(int)IconIndex.Block].GO.transform.localScale = Vector3.one * m_abilityIconSizeSmall;
+                    m_Icons[(int)IconIndex.Block].index = 0;
 
+                    m_Icons[(int)IconIndex.Gun].GO.transform.localPosition = m_iconPositions[(int)IconIndex.Block];
+                    m_Icons[(int)IconIndex.Gun].index = 2;
+                }
+                else if (m_player.Abilities.GetActiveAbility() == PlayerAbilities.AbilityEnum.Shoot)
+                {
+                    m_Icons[(int)IconIndex.Block].GO.transform.localPosition = m_iconPositions[(int)IconIndex.Block];
+                    m_Icons[(int)IconIndex.Block].index = 2;
+
+                    m_Icons[(int)IconIndex.Dash].GO.transform.localPosition = m_iconPositions[(int)IconIndex.Dash];
+                    m_Icons[(int)IconIndex.Dash].index = 0;
+                }
                 break;
 
             default:
@@ -326,17 +353,30 @@ public class PlayerUI : MonoBehaviour
         switch (numOfAbilitiesUnlocked)
         {
             case 2:
-                for (int i = 1; i < m_Icons.Length; i++)
+                int start = 1;
+                int index = 2;
+
+                if (!m_player.Abilities.IsUnlocked(PlayerAbilities.AbilityEnum.Block))
+                {
+                    start = 0;
+                }
+
+                for (int i = start; i < m_Icons.Length; i++)
                 {
                     if (m_Icons[i].index == 2)
                     {
                         LeanTween.moveLocal(m_Icons[i].GO, m_iconPositions[(int)IconIndex.Gun], transitionSpeed);
+
                         LeanTween.scale(m_Icons[i].GO, new Vector3(m_abilityIconSizeLarge, m_abilityIconSizeLarge, m_abilityIconSizeLarge), transitionSpeed);
                         m_Icons[i].index--;
                     }
                     else
                     {
-                        LeanTween.moveLocal(m_Icons[i].GO, m_iconPositions[(int)IconIndex.Block], transitionSpeed);
+                        if (m_player.Abilities.IsUnlocked(PlayerAbilities.AbilityEnum.Block))
+                            LeanTween.moveLocal(m_Icons[i].GO, m_iconPositions[(int)IconIndex.Block], transitionSpeed);
+                        else
+                            LeanTween.moveLocal(m_Icons[i].GO, m_iconPositions[(int)IconIndex.Dash], transitionSpeed);
+
                         LeanTween.scale(m_Icons[i].GO, new Vector3(m_abilityIconSizeSmall, m_abilityIconSizeSmall, m_abilityIconSizeSmall), transitionSpeed);
                         m_Icons[i].GO.transform.SetAsFirstSibling();
 
