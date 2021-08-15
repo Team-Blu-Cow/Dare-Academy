@@ -8,12 +8,14 @@ using TMPro;
 public class CutsceneControl : MonoBehaviour
 {
     private float m_timer = 0f;
+
+    [SerializeField]
     private TextMeshProUGUI m_text;
 
     private void OnEnable()
     {
-        App.GetModule<InputModule>().SystemController.UI.Pause.performed += Skip;
-        App.GetModule<InputModule>().SystemController.UI.Skip.performed += Skip;
+        App.GetModule<InputModule>().SystemController.UI.Pause.started += Skip;
+        App.GetModule<InputModule>().SystemController.UI.Skip.started += Skip;
     }
 
     private void OnDisable()
@@ -23,12 +25,17 @@ public class CutsceneControl : MonoBehaviour
             App.GetModule<SceneModule>().SwitchScene(LevelModule.ResolveSceneNameString(blu.LevelID._default), TransitionType.Fade);
         }
 
-        App.GetModule<InputModule>().SystemController.UI.Skip.performed += Skip;
-        App.GetModule<InputModule>().SystemController.UI.Pause.performed -= Skip;
+        App.GetModule<InputModule>().SystemController.UI.Skip.started += Skip;
+        App.GetModule<InputModule>().SystemController.UI.Pause.started -= Skip;
     }
 
     private void Skip(InputAction.CallbackContext context)
     {
+        if (App.GetModule<SceneModule>() && m_text.isActiveAndEnabled)
+        {
+            App.GetModule<SceneModule>().SwitchScene(LevelModule.ResolveSceneNameString(blu.LevelID._default), TransitionType.Fade);
+        }
+
         if (!m_text.isActiveAndEnabled)
         {
             m_text.enabled = true;
@@ -58,12 +65,7 @@ public class CutsceneControl : MonoBehaviour
                     break;
             }
 
-            m_text.text = "Press " + key + "to skip";
-        }
-
-        if (App.GetModule<SceneModule>() && m_text.isActiveAndEnabled)
-        {
-            App.GetModule<SceneModule>().SwitchScene(LevelModule.ResolveSceneNameString(blu.LevelID._default), TransitionType.Fade);
+            m_text.text = "Press " + key + " to skip";
         }
     }
 
