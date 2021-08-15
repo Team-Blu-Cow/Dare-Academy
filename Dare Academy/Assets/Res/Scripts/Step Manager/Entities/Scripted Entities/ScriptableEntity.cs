@@ -276,6 +276,11 @@ public class ScriptableEntity : GridEntity
                 stepQueue = b;
                 break;
 
+            case ScriptedActionQueue.ActionType.WaitForever:
+                runAgain = false;
+                stepQueue = false;
+                break;
+
             default:
                 Debug.LogWarning($"[ScriptedEntity] [{gameObject.name}] could not resolve action [type = {currentAction.type.ToString()}]");
                 runAgain = true;

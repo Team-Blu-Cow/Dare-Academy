@@ -53,20 +53,23 @@ public class EnemyHealth : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (m_storedHealth > m_entity.Health)
+        if (m_entity && m_entity.Flags.IsFlagsSet(GridEntityFlags.Flags.isKillable))
         {
-            if (m_hearts.Count == 0)
+            if (m_storedHealth > m_entity.Health)
             {
-                for (int i = 0; i < m_entity.Health + (m_storedHealth - m_entity.Health); i++)
+                if (m_hearts.Count == 0)
                 {
-                    AddHeart();
+                    for (int i = 0; i < m_entity.Health + (m_storedHealth - m_entity.Health); i++)
+                    {
+                        AddHeart();
+                    }
                 }
+
+                for (int i = 0; i < m_storedHealth - m_entity.Health; i++)
+                    OnHit();
+
+                m_storedHealth = m_entity.Health;
             }
-
-            for (int i = 0; i < m_storedHealth - m_entity.Health; i++)
-                OnHit();
-
-            m_storedHealth = m_entity.Health;
         }
     }
 
