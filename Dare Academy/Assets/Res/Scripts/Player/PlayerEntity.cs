@@ -393,6 +393,12 @@ public class PlayerEntity : GridEntity
         //m_animationController.animator.SetInteger("AbilityState", animationFlag);
     }
 
+    public override void ResetAnimations()
+    {
+        base.ResetAnimations();
+        LastDirection = Vector2Int.zero;
+    }
+
     public override void AnalyseStep()
     {
         if (m_moveDirection != Vector2.zero)
