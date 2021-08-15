@@ -28,7 +28,12 @@ public abstract class GridEntity : MonoBehaviour
     protected GridEntityInternalFlags m_internalFlags = new GridEntityInternalFlags();
 
     public Vector2Int Direction => m_movementDirection;
-    public Vector2Int LastDirection => m_lastMovementDiretion;
+
+    public Vector2Int LastDirection
+    {
+        get => m_lastMovementDiretion;
+        set => m_lastMovementDiretion = value;
+    }
 
     public int Mass { get { return m_mass; } set { m_mass = value; } }
     public int Speed { get { return m_speed; } }
@@ -1341,7 +1346,7 @@ public abstract class GridEntity : MonoBehaviour
                 }
 
                 if (hasHit)
-                { 
+                {
                     if (prefab.TryGetComponent(out BulletEntity bulletEntity))
                     {
                         if (bulletEntity.ExplosionPrefab != null)
@@ -1349,10 +1354,9 @@ public abstract class GridEntity : MonoBehaviour
                             BulletEntity.DeathExplosion(bulletEntity.ExplosionPrefab, spawnPosition);
                         }
                     }
-                
 
-                bullet = null;
-                return true;
+                    bullet = null;
+                    return true;
                 }
             }
 

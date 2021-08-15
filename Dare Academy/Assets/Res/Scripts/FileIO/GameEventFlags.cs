@@ -27,8 +27,8 @@ public class GameEventFlags : BitFlags_32
         mole_shipart = 0x0004_0000,
         mir_capture_shippart = 0x0008_0000,
         misplaced_forest_shippart = 0x0010_0000,
-        Flag_22 = 0x0020_0000,
-        Flag_23 = 0x0040_0000,
+        mir_house_shippart = 0x0020_0000,
+        archer_lesson_shippart = 0x0040_0000,
         Flag_24 = 0x0080_0000,
 
         Flag_25 = 0x0100_0000,
