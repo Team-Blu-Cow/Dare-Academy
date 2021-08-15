@@ -57,8 +57,28 @@ namespace blu
             if (in_quest)
             {
                 in_quest.complete = true;
-                _completedQuests.Add(in_quest);
-                _activeQuests.Remove(in_quest);
+
+                bool alreadyComplete = false;
+                for (int i = _completedQuests.Count - 1; i >= 0; i--)
+                {
+                    if (_completedQuests[i].name == in_quest.name)
+                    {
+                        alreadyComplete = true;
+                        break;
+                    }
+                }
+                if (!alreadyComplete)
+                    _completedQuests.Add(in_quest);
+
+                for (int i = _activeQuests.Count - 1; i >= 0; i--)
+                {
+                    if (_activeQuests[i].name == in_quest.name)
+                    {
+                        _activeQuests.RemoveAt(i);
+                        break;
+                    }
+                }
+
                 return true;
             }
             return false;

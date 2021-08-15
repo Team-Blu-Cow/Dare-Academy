@@ -71,6 +71,11 @@ public class ScriptableEntityEditor : Editor
     {
         bool dirty = false;
 
+        if (GUILayout.Button("Force set scene as dirty", GUILayout.Width(200f)))
+        {
+            dirty = true;
+        }
+
         EditorGUILayout.BeginHorizontal();
 
         int len = EditorGUILayout.IntField(queue.m_actionList.Count);
@@ -181,6 +186,10 @@ public class ScriptableEntityEditor : Editor
                     break;
 
                 case ScriptedActionQueue.ActionType.AddQuest:
+                    AddQuest(ref queue.m_actionList[i].unityObject);
+                    break;
+
+                case ScriptedActionQueue.ActionType.CompleteQuest:
                     AddQuest(ref queue.m_actionList[i].unityObject);
                     break;
 
@@ -343,6 +352,7 @@ public class ScriptableEntityEditor : Editor
 
     private void AddQuest(ref UnityEngine.Object obj)
     {
+        // also used for complete quest
         obj = UnityObjectField(obj, typeof(Quest));
     }
 

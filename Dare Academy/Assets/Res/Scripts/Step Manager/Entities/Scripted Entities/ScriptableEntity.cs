@@ -264,6 +264,12 @@ public class ScriptableEntity : GridEntity
                 stepQueue = true;
                 break;
 
+            case ScriptedActionQueue.ActionType.CompleteQuest:
+                CompleteQuest(currentAction);
+                runAgain = true;
+                stepQueue = true;
+                break;
+
             case ScriptedActionQueue.ActionType.AwaitEventFlagSet:
                 b = AwaitEventFlagSet(currentAction);
                 runAgain = b;
@@ -490,6 +496,14 @@ public class ScriptableEntity : GridEntity
         if (data.unityObject && data.unityObject is Quest)
         {
             blu.App.GetModule<blu.QuestModule>().AddQuest(data.unityObject as Quest, true);
+        }
+    }
+
+    protected void CompleteQuest(ScriptedActionQueue.ActionWrapper data)
+    {
+        if (data.unityObject && data.unityObject is Quest)
+        {
+            blu.App.GetModule<blu.QuestModule>().SetComplete(data.unityObject as Quest);
         }
     }
 }
