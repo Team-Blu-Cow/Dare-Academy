@@ -14,4 +14,9 @@ public class EndSceen : MonoBehaviour
         LeanTween.value(text.gameObject, a => text.color = a, new Color(1, 1, 1, 0), new Color(1, 1, 1, 1), 2f).setOnComplete(
             () => { LeanTween.delayedCall(5, () => { App.GetModule<SceneModule>().SwitchScene("Credits"); }); });
     }
+
+    private void OnDestroy()
+    {
+        LeanTween.cancelAll();
+    }
 }
