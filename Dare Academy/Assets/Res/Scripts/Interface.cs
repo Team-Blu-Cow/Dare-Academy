@@ -15,6 +15,7 @@ public abstract class Interface : MonoBehaviour
 
     private InputModule m_inputModule;
 
+    [SerializeField, HideInInspector]
     private GameObject m_interact;
 
     public abstract void OnInteract(InputAction.CallbackContext ctx);

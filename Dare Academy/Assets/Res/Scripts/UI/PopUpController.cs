@@ -25,7 +25,18 @@ public class PopUpController : MonoBehaviour
 
         App.GetModule<InputModule>().DialogueController.Dialogue.Skip.performed += SkipDialogue;
 
+        App.GetModule<InputModule>().SystemController.UI.Pause.performed += ToggleTimeline;
+        App.GetModule<InputModule>().SystemController.UI.Back.performed += StartTimeline;
+
         m_playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(0);
+    }
+
+    private void ToggleTimeline(InputAction.CallbackContext context)
+    {
+        if (App.GetModule<LevelModule>().LevelManager.paused)
+            m_playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(0);
+        else
+            m_playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
     }
 
     private void Start()
@@ -33,6 +44,11 @@ public class PopUpController : MonoBehaviour
         Transform textTransform = transform.parent.GetChild(1);
         textTransform.GetComponentsInChildren<TextMeshProUGUI>()[0].text = m_head;
         textTransform.GetComponentsInChildren<TextMeshProUGUI>()[1].text = m_body[0];
+
+        //      =><=
+        //      |__|
+
+        GetComponentInParent<Canvas>().sortingOrder = 0;
     }
 
     private void Update()
@@ -57,6 +73,9 @@ public class PopUpController : MonoBehaviour
     private void OnDisable()
     {
         App.GetModule<InputModule>().DialogueController.Dialogue.Skip.performed -= SkipDialogue;
+
+        App.GetModule<InputModule>().SystemController.UI.Pause.performed -= ToggleTimeline;
+        App.GetModule<InputModule>().SystemController.UI.Back.performed -= StartTimeline;
 
         Destroy(transform.parent.gameObject);
     }
@@ -91,7 +110,7 @@ public class PopUpController : MonoBehaviour
         else
             yield return new WaitForSeconds(2);
 
-        StartTimeline();
+        StartTimeline(new InputAction.CallbackContext());
     }
 
     private IEnumerator WaitForKeyDown()
@@ -108,11 +127,12 @@ public class PopUpController : MonoBehaviour
             m_nextDialogue = true;
     }
 
-    private void StartTimeline()
+    private void StartTimeline(InputAction.CallbackContext ctx)
     {
         m_playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(1);
 
-        App.GetModule<InputModule>().SystemController.UI.Enable();
+        if (m_playerControlled)
+            App.GetModule<InputModule>().SystemController.UI.Enable();
     }
 
     private void OnDestroy()
@@ -124,7 +144,9 @@ public class PopUpController : MonoBehaviour
     private void StopTimeline()
     {
         m_playableDirector.playableGraph.GetRootPlayable(0).SetSpeed(0);
-        App.GetModule<InputModule>().SystemController.UI.Disable();
+
+        if (m_playerControlled)
+            App.GetModule<InputModule>().SystemController.UI.Disable();
     }
 
     private void StopControls()

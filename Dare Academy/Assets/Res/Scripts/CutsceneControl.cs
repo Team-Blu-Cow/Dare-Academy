@@ -15,6 +15,7 @@ public class CutsceneControl : MonoBehaviour
     private void OnEnable()
     {
         App.GetModule<InputModule>().SystemController.UI.Pause.started += Skip;
+        App.GetModule<InputModule>().PlayerController.Player.Interact.started += Skip;
         App.GetModule<InputModule>().SystemController.UI.Skip.started += Skip;
     }
 
@@ -25,7 +26,7 @@ public class CutsceneControl : MonoBehaviour
             App.GetModule<SceneModule>().SwitchScene(LevelModule.ResolveSceneNameString(blu.LevelID._default), TransitionType.Fade);
         }
 
-        App.GetModule<InputModule>().SystemController.UI.Skip.started += Skip;
+        App.GetModule<InputModule>().SystemController.UI.Skip.started -= Skip;
         App.GetModule<InputModule>().SystemController.UI.Pause.started -= Skip;
     }
 
