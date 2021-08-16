@@ -36,7 +36,7 @@ public class GameEventFlags : BitFlags_32
         mir_house_encounter = 0x0400_0000,
         mir_saved_cutscene = 0x0800_0000,
         wyrm_fight_start = 0x1000_0000,
-        Flag_30 = 0x2000_0000,
+        wyrm_pickup = 0x2000_0000,
         Flag_31 = 0x4000_0000,
     }
 
