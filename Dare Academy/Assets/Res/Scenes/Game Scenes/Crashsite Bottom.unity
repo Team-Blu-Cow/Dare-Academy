@@ -54538,7 +54538,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: -4435658009496331364, guid: 061d090504ea1cf4093a85ea2ce4563f, type: 3}
       propertyPath: m_attackRadius
-      value: 7
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 2421090248395188595, guid: 061d090504ea1cf4093a85ea2ce4563f, type: 3}
       propertyPath: m_LocalPosition.y

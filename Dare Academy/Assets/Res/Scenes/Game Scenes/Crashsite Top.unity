@@ -140,7 +140,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7558758715919986827, guid: f39de10426350474cbed29d3cb06eedc, type: 3}
       propertyPath: m_RootOrder
-      value: 19
+      value: 18
       objectReference: {fileID: 0}
     - target: {fileID: 7558758715919986827, guid: f39de10426350474cbed29d3cb06eedc, type: 3}
       propertyPath: m_LocalPosition.x
@@ -949,8 +949,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentIDCounter: 4
-  json: '{"Options":[],"Parameters":[],"SpeechNodes":[{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":2}],"EditorInfo":{"isRoot":true,"xPos":148,"yPos":22},"ID":0,"ParamActions":[],"TMPFontGUID":null,"Text":"Good
-    luck that Blarb isn''t around otherise we''d be in a spot of trouble.","parentUIDs":[],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"Blorb","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":150,"yPos":145},"ID":2,"ParamActions":[],"TMPFontGUID":null,"Text":"Quite
+  json: '{"Options":[],"Parameters":[],"SpeechNodes":[{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":2}],"EditorInfo":{"isRoot":true,"xPos":348,"yPos":22},"ID":0,"ParamActions":[],"TMPFontGUID":null,"Text":"Good
+    luck that Blarb isn''t around otherise we''d be in a spot of trouble.","parentUIDs":[],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"Blorb","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":350,"yPos":145},"ID":2,"ParamActions":[],"TMPFontGUID":null,"Text":"Quite
     old chap! We better be quiet around this fellow.","parentUIDs":[0],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"Blerb","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0}]}'
   saveVersion: 110
   DefaultName: 
@@ -11663,41 +11663,8 @@ MonoBehaviour:
     boolData: 1
     vec3data: {x: 0, y: 0, z: 0}
     unityObject: {fileID: 0}
-  - type: 3
-    int32Data: 0
-    doubleData: 0
-    moveData:
-      direction: 0
-      distance: 1
-    textData: 
-    gameObject: {fileID: 139128100}
-    boolData: 0
-    vec3data: {x: 0, y: 0, z: 0}
-    unityObject: {fileID: 0}
-  - type: 11
-    int32Data: 0
-    doubleData: 0
-    moveData:
-      direction: 0
-      distance: 1
-    textData: 
-    gameObject: {fileID: 0}
-    boolData: 0
-    vec3data: {x: 0, y: 0, z: 0}
-    unityObject: {fileID: 0}
-  - type: 9
-    int32Data: 0
-    doubleData: 0
-    moveData:
-      direction: 0
-      distance: 1
-    textData: 
-    gameObject: {fileID: 1460067245}
-    boolData: 1
-    vec3data: {x: 0, y: 0, z: 0}
-    unityObject: {fileID: 0}
   - type: 12
-    int32Data: 2
+    int32Data: 1
     doubleData: 1
     moveData:
       direction: 0
@@ -11718,19 +11685,8 @@ MonoBehaviour:
     boolData: 0
     vec3data: {x: 0, y: 0, z: 0}
     unityObject: {fileID: 0}
-  - type: 9
+  - type: 10
     int32Data: 0
-    doubleData: 0
-    moveData:
-      direction: 0
-      distance: 1
-    textData: 
-    gameObject: {fileID: 1566887697}
-    boolData: 1
-    vec3data: {x: 0, y: 0, z: 0}
-    unityObject: {fileID: 0}
-  - type: 1
-    int32Data: 1
     doubleData: 0
     moveData:
       direction: 0
@@ -11738,17 +11694,6 @@ MonoBehaviour:
     textData: 
     gameObject: {fileID: 0}
     boolData: 0
-    vec3data: {x: 0, y: 0, z: 0}
-    unityObject: {fileID: 0}
-  - type: 9
-    int32Data: 0
-    doubleData: 0
-    moveData:
-      direction: 0
-      distance: 1
-    textData: 
-    gameObject: {fileID: 1460067245}
-    boolData: 1
     vec3data: {x: 0, y: 0, z: 0}
     unityObject: {fileID: 0}
   - type: 3
@@ -21266,8 +21211,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentIDCounter: 3
-  json: '{"Options":[],"Parameters":[],"SpeechNodes":[{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":1}],"EditorInfo":{"isRoot":true,"xPos":60,"yPos":139},"ID":0,"ParamActions":[],"TMPFontGUID":null,"Text":"I
-    do say Blorb, Blarb does appear to be taking a rather large amount of time.","parentUIDs":[],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"???","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":136,"yPos":242},"ID":1,"ParamActions":[],"TMPFontGUID":null,"Text":"I
+  json: '{"Options":[],"Parameters":[],"SpeechNodes":[{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":1}],"EditorInfo":{"isRoot":true,"xPos":153,"yPos":189},"ID":0,"ParamActions":[],"TMPFontGUID":null,"Text":"I
+    do say Blorb, Blarb does appear to be taking a rather large amount of time.","parentUIDs":[],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"???","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":229,"yPos":292},"ID":1,"ParamActions":[],"TMPFontGUID":null,"Text":"I
     dare say Blerb I must agree, where HAS that rascal gone off too?","parentUIDs":[0],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"Blorb","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0}]}'
   saveVersion: 110
   DefaultName: 
@@ -25359,18 +25304,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentIDCounter: 4
-  json: '{"Options":[{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":15,"yPos":297},"ID":2,"ParamActions":[],"TMPFontGUID":null,"Text":"Uhhh","parentUIDs":[1],"SpeechUID":-1},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":265,"yPos":300},"ID":3,"ParamActions":[],"TMPFontGUID":null,"Text":"Uhhhh,
-    hi?","parentUIDs":[1],"SpeechUID":-1}],"Parameters":[],"SpeechNodes":[{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":1}],"EditorInfo":{"isRoot":true,"xPos":149,"yPos":45},"ID":0,"ParamActions":[],"TMPFontGUID":null,"Text":"...","parentUIDs":[],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"MC","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":2},{"__type":"EditableOptionConnection:#DialogueEditor","Conditions":[],"NodeUID":3}],"EditorInfo":{"isRoot":false,"xPos":148,"yPos":178},"ID":1,"ParamActions":[],"TMPFontGUID":null,"Text":"...
-    Uhhh","parentUIDs":[0],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"MC","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0}]}'
+  json: '{"Options":[],"Parameters":[],"SpeechNodes":[{"Connections":[],"EditorInfo":{"isRoot":true,"xPos":348,"yPos":22},"ID":0,"ParamActions":[],"TMPFontGUID":null,"Text":"...","parentUIDs":[],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"MC","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0}]}'
   saveVersion: 110
   DefaultName: 
   DefaultSprite: {fileID: 0}
   DefaultFont: {fileID: 0}
   NodeSerializedDataList:
   - {fileID: 1244958823}
-  - {fileID: 1244958822}
-  - {fileID: 1244958821}
-  - {fileID: 1244958820}
   ContinueFont: {fileID: 0}
   EndConversationFont: {fileID: 0}
   Event:
@@ -50533,7 +50473,7 @@ Transform:
   m_Children:
   - {fileID: 1997668741}
   m_Father: {fileID: 0}
-  m_RootOrder: 17
+  m_RootOrder: 16
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &991964056 stripped
 Transform:
@@ -78458,9 +78398,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   CurrentIDCounter: 3
-  json: '{"Options":[],"Parameters":[],"SpeechNodes":[{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":1}],"EditorInfo":{"isRoot":true,"xPos":462,"yPos":90},"ID":0,"ParamActions":[],"TMPFontGUID":null,"Text":"I
-    do say Blerb i have a sneaking suspiction as to the whereabouts of Blarb.","parentUIDs":[],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"Blorb","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":2}],"EditorInfo":{"isRoot":false,"xPos":462,"yPos":207},"ID":1,"ParamActions":[],"TMPFontGUID":null,"Text":"Jolly
-    o'' chap i do say we go take vengance for Blarb","parentUIDs":[0],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"Blerb","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":456,"yPos":322},"ID":2,"ParamActions":[],"TMPFontGUID":null,"Text":"Indeed.","parentUIDs":[1],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"Blorb","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0}]}'
+  json: '{"Options":[],"Parameters":[],"SpeechNodes":[{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":1}],"EditorInfo":{"isRoot":true,"xPos":348,"yPos":22},"ID":0,"ParamActions":[],"TMPFontGUID":null,"Text":"I
+    do say Blerb i have a sneaking suspiction as to the whereabouts of Blarb.","parentUIDs":[],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"Blorb","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[{"__type":"EditableSpeechConnection:#DialogueEditor","Conditions":[],"NodeUID":2}],"EditorInfo":{"isRoot":false,"xPos":348,"yPos":139},"ID":1,"ParamActions":[],"TMPFontGUID":null,"Text":"Jolly
+    o'' chap i do say we go take vengance for Blarb","parentUIDs":[0],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"Blerb","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0},{"Connections":[],"EditorInfo":{"isRoot":false,"xPos":342,"yPos":254},"ID":2,"ParamActions":[],"TMPFontGUID":null,"Text":"Indeed.","parentUIDs":[1],"AdvanceDialogueAutomatically":false,"AudioGUID":null,"AutoAdvanceShouldDisplayOption":false,"IconGUID":null,"Name":"Blorb","OptionUIDs":null,"SpeechUID":0,"TimeUntilAdvance":0,"Volume":0}]}'
   saveVersion: 110
   DefaultName: 
   DefaultSprite: {fileID: 0}
@@ -78541,9 +78481,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1244958819}
   - component: {fileID: 1244958823}
-  - component: {fileID: 1244958822}
-  - component: {fileID: 1244958821}
-  - component: {fileID: 1244958820}
   m_Layer: 0
   m_Name: ConversationEventInfo
   m_TagString: Untagged
@@ -78565,63 +78502,6 @@ Transform:
   m_Father: {fileID: 543792932}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1244958820
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1244958818}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00abedce3cdbbba46bf2d86c9518c9f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Event:
-    m_PersistentCalls:
-      m_Calls: []
-  NodeID: 3
-  TMPFont: {fileID: 0}
-  Icon: {fileID: 0}
-  Audio: {fileID: 0}
---- !u!114 &1244958821
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1244958818}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00abedce3cdbbba46bf2d86c9518c9f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Event:
-    m_PersistentCalls:
-      m_Calls: []
-  NodeID: 2
-  TMPFont: {fileID: 0}
-  Icon: {fileID: 0}
-  Audio: {fileID: 0}
---- !u!114 &1244958822
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1244958818}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 00abedce3cdbbba46bf2d86c9518c9f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Event:
-    m_PersistentCalls:
-      m_Calls: []
-  NodeID: 1
-  TMPFont: {fileID: 0}
-  Icon: {fileID: 0}
-  Audio: {fileID: 0}
 --- !u!114 &1244958823
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -79286,7 +79166,7 @@ Transform:
   - {fileID: 676188982}
   - {fileID: 495797127}
   m_Father: {fileID: 0}
-  m_RootOrder: 16
+  m_RootOrder: 15
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1417364655 stripped
 Transform:
@@ -82030,7 +81910,7 @@ Transform:
   - {fileID: 1069015393}
   - {fileID: 1774932637}
   m_Father: {fileID: 0}
-  m_RootOrder: 14
+  m_RootOrder: 13
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1846986668
 PrefabInstance:
@@ -99003,36 +98883,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27f8a2aef42da1c46962f1d27793f90b, type: 3}
---- !u!1 &2119220951
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2119220952}
-  m_Layer: 0
-  m_Name: Dash
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2119220952
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2119220951}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -40.5, y: -36.5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 13
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2135694025
 GameObject:
   m_ObjectHideFlags: 0
@@ -99235,7 +99085,7 @@ Transform:
   - {fileID: 1550803303}
   - {fileID: 792759258}
   m_Father: {fileID: 0}
-  m_RootOrder: 15
+  m_RootOrder: 14
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1230375373346954828
 PrefabInstance:
@@ -104312,6 +104162,7 @@ MonoBehaviour:
   m_interactImages:
   - {fileID: 21300000, guid: 79daafe6d2f867a4abffdba61c1ac392, type: 3}
   - {fileID: 21300000, guid: cb240d46d23e4ed469ba70ba3674eed3, type: 3}
+  m_interact: {fileID: 0}
   Dialouge: {fileID: 809254738}
   upgradeType: 4
 --- !u!1 &5215871532384363437
@@ -104347,7 +104198,7 @@ Transform:
   - {fileID: 5215871532162893322}
   - {fileID: 809254739}
   m_Father: {fileID: 0}
-  m_RootOrder: 18
+  m_RootOrder: 17
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5215871532824799031
 GameObject:
