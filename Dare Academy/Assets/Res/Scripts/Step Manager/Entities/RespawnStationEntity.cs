@@ -14,6 +14,7 @@ public class RespawnStationEntity : GridEntity, IInteractable
     private bool m_playerInRange;
     private PlayerEntity m_player;
 
+    [SerializeField, HideInInspector]
     private Sprite[] m_interactImages = new Sprite[2];
 
     private GameObject m_interact;
