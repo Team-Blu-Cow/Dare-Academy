@@ -80,6 +80,12 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
         m_spriteBody.GetComponent<SpriteRenderer>().sharedMaterial.SetFloat("_Strength", 0);
     }
 
+    public void endAllSounds()
+    {
+        StopLuvParticles();
+        StopDashChargeParticles();
+    }
+
     protected override void Start()
     {
         base.Start();
@@ -432,5 +438,10 @@ public class PlayerEntityAnimationController : GridEntityAnimationController
             {
                 App.CameraController.transform.rotation = Quaternion.identity;
             });
+    }
+
+    private void OnDestroy()
+    {
+        endAllSounds();
     }
 }

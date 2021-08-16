@@ -171,7 +171,12 @@ public class WyrmHead : WyrmSection
         if (started <= 1 && !HasSplit)
         {
             if (started == 1)
+            {
                 m_uiHealth.FightStart();
+
+                m_startBarrier = Resources.Load<GameObject>("prefabs/BarrierEntrance");
+                m_startBarrier = Instantiate(m_startBarrier);
+            }
 
             started++;
         }
@@ -207,8 +212,6 @@ public class WyrmHead : WyrmSection
     {
         //spawn barrier
 
-        m_startBarrier = Resources.Load<GameObject>("prefabs/BarrierEntrance");
-        m_startBarrier = Instantiate(m_startBarrier);
     }
 
     protected override void OnRoomExit()
@@ -651,7 +654,7 @@ public class WyrmHead : WyrmSection
                 other.Flags._FlagData = Flags._FlagData;
 
                 //set health
-                int h = Health / 2;
+                int h = Mathf.CeilToInt( (float)StartingHealth / 4f);
                 head.Health = h;
                 Health = h;
 
@@ -977,6 +980,13 @@ public class WyrmHead : WyrmSection
             return;
 
         Vector3[] path = PathToPlayer();
+
+        if(path == null)
+        {
+            state = WyrmState.UnderGround;
+            AnalyseFSM();
+            return;
+        }
 
         Vector3 pos = new Vector3(path[0].x, path[0].y, 0);
         GridNode n = levelModule.MetaGrid.GetNodeFromWorld(pos);
@@ -1317,7 +1327,13 @@ public class WyrmHead : WyrmSection
             avoidNodes[i] = sections[i].currentNode.position.world;
         }
 
-        return levelModule.MetaGrid.GetPathWithAvoidance(currentNode.position.world, PlayerEntity.Instance.currentNode.position.world, avoidNodes, 1);
+        if (m_currentNode == null)
+            return null;
+
+        Vector3[] path = levelModule.MetaGrid.GetPathWithAvoidance(currentNode.position.world, PlayerEntity.Instance.currentNode.position.world, avoidNodes, 1);
+
+        return path;
+
     }
 
     private void CreateWaringSymbols()

@@ -38,12 +38,9 @@ public class GameOverScript : MonoBehaviour
 
     private void KillPlayerAndResetPosition()
     {
-        if (!_playerRef.MoveToRespawnLocation())
-        {
-            blu.App.GetModule<blu.InputModule>().PlayerController.Enable();
-            Debug.LogWarning("Player failed to respawn, reloading scene");
-            blu.App.GetModule<blu.SceneModule>().SwitchScene(SceneManager.GetActiveScene().name, blu.TransitionType.Fade);
-        }
+        blu.App.GetModule<blu.InputModule>().PlayerController.Enable();
+        Debug.LogWarning("Player failed to respawn, reloading scene");
+        blu.App.GetModule<blu.SceneModule>().SwitchScene(SceneManager.GetActiveScene().name, blu.TransitionType.Fade);
 
         _destroySelf = true;
     }
