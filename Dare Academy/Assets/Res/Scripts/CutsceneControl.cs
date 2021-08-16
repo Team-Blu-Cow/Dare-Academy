@@ -28,6 +28,7 @@ public class CutsceneControl : MonoBehaviour
 
         App.GetModule<InputModule>().SystemController.UI.Skip.started -= Skip;
         App.GetModule<InputModule>().SystemController.UI.Pause.started -= Skip;
+        App.GetModule<InputModule>().PlayerController.Player.Interact.started -= Skip;
     }
 
     private void Skip(InputAction.CallbackContext context)
