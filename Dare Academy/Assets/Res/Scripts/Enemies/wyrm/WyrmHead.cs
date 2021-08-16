@@ -289,7 +289,7 @@ public class WyrmHead : WyrmSection
             HasAttacked = true;
         }
 
-        if(hasResurfaced)
+        if(hasResurfaced && m_currentNode != null)
         {
             hasResurfaced = false;
 
