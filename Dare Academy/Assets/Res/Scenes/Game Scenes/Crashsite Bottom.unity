@@ -24454,6 +24454,17 @@ MonoBehaviour:
     boolData: 0
     vec3data: {x: 0, y: 0, z: 0}
     unityObject: {fileID: 0}
+  - type: 17
+    int32Data: 0
+    doubleData: 0
+    moveData:
+      direction: 0
+      distance: 1
+    textData: 
+    gameObject: {fileID: 0}
+    boolData: 0
+    vec3data: {x: 0, y: 0, z: 0}
+    unityObject: {fileID: 11400000, guid: f5bae3266a19a4a42b3d212ce5d4081e, type: 2}
   - type: 10
     int32Data: 0
     doubleData: 0
