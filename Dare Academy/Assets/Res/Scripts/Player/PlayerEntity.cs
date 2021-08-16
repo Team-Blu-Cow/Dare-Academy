@@ -79,6 +79,8 @@ public class PlayerEntity : GridEntity
     private PlayerInput m_playerInput = new PlayerInput();
 
     // OTHER
+    private float age = 0;
+
     private int m_pickups;
 
     public int ShipParts { get => m_pickups; set => m_pickups = value; }
@@ -241,6 +243,11 @@ public class PlayerEntity : GridEntity
 
     protected void Update()
     {
+        age += Time.deltaTime;
+
+        if (age < 1)
+            return;
+
         m_moveDirection = Vector2Int.zero;
         // m_abilityDirection = Vector2Int.zero;
 
@@ -955,11 +962,11 @@ public class PlayerEntity : GridEntity
 
     public override void ResolveMoveStep()
     {
-        if(m_currentNode != null)
+        if (m_currentNode != null)
         {
-            foreach(var e in m_currentNode.GetGridEntities())
+            foreach (var e in m_currentNode.GetGridEntities())
             {
-                if(e.GetType() == typeof(WyrmHead) || e.GetType() == typeof(WyrmBody))
+                if (e.GetType() == typeof(WyrmHead) || e.GetType() == typeof(WyrmBody))
                 {
                     OnHit(1);
                 }
@@ -967,7 +974,5 @@ public class PlayerEntity : GridEntity
         }
 
         base.ResolveMoveStep();
-
-
     }
 }
