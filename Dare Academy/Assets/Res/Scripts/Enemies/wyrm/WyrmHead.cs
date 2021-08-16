@@ -16,6 +16,7 @@ public class WyrmHead : WyrmSection
         Circing,
         CrossScreenCharge,
         FireAttack,
+        Wait
     }
 
     private List<DamageEntity> m_activeWarningSymbols = new List<DamageEntity>();
@@ -50,12 +51,16 @@ public class WyrmHead : WyrmSection
     [SerializeField, HideInInspector] private GameObject m_bodyPrefab;
     [SerializeField, HideInInspector] private GameObject m_firePrefab;
     [SerializeField, HideInInspector] private GameObject m_warningPrefab;
+    [SerializeField] private Sprite m_warningSprite;
+    [SerializeField] private ParticleSystem[] m_fireParticles;
 
     private GridNode m_chargeStartNode = null;
     private Vector2Int m_chargeDir = Vector2Int.zero;
     private int m_chargeCountdown = 0;
-    private const int m_chargeCountdownTime = 5;
+    [SerializeField] private int m_chargeCountdownTime = 5;
     private List<GridNode> m_chargeDamageNodes = new List<GridNode>();
+
+    private Vector2Int m_attackDirection;
 
     private const int CirclingMinTime = 30;
     private const int CirclingMaxTime = 40;
@@ -71,6 +76,8 @@ public class WyrmHead : WyrmSection
 
     private int m_chargeDamage = 1;
 
+    private bool hasResurfaced;
+
     private GridNode m_randomMovementTargetNode = null;
 
     private int m_stepsUntilResurface = 0;
@@ -78,6 +85,12 @@ public class WyrmHead : WyrmSection
     private int m_chasingNodeDirection = 0;
 
     private int started = 0;
+
+    GridNode m_resurfaceNode;
+
+    public GridNode resurfaceNode
+    {get { return m_resurfaceNode; }}
+
 
     [SerializeField] private GameObject m_endPickup;
     [SerializeField] private BarrierEntity m_endBarrier;
@@ -95,6 +108,11 @@ public class WyrmHead : WyrmSection
 
     protected override void Start()
     {
+        hasResurfaced = false;
+
+        state = WyrmState.UnderGround;
+        lastState = state;
+
         base.Start();
         levelModule = App.GetModule<LevelModule>();
 
@@ -106,7 +124,6 @@ public class WyrmHead : WyrmSection
         // we start underground
         RemoveFromCurrentNode();
         m_currentNode = null;
-        state = WyrmState.UnderGround;
 
         m_stepsUntilResurface = 5;
 
@@ -160,6 +177,16 @@ public class WyrmHead : WyrmSection
         }
     }
 
+    public override void ResetAnimations()
+    {
+        base.ResetAnimations();
+
+        if(state != WyrmState.UnderGround && state != WyrmState.CrossScreenCharge)
+        {
+            spriteRenderer.enabled = true;
+        }
+    }
+
     public override void OnHit(int damage, float offsetTime = 0)
     {
         base.OnHit(damage, offsetTime);
@@ -195,14 +222,14 @@ public class WyrmHead : WyrmSection
 
             LeanTween.delayedCall(0.1f, () =>
         {
-            App.GetModule<LevelModule>().EventFlags.SetFlags(GameEventFlags.Flags.Flag_29, false);
+            App.GetModule<LevelModule>().EventFlags.SetFlags(GameEventFlags.Flags.wyrm_fight_start, false);
         });
         }
     }
 
     private void AnalyseFSM()
     {
-        if (state != WyrmState.Splitting && !HasSplit && Health < SplitHealth)
+        if (state != WyrmState.Splitting && !HasSplit && Health <= SplitHealth)
         {
             state = WyrmState.Splitting;
         }
@@ -240,6 +267,10 @@ public class WyrmHead : WyrmSection
             case WyrmState.FireAttack:
                 State_FireAttack();
                 break;
+
+            case WyrmState.Wait:
+                state = WyrmState.UnderGround;
+                break;
         }
     }
 
@@ -254,9 +285,91 @@ public class WyrmHead : WyrmSection
                 SpawnFire(node);
             }
             m_fireAttackNodes.Clear();
-            state = WyrmState.UnderGround;
+            state = WyrmState.Wait;
             HasAttacked = true;
         }
+
+        if(hasResurfaced)
+        {
+            hasResurfaced = false;
+
+            if (m_currentNode.Neighbors[Vector2Int.up].reference != null
+                && m_currentNode.Neighbors[Vector2Int.up].reference.IsTraversable(false))
+            {
+                GameObject obj = GameObject.Instantiate(m_firePrefab, m_currentNode.Neighbors[Vector2Int.up].reference.position.world, Quaternion.identity);
+                if (obj.TryGetComponent(out DamageEntity fire))
+                {
+                    fire.Init(m_currentNode.Neighbors[Vector2Int.up].reference);
+                    fire.Linger = 2;
+                }
+            }
+
+            if (m_currentNode.Neighbors[Vector2Int.down].reference != null
+                && m_currentNode.Neighbors[Vector2Int.down].reference.IsTraversable(false))
+            {
+                GameObject obj = GameObject.Instantiate(m_firePrefab, m_currentNode.Neighbors[Vector2Int.down].reference.position.world, Quaternion.identity);
+                if (obj.TryGetComponent(out DamageEntity fire))
+                {
+                    fire.Init(m_currentNode.Neighbors[Vector2Int.down].reference);
+                    fire.Linger = 2;
+                }
+            }
+
+            if (m_currentNode.Neighbors[Vector2Int.left].reference != null
+                && m_currentNode.Neighbors[Vector2Int.left].reference.IsTraversable(false))
+            {
+                GameObject obj = GameObject.Instantiate(m_firePrefab, m_currentNode.Neighbors[Vector2Int.left].reference.position.world, Quaternion.identity);
+                if (obj.TryGetComponent(out DamageEntity fire))
+                {
+                    fire.Init(m_currentNode.Neighbors[Vector2Int.left].reference);
+                    fire.Linger = 2;
+                }
+            }
+
+            if (m_currentNode.Neighbors[Vector2Int.right].reference != null
+                && m_currentNode.Neighbors[Vector2Int.right].reference.IsTraversable(false))
+            {
+                GameObject obj = GameObject.Instantiate(m_firePrefab, m_currentNode.Neighbors[Vector2Int.right].reference.position.world, Quaternion.identity);
+                if (obj.TryGetComponent(out DamageEntity fire))
+                {
+                    fire.Init(m_currentNode.Neighbors[Vector2Int.right].reference);
+                    fire.Linger = 2;
+                }
+            }
+
+        }
+
+        if (state == WyrmState.Circing || state == WyrmState.Chasing)
+        {
+            WyrmSection section = this;
+
+            while(section.SectionBehind != null)
+            {
+                section = section.SectionBehind;
+            }
+
+            if (section.currentNode != null)
+            {
+                for(int i = 0; i < ((WyrmBody)section).m_nodesVisited.Count; i++)
+                {
+                    if (((WyrmBody)section).m_nodesVisited[i] == null)
+                        continue;
+                    GameObject obj = GameObject.Instantiate(m_firePrefab, ((WyrmBody)section).m_nodesVisited[i].position.world, Quaternion.identity);
+                    if (obj.TryGetComponent(out DamageEntity fire))
+                    {
+                        fire.Linger = 5;
+
+                    }
+                }
+            }
+        }
+    }
+
+    public override void PreMoveStep()
+    {
+        base.PreMoveStep();
+        if (m_resurfaceNode != null)
+            Resurface();
     }
 
     public override void MoveStep()
@@ -274,7 +387,7 @@ public class WyrmHead : WyrmSection
         base.DamageStep();
         if (DoChargeAttack)
         {
-            DoChargeAttack = false;
+            //DoChargeAttack = false;
             foreach (var node in m_chargeDamageNodes)
             {
                 if (node != null)
@@ -291,8 +404,6 @@ public class WyrmHead : WyrmSection
                     }
                 }
             }
-
-            m_chargeDamageNodes.Clear();
         }
     }
 
@@ -321,20 +432,59 @@ public class WyrmHead : WyrmSection
         base.OnDeath();
     }
 
+    public void EndAttack()
+    {
+        animator.SetBool("IsAttacking", false);
+    }
+
     public override void DrawStep()
     {
         // base.DrawStep();
 
+        if(DoChargeAttack)
+        {
+            DoChargeAttack = false;
+
+            // do stuff here
+            Vector3 startPos = m_chargeStartNode.position.world;
+            Vector3 endPos = m_chargeDamageNodes[m_chargeDamageNodes.Count - 1].position.world;
+
+            Vector3 dir = (endPos - startPos).normalized;
+
+            animator.SetFloat("WalkDirX", dir.x);
+            animator.SetFloat("WalkDirY", dir.y);
+
+            SetAnimationFlags(transform.position, m_chargeDamageNodes[m_chargeDamageNodes.Count - 1].position.world);
+
+            StartCoroutine(AnimateCharge(startPos, endPos, m_length));
+
+            state = WyrmState.UnderGround;
+            m_chargeStartNode = null;
+            m_chargeDir = Vector2Int.zero;
+
+            ClearWarningsSymbols();
+            m_chargeDamageNodes.Clear();
+
+            return;
+        }
+
+
         animator.SetBool("IsAttacking", HasAttacked);
         if (HasAttacked)
         {
+            animator.SetFloat("WalkDirX", m_attackDirection.x);
+            animator.SetFloat("WalkDirY", m_attackDirection.y);
+
             HasAttacked = false;
         }
-
-        if (MovedThisStep && m_currentNode != null && m_animationMidNode != Vector3.zero)
+        else if (MovedThisStep && m_currentNode != null && m_animationMidNode != Vector3.zero)
         {
             // m_animationController.animator.SetBool("IsMoving", true);
-            SetAnimationFlags(transform.position, m_animationMidNode);
+            //SetAnimationFlags(transform.position, m_animationMidNode);
+            Vector3 dir = (m_animationMidNode - transform.position).normalized;
+
+            animator.SetFloat("WalkDirX", dir.x);
+            animator.SetFloat("WalkDirY", dir.y);
             LeanTween.move(gameObject, m_animationMidNode, m_stepController.stepTime / 2).setOnComplete(() =>
             {
                 if (m_currentNode is null)
@@ -342,7 +492,11 @@ public class WyrmHead : WyrmSection
                     return;
                 }
 
-                SetAnimationFlags(transform.position, m_currentNode.position.world);
+                //SetAnimationFlags(transform.position, m_currentNode.position.world);
+                Vector3 dir = (m_currentNode.position.world - transform.position).normalized;
+
+                animator.SetFloat("WalkDirX", dir.x);
+                animator.SetFloat("WalkDirY", dir.y);
                 LeanTween.move(gameObject, m_currentNode.position.world, m_stepController.stepTime / 2).setOnComplete(() =>
                 {
                     // m_animationController.animator.SetBool("IsMoving", false);
@@ -392,6 +546,67 @@ public class WyrmHead : WyrmSection
         while (true);
     }
 
+    public GridNode GetClosestPoint()
+    {
+        int start_x, start_y;
+        start_x = PlayerEntity.Instance.Position.grid.x;
+        start_y = PlayerEntity.Instance.Position.grid.y;
+
+        var currentRoom = levelModule.CurrentRoom;
+        int X, Y;
+        X = currentRoom.Width;
+        Y = currentRoom.Height;
+        int x,y,dx,dy;
+        x = y = dx = 0;
+        dy = -1;
+        int t = Mathf.Max(X,Y);
+        int maxI = t*t;
+        for (int i = 0; i < maxI; i++)
+        {
+            if ((-X / 2 <= x) && (x <= X / 2) && (-Y / 2 <= y) && (y <= Y / 2))
+            {
+                // DO STUFF...
+                if (currentRoom[start_x+x, start_y+y] != null)
+                {
+                    if (currentRoom[start_x + x, start_y + y].IsTraversable(false))
+                    {
+                        if (currentRoom[start_x + x, start_y + y].GetGridEntities().Count == 0)
+                        {
+                            bool anyValidNeighbours = false;
+                            foreach (var neighbor in currentRoom[start_x + x, start_y + y].Neighbors)
+                            {
+                                if (neighbor != null && neighbor.reference != null && neighbor.reference.IsTraversable(false))
+                                {
+                                    anyValidNeighbours = true;
+                                    break;
+                                }
+                            }
+                            if (anyValidNeighbours == false)
+                            {
+                                continue;
+                            }
+
+                            return currentRoom[start_x + x, start_y + y];
+                        }
+                    }
+                }
+
+
+            }
+            if ((x == y) || ((x < 0) && (x == -y)) || ((x > 0) && (x == 1 - y)))
+            {
+                t = dx;
+                dx = -dy;
+                dy = t;
+            }
+            x += dx;
+            y += dy;
+        }
+
+        //Debug.LogError("Wyrm could not find a valid tile");
+        return GenerateBurrowLocation();
+    }
+
     private void Split()
     {
         HasSplit = true;
@@ -412,8 +627,15 @@ public class WyrmHead : WyrmSection
             // tail of front half will auto disconnect
 
             {
+                Vector3 startPos = sections[newHead].transform.position;
+
+                if(m_currentNode != null && startPos == m_currentNode.position.world)
+                {
+                    startPos = GetClosestPoint().position.world;
+                }
+
                 GameObject.Destroy(sections[newHead]);
-                GameObject obj = GameObject.Instantiate(m_headPrefab, transform.position, Quaternion.identity);
+                GameObject obj = GameObject.Instantiate(m_headPrefab, startPos, Quaternion.identity);
 
                 WyrmHead head = obj.GetComponent<WyrmHead>();
 
@@ -462,13 +684,17 @@ public class WyrmHead : WyrmSection
     protected override void Burrow()
     {
         base.Burrow();
-        m_stepsUntilResurface = 5;
+        m_stepsUntilResurface = RandWrapper(3,8);
     }
 
     protected override void Resurface()
     {
-        m_currentNode = GenerateBurrowLocation();
+        // #todo #jay spawn damage here
         base.Resurface();
+        lastState = WyrmState.UnderGround;
+        state = WyrmState.NoState;
+        m_resurfaceNode = null;
+        hasResurfaced = true;
     }
 
     private void State_NoState()
@@ -487,12 +713,17 @@ public class WyrmHead : WyrmSection
         else if (num < 80) // 45% chance
         { state = WyrmState.Circing; }
         else // 20% chance
-        { state = WyrmState.CrossScreenCharge; }
+        { state = WyrmState.UnderGround; }
 
         if (state == lastState)
             goto tryAgain;
 
+        if (lastState == WyrmState.UnderGround && state == WyrmState.CrossScreenCharge)
+            goto tryAgain;
+
         lastState = state;
+
+        AnalyseFSM();
     }
 
     private void State_UnderGround()
@@ -514,9 +745,45 @@ public class WyrmHead : WyrmSection
 
         if (m_stepsUntilResurface < 0)
         {
-            Resurface();
-            state = WyrmState.NoState;
+            System.Random rnd = new System.Random();
+
+            int num = rnd.Next(0, 100);
+
+            if (num < 33)
+            { 
+                state = WyrmState.CrossScreenCharge;
+                AnalyseFSM();
+            }
+            else
+            {
+                PrepareToResurface();
+            }
+            //m_resurfaceNode = null;
         }
+    }
+
+    public void PrepareToResurface()
+    {
+        m_resurfaceNode = GetClosestPoint();
+
+        levelModule.telegraphDrawer.CreateTelegraph(m_resurfaceNode, TelegraphDrawer.Type.ATTACK);
+        if (m_resurfaceNode.Neighbors[Vector2Int.up].reference != null
+            && m_resurfaceNode.Neighbors[Vector2Int.up].reference.IsTraversable(false))
+            levelModule.telegraphDrawer.CreateTelegraph(m_resurfaceNode.Neighbors[Vector2Int.up].reference, TelegraphDrawer.Type.ATTACK);
+
+        if (m_resurfaceNode.Neighbors[Vector2Int.down].reference != null
+            && m_resurfaceNode.Neighbors[Vector2Int.down].reference.IsTraversable(false))
+            levelModule.telegraphDrawer.CreateTelegraph(m_resurfaceNode.Neighbors[Vector2Int.down].reference, TelegraphDrawer.Type.ATTACK);
+
+        if (m_resurfaceNode.Neighbors[Vector2Int.left].reference != null
+            && m_resurfaceNode.Neighbors[Vector2Int.left].reference.IsTraversable(false))
+            levelModule.telegraphDrawer.CreateTelegraph(m_resurfaceNode.Neighbors[Vector2Int.left].reference, TelegraphDrawer.Type.ATTACK);
+
+        if (m_resurfaceNode.Neighbors[Vector2Int.right].reference != null
+            && m_resurfaceNode.Neighbors[Vector2Int.right].reference.IsTraversable(false))
+            levelModule.telegraphDrawer.CreateTelegraph(m_resurfaceNode.Neighbors[Vector2Int.right].reference, TelegraphDrawer.Type.ATTACK);
+
+        m_currentNode = m_resurfaceNode;
     }
 
     private void State_Splitting()
@@ -572,6 +839,13 @@ public class WyrmHead : WyrmSection
 
     private void State_Circing()
     {
+        if(m_currentNode == null)
+        {
+            state = WyrmState.UnderGround;
+            AnalyseFSM();
+            return;
+        }
+
         if (CirclingCountToChase < 0)
         {
             ResetChaseCounter();
@@ -669,10 +943,9 @@ public class WyrmHead : WyrmSection
                 if (GenerateChargePath())
                 {
                     TelegraphChargeNodes();
-                    CreateWaringSymbols();
                     // SpawnWarningSymbol(m_chargeStartNode);
                     m_chargeCountdown = m_chargeCountdownTime;
-                    Burrow();
+                    //Burrow();
                     return;
                 }
             }
@@ -688,17 +961,8 @@ public class WyrmHead : WyrmSection
             {
                 // #wyrm do charge
                 DoChargeAttack = true;
-
-                Vector3 startPos = m_chargeStartNode.position.world;
-                Vector3 endPos = m_chargeDamageNodes[m_chargeDamageNodes.Count - 1].position.world;
-
-                StartCoroutine(AnimateCharge(startPos, endPos));
-
-                state = WyrmState.UnderGround;
-                m_chargeStartNode = null;
-                m_chargeDir = Vector2Int.zero;
-
-                ClearWarningsSymbols();
+                TelegraphChargeNodes();
+                CreateWaringSymbols();
             }
             else
             {
@@ -718,6 +982,8 @@ public class WyrmHead : WyrmSection
         GridNode n = levelModule.MetaGrid.GetNodeFromWorld(pos);
         Vector2Int dir = n.position.grid - m_currentNode.position.grid;
 
+        m_attackDirection = dir;
+
         if (dir.x != 0)
         {
             int x = dir.x;
@@ -731,6 +997,18 @@ public class WyrmHead : WyrmSection
             m_fireAttackNodes.Add(currentNode.GetNodeRelative(3 * x, 0));
             m_fireAttackNodes.Add(currentNode.GetNodeRelative(3 * x, 1));
             m_fireAttackNodes.Add(currentNode.GetNodeRelative(3 * x, -1));
+
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(4 * x, 0));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(4 * x, 1));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(4 * x, -1));
+
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(5 * x, 0));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(5 * x, 1));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(5 * x, -1));
+
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(6 * x, 0));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(6 * x, 1));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(6 * x, -1));
         }
         else if (dir.y != 0)
         {
@@ -745,6 +1023,23 @@ public class WyrmHead : WyrmSection
             m_fireAttackNodes.Add(currentNode.GetNodeRelative(0, 3 * y));
             m_fireAttackNodes.Add(currentNode.GetNodeRelative(1, 3 * y));
             m_fireAttackNodes.Add(currentNode.GetNodeRelative(-1, 3 * y));
+
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(0, 4 * y));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(1, 4 * y));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(-1, 4 * y));
+
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(0, 5 * y));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(1, 5 * y));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(-1, 5 * y));
+
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(0, 6 * y));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(1, 6 * y));
+            m_fireAttackNodes.Add(currentNode.GetNodeRelative(-1, 6 * y));
+        }
+
+        foreach(var node in m_fireAttackNodes)
+        {
+            levelModule.telegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.ATTACK);
         }
     }
 
@@ -752,6 +1047,7 @@ public class WyrmHead : WyrmSection
 
     private Vector3[] CirclingGetPath()
     {
+
         if (m_chasingNodeDirection >= 8)
             m_chasingNodeDirection = 0;
 
@@ -846,6 +1142,7 @@ public class WyrmHead : WyrmSection
         GameObject obj = GameObject.Instantiate(m_firePrefab, spawnNode.position.world, Quaternion.identity);
         if (obj.TryGetComponent(out DamageEntity fire))
         {
+            fire.Init(spawnNode);
             fire.Linger = fireTime;
             return true;
         }
@@ -1025,7 +1322,7 @@ public class WyrmHead : WyrmSection
 
     private void CreateWaringSymbols()
     {
-        foreach (var node in m_chargeDamageNodes)
+        /*foreach (var node in m_chargeDamageNodes)
         {
             bool hasConflict = false;
             var entities = node.GetGridEntities();
@@ -1042,6 +1339,11 @@ public class WyrmHead : WyrmSection
             {
                 SpawnWarningSymbol(node);
             }
+        }*/
+
+        foreach (var node in m_chargeDamageNodes)
+        {
+            LevelManager.Instance.TelegraphDrawer.CreateTelegraph(node, TelegraphDrawer.Type.ATTACK, m_warningSprite);
         }
     }
 
@@ -1061,5 +1363,10 @@ public class WyrmHead : WyrmSection
     private void ResetChaseCounter()
     {
         CirclingCountToChase = RandWrapper(CirclingMinTime, CirclingMaxTime);
+    }
+
+    public void BreatheFire(int index)
+    {
+        m_fireParticles[index].Play();
     }
 }

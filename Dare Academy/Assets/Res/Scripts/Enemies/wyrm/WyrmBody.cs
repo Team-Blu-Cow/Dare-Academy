@@ -8,14 +8,21 @@ public class WyrmBody : WyrmSection
 {
     public bool isLegs = false;
     private Vector3 m_animationMidNode = Vector3.zero;
+    public bool isGoingToSurface;
+
+    public List<GridNode> m_nodesVisited;
+
 
     protected override void Start()
     {
         base.Start();
+        isGoingToSurface = false;
 
         // we remove from current node
         RemoveFromCurrentNode();
         m_currentNode = null;
+
+        m_nodesVisited = new List<GridNode>();
     }
 
     protected override void OnValidate()
@@ -35,6 +42,7 @@ public class WyrmBody : WyrmSection
         base.AnalyseStep();
         BodyAnalyseLogic();
         doReanalyse = true;
+        m_nodesVisited.Clear();
     }
 
     public override void ReAnalyseStep()
@@ -55,7 +63,7 @@ public class WyrmBody : WyrmSection
             // is underground
             if (SectionInfront.currentNode != null && SectionInfront.ResurfacedThisStep == false)
             {
-                Resurface();
+                isGoingToSurface = true;
             }
             else
             {
@@ -98,6 +106,13 @@ public class WyrmBody : WyrmSection
                 SetMovementDirection(dir);
             }
         }
+    }
+
+    public override void MoveStep()
+    {
+        m_nodesVisited.Add(m_currentNode);
+        base.MoveStep();
+
     }
 
     public override void DrawStep()
@@ -145,5 +160,15 @@ public class WyrmBody : WyrmSection
     {
         m_currentNode = SectionInfront.ResurfaceFrom;
         base.Resurface();
+    }
+
+    public override void PreMoveStep()
+    {
+        base.PreMoveStep();
+        if(isGoingToSurface)
+        {
+            isGoingToSurface = false;
+            Resurface();
+        }
     }
 }

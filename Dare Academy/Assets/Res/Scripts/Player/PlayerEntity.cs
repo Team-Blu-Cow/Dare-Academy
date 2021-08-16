@@ -952,4 +952,22 @@ public class PlayerEntity : GridEntity
 
         animationController.CameraShake(9f, 0.2f);
     }
+
+    public override void ResolveMoveStep()
+    {
+        if(m_currentNode != null)
+        {
+            foreach(var e in m_currentNode.GetGridEntities())
+            {
+                if(e.GetType() == typeof(WyrmHead) || e.GetType() == typeof(WyrmBody))
+                {
+                    OnHit(1);
+                }
+            }
+        }
+
+        base.ResolveMoveStep();
+
+
+    }
 }

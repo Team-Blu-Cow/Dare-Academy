@@ -63,6 +63,26 @@ public class TelegraphDrawer
         m_spriteList.Add(newTelegraph);
     }
 
+    public void CreateTelegraph(GridNode node, Type type, Sprite sprite, float in_alpha = 1)
+    {
+        if (node == null)
+            return;
+
+        GameObject newTelegraph =  GameObject.Instantiate(m_prefabList[GetPrefabIndex(type)], node.position.world, Quaternion.identity);
+
+        newTelegraph.transform.parent = m_telegraphParentGameobject.transform;
+
+        Color colour = newTelegraph.GetComponent<SpriteRenderer>().color;
+
+        colour = new Color(colour.r, colour.g, colour.b, colour.a * in_alpha);
+
+        newTelegraph.GetComponent<SpriteRenderer>().color = colour;
+
+        newTelegraph.GetComponent<SpriteRenderer>().sprite = sprite;
+
+        m_spriteList.Add(newTelegraph);
+    }
+
     public void CreateTelegraph(GridNode node, Type type, Color colour)
     {
         if (node == null)

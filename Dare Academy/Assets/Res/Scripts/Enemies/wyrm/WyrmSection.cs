@@ -16,6 +16,8 @@ public abstract class WyrmSection : GridEntity
     [SerializeField, HideInInspector] protected WyrmUIHealth m_uiHealth;
     [SerializeField, HideInInspector] protected Animator animator;
 
+    [SerializeField] private GameObject m_burrowVFXPrefab; 
+
     public WyrmSection SectionInfront
     { get; set; }
 
@@ -73,29 +75,42 @@ public abstract class WyrmSection : GridEntity
         BurrowFrom = m_currentNode;
         m_currentNode = null;
         spriteRenderer.enabled = false;
+        Instantiate(m_burrowVFXPrefab, BurrowFrom.position.world - new Vector3(0, 0.4f, 0), Quaternion.identity);
     }
 
     protected virtual void Resurface()
     {
         AddToCurrentNode();
         ResurfaceFrom = currentNode;
+        transform.position = m_currentNode.position.world;
         spriteRenderer.enabled = true;
         BurrowFrom = null;
-        transform.position = m_currentNode.position.world;
         ResurfacedThisStep = true;
+        Instantiate(m_burrowVFXPrefab, transform.position-new Vector3(0,0.4f, 0), Quaternion.identity);
     }
 
     private void CallAnimateCharge(Vector3 startPos, Vector3 endPos)
     {
-        StartCoroutine(AnimateCharge(startPos, endPos));
+        StartCoroutine(AnimateCharge(startPos, endPos, 1));
     }
 
-    protected IEnumerator AnimateCharge(Vector3 startPos, Vector3 endPos)
+    protected IEnumerator AnimateCharge(Vector3 startPos, Vector3 endPos, float length)
     {
-        float animationTime = m_stepController.stepTime * 2.5f;
+        
+
+        float animationTime = m_stepController.stepTime*2f;
         float currentTime = 0;
 
+        //if (wait)
+        //{
+         //   yield return new WaitForSeconds(((animationTime / 12f) / 12f)/12f);
+        //}
+
         bool nextHasStarted = false;
+
+        Vector3 dir = (endPos - startPos).normalized;
+
+        endPos = endPos + (dir * length);
 
         while (true)
         {
@@ -105,25 +120,35 @@ public abstract class WyrmSection : GridEntity
             transform.position = currentPos;
             yield return null;
 
-            if (!nextHasStarted)
-            {
-                Vector3 diff = currentPos - startPos;
+            Vector3 diff = currentPos - startPos;
 
-                if (diff.magnitude > 1)
-                {
-                    if (SectionBehind)
-                    {
-                        SectionBehind.CallAnimateCharge(startPos, endPos);
-                    }
-                    nextHasStarted = true;
-                }
+            WyrmSection currentSection = SectionBehind;
+            Vector3 sectionPos = currentPos;
+
+            diff = diff.normalized;
+
+            while(currentSection != null)
+            {
+                currentSection.spriteRenderer.enabled = true;
+                sectionPos = sectionPos - diff;
+                currentSection.transform.position = sectionPos;
+                currentSection = currentSection.SectionBehind;
             }
+            
 
             if (currentTime > animationTime)
                 break;
         }
 
         spriteRenderer.enabled = false;
+        {
+            WyrmSection currentSection = SectionBehind;
+            while (currentSection != null)
+            {
+                currentSection.spriteRenderer.enabled = true;
+                currentSection = currentSection.SectionBehind;
+            }
+        }
     }
 
     protected void SetAnimationFlags(Vector3 start_pos, Vector3 end_pos)
@@ -136,7 +161,7 @@ public abstract class WyrmSection : GridEntity
             // ZeroAnimationFlags();
         }
 
-        Quaternion rot = Quaternion.identity;
+        //Quaternion rot = Quaternion.identity;
 
         if (diff.x > 0.7)
         {
@@ -144,7 +169,7 @@ public abstract class WyrmSection : GridEntity
             animator.SetBool("movingDown", false);
             animator.SetBool("movingLeft", false);
             animator.SetBool("movingRight", true);
-            rot = Quaternion.Euler(0, 180, 0);
+            //rot = Quaternion.Euler(0, 180, 0);
         }
         if (diff.x < -0.7)
         {
@@ -168,6 +193,6 @@ public abstract class WyrmSection : GridEntity
             animator.SetBool("movingRight", false);
         }
 
-        transform.rotation = rot;
+        //transform.rotation = rot;
     }
 }

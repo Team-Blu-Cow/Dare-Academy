@@ -188,7 +188,7 @@ public abstract class GridEntity : MonoBehaviour
         MovedThisStep = false;
     }
 
-    public void PreMoveStep()
+    public virtual void PreMoveStep()
     {
         // allows checking if an entity moved this step
         m_previousNode = null;
@@ -563,6 +563,9 @@ public abstract class GridEntity : MonoBehaviour
         //StartCoroutine(AnimateMove(m_stepController.m_stepTime));
 
         //return;
+
+        if (m_actionList == null)
+            return;
 
         if (m_actionList.Count < 1)
             return;

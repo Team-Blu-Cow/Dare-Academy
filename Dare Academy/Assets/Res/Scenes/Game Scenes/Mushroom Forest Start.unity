@@ -1906,6 +1906,7 @@ MonoBehaviour:
   m_interactImages:
   - {fileID: 21300000, guid: 79daafe6d2f867a4abffdba61c1ac392, type: 3}
   - {fileID: 21300000, guid: cb240d46d23e4ed469ba70ba3674eed3, type: 3}
+  m_interact: {fileID: 0}
   Dialouge: {fileID: 1176078775}
   upgradeType: 2
 --- !u!61 &45495443
@@ -52339,29 +52340,17 @@ PrefabInstance:
       value: WyrmHead
       objectReference: {fileID: 0}
     - target: {fileID: 2468310734715714110, guid: 6c28d158b937ef84f908a682ed1f6570, type: 3}
-      propertyPath: m_health
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 2468310734715714110, guid: 6c28d158b937ef84f908a682ed1f6570, type: 3}
-      propertyPath: m_length
-      value: 12
-      objectReference: {fileID: 0}
-    - target: {fileID: 2468310734715714110, guid: 6c28d158b937ef84f908a682ed1f6570, type: 3}
-      propertyPath: m_uiHealth
-      value: 
-      objectReference: {fileID: 818308420}
-    - target: {fileID: 2468310734715714110, guid: 6c28d158b937ef84f908a682ed1f6570, type: 3}
       propertyPath: m_endPickup
       value: 
       objectReference: {fileID: 2102497754}
     - target: {fileID: 2468310734715714110, guid: 6c28d158b937ef84f908a682ed1f6570, type: 3}
-      propertyPath: m_bodyPrefab
-      value: 
-      objectReference: {fileID: 949926586993298758, guid: 8e1fd613113460c48b09a25d44edb85a, type: 3}
-    - target: {fileID: 2468310734715714110, guid: 6c28d158b937ef84f908a682ed1f6570, type: 3}
       propertyPath: m_endBarrier
       value: 
       objectReference: {fileID: 1174765745}
+    - target: {fileID: 2468310734715714110, guid: 6c28d158b937ef84f908a682ed1f6570, type: 3}
+      propertyPath: m_headPrefab
+      value: 
+      objectReference: {fileID: 720815317660526086, guid: 6c28d158b937ef84f908a682ed1f6570, type: 3}
     - target: {fileID: 3661788138897929295, guid: 6c28d158b937ef84f908a682ed1f6570, type: 3}
       propertyPath: m_RootOrder
       value: 20
@@ -53914,9 +53903,9 @@ MonoBehaviour:
       drawGrid: 1
       drawGridOutlineColour: {r: 1, g: 1, b: 1, a: 1}
       drawGridColour: {r: 1, g: 1, b: 1, a: 0.1}
-      drawNodes: 1
+      drawNodes: 0
       drawOverWrittenNodes: 1
-      drawNodeConnections: 1
+      drawNodeConnections: 0
       showPathfindTime: 0
       showGridGenerationTime: 0
 --- !u!4 &1243603346
@@ -139891,6 +139880,36 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: fefd3da8cc1bdd64a9f8dbe6cf130a94, type: 3}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 768281665006a3240916bb151c081d4c, type: 3}
+--- !u!1 &1955297665
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1955297666}
+  m_Layer: 0
+  m_Name: GameObject
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1955297666
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1955297665}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 76.43, y: 16.4, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 30
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1959347323
 PrefabInstance:
   m_ObjectHideFlags: 0

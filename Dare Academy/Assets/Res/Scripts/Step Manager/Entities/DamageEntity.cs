@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using blu;
 
 public class DamageEntity : GridEntity
 {
@@ -34,6 +35,31 @@ public class DamageEntity : GridEntity
     public override void AnalyseStep()
     {
         SetMovementDirection(Vector2Int.zero, 0);
+    }
+
+    public void Init(GridNode node)
+    {
+        m_currentNode = node;
+
+        if (m_currentNode == null)
+        {
+            m_roomIndex = -1;
+            return;
+        }
+
+        m_currentNode.AddEntity(this);
+        m_roomIndex = m_currentNode.roomIndex;
+
+        transform.position = Position.world;
+
+        m_stepController = App.GetModule<LevelModule>().LevelManager.StepController;
+
+        m_stepController.RoomChangeEvent += RoomChange;
+
+        if (m_roomIndex == m_stepController.m_currentRoomIndex)
+        {
+            m_stepController.AddEntity(this);
+        }
     }
 
     public override void DamageStep()
