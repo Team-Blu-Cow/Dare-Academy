@@ -211,6 +211,7 @@ public class ScriptableEntity : GridEntity
             case ScriptedActionQueue.ActionType.SetEventFlagValue:
 
                 blu.App.GetModule<blu.LevelModule>().EventFlags.SetFlags(currentAction.int32Data, currentAction.boolData);
+                blu.App.GetModule<blu.LevelModule>().SaveGame();
                 runAgain = true;
                 stepQueue = true;
                 return;
@@ -305,6 +306,8 @@ public class ScriptableEntity : GridEntity
             m_hasBeenReplaced = true;
             GridEntity entity = obj.GetComponent<GridEntity>();
             entity.Flags.SetFlags(this.Flags._FlagData, true);
+            entity.m_deathEventFlags = m_deathEventFlags;
+            m_deathEventFlags = 0;
         }
         else
         {

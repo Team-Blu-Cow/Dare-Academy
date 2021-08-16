@@ -27,7 +27,10 @@ public class BarrierEntity : GridEntity
         base.OnDeath();
 
         if (m_flipFlag)
+        {
             App.GetModule<LevelModule>().EventFlags.SetFlags(m_barrierFlag, true);
+            App.GetModule<blu.LevelModule>().SaveGame();
+        }
 
         var barriers = transform.parent.GetComponentsInChildren<BarrierEntity>();
 

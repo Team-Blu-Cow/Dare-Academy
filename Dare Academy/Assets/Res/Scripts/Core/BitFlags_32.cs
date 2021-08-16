@@ -42,6 +42,8 @@ public class BitFlags_32 : BitFlagsBase
 
     [UnityEngine.SerializeField] protected Int32 m_flagData = 0;
 
+    protected blu.LevelModule levelModule;
+
     public Int32 _FlagData
     {
         get { return m_flagData; }

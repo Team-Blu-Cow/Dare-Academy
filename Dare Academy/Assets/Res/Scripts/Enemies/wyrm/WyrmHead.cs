@@ -196,6 +196,7 @@ public class WyrmHead : WyrmSection
             LeanTween.delayedCall(0.1f, () =>
         {
             App.GetModule<LevelModule>().EventFlags.SetFlags(GameEventFlags.Flags.Flag_29, false);
+            blu.App.GetModule<blu.LevelModule>().SaveGame();
         });
         }
     }

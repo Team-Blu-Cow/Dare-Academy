@@ -43,6 +43,11 @@ public class ScriptableEntityEditor : Editor
 
         SerializedProperty actionQueueProperty = serializedObject.FindProperty("m_actionQueue");
         SerializedProperty flagsProperty = serializedObject.FindProperty("m_flagValue");
+        SerializedProperty deathFlagsProperty = serializedObject.FindProperty("m_deathEventFlags");
+
+        int deathFlags = deathFlagsProperty.intValue;
+        deathFlags = (int)(GameEventFlags.Flags)EditorGUILayout.EnumFlagsField("Set Flag On Death", (GameEventFlags.Flags)(deathFlags));
+        deathFlagsProperty.intValue = deathFlags;
 
         flagsProperty.intValue = DisplayFlags(flagsProperty.intValue);
 
