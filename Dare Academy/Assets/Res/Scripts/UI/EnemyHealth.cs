@@ -70,6 +70,15 @@ public class EnemyHealth : MonoBehaviour
 
                 m_storedHealth = m_entity.Health;
             }
+
+            if (m_storedHealth < m_entity.Health)
+            {
+                foreach (GameObject heart in m_hearts)
+                {
+                    Destroy(heart);
+                }
+                m_hearts.Clear();
+            }
         }
     }
 

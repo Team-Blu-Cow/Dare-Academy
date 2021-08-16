@@ -49059,7 +49059,7 @@ MonoBehaviour:
   m_currentEnergy: 0
   m_dashEnergyCost: 3
   m_shootEnergyCost: 3
-  m_blockEnergyCost: 3
+  m_blockEnergyCost: 1
   m_bulletPrefab: {fileID: 456181785455378373, guid: bdf1968a6eec2a14693ddc663196025a, type: 3}
   m_abilityDirection: {x: 0, y: 0}
   m_overlayRadius: 3

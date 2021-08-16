@@ -60,9 +60,9 @@ public class PlayerEntity : GridEntity
     public int Energy { get => m_currentEnergy; set => m_currentEnergy = value; }
     public int MaxEnergy { get => m_maxEnergy; set => m_maxEnergy = value; }
 
-    public int m_dashEnergyCost = 3;
-    public int m_shootEnergyCost = 3;
-    public int m_blockEnergyCost = 1;
+    public int m_dashEnergyCost;
+    public int m_shootEnergyCost;
+    public int m_blockEnergyCost;
 
     // INPUT
 
