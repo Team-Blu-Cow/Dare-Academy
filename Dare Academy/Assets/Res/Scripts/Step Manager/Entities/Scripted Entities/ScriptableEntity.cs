@@ -485,7 +485,11 @@ public class ScriptableEntity : GridEntity
             // any
             for (int i = 0; i < 31; i++)
             {
-                if (!blu.App.GetModule<blu.LevelModule>().EventFlags.IsFlagsSet(data.int32Data & (1 << i)))
+                int bit = data.int32Data & (1 << i);
+                if (bit == 0)
+                    continue;
+
+                if (!blu.App.GetModule<blu.LevelModule>().EventFlags.IsFlagsSet(bit))
                 {
                     Kill();
                     return false;
