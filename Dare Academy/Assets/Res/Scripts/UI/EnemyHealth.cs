@@ -78,6 +78,8 @@ public class EnemyHealth : MonoBehaviour
                     Destroy(heart);
                 }
                 m_hearts.Clear();
+
+                m_storedHealth = m_entity.Health;
             }
         }
     }
