@@ -24,8 +24,6 @@ public abstract class GridEntity : MonoBehaviour
 
     protected int m_roomIndex = 0;
 
-    [SerializeField] public GameEventFlags.Flags m_deathEventFlags = GameEventFlags.Flags.NoFlag;
-
     [SerializeField] protected GridEntityFlags m_flags = new GridEntityFlags();
     protected GridEntityInternalFlags m_internalFlags = new GridEntityInternalFlags();
 
@@ -1206,12 +1204,6 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void CleanUp()
     {
-        if (m_deathEventFlags != GameEventFlags.Flags.NoFlag)
-        {
-            App.GetModule<LevelModule>().EventFlags.SetFlags(m_deathEventFlags, true);
-            App.GetModule<LevelModule>().SaveGame();
-        }
-
         RemoveFromCurrentNode();
         m_stepController.RemoveEntity(this);
         GameObject.Destroy(gameObject);

@@ -195,6 +195,5 @@ public class PlayerAbilities
         }
 
         levelModule.EventFlags.SetFlags(flag, true);
-        blu.App.GetModule<blu.LevelModule>().SaveGame();
     }
 }

@@ -4,7 +4,6 @@ public class GameEventFlags : BitFlags_32
 {
     public enum Flags : Int32
     {
-        NoFlag = 0,
         shoot_unlocked = 0x0000_0001,
         dash_unlocked = 0x0000_0002,
         block_unlocked = 0x0000_0004,

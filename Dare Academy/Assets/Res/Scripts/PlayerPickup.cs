@@ -25,7 +25,6 @@ public class PlayerPickup : Interface
         if (m_playerInRange)
         {
             App.GetModule<LevelModule>().EventFlags.SetFlags(m_flagToFlip, true);
-            blu.App.GetModule<blu.LevelModule>().SaveGame();
 
             GameObject popup = Instantiate(Resources.Load<GameObject>("prefabs/UI prefabs/PopUp"));
 

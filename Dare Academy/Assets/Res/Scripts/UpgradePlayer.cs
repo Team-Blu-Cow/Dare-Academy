@@ -24,7 +24,6 @@ public class UpgradePlayer : Interface
         if (m_playerInRange)
         {
             App.GetModule<LevelModule>().EventFlags.SetFlags((Int32)upgradeType, true);
-            App.GetModule<LevelModule>().SaveGame();
             PlayerEntity.Instance.Abilities.Refresh();
 
             switch (upgradeType)
