@@ -222,6 +222,12 @@ public class StepController
         {
             if (entity.Flags.IsFlagsSet(GridEntityFlags.Flags.isHostile))
             {
+                if (entity.Flags.IsFlagsSet(GridEntityFlags.Flags.keepAwake))
+                {
+                    if (entity.RoomIndex != PlayerEntity.Instance.RoomIndex)
+                        continue;
+                }
+
                 return true;
             }
         }
