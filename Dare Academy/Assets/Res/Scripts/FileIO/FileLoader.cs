@@ -78,9 +78,9 @@ namespace blu.FileIO
         }
     }
 
-    public class DebugFileLoader<T> : BaseFileLoader<T> where T : class, IFileFormat
+    public class JsonFileLoader<T> : BaseFileLoader<T> where T : class, IFileFormat
     {
-        public DebugFileLoader(string in_path) : base(in_path)
+        public JsonFileLoader(string in_path) : base(in_path)
         {
         }
 

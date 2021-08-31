@@ -9,8 +9,6 @@ public class RespawnStationEntity : GridEntity, IInteractable
 {
     [SerializeField] private Vector2Int m_respawnLocation = Vector2Int.zero;
 
-    static private RespawnStationEntity m_currentRespawnStation = null;
-
     private bool m_playerInRange;
     private PlayerEntity m_player;
 
@@ -18,12 +16,6 @@ public class RespawnStationEntity : GridEntity, IInteractable
     private Sprite[] m_interactImages = new Sprite[2];
 
     private GameObject m_interact;
-
-    static public RespawnStationEntity CurrentRespawnStation
-    {
-        get { return m_currentRespawnStation; }
-        set { m_currentRespawnStation = value; }
-    }
 
     protected override void Start()
     {
@@ -97,19 +89,12 @@ public class RespawnStationEntity : GridEntity, IInteractable
     {
         if (m_playerInRange)
         {
-            if (m_currentRespawnStation != null)
-                m_currentRespawnStation.GetComponent<SpriteRenderer>().color = Color.white;
-
             m_player.Health = m_player.MaxHealth;
             PlayerEntity.Instance.StoreHeathEnergy();
             PlayerEntity.Instance.StoreRespawnLoaction();
+            App.GetModule<LevelModule>().ActiveSaveData.respawnRoomID = RoomIndex;
+
             App.GetModule<LevelModule>().SaveGame();
-
-            blu.App.GetModule<blu.LevelModule>().ActiveSaveData.respawnRoomID = this.RoomIndex;
-
-            m_currentRespawnStation = this;
-
-            m_currentRespawnStation.GetComponent<SpriteRenderer>().color = Color.black;
         }
     }
 

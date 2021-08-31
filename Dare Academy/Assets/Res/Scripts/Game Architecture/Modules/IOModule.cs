@@ -87,7 +87,7 @@ namespace blu
 
         private BaseFileLoader<T> CreateFileLoader<T>(string path) where T : class, IFileFormat
         {
-            return new DebugFileLoader<T>(path);
+            return new JsonFileLoader<T>(path);
         }
 
         public bool LoadSaveSlots()
@@ -116,10 +116,10 @@ namespace blu
                     BaseFileLoader<SaveData> fileloader = CreateFileLoader<SaveData>(data.m_filepath);
                     SaveData savedata = fileloader.ReadData();
 
-                    data.levelId        = savedata.levelId;
-                    data.playtime       = savedata.playtime;
-                    data.enegryCount    = savedata.maxEnergy;
-                    data.heartCount     = savedata.maxHealth;
+                    data.levelId = savedata.levelId;
+                    data.playtime = savedata.playtime;
+                    data.enegryCount = savedata.maxEnergy;
+                    data.heartCount = savedata.maxHealth;
 
                     int flagTest = (savedata.gameEventFlags & (Int32)GameEventFlags.Flags.shoot_unlocked);
                     data.powerUpsunlocked[0] = (flagTest == (Int32)GameEventFlags.Flags.shoot_unlocked) ? true : false;

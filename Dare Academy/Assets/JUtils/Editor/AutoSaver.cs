@@ -20,7 +20,7 @@ namespace JUtil
             };
         }
 
-        [MenuItem(MenuName)]
+        [MenuItem(MenuName, priority = (int)blu.EditorTools.EditorMenuItemPriority.AutoSaveOnRun)]
         private static void ToggleMode()
         {
             isToggled = !isToggled;

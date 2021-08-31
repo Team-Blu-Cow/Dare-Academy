@@ -2,15 +2,16 @@ using UnityEngine;
 using UnityEditor;
 using System;
 using System.Reflection;
+using blu.FileIO;
 
 namespace blu.EditorTools
 {
     [InitializeOnLoad]
-    public class OpenSaveEditor
+    internal class OpenSaveEditor
     {
         public const string MenuName = "Tools/Save Editor";
 
-        [MenuItem(MenuName)]
+        [MenuItem(MenuName, priority = (int)blu.EditorTools.EditorMenuItemPriority.SaveEditor)]
         private static void ButtonCall()
         {
             SaveEditor window = (SaveEditor)EditorWindow.GetWindow(typeof(SaveEditor), false, "Save Editor");
@@ -19,56 +20,69 @@ namespace blu.EditorTools
 
     public class SaveEditor : EditorWindow
     {
-        private string filepath = "";
-        private SaveData savedata = null;
-        private bool m_flagsFoldoutExpanded = false;
+        private string m_filepath = "";
+        private SaveData m_savedata = null;
         private Vector2 m_scrollPos = Vector2.zero;
-        private Vector2 m_flagsScrollPos = Vector2.zero;
+        private bool m_doLiveUpdate = false;
 
-        public void OnValidate()
-        {
-            if (filepath != null && filepath.Length > 0)
-            {
-                bool success = OpenFile(filepath);
-                if (!success)
-                {
-                    filepath = "";
-                    savedata = null;
-                }
-            }
-        }
+        private bool m_flagsFoldoutExpanded = false;
+        private Vector2 m_flagsScrollPos = Vector2.zero;
 
         public void OnEnable()
         {
-        }
+            m_savedata = null;
+            OpenLastFile();
 
-        private bool OpenFile(string path)
-        {
-            if (path.Length != 0)
-            {
-                if (System.IO.File.Exists(path))
-                {
-                    filepath = path;
-                    FileIO.BaseFileLoader<SaveData> fileloader = new FileIO.DebugFileLoader<SaveData>(filepath);
-                    savedata = fileloader.ReadData();
-
-                    return true;
-                }
-            }
-            return false;
-        }
-
-        private bool SaveFile()
-        {
-            FileIO.BaseFileLoader<SaveData> fileloader = new FileIO.DebugFileLoader<SaveData>(filepath);
-            return fileloader.WriteData(savedata);
+            m_doLiveUpdate = PlayerPrefs.GetInt("Editor_SaveEditor_LiveUpdate", 0) == 1;
         }
 
         public void OnGUI()
         {
+            FileBox();
+
+            if (Application.isPlaying)
+                GUI.enabled = false;
+
+            if (m_savedata != null)
+                Buttons();
+
+            GUI.enabled = true;
+
+            ToggleLiveUpdate();
+
+            if (Application.isPlaying)
+                GUI.enabled = false;
+
+            // buttons could have nulled savedata
+            if (m_savedata != null)
+            {
+                GUILayout.Space(20);
+
+                m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos);
+
+                FieldInfo[] fieldInfo = typeof(SaveData).GetFields();
+                for (int i = 0; i < fieldInfo.Length; i++)
+                {
+                    ShowField(fieldInfo[i]);
+                }
+
+                GUILayout.EndScrollView();
+            }
+        }
+
+        public void Update()
+        {
+            if (Application.isPlaying && m_doLiveUpdate)
+                OpenFile(m_filepath);
+        }
+
+        // OnGUI
+
+        private void FileBox()
+        {
             GUILayout.BeginHorizontal();
             GUILayout.Label("File Location: ", EditorStyles.boldLabel, GUILayout.Width(100f));
-            GUILayout.Label(filepath, EditorStyles.boldLabel);
+            GUILayout.Label(m_filepath, EditorStyles.boldLabel);
             if (GUILayout.Button("Find", GUILayout.Width(100f)))
             {
                 SaveData savedata = new SaveData();
@@ -77,129 +91,161 @@ namespace blu.EditorTools
                 OpenFile(path);
             }
             GUILayout.EndHorizontal();
-            GUILayout.Space(15);
+        }
 
-            if (savedata != null)
+        private void ToggleLiveUpdate()
+        {
+            EditorGUILayout.BeginHorizontal();
+            GUIContent content = new GUIContent("Live Update", "File will regularly be reloaded at runtime");
+            GUILayout.Label(content, GUILayout.Width(100f));
+            bool toggle = blu.EditorTools.EditorUtil.BoolField(m_doLiveUpdate);
+            EditorGUILayout.EndHorizontal();
+
+            if (toggle != m_doLiveUpdate)
             {
-                m_scrollPos = EditorGUILayout.BeginScrollView(m_scrollPos);
+                m_doLiveUpdate = toggle;
+                PlayerPrefs.SetInt("Editor_SaveEditor_LiveUpdate", m_doLiveUpdate ? 1 : 0);
+                PlayerPrefs.Save();
+            }
+        }
 
-                Type type = typeof(SaveData);
-                FieldInfo[] fieldInfo = type.GetFields();
+        // returns if a custom behaviour is implemented for this field
+        private bool CustomFieldBehaviour(string fieldName, ref object obj)
+        {
+            switch (fieldName)
+            {
+                case "gameEventFlags":
+                    obj = DisplayGameEventFlags((int)obj);
+                    return true;
 
-                for (int i = 0; i < fieldInfo.Length; i++)
+                case "levelId":
+                    obj = DisplayLevelId((blu.LevelID)obj);
+                    return true;
+
+                default:
+                    // cant find custom behaviour, revert to normal handling
+                    return false;
+            }
+
+            ;
+        }
+
+        private void ShowField(FieldInfo fieldInfo)
+        {
+            object? obj = fieldInfo.GetValue(m_savedata);
+            string name = fieldInfo.Name;
+
+            GUILayout.BeginHorizontal();
+
+            GUILayout.Label(name, GUILayout.Width(100f));
+
+            if (!CustomFieldBehaviour(name, ref obj))
+            {
+                // no custom behaviour, revert to normal processing
+                obj = EditorUtil.AutoFieldHandleing(obj);
+            }
+
+            fieldInfo.SetValue(m_savedata, obj);
+            GUILayout.EndHorizontal();
+        }
+
+        private void Buttons()
+        {
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("", GUILayout.Width(100));
+            if (GUILayout.Button("Save", GUILayout.Width(80)))
+            {
+                SaveFile();
+                OpenFile(m_filepath);
+            }
+
+            if (GUILayout.Button("Reload", GUILayout.Width(80)))
+            {
+                OpenFile(m_filepath);
+            }
+
+            if (GUILayout.Button("Close", GUILayout.Width(80)))
+            {
+                CloseFile();
+            }
+
+            GUILayout.EndHorizontal();
+        }
+
+        // run is the application is playing
+        private void AppPlaying()
+        {
+            GUI.enabled = false;
+            OpenFile(m_filepath);
+        }
+
+        // FILE IO
+        private bool OpenFile(string path)
+        {
+            if (path != null && path.Length != 0)
+            {
+                if (System.IO.File.Exists(path))
                 {
-                    object obj = fieldInfo[i].GetValue(savedata);
-                    string name = fieldInfo[i].Name;
-
-                    GUILayout.BeginHorizontal();
-
-                    GUILayout.Label(name, GUILayout.Width(100f));
-
-                    switch (name)
+                    BaseFileLoader<SaveData > fileloader = new JsonFileLoader<SaveData>(path);
+                    m_savedata = fileloader.ReadData();
+                    if (m_savedata != null)
                     {
-                        case "gameEventFlags":
-                            obj = DisplayGameEventFlags((Int32)obj);
-                            break;
-
-                        case "levelId":
-                            obj = DisplayLevelId((blu.LevelID)obj);
-                            break;
-
-                        default:
-                            // fallback for built in types
-                            obj = DefaultFieldHandleing(obj);
-                            break;
+                        m_filepath = path;
+                        SetLastFile();
+                        return true;
                     }
-
-                    fieldInfo[i].SetValue(savedata, obj);
-                    GUILayout.EndHorizontal();
                 }
-
-                GUILayout.EndScrollView();
-
-                GUILayout.Space(10);
-                GUILayout.BeginHorizontal();
-
-                if (GUILayout.Button("Save"))
-                {
-                    SaveFile();
-                    OpenFile(filepath);
-                }
-
-                if (GUILayout.Button("Reset"))
-                {
-                    OpenFile(filepath);
-                }
-
-                GUILayout.EndHorizontal();
             }
+            return false;
         }
 
-        private void DataNotReadable()
+        private void CloseFile()
         {
-            GUILayout.Label("DATA NOT READABLE IN EDITOR");
+            m_savedata = null;
+            m_filepath = null;
+            m_scrollPos = Vector2.zero;
+            ClearLastFile();
         }
 
-        private object DefaultFieldHandleing(object field)
+        private bool SaveFile()
         {
-            if (field is bool)
-            {
-                return GUILayout.Toggle((bool)field, "");
-            }
-
-            if (field is int)
-            {
-                return EditorGUILayout.IntField((int)field);
-            }
-
-            if (field is long)
-            {
-                return EditorGUILayout.LongField((long)field);
-            }
-
-            if (field is System.String)
-            {
-                return EditorGUILayout.TextField((System.String)field);
-            }
-
-            if (field is float)
-            {
-                return EditorGUILayout.FloatField((float)field);
-            }
-
-            if (field is double)
-            {
-                return EditorGUILayout.DoubleField((double)field);
-            }
-
-            if (field is Vector2)
-            {
-                return EditorGUILayout.Vector2Field("", (Vector2)field);
-            }
-
-            if (field is Vector2Int)
-            {
-                return EditorGUILayout.Vector2IntField("", (Vector2Int)field);
-            }
-
-            if (field is Vector3)
-            {
-                return EditorGUILayout.Vector3Field("", (Vector3)field);
-            }
-
-            if (field is Vector3Int)
-            {
-                return EditorGUILayout.Vector3IntField("", (Vector3Int)field);
-            }
-
-            if (field is Vector4)
-            {
-                return EditorGUILayout.Vector4Field("", (Vector4)field);
-            }
-
-            DataNotReadable();
-            return field;
+            BaseFileLoader<SaveData> fileloader = new JsonFileLoader<SaveData>(m_filepath);
+            return fileloader.WriteData(m_savedata);
         }
+
+        // Player Pref
+
+        private void OpenLastFile()
+        {
+            string lastFilePath = PlayerPrefs.GetString("Editor_SaveEditor_LastFilePath");
+            if (lastFilePath != "")
+            {
+                OpenFile(lastFilePath);
+                if (m_filepath == null)
+                    ClearLastFile();
+            }
+        }
+
+        private void SetLastFile()
+        {
+            if (m_filepath != null)
+            {
+                PlayerPrefs.SetString("Editor_SaveEditor_LastFilePath", m_filepath);
+                PlayerPrefs.Save();
+            }
+            else
+            {
+                ClearLastFile();
+            }
+        }
+
+        private void ClearLastFile()
+        {
+            PlayerPrefs.DeleteKey("Editor_SaveEditor_LastFilePath");
+            PlayerPrefs.Save();
+        }
+
+        // CUSTOM FILED HANDLING
 
         private Int32 DisplayGameEventFlags(Int32 gameEventFlags)
         {

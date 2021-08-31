@@ -717,29 +717,6 @@ public class PlayerEntity : GridEntity
         }
     }
 
-    public bool MoveToRespawnLocation()
-    {
-        RespawnStationEntity respawnStation = RespawnStationEntity.CurrentRespawnStation;
-        if (respawnStation != null)
-        {
-            GridNode respawnPoint = respawnStation.RespawnLocation();
-            if (respawnPoint != null)
-            {
-                RemoveFromCurrentNode();
-                m_currentNode = respawnPoint;
-                m_internalFlags.SetFlags(interalFlags.isDead, false);
-                Health = MaxHealth;
-                Energy = MaxEnergy;
-                transform.position = m_currentNode.position.world;
-                AddToCurrentNode();
-                ExecuteStep(); // jank solution but it works
-                // App.CameraController.MoveToRoomByIndex(respawnPoint.roomIndex);
-                return true;
-            }
-        }
-        return false;
-    }
-
     public override void OnDeath()
     {
         GameObject temp = Resources.Load<GameObject>("prefabs/UI prefabs/DeathScreenCanvas");
