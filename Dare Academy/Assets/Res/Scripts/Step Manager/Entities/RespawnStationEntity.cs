@@ -17,6 +17,8 @@ public class RespawnStationEntity : GridEntity, IInteractable
 
     private GameObject m_interact;
 
+    [SerializeField] ParticleSystem m_particles;
+
     protected override void Start()
     {
         base.Start();
@@ -89,6 +91,8 @@ public class RespawnStationEntity : GridEntity, IInteractable
     {
         if (m_playerInRange)
         {
+            m_particles.Play();
+
             m_player.Health = m_player.MaxHealth;
             PlayerEntity.Instance.StoreHeathEnergy();
             PlayerEntity.Instance.StoreRespawnLoaction();
