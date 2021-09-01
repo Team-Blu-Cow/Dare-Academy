@@ -82,9 +82,13 @@ public abstract class GridEntity : MonoBehaviour
     protected GridNode m_previousNode = null;
     protected GridNode m_startingNode = null;
     protected GridNode m_initialNode = null;
+    protected GridNode m_lastStepNode = null;
 
     public bool MovedThisStep
     { get; protected set; }
+
+    public GridNode lastStepNode
+    { get { return m_lastStepNode; } }
 
     public GridNode previousNode
     { get { return m_previousNode; } }
@@ -456,6 +460,8 @@ public abstract class GridEntity : MonoBehaviour
 
     virtual public void EndStep()
     {
+        m_lastStepNode = m_currentNode;
+
         doReanalyse = false;
 
         m_stepsTaken = 0;
