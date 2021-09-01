@@ -153,10 +153,11 @@ public class BulletEntity : GridEntity
 
     public override void DamageStep()
     {
-        if (!MovedThisStep && !m_passthrough)
-        {
+        if (m_currentNode == m_lastStepNode)
             return;
-        }
+
+        if (!MovedThisStep && !m_passthrough)
+            return;
 
         TryReflectBullet();
 
