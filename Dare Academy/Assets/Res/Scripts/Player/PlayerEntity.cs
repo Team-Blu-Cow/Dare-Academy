@@ -154,13 +154,13 @@ public class PlayerEntity : GridEntity
         abilityInputMode = AbilityInputMode.None;
         UpdateInputMode();
 
-        if (levelModule.LevelManager.debug_SpawnPlayer && levelModule.ActiveSaveData.useRespawnData && !LoadingFromOtherScene)
-        {
-            Vector3 pos = levelModule.MetaGrid.Grid(levelModule.ActiveSaveData.respawnRoomID)[levelModule.ActiveSaveData.respawnLocation].position.world;
-            gameObject.transform.position = pos;
+        //if (levelModule.LevelManager.debug_SpawnPlayer && levelModule.ActiveSaveData.useRespawnData && !LoadingFromOtherScene)
+        //{
+        //    Vector3 pos = levelModule.MetaGrid.Grid(levelModule.ActiveSaveData.respawnRoomID)[levelModule.ActiveSaveData.respawnLocation].position.world;
+        //    gameObject.transform.position = pos;
 
-            App.CameraController.Init(pos);
-        }
+        //    App.CameraController.Init(pos);
+        //}
 
         base.Start();
         levelModule.StepController.m_targetRoomIndex = RoomIndex;

@@ -1343,7 +1343,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
+      - m_Target: {fileID: 466815450}
         m_TargetAssemblyTypeName: SaveSlots, Assembly-CSharp
         m_MethodName: OnSave
         m_Mode: 3
@@ -12991,7 +12991,7 @@ MonoBehaviour:
     loadingBar: 1
     sceneName: 
     swapScene: 1
-    showInEditor: 0
+    showInEditor: 1
   - canvas: []
     button: {fileID: 1019158116}
     image: {fileID: 1019158114}
@@ -13008,7 +13008,7 @@ MonoBehaviour:
     loadingBar: 1
     sceneName: 
     swapScene: 1
-    showInEditor: 0
+    showInEditor: 1
   - canvas: []
     button: {fileID: 1005306448}
     image: {fileID: 1005306446}
@@ -13025,7 +13025,7 @@ MonoBehaviour:
     loadingBar: 1
     sceneName: 
     swapScene: 1
-    showInEditor: 0
+    showInEditor: 1
   - canvas: []
     button: {fileID: 1334000586}
     image: {fileID: 1334000584}
@@ -15258,7 +15258,7 @@ MonoBehaviour:
     desc: 
     layer: 0
     transition: 0
-    showInEditor: 1
+    showInEditor: 0
   - gameObject: {fileID: 1386111702}
     canvas: {fileID: 1386111707}
     canvasScaler: {fileID: 1386111706}
@@ -15266,7 +15266,7 @@ MonoBehaviour:
     desc: 
     layer: 0
     transition: 0
-    showInEditor: 0
+    showInEditor: 1
   - gameObject: {fileID: 1621692438}
     canvas: {fileID: 1621692443}
     canvasScaler: {fileID: 1621692442}
